@@ -1,6 +1,6 @@
 {
   "name": "proper-enterprise-app",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "description": "propersoft enterprise application",
   "private": true,
   "scripts": {
