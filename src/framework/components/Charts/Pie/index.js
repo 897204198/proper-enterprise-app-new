@@ -19,14 +19,23 @@ export default class Pie extends Component {
   };
 
   componentDidMount() {
-    this.getLengendData();
+    this.getLegendData();
     this.resize();
     window.addEventListener('resize', this.resize);
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.data !== nextProps.data) {
-      this.getLengendData();
+      // because of charts data create when rendered
+      // so there is a trick for get rendered time
+      this.setState(
+        {
+          legendData: [...this.state.legendData],
+        },
+        () => {
+          this.getLegendData();
+        }
+      );
     }
   }
 
@@ -40,7 +49,7 @@ export default class Pie extends Component {
   };
 
   // for custom lengend view
-  getLengendData = () => {
+  getLegendData = () => {
     if (!this.chart) return;
     const geom = this.chart.getAllGeoms()[0]; // 获取所有的图形
     const items = geom.get('dataArray') || []; // 获取图形对应的
@@ -212,7 +221,9 @@ export default class Pie extends Component {
               <div className={styles.total}>
                 {subTitle && <h4 className="pie-sub-title">{subTitle}</h4>}
                 {/* eslint-disable-next-line */}
-                {total && <div className="pie-stat" dangerouslySetInnerHTML={{ __html: total }} />}
+                {total && (
+                  <div style={{fontSize: '14px'}} className="pie-stat">{typeof total === 'function' ? total() : total}</div>
+                )}
               </div>
             )}
           </div>
@@ -224,19 +235,16 @@ export default class Pie extends Component {
               <li key={item.x} onClick={() => this.handleLegendClick(item, i)}>
                 <span
                   className={styles.dot}
-                  style={{ backgroundColor: !item.checked ? '#aaa' : item.color }}
+                  style={{
+                    backgroundColor: !item.checked ? '#aaa' : item.color,
+                  }}
                 />
                 <span className={styles.legendTitle}>{item.x}</span>
                 <Divider type="vertical" />
                 <span className={styles.percent}>
                   {`${(isNaN(item.percent) ? 0 : item.percent * 100).toFixed(2)}%`}
                 </span>
-                <span
-                  className={styles.value}
-                  dangerouslySetInnerHTML={{
-                    __html: valueFormat ? valueFormat(item.y) : item.y,
-                  }}
-                />
+                <span className={styles.value}>{valueFormat ? valueFormat(item.y) : item.y}</span>
               </li>
             ))}
           </ul>
