@@ -40,9 +40,5 @@ export async function treeListDelete(param) {
   });
 }
 export async function getTableData(param) {
-  return request(`/sys/datadic/catalog/${param}`, {
-  });
-}
-export async function tableInit(param) {
-  return request(`/sys/datadic?${stringify(param)}`);
+  return typeof param === 'string' ? request(`/sys/datadic/catalog/${param}`) : request(`/sys/datadic?${stringify(param)}`);
 }

@@ -52,20 +52,12 @@ export default {
       const resp = yield call(treeListDelete, payload);
       if (callback) callback(resp)
     },
-    *tableInit({payload, callback}, {call, put}) {
+    *tableInit({payload, callback}, {call}) {
       const resp = yield call(tableInit, payload);
-      yield put({
-        type: 'tableInitData',
-        payload: resp
-      })
       if (callback) callback(resp)
     },
-    *getTableData({payload, callback}, {call, put}) {
+    *getTableData({payload, callback}, {call}) {
       const resp = yield call(getTableData, payload);
-      yield put({
-        type: 'tableData',
-        payload: resp
-      })
       if (callback) callback(resp)
     }
   },

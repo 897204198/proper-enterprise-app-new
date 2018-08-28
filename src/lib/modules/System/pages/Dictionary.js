@@ -1,11 +1,14 @@
 import React, {Fragment} from 'react';
-import { Modal, Form, Spin, Input, Button, Radio, InputNumber, Select } from 'antd';
+import classNames from 'classnames';
+import {Modal, Form, Spin, Input, Button, Radio, InputNumber, Select } from 'antd';
 import {connect} from 'dva';
 import { inject } from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
 import { oopToast } from '../../../../framework/common/oopUtils';
 import OopTreeTable from '../../../components/OopTreeTable';
+import OopModal from '../../../components/OopModal';
 import DescriptionList from '../../../../framework/components/DescriptionList';
+import styles from './Dictionary.less';
 
 const { Description } = DescriptionList;
 const FormItem = Form.Item;
@@ -99,46 +102,37 @@ const TreeForm = Form.create()((props) => {
     </Form>
   )
 });
-const ModalForm = Form.create()((props) => {
-  const { form, loading, visible, title, onModalCancel, onModalSubmit, formEntity, selectData, selectValue } = props;
-  const submitForm = ()=>{
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      onModalSubmit(fieldsValue, form);
-    });
+
+function onValuesChange(props, changedValues, allValues) {
+  const { funcBasicInfo, conductValuesChange } = props;
+  if (conductValuesChange) {
+    const warningField = {};
+    for (const k in allValues) {
+      if (Object.keys(funcBasicInfo).length === 0) {
+        if (allValues[k]) {
+          warningField[k] = {hasChanged: true, prevValue: allValues[k]};
+        }
+      } else if (Object.prototype.hasOwnProperty.call(funcBasicInfo, k) &&
+      allValues[k] !== funcBasicInfo[k]) {
+        warningField[k] = {hasChanged: true, prevValue: funcBasicInfo[k]};
+      }
+    }
+    conductValuesChange(warningField);
   }
-  const cancelForm = ()=>{
-    onModalCancel(form)
-  }
-  const footer = (
-    <Fragment>
-      <Button onClick={cancelForm}>取消</Button>
-      <Button type="primary" onClick={submitForm} loading={loading}>保存</Button>
-    </Fragment>);
+}
+const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
+  const { form, formEntity, selectData, selectValue, warningWrapper, loading } = props;
   return (
-    <Modal
-      title={title}
-      visible={visible}
-      footer={footer}
-      onCancel={cancelForm}
-      maskClosable={false}
-      destroyOnClose={true} >
-      <Spin spinning={loading}>
-        <Form>
-          <div>
+    <Spin spinning={loading}>
+        <Form key="form" className={ classNames({[styles.warningWrapper]: warningWrapper})} style={{marginTop: 24}}>
+              <div>
             {form.getFieldDecorator('id', {
               initialValue: formEntity.id
             })(<Input type="hidden" />)}
           </div>
           <FormItem {...formItemLayout} label="字典项">
-            {/* {form.getFieldDecorator('catalog', {
-              initialValue: formEntity.catalog,
-              rules: [
-                { required: true, whitespace: true, pattern: /^[^ \u4e00-\u9fa5]+$/, message: '字典项不能为空，且为非汉字', }
-              ]
-            })(<Input placeholder="请输入字典项内容" />)} */}
             {form.getFieldDecorator('catalog', {
-              initialValue: selectValue ? selectValue.catalogCode : formEntity.catalog,
+              initialValue: selectValue && (selectValue && Object.keys(selectValue).length !== 0) ? selectValue.catalogCode : formEntity.catalog,
               rules: [
                 { required: true, whitespace: true, message: '字典项不能为空', }
               ]
@@ -182,23 +176,14 @@ const ModalForm = Form.create()((props) => {
             {form.getFieldDecorator('deft', {
               initialValue: formEntity.deft != null ? formEntity.deft : true,
             })(<RadioGroup>
-                <Radio value={true}>是</Radio>
-                <Radio value={false}>否</Radio>
+                <Radio value={false}>是</Radio>
+                <Radio value={true}>否</Radio>
             </RadioGroup>)}
           </FormItem>
-        </Form>
-      </Spin>
-    </Modal>
+    </Form>
+  </Spin>
   )
 });
-// function documentClick (event){
-//   if(event.target.children[0]){
-//     if(event.target.children[0].className == "index__primaryColor___BRfLf"){
-//       console.log("点着了")
-//     }
-//   }
-//   // alert(1)
-// }
 @inject(['systemDictionary', 'global'])
 @connect(({ systemDictionary, global, loading }) => ({
   systemDictionary,
@@ -209,7 +194,6 @@ const ModalForm = Form.create()((props) => {
 export default class Dictionary extends React.PureComponent {
   state = {
     tableTitle: '所有',
-    modalFormVisible: false,
     visible: false,
     info: {},
     treeMenuVisible: false,
@@ -218,22 +202,28 @@ export default class Dictionary extends React.PureComponent {
     catalogCode: '',
     catalogType: '',
     sort: '',
-    newTableData: {},
-    pageNumShow: 1,
     handleSelect: null,
+    deBugTableData: [],
+    filterTableData: [],
+    searchState: false,
+    editDisable: false,
+    deleteDisable: false,
+    addOrEditModalTitle: null,
+    modalVisible: false,
+    isCreate: true,
+    warningWrapper: false,
+    closeConfirmConfig: {
+      visible: false
+    },
   }
   componentDidMount() {
-    this.onLoad();
-    // document.addEventListener("click",documentClick)
+    this.getTreeData();
     this.tableInit();
   }
-  // componentWillUnmount(){
-  //   // document.removeEventListener("click", documentClick);
-  // }
   tableInit = (pagination) =>{
     const param = {
       dataDicType: '',
-      pageSize: 10
+      pageSize: 999
     }
     if (pagination) {
       param.pageNo = pagination.pageNo;
@@ -241,21 +231,22 @@ export default class Dictionary extends React.PureComponent {
       param.pageNo = 1;
     }
     this.props.dispatch({
-      type: 'systemDictionary/tableInit',
+      type: 'systemDictionary/getTableData',
       payload: param,
+      callback: (res)=>{
+        this.setState({
+          deBugTableData: res.result.data
+        })
+      }
     });
   }
-  onLoad = (param = {})=>{
-    const {pagination} = param;
+  getTreeData = ()=> {
     this.props.dispatch({
       type: 'systemDictionary/getTreeData',
     });
-    if (pagination) {
-      this.setState({
-        pageNumShow: pagination.pageNo
-      })
-      this.tableInit(pagination);
-    }
+  }
+  onLoad = ()=>{
+
   }
   handlePopoverEditSub = (values) =>{
     const {catalogName, catalogCode, catalogType, sort} = values;
@@ -298,9 +289,19 @@ export default class Dictionary extends React.PureComponent {
       sort: data.sort,
       id: data.id
     }
-    this.setState({
-      ...newData
-    });
+    if (data.key === '-1') {
+      this.setState({
+        ...newData,
+        editDisable: true,
+        deleteDisable: true,
+      })
+    } else {
+      this.setState({
+        ...newData,
+        editDisable: false,
+        deleteDisable: false,
+      })
+    }
   }
   setVisible = (state) => {
     this.setState({
@@ -308,14 +309,27 @@ export default class Dictionary extends React.PureComponent {
     })
   }
   handleCreate = ()=>{
-    this.setModalFormVisible(true);
+    this.setState({
+      modalVisible: true,
+      addOrEditModalTitle: '新建',
+      isCreate: true
+    });
+    setTimeout(()=>{
+      this.props.dispatch({
+        type: 'systemDictionary/clearEntity'
+      });
+    }, 300)
   }
   handleEdit = (record) => {
     this.props.dispatch({
       type: 'systemDictionary/fetchById',
       payload: record.id,
     });
-    this.setModalFormVisible(true);
+    this.setState({
+      modalVisible: true,
+      isCreate: false,
+      addOrEditModalTitle: '编辑',
+    })
   }
   deleteById = (record) => {
     this.props.dispatch({
@@ -333,7 +347,8 @@ export default class Dictionary extends React.PureComponent {
       payload: record,
       callback: (res)=>{
         oopToast(res, '添加成功', '添加失败');
-        this.onLoad();
+        this.getTreeData();
+        this.handleTableTreeNodeSelect();
       }
     })
   }
@@ -343,7 +358,7 @@ export default class Dictionary extends React.PureComponent {
       payload: record,
       callback: (res)=>{
         oopToast(res, '保存成功', '保存失败');
-        this.onLoad();
+        this.getTreeData();
       }
     })
   }
@@ -353,17 +368,7 @@ export default class Dictionary extends React.PureComponent {
       payload: record.id,
       callback: (res)=>{
         oopToast(res, '删除成功', '删除失败');
-        this.onLoad();
-      }
-    })
-  }
-  treeListAdd = (record) => {
-    this.props.dispatch({
-      type: 'systemDictionary/treeListAdd',
-      payload: record,
-      callback: (res)=>{
-        oopToast(res, '添加成功', '添加失败');
-        this.onLoad();
+        this.getTreeData();
       }
     })
   }
@@ -373,7 +378,7 @@ export default class Dictionary extends React.PureComponent {
       payload: record,
       callback: (res)=>{
         oopToast(res, '保存成功', '保存失败');
-        this.onLoad();
+        this.getTreeData();
       }
     })
   }
@@ -383,14 +388,13 @@ export default class Dictionary extends React.PureComponent {
       payload: record.id,
       callback: (res)=>{
         oopToast(res, '删除成功', '删除失败');
-        this.onLoad();
+        this.getTreeData();
       }
     })
   }
-  handleModalCancel = (form) => {
-    this.setModalFormVisible(false);
+  handleModalCancel = () => {
+    this.setModalVisible(false)
     setTimeout(()=>{
-      form.resetFields();
       this.props.dispatch({
         type: 'systemDictionary/clearEntity'
       });
@@ -408,6 +412,64 @@ export default class Dictionary extends React.PureComponent {
       }
     });
   }
+  handleCloseConfirmCancel = (warningWrapper) => {
+    this.setState({
+      warningWrapper
+    })
+  }
+  setModalVisible = (flag) => {
+    this.setState({
+      modalVisible: flag
+    });
+  }
+  handleAddOrEditModalCancel = () =>{
+    this.setModalVisible(false)
+    setTimeout(() => {
+      this.setState({
+        closeConfirmConfig: {
+          visible: false
+        },
+        warningWrapper: false,
+      });
+      this.props.dispatch({
+        type: 'authFunc/clear'
+      });
+    }, 300);
+  }
+  onOk = () => {
+    const form = this.basic.getForm();
+    const {validateFieldsAndScroll} = form;
+    validateFieldsAndScroll((err, fieldsValue) => {
+      if (err) return;
+      this.handleModalSubmit(fieldsValue);
+    });
+  };
+  onDeleteFromEdit = () => {
+    const {systemDictionary: {entity: {id}}} = this.props;
+    this.props.dispatch({
+      type: 'systemDictionary/remove',
+      payload: id,
+      callback: (res)=>{
+        oopToast(res, '删除成功', '删除失败');
+        this.handleTableTreeNodeSelect()
+        this.setState({
+          modalVisible: false
+        });
+      }
+    })
+  }
+  handleBasicChange = (warningField) => {
+    const visible = Object.keys(warningField).length > 0;
+    this.setState((prevState) => {
+      return {
+        closeConfirmConfig: {
+          ...prevState.closeConfirmConfig,
+          visible
+        },
+        warningField
+      }
+    });
+  };
   handleView = (record) => {
     this.setState({
       visible: true,
@@ -420,70 +482,63 @@ export default class Dictionary extends React.PureComponent {
       info: {}
     });
   }
-  setModalFormVisible = (flag) =>{
-    this.setState({modalFormVisible: flag})
-  }
   handleTableTreeNodeSelect = ()=>{
+    this.oopTreeTable.oopSearch.setState({
+      inputValue: ''
+    });
     const treeNode = this.oopTreeTable.getCurrentSelectTreeNode();
-    if (treeNode.title === '所有') {
+    if (treeNode.key === '-1') {
       this.setState({
         tableTitle: treeNode.catalogName || treeNode.title || '所有',
         handleSelect: null,
       })
+      this.tableInit()
     } else {
       this.setState({
         tableTitle: treeNode.catalogName || treeNode.title || '所有',
         handleSelect: treeNode,
       })
+      this.props.dispatch({
+        type: 'systemDictionary/getTableData',
+        payload: treeNode.catalogCode,
+        callback: (res)=>{
+          this.setState({
+            deBugTableData: res.result,
+            searchState: false
+          })
+        }
+      });
     }
-
-    this.tableInit();
-    this.props.dispatch({
-      type: 'systemDictionary/getTableData',
-      payload: treeNode.catalogCode,
-    });
   }
   filterTable = (inputValue, filter) => {
-    const {systemDictionary: {tableData, tableInitData} } = this.props;
-    const filterTable = tableData.length > 0 ? tableData : tableInitData.data
-    const tableDataFinal = inputValue ? filter(filterTable, ['catalog', 'code', 'name']) : filterTable;
-    const newTableDataFinal = {list: tableDataFinal, pagination: { pageNo: 3, pageSize: 10, count: tableData.length}}
+    const tableDataFinal = inputValue ? filter(this.state.deBugTableData, ['catalog', 'code', 'name']) : this.state.deBugTableData;
     this.setState({
-      newTableData: newTableDataFinal,
+      filterTableData: tableDataFinal,
+      searchState: true,
     })
   }
   render() {
-    const {systemDictionary: {entity, treeData, tableData, tableInitData},
-      global: { size }, gridLoading } = this.props;
-    const loading = false;
-    const { visible, info, tableTitle, newTableData, pageNumShow, handleSelect } = this.state;
-    const tableDataFinal = JSON.stringify(newTableData) !== '{}' ?
-      newTableData : handleSelect && tableTitle !== '所有' ? {list: tableData, pagination: {
-        pageNo: 1,
-        pageSize: 10,
-        count: tableData.length}} : {
-        list: tableInitData.data,
-        pagination: {
-          pageNo: pageNumShow,
-          pageSize: 10,
-          count: tableInitData.count}};
-    const { newForm, editFrom } = { newForm: '新建数据字典', editFrom: '编辑数据字典' }
+    const {systemDictionary: {entity, treeData },
+      global: { size }, gridLoading, loading } = this.props;
+    const { visible, info, tableTitle, handleSelect, deBugTableData, filterTableData, searchState,
+      deleteDisable, editDisable, addOrEditModalTitle, closeConfirmConfig, warningWrapper, warningField } = this.state;
+    const activeTableData = searchState ? filterTableData : deBugTableData;
     const columns = [
-      { title: '字典项', dataIndex: 'catalog', render: (text, record)=>(
+      { title: '字典项', dataIndex: 'catalog', width: 90, render: (text, record)=>(
         <span
           onClick={()=>this.handleView(record)}
           style={{textDecoration: 'underline', cursor: 'pointer'}}>
           {text}
       </span>)},
-      { title: '字典编码', dataIndex: 'code' },
-      { title: '字典值', dataIndex: 'name' },
-      { title: '排序', dataIndex: 'order' },
-      { title: '是否默认', dataIndex: 'deft', render: text => (
+      { title: '字典编码', dataIndex: 'code', width: 80 },
+      { title: '字典值', dataIndex: 'name', width: 60 },
+      { title: '排序', dataIndex: 'order', width: 60 },
+      { title: '是否默认', dataIndex: 'deft', width: 80, render: text => (
         <Fragment>
           {text === true ? '是' : '否'}
         </Fragment>
       ) },
-      { title: '系统字典', dataIndex: 'dataDicType', render: text => (
+      { title: '系统字典', dataIndex: 'dataDicType', width: 80, render: text => (
           <Fragment>
             {text === 'SYSTEM' ? '是' : '否'}
           </Fragment>
@@ -520,6 +575,7 @@ export default class Dictionary extends React.PureComponent {
         icon: 'folder-add',
         text: '增加',
         name: 'add',
+        disabled: false,
         onClick: (record) => {
           this.treeListAdd(record)
         },
@@ -533,6 +589,7 @@ export default class Dictionary extends React.PureComponent {
         icon: 'edit',
         text: '编辑',
         name: 'edit',
+        disabled: editDisable,
         onClick: (record) => {
           this.treeListEdit(record)
         },
@@ -551,6 +608,7 @@ export default class Dictionary extends React.PureComponent {
         icon: 'delete',
         text: '删除',
         name: 'remove',
+        disabled: deleteDisable,
         onClick: (record) => {
           this.treeListDelete(record)
         },
@@ -562,7 +620,7 @@ export default class Dictionary extends React.PureComponent {
           ref={(el)=>{ this.oopTreeTable = el }}
           table={{
             title: `${tableTitle}数据字典`,
-            grid: tableDataFinal,
+            grid: {list: activeTableData},
             columns,
             gridLoading,
             onLoad: this.onLoad,
@@ -572,7 +630,8 @@ export default class Dictionary extends React.PureComponent {
               onInputChange: this.filterTable,
               placeholder: '请输入',
               enterButtonText: '搜索'
-            }
+            },
+            checkable: false
           }}
           tree={{
             onRightClickConfig: {
@@ -583,11 +642,13 @@ export default class Dictionary extends React.PureComponent {
                 this.rightClick(data)
               },
             },
+            defaultSelectedKeys: ['-1'],
             title: '数据字典项',
             treeLoading: loading,
             treeData,
             treeTitle: 'catalogName',
             treeKey: 'id',
+            showLine: true,
             treeRoot: {
               key: '-1',
               title: '所有',
@@ -596,15 +657,37 @@ export default class Dictionary extends React.PureComponent {
           size={size}
           onTableTreeNodeSelect={this.handleTableTreeNodeSelect}
         />
-        <ModalForm
-          selectData={treeData}
-          selectValue={handleSelect}
-          visible={this.state.modalFormVisible}
-          title={entity.id ? editFrom : newForm}
-          onModalCancel={this.handleModalCancel}
-          onModalSubmit={this.handleModalSubmit}
-          formEntity={entity}
+        <OopModal
+          title={`${addOrEditModalTitle}功能`}
+          visible={this.state.modalVisible}
+          destroyOnClose={true}
+          width={800}
+          closeConfirm={closeConfirmConfig}
+          closeConfirmCancel={this.handleCloseConfirmCancel}
+          onCancel={this.handleAddOrEditModalCancel}
+          onOk={this.onOk}
+          onDelete={this.onDeleteFromEdit}
+          isCreate={this.state.isCreate}
           loading={!!loading}
+          tabs={[
+            {
+              key: 'basic',
+              title: '基本信息',
+              tips: (<div>新建时，需要<a>填写完基本信息的必填项并保存</a>后，滚动页面或点击左上角的导航来完善其他信息</div>),
+              main: true,
+              content: <FuncBasicInfoForm
+                ref={(el) => {
+                  this.basic = el;
+                }}
+                formEntity={entity}
+                selectData={treeData}
+                warningWrapper={warningWrapper}
+                warningField={warningField}
+                loading={loading}
+                selectValue={handleSelect}
+              />
+            },
+          ]}
         />
         <Modal
           visible={visible}

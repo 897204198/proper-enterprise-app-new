@@ -6,9 +6,11 @@ import {inject} from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
 import OopTreeTable from '../../../components/OopTreeTable';
 import OopModal from '../../../components/OopModal';
+import DescriptionList from '../../../../framework/components/DescriptionList';
 import { oopToast } from '../../../../framework/common/oopUtils';
 import styles from './AppConfig.less';
 
+const { Description } = DescriptionList;
 const { Option } = Select;
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -52,7 +54,7 @@ const TreeForm = Form.create()((props) => {
               rules: [
                 { required: true, whitespace: true, pattern: /^(?![0-9]+$)[^ \u4e00-\u9fa5]+$/, message: '不能为空，且不能为纯数字', },
               ]
-            })(<Input placeholder="请输入编码" style={{width: 200}} />)}
+            })(<Input disabled={props.code && true} placeholder="请输入编码" style={{width: 200}} />)}
           </FormItem>
           <FormItem key="5" style={{marginBottom: 0}}>
             {/* <Button type="primary" htmlType="submit" size="small"> */}
@@ -167,12 +169,11 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
         >
           {getFieldDecorator('data', {
             initialValue: entity.data,
-            // rules: [
-            //   {required: true, message: '应用数据不能为空'},
-            //   {validator: validateJson}
-            // ],
+            rules: [{
+              required: false, pattern: /^\{"\S{1,}":"\S{1,}"\}$/, message: '输入的格式错误',
+            }],
           })(
-            <TextArea autosize placeholder="请输入应用数据" />
+            <TextArea autosize={{ minRows: 2 }} placeholder="请输入应用数据" />
           )}
         </FormItem>
       </Form>
@@ -201,6 +202,8 @@ export default class AppConfig extends PureComponent {
     closeConfirmConfig: {
       visible: false
     },
+    visible: false,
+    info: {}
   }
   componentDidMount() {
     this.getTreeData();
@@ -217,7 +220,7 @@ export default class AppConfig extends PureComponent {
   // 获取应用列表数据
   onLoad = (param = {})=>{
     const treeNode = this.oopTreeTable.getCurrentSelectTreeNode();
-    const code = (treeNode && treeNode.key === '-1' ? undefined : treeNode.key);
+    const code = (treeNode && treeNode.key === '-1' ? undefined : treeNode.code);
     const {pagination} = param;
     this.oopTreeTable.oopSearch.load({
       pagination,
@@ -438,6 +441,18 @@ export default class AppConfig extends PureComponent {
       }
     })
   }
+  handleView = (record) => {
+    this.setState({
+      visible: true,
+      info: record
+    });
+  }
+  handleClose = () => {
+    this.setState({
+      visible: false,
+      info: {}
+    });
+  }
   render() {
     const {loading, systemAppConfig: { treeData },
       gridLoading, global: { size, oopSearchGrid } } = this.props;
@@ -449,10 +464,15 @@ export default class AppConfig extends PureComponent {
         item.data = item.data === '{}' ? '' : item.data
       }
     });
-    const { tableTitle, entity, modalVisible, handleSelect,
+    const { visible, info, tableTitle, entity, modalVisible, handleSelect,
       closeConfirmConfig, warningWrapper, warningField } = this.state;
     const columns = [
-      {title: '应用名称', dataIndex: 'name'},
+      {title: '应用名称', dataIndex: 'name', render: (text, record)=>(
+        <span
+          onClick={()=>this.handleView(record)}
+          style={{textDecoration: 'underline', cursor: 'pointer'}}>
+          {text}
+      </span>)},
       {title: '应用图标', dataIndex: 'icon'},
       {title: '应用页', dataIndex: 'page'},
       {title: '应用数据', dataIndex: 'data', width: 300}
@@ -557,12 +577,10 @@ export default class AppConfig extends PureComponent {
               },
             },
             showLine: true,
-            title: '应用类别',
-            treeTitle: 'name',
             treeLoading: loading,
             treeData,
             treeKey: 'id',
-            defaultSelectedKeys: ['-1'],
+            treeTitle: 'typeName',
             treeRoot: {
               key: '-1',
               title: '全部',
@@ -603,6 +621,33 @@ export default class AppConfig extends PureComponent {
             },
           ]}
         />
+        <Modal
+          visible={visible}
+          title="数据字典配置"
+          onCancel={()=>this.handleClose()}
+          footer={<Button type="primary" onClick={()=>this.handleClose()}>确定</Button>}
+        >
+          <DescriptionList size={size} col="1">
+            {/* <Description term="应用类别">
+              {info.catalog}
+            </Description> */}
+            <Description term="应用名称">
+              {info.name}
+            </Description>
+            <Description term="应用图标">
+              {info.icon}
+            </Description>
+            <Description term="应用页">
+              {info.page}
+            </Description>
+            <Description term="应用扩展">
+              {info.style}
+            </Description>
+            <Description term="应用数据">
+              {info.data}
+            </Description>
+          </DescriptionList>
+        </Modal>
       </PageHeaderLayout>
     )
   }
