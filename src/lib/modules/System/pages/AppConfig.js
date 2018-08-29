@@ -193,7 +193,6 @@ export default class AppConfig extends PureComponent {
     tableTitle: '全部',
     entity: {},
     modalVisible: false,
-    treeMenuVisible: false,
     typeName: '',
     code: '',
     handleSelect: null,
@@ -363,11 +362,6 @@ export default class AppConfig extends PureComponent {
       }
     })
   }
-  setVisible = (state) => {
-    this.setState({
-      treeMenuVisible: state,
-    })
-  }
   rightClick = (data) =>{
     const newData = {
       typeName: data.typeName,
@@ -380,11 +374,11 @@ export default class AppConfig extends PureComponent {
   handlePopoverAddSub = (values) =>{
     this.treeListAdd(values)
     this.setState({
-      treeMenuVisible: false,
       typeName: '',
       code: '',
       // sort: '',
     })
+    this.oopTreeTable.handleClosePopover()
   }
   handlePopoverEditSub = (values) => {
     const {code, typeName} = values;
@@ -396,16 +390,13 @@ export default class AppConfig extends PureComponent {
     }]
     this.treeListEdit(param)
     this.setState({
-      treeMenuVisible: false,
       typeName: '',
       code: '',
-      // sort: '',
     })
+    this.oopTreeTable.handleClosePopover()
   }
   handlePopoverC = () =>{
-    this.setState({
-      treeMenuVisible: false,
-    });
+    this.oopTreeTable.handleClosePopover()
   }
   treeListDelete = (record) => {
     this.props.dispatch({
@@ -570,8 +561,6 @@ export default class AppConfig extends PureComponent {
           tree={{
             onRightClickConfig: {
               menuList,
-              menuVisible: (state)=>{ this.setVisible(state) },
-              treeMenuVisible: this.state.treeMenuVisible,
               rightClick: (data)=>{
                 this.rightClick(data)
               },

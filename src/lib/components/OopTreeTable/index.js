@@ -1,4 +1,5 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { Row, Col, Card, Tree, Spin, Input, Icon, Menu, Dropdown, Modal } from 'antd';
 import OopTable from '../OopTable';
 import OopSearch from '../OopSearch';
@@ -35,18 +36,6 @@ const generateList = (data, props) => {
     }
   }
 };
-function setPosition(x, y, target) {
-  setTimeout(
-    () => {
-      const popoverDom = document.querySelector('.ant-dropdown')
-      target.appendChild(popoverDom)
-      target.style.position = 'relative'
-      popoverDom.style.top = `${target.offsetHeight}px`;
-      popoverDom.children[0].style.paddingLeft = '0px';
-      popoverDom.style.left = `${x + 5}px`;
-    }, 0, y, x, target
-  )
-}
 export default class OopTreeTable extends PureComponent {
   constructor(props) {
     super(props);
@@ -59,11 +48,9 @@ export default class OopTreeTable extends PureComponent {
       selectedKeys: [..._defaultSelectedKeys],
       popoverConfig: {
         treeMenuState: 'button',
-        popoverY: null,
-        popoverX: null,
         popoverInfo: null,
-        popoverParentDom: null,
-      }
+        popoverRenderDom: {},
+      },
     }
   }
   handleOnSelect = (treeNode, event)=>{
@@ -94,27 +81,88 @@ export default class OopTreeTable extends PureComponent {
     }
   }
   handleOnRightClick = ({event, node}) => {
-    if (!(this.props.tree.onRightClickConfig)) {
+    if (!(this.props.tree.onRightClickConfig) || event.target.className !== '') {
       return
     }
-    const y = event.pageY;
-    const x = event.target.offsetWidth
-    setPosition.call(this, x, y, event.target)
     this.props.tree.onRightClickConfig.rightClick(node.props.dataRef)
-    this.props.tree.onRightClickConfig.menuVisible(true)
+    let renderDom = null
+    if (event.target.children.length !== 0) {
+      [renderDom] = event.target.children;
+      while (renderDom.hasChildNodes()) {
+        renderDom.removeChild(renderDom.firstChild);
+      }
+    } else {
+      renderDom = event.target;
+      const renderDomTxt = renderDom.firstChild;
+      while (renderDom.hasChildNodes()) {
+        renderDom.removeChild(renderDom.firstChild);
+      }
+      renderDom.appendChild(renderDomTxt)
+    }
+    this.handleClosePopover();
+    const divDom = document.createElement('div');
+    renderDom.style.position = 'relative';
+    divDom.style.position = 'absolute';
+    divDom.style.top = `${18}px`
+    divDom.style.left = '40px'
+    renderDom.appendChild(divDom)
     const data = {
-      popoverY: y,
-      popoverX: x,
       popoverInfo: node,
       treeMenuState: 'button',
-      popoverParentDom: event.target
+      popoverRenderDom: divDom,
     }
     this.setState({
-      popoverConfig: data
+      popoverConfig: data,
+    }, ()=>{
+      let menuHTML = null;
+      let menuList = null;
+      if ((this.props.tree.onRightClickConfig)) {
+        const {menuList: temp} = this.props.tree.onRightClickConfig
+        menuList = temp
+      }
+      menuList !== null && (this.state.popoverConfig.treeMenuState === 'button' ? menuHTML = (
+        <Menu style={{width: 120}}>
+          {
+            menuList.map((item)=>{
+              const {name} = item;
+              if (!item.confirm) {
+                return (
+                  <Menu.Item disabled={item.disabled} className={`popoverLine ${item.name}`} key={name} onClick={(nameParam)=>{ this.handelPopover(nameParam) }}>
+                  <div style={{paddingLeft: 0, color: '#666'}}>
+                    <Icon type={item.icon} style={{fontSize: 16}} />
+                        <span style={{paddingLeft: 8}}>{item.text}</span>
+                        </div>
+                  </Menu.Item>
+                )
+              } else {
+                return (
+                  <Menu.Item disabled={item.disabled} className={item.name} key={name} onClick={()=>{ this.confirm(item) }}>
+                    <div style={{paddingLeft: 0}}>
+                      <Icon type={item.icon} style={{ fontSize: 16}} />
+                        <span style={{paddingLeft: 8}}>{item.text}</span>
+                    </div>
+                  </Menu.Item>
+                )
+              }
+            })
+          }
+        </Menu>) : ''
+      )
+      ReactDOM.render(
+        <Dropdown
+          overlay={menuHTML}
+          trigger={['click']}
+          visible={true}
+          ref={(el)=>{ this.popover = el }}
+        >
+        <div />
+      </Dropdown>,
+        divDom
+      )
     });
   }
   confirm = (item) => {
-    this.props.tree.onRightClickConfig.menuVisible(false)
+    this.handleClosePopover()
     const {props} = this.state.popoverConfig.popoverInfo;
     const { onClick } = item;
     confirm({
@@ -126,20 +174,50 @@ export default class OopTreeTable extends PureComponent {
       },
     });
   }
-  handleVisibleChange = () => {
-    this.props.tree.onRightClickConfig.menuVisible(false)
+  componentDidMount() {
+    if (this.props.tree.onRightClickConfig) {
+      document.querySelectorAll('.ant-card-body')[1].classList.add('popoverParent')
+      document.addEventListener('click', (e)=>{
+        let flag = false;
+        e.path.forEach((item)=>{
+          if (item.className === 'ant-dropdown ant-dropdown-placement-bottomLeft') {
+            flag = true;
+          }
+        })
+        const dom = document.querySelector('.ant-dropdown-placement-bottomLeft');
+        if (!flag && dom) {
+          dom.parentNode.removeChild(dom);
+        }
+      })
+    }
+  }
+  handleClosePopover = ()=>{
+    const dom = document.querySelector('.ant-dropdown-placement-bottomLeft')
+    dom && dom.parentNode.removeChild(dom);
   }
   handelPopover = (type) =>{
-    const x = this.state.popoverConfig.popoverX;
-    const y = this.state.popoverConfig.popoverY;
-    const dom = this.state.popoverConfig.popoverParentDom;
-    setPosition.call(this, x, y, dom)
-    this.setState({
-      popoverConfig: {
-        ...this.state.popoverConfig,
-        treeMenuState: type.key
-      },
-    });
+    let menuList = null;
+    if ((this.props.tree.onRightClickConfig)) {
+      const {menuList: temp} = this.props.tree.onRightClickConfig
+      menuList = temp
+    }
+    menuList.forEach((item)=>{
+      if (item.name === type.key) {
+        ReactDOM.render(
+          <Dropdown
+            style={{zIndex: 1000}}
+            overlay={item.render}
+            trigger={['click']}
+            visible={true}
+            ref={(el)=>{ this.popover = el }}
+          >
+          <div />
+        </Dropdown>,
+          this.state.popoverConfig.popoverRenderDom
+        )
+      }
+    })
+    return false
   }
   renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue)=> {
     const treeNodes = data.map((node) => {
@@ -221,11 +299,6 @@ export default class OopTreeTable extends PureComponent {
     return {...this.state.currentSelectTreeNode}
   }
   render() {
-    let menuList = null;
-    if ((this.props.tree.onRightClickConfig)) {
-      const {menuList: temp} = this.props.tree.onRightClickConfig
-      menuList = temp
-    }
     const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
     const treeConfig = this.props.tree;
     const tableConfig = this.props.table;
@@ -237,46 +310,6 @@ export default class OopTreeTable extends PureComponent {
         selectedKeys.push(item);
       });
     }
-    let menuHTML = null;
-    menuList && (this.state.popoverConfig.treeMenuState === 'button' ? menuHTML = (
-          <Menu style={{width: 140}}>
-            {
-              menuList.map((item)=>{
-                const {name} = item;
-                if (!item.confirm) {
-                  return (
-                    <Menu.Item key={name} className="popoverLine" onClick={(nameParam)=>{ this.handelPopover(nameParam) }}>
-                    <div style={{paddingLeft: 5}}>
-                      <Icon type={item.icon} style={{fontSize: 16}} />
-                          <span style={{paddingLeft: 8}}>{item.text}</span>
-                          </div>
-                    </Menu.Item>
-                  )
-                } else {
-                  return (
-                    <Menu.Item key={name}>
-                      <div onClick={()=>{ this.confirm(item) }} style={{paddingLeft: 5}}>
-                        <Icon type={item.icon} style={{ fontSize: 16}} />
-                          <span style={{paddingLeft: 8}}>{item.text}</span>
-                      </div>
-                    </Menu.Item>
-                  )
-                }
-              })
-            }
-          </Menu>) : menuHTML = (
-            <li key="other" >
-              {menuList.map((item) => {
-                if (item.name === this.state.popoverConfig.treeMenuState) {
-                  return (
-                  <Fragment key={item.name}>{item.render}</Fragment>
-                );
-                }
-                return null
-              })
-            }
-          </li>)
-    )
     return (
       <Row gutter={16} className={styles.OopTreeTable}>
         <Col span={18} push={6}>
@@ -298,22 +331,10 @@ export default class OopTreeTable extends PureComponent {
             />
           </Card>
         </Col>
-        <Col span={6} pull={18}>
+        <Col span={6} pull={18} >
           <Card bordered={false} title={treeConfig.title}>
             <Spin spinning={treeLoading}>
               <Search style={{ marginBottom: 8}} placeholder="搜索" onChange={this.handleOnChange} />
-              {menuList && (
-              <Dropdown
-                style={{zIndex: 1000}}
-                overlay={menuHTML}
-                trigger={['click']}
-                visible={this.props.tree.onRightClickConfig.treeMenuVisible }
-                onVisibleChange={this.handleVisibleChange}
-                ref={(el)=>{ this.popover = el }}
-              >
-              <div />
-              </Dropdown>)
-            }
                 <Tree
                   defaultExpandAll={true}
                   onExpand={this.onExpand}
@@ -324,6 +345,7 @@ export default class OopTreeTable extends PureComponent {
                   {...treeConfig}
                   ref={(el)=>{ this.tree = el }}
                   onRightClick={this.handleOnRightClick}
+                  defaultSelectedKeys={['-1']}
                 >
                   {this.renderTreeNodes(treeData, treeTitle, treeKey, treeRoot, searchValue)}
                 </Tree>

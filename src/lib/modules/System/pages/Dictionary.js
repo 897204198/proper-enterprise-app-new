@@ -196,7 +196,6 @@ export default class Dictionary extends React.PureComponent {
     tableTitle: '所有',
     visible: false,
     info: {},
-    treeMenuVisible: false,
     id: null,
     catalogName: '',
     catalogCode: '',
@@ -245,9 +244,7 @@ export default class Dictionary extends React.PureComponent {
       type: 'systemDictionary/getTreeData',
     });
   }
-  onLoad = ()=>{
-
-  }
+  onLoad = ()=>{}
   handlePopoverEditSub = (values) =>{
     const {catalogName, catalogCode, catalogType, sort} = values;
     const {id} = this.state;
@@ -259,27 +256,25 @@ export default class Dictionary extends React.PureComponent {
     }, id]
     this.treeListEdit(param)
     this.setState({
-      treeMenuVisible: false,
       catalogName: '',
       catalogCode: '',
       catalogType: '',
       sort: '',
     })
+    this.oopTreeTable.handleClosePopover()
   }
   handlePopoverAddSub = (values) =>{
     this.treeListAdd(values)
     this.setState({
-      treeMenuVisible: false,
       catalogName: '',
       catalogCode: '',
       catalogType: '',
       sort: '',
     })
+    this.oopTreeTable.handleClosePopover()
   }
   handlePopoverC = () =>{
-    this.setState({
-      treeMenuVisible: false,
-    });
+    this.oopTreeTable.handleClosePopover()
   }
   rightClick = (data) =>{
     const newData = {
@@ -302,11 +297,6 @@ export default class Dictionary extends React.PureComponent {
         deleteDisable: false,
       })
     }
-  }
-  setVisible = (state) => {
-    this.setState({
-      treeMenuVisible: state,
-    })
   }
   handleCreate = ()=>{
     this.setState({
@@ -636,8 +626,6 @@ export default class Dictionary extends React.PureComponent {
           tree={{
             onRightClickConfig: {
               menuList,
-              menuVisible: (state)=>{ this.setVisible(state) },
-              treeMenuVisible: this.state.treeMenuVisible,
               rightClick: (data)=>{
                 this.rightClick(data)
               },
