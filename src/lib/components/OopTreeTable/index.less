@@ -13,21 +13,25 @@
       border-left: 0 !important;
     }
     .rightClickPopover {
-      // border: 1px solid black;
-      // padding: 10px;
-      box-shadow: 2px 2px 6px #888888;
+      border-radius: 4px;
+      box-shadow: 0 0 6px @shadow-color;
       .ant-menu {
-        padding-left: 0;
+      border-radius: 4px;
+      padding-left: 0;
       }
       li {
         margin: 0 !important;
+        color: @text-color !important;
+        height: 30px;
+        line-height: 30px;
+        font-size: 14px;
       }
       li:hover{
-        background: #bae7ff;
-        color: #fff !important;
-        margin: 0 !important;
-        transition: all 0.3s;
-        border-radius: 4px;
+        background: @item-hover-bg;
+        font-size: 14px;
+        color: @text-color !important;
+        line-height: 30px;
+        height: 30px;
       }
     }
   }

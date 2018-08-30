@@ -568,6 +568,7 @@ export default class AppConfig extends PureComponent {
               },
             },
             showLine: true,
+            title: '应用管理',
             treeLoading: loading,
             treeData,
             treeKey: 'id',

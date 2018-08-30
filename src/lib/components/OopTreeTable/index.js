@@ -24,6 +24,70 @@ const getParentKey = (key, tree, props) => {
   }
   return parentKey;
 };
+const clickEvent = (e)=>{
+  let flag = false;
+  e.path.forEach((item)=>{
+    if (item.className === 'rightClickPopover') {
+      flag = true;
+    }
+  })
+  const dom = document.querySelector('.rightClickPopover');
+  if (!flag && dom) {
+    dom.parentNode.removeChild(dom);
+  }
+}
+const renderMenu = (divDom, that)=>{
+  let menuHTML = null;
+  let menuList = null;
+  if (that.props.tree.onRightClickConfig) {
+    const {menuList: temp} = that.props.tree.onRightClickConfig
+    menuList = temp
+  }
+  menuList !== null && (that.state.popoverConfig.treeMenuState === 'button' ? menuHTML = (
+    <Menu style={{width: 120}}>
+      {
+        menuList.map((item)=>{
+          const {name} = item;
+          if (!item.confirm) {
+            return (
+              <Menu.Item disabled={item.disabled} className={`popoverLine ${item.name}`} key={name} onClick={(nameParam)=>{ that.handelPopover(nameParam) }}>
+                <div style={{paddingLeft: 0}}>
+                  <Icon type={item.icon} style={{fontSize: 16}} />
+                      <span >{item.text}</span>
+                </div>
+              </Menu.Item>
+            )
+          } else {
+            return (
+              <Menu.Item disabled={item.disabled} className={item.name} key={name} onClick={()=>{ that.confirm(item) }}>
+                <div style={{paddingLeft: 0}}>
+                  <Icon type={item.icon} style={{ fontSize: 16}} />
+                    <span>{item.text}</span>
+                </div>
+              </Menu.Item>
+            )
+          }
+        })
+      }
+    </Menu>) : ''
+  )
+  ReactDOM.render(
+    <div className="rightClickPopover">
+      {menuHTML}
+    </div>,
+    divDom
+  );
+}
+const creatDiv = (renderDom)=>{
+  const divDom = document.createElement('div');
+  renderDom.style.position = 'relative';
+  divDom.style.position = 'absolute';
+  divDom.style.top = '22px'
+  divDom.style.left = '40px'
+  divDom.style.zIndex = '9999'
+  renderDom.appendChild(divDom)
+  return divDom
+}
 export default class OopTreeTable extends PureComponent {
   constructor(props) {
     super(props);
@@ -71,18 +135,33 @@ export default class OopTreeTable extends PureComponent {
     }
   }
   handleOnRightClick = ({event, node}) => {
-    if (!(this.props.tree.onRightClickConfig) || event.target.className !== '') {
+    if (event.target.tagName === 'I' || event.target.className.indexOf('ant-tree-node-selected') >= 0 || !this.props.tree.onRightClickConfig || event.target.className === 'ant-tree-title' || event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-open') {
       return
+    };
+    this.props.tree.onRightClickConfig.rightClick(node.props.dataRef);
+    let renderDom = null;
+    let targetDom = null;
+    if (event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-normal') {
+      [targetDom] = event.target.children[0].children
+    } else {
+      targetDom = event.target;
     }
-    this.props.tree.onRightClickConfig.rightClick(node.props.dataRef)
-    let renderDom = null
-    if (event.target.children.length !== 0) {
-      [renderDom] = event.target.children;
-      while (renderDom.hasChildNodes()) {
-        renderDom.removeChild(renderDom.firstChild);
+    if (targetDom.children.length !== 0) {
+      [renderDom] = targetDom.children;
+      if (renderDom.tagName === 'SPAN') {
+        while (renderDom.hasChildNodes()) {
+          renderDom.removeChild(renderDom.firstChild);
+        }
+      } else if (renderDom.tagName === 'DIV') {
+        renderDom = targetDom.parentNode;
+        const renderDomTxt = renderDom.firstChild;
+        while (renderDom.hasChildNodes()) {
+          renderDom.removeChild(renderDom.firstChild);
+        }
+        renderDom.appendChild(renderDomTxt)
       }
     } else {
-      renderDom = event.target;
+      renderDom = targetDom;
       const renderDomTxt = renderDom.firstChild;
       while (renderDom.hasChildNodes()) {
         renderDom.removeChild(renderDom.firstChild);
@@ -90,61 +169,16 @@ export default class OopTreeTable extends PureComponent {
       renderDom.appendChild(renderDomTxt)
     }
     this.handleClosePopover();
-    const divDom = document.createElement('div');
-    renderDom.style.position = 'relative';
-    divDom.style.position = 'absolute';
-    divDom.style.top = `${22}px`
-    divDom.style.left = '40px'
-    divDom.style.zIndex = '9999'
-    renderDom.appendChild(divDom)
+    const divDom = creatDiv(renderDom)
     const data = {
       popoverInfo: node,
       treeMenuState: 'button',
       popoverRenderDom: divDom,
     }
     this.setState({
-      popoverConfig: data,
+      popoverConfig: data
     }, ()=>{
-      let menuHTML = null;
-      let menuList = null;
-      if ((this.props.tree.onRightClickConfig)) {
-        const {menuList: temp} = this.props.tree.onRightClickConfig
-        menuList = temp
-      }
-      menuList !== null && (this.state.popoverConfig.treeMenuState === 'button' ? menuHTML = (
-        <Menu style={{width: 120}}>
-          {
-            menuList.map((item)=>{
-              const {name} = item;
-              if (!item.confirm) {
-                return (
-                  <Menu.Item disabled={item.disabled} className={`popoverLine ${item.name}`} key={name} onClick={(nameParam)=>{ this.handelPopover(nameParam) }}>
-                  <div style={{paddingLeft: 0}}>
-                    <Icon type={item.icon} style={{fontSize: 16}} />
-                        <span >{item.text}</span>
-                        </div>
-                  </Menu.Item>
-                )
-              } else {
-                return (
-                  <Menu.Item disabled={item.disabled} className={item.name} key={name} onClick={()=>{ this.confirm(item) }}>
-                    <div style={{paddingLeft: 0}}>
-                      <Icon type={item.icon} style={{ fontSize: 16}} />
-                        <span>{item.text}</span>
-                    </div>
-                  </Menu.Item>
-                )
-              }
-            })
-          }
-        </Menu>) : ''
-      )
-      ReactDOM.render(
-        <div className="rightClickPopover">
-          {menuHTML}
-        </div>,
-        divDom
-      )
+      renderMenu(divDom, this)
     });
   }
   confirm = (item) => {
@@ -163,20 +197,12 @@ export default class OopTreeTable extends PureComponent {
   componentDidMount() {
     this.treeNodeDataListCache = [];
     if (this.props.tree.onRightClickConfig) {
-      document.querySelectorAll('.ant-card-body')[1].classList.add('popoverParent')
-      document.addEventListener('click', (e)=>{
-        let flag = false;
-        console.log(e.path)
-        e.path.forEach((item)=>{
-          if (item.className === 'rightClickPopover') {
-            flag = true;
-          }
-        })
-        const dom = document.querySelector('.rightClickPopover');
-        if (!flag && dom) {
-          dom.parentNode.removeChild(dom);
-        }
-      })
+      document.addEventListener('click', clickEvent)
+    }
+  }
+  componentWillUnmount() {
+    if (this.props.tree.onRightClickConfig) {
+      document.removeEventListener('click', clickEvent)
     }
   }
   handleClosePopover = ()=>{
