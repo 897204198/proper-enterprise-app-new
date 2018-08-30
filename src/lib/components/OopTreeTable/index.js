@@ -24,18 +24,6 @@ const getParentKey = (key, tree, props) => {
   }
   return parentKey;
 };
-const generateList = (data, props) => {
-  const key = props.treeKey || 'key';
-  const title = props.treeTitle || 'title';
-  const parentId = props.treeParentKey || 'parentId';
-  for (let i = 0; i < data.length; i++) {
-    const node = data[i];
-    dataList.push({ key: node[key], title: node[title], parentId: node[parentId]});
-    if (node.children) {
-      generateList(node.children, props);
-    }
-  }
-};
 export default class OopTreeTable extends PureComponent {
   constructor(props) {
     super(props);
@@ -53,6 +41,8 @@ export default class OopTreeTable extends PureComponent {
       },
     }
   }
+  // 缓存树节点的所有数据
+  treeNodeDataListCache = []
   handleOnSelect = (treeNode, event)=>{
     if (event.selected) {
       const id = event.node.props.dataRef.id || event.node.props.dataRef.key;
@@ -171,6 +161,7 @@ export default class OopTreeTable extends PureComponent {
     });
   }
   componentDidMount() {
+    this.treeNodeDataListCache = [];
     if (this.props.tree.onRightClickConfig) {
       document.querySelectorAll('.ant-card-body')[1].classList.add('popoverParent')
       document.addEventListener('click', (e)=>{
@@ -264,7 +255,7 @@ export default class OopTreeTable extends PureComponent {
     const { value } = e.target;
     const { tree } = this.props;
     const { treeData } = tree;
-    generateList(treeData, tree)
+    this.generateList(treeData, tree)
     const expandedKeys = dataList.map((item) => {
       if (item.parentId === null) {
         return item.key
@@ -292,8 +283,19 @@ export default class OopTreeTable extends PureComponent {
   getCurrentSelectTreeNode = ()=>{
     return {...this.state.currentSelectTreeNode}
   }
+  generateList = (data, props) => {
+    const key = props.treeKey || 'key';
+    const title = props.treeTitle || 'title';
+    const parentId = props.treeParentKey || 'parentId';
+    for (let i = 0; i < data.length; i++) {
+      const node = data[i];
+      this.treeNodeDataListCache.push({ key: node[key], title: node[title], parentId: node[parentId]});
+      if (node.children) {
+        this.generateList(node.children, props);
+      }
+    }
+  };
   render() {
-    console.log(111111)
     const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
     const treeConfig = this.props.tree;
     const tableConfig = this.props.table;

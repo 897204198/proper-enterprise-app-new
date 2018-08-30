@@ -138,11 +138,11 @@ export default class Mongoshell extends React.Component {
             if (!(res[0][key] instanceof Object)) {
               columns.push({
                 title: key, dataIndex: key, key, render: (
-                  text => (
+                  text => (text ? (
                     <span>
                       {text.toString()}
                     </span>
-                  )
+                  ) : null)
                 )
               })
             }
