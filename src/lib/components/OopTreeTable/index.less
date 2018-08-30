@@ -12,6 +12,24 @@
     .popoverLine:not(:last-child):before {
       border-left: 0 !important;
     }
+    .rightClickPopover {
+      // border: 1px solid black;
+      // padding: 10px;
+      box-shadow: 2px 2px 6px #888888;
+      .ant-menu {
+        padding-left: 0;
+      }
+      li {
+        margin: 0 !important;
+      }
+      li:hover{
+        background: #bae7ff;
+        color: #fff !important;
+        margin: 0 !important;
+        transition: all 0.3s;
+        border-radius: 4px;
+      }
+    }
   }
   .primaryColor {
     color: @primary-color;

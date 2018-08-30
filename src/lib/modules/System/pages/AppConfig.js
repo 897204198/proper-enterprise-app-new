@@ -297,8 +297,10 @@ export default class AppConfig extends PureComponent {
         value.data = obj;
       }
       value.appId = value.id;
-      value.data === '' ? delete value.data : '';
+      // value.data === '' ? delete value.data : '';
+      value.data === '' ? value.data = {} : '';
       delete value.id;
+      console.log(value)
       this.props.dispatch({
         type: 'systemAppConfig/saveOrUpdate',
         payload: value,
@@ -451,7 +453,7 @@ export default class AppConfig extends PureComponent {
     list.forEach((item) => {
       const { data } = item;
       if (typeof data === 'object') {
-        item.data = JSON.stringify(item.data, null, 2);
+        item.data = JSON.stringify(item.data);
         item.data = item.data === '{}' ? '' : item.data
       }
     });

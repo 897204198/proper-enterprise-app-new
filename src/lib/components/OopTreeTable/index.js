@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
-import { Row, Col, Card, Tree, Spin, Input, Icon, Menu, Dropdown, Modal } from 'antd';
+import { Row, Col, Card, Tree, Spin, Input, Icon, Menu, Modal } from 'antd';
 import OopTable from '../OopTable';
 import OopSearch from '../OopSearch';
 import styles from './index.less';
@@ -103,8 +103,9 @@ export default class OopTreeTable extends PureComponent {
     const divDom = document.createElement('div');
     renderDom.style.position = 'relative';
     divDom.style.position = 'absolute';
-    divDom.style.top = `${18}px`
+    divDom.style.top = `${22}px`
     divDom.style.left = '40px'
+    divDom.style.zIndex = '9999'
     renderDom.appendChild(divDom)
     const data = {
       popoverInfo: node,
@@ -128,9 +129,9 @@ export default class OopTreeTable extends PureComponent {
               if (!item.confirm) {
                 return (
                   <Menu.Item disabled={item.disabled} className={`popoverLine ${item.name}`} key={name} onClick={(nameParam)=>{ this.handelPopover(nameParam) }}>
-                  <div style={{paddingLeft: 0, color: '#666'}}>
+                  <div style={{paddingLeft: 0}}>
                     <Icon type={item.icon} style={{fontSize: 16}} />
-                        <span style={{paddingLeft: 8}}>{item.text}</span>
+                        <span >{item.text}</span>
                         </div>
                   </Menu.Item>
                 )
@@ -139,7 +140,7 @@ export default class OopTreeTable extends PureComponent {
                   <Menu.Item disabled={item.disabled} className={item.name} key={name} onClick={()=>{ this.confirm(item) }}>
                     <div style={{paddingLeft: 0}}>
                       <Icon type={item.icon} style={{ fontSize: 16}} />
-                        <span style={{paddingLeft: 8}}>{item.text}</span>
+                        <span>{item.text}</span>
                     </div>
                   </Menu.Item>
                 )
@@ -149,14 +150,9 @@ export default class OopTreeTable extends PureComponent {
         </Menu>) : ''
       )
       ReactDOM.render(
-        <Dropdown
-          overlay={menuHTML}
-          trigger={['click']}
-          visible={true}
-          ref={(el)=>{ this.popover = el }}
-        >
-        <div />
-      </Dropdown>,
+        <div className="rightClickPopover">
+          {menuHTML}
+        </div>,
         divDom
       )
     });
@@ -179,12 +175,13 @@ export default class OopTreeTable extends PureComponent {
       document.querySelectorAll('.ant-card-body')[1].classList.add('popoverParent')
       document.addEventListener('click', (e)=>{
         let flag = false;
+        console.log(e.path)
         e.path.forEach((item)=>{
-          if (item.className === 'ant-dropdown ant-dropdown-placement-bottomLeft') {
+          if (item.className === 'rightClickPopover') {
             flag = true;
           }
         })
-        const dom = document.querySelector('.ant-dropdown-placement-bottomLeft');
+        const dom = document.querySelector('.rightClickPopover');
         if (!flag && dom) {
           dom.parentNode.removeChild(dom);
         }
@@ -192,7 +189,8 @@ export default class OopTreeTable extends PureComponent {
     }
   }
   handleClosePopover = ()=>{
-    const dom = document.querySelector('.ant-dropdown-placement-bottomLeft')
+    this.forceUpdate();
+    const dom = document.querySelector('.rightClickPopover')
     dom && dom.parentNode.removeChild(dom);
   }
   handelPopover = (type) =>{
@@ -204,20 +202,16 @@ export default class OopTreeTable extends PureComponent {
     menuList.forEach((item)=>{
       if (item.name === type.key) {
         ReactDOM.render(
-          <Dropdown
-            style={{zIndex: 1000}}
-            overlay={item.render}
-            trigger={['click']}
-            visible={true}
-            ref={(el)=>{ this.popover = el }}
-          >
-          <div />
-        </Dropdown>,
+          <div className="rightClickPopover">
+            {item.render}
+          </div>,
           this.state.popoverConfig.popoverRenderDom
         )
       }
     })
-    return false
+    setTimeout(()=>{
+      this.forceUpdate();
+    }, 1000)
   }
   renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue)=> {
     const treeNodes = data.map((node) => {
@@ -299,6 +293,7 @@ export default class OopTreeTable extends PureComponent {
     return {...this.state.currentSelectTreeNode}
   }
   render() {
+    console.log(111111)
     const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
     const treeConfig = this.props.tree;
     const tableConfig = this.props.table;
