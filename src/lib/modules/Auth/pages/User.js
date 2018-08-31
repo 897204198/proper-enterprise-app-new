@@ -729,11 +729,11 @@ export default class User extends React.PureComponent {
             </DescriptionList>
             <Divider style={{marginBottom: 16}} />
             <DescriptionList size={size} col="2" title="角色信息">
-              <Description>{userRoles.map(item => item.name.concat(', '))}</Description>
+              <Description>{userRoles.map(item => item.name).join(', ')}</Description>
             </DescriptionList>
             <Divider style={{marginBottom: 16}} />
             <DescriptionList size={size} col="2" title="用户组信息">
-              <Description>{userGroups.map(item => item.name.concat(', '))}</Description>
+              <Description>{userGroups.map(item => item.name).join(', ')}</Description>
             </DescriptionList>
           </Spin>
         </Modal>
