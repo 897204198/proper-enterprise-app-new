@@ -1,4 +1,4 @@
-import { fetchById, remove, saveOrUpdate, getTreeData, treeListDelete, treeListEdit, treeListAdd, getTableData } from '../services/systemDictionaryS';
+import { fetchById, remove, saveOrUpdate, getTreeData, treeListDelete, treeListEdit, treeListAdd, getTableData, tableInit } from '../services/systemDictionaryS';
 
 export default {
   namespace: 'systemDictionary',

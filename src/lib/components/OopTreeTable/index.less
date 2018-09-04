@@ -12,27 +12,10 @@
     .popoverLine:not(:last-child):before {
       border-left: 0 !important;
     }
-    .rightClickPopover {
-      border-radius: 4px;
-      box-shadow: 0 0 6px @shadow-color;
-      .ant-menu {
-      border-radius: 4px;
-      padding-left: 0;
-      }
-      li {
-        margin: 0 !important;
-        color: @text-color !important;
-        height: 30px;
-        line-height: 30px;
-        font-size: 14px;
-      }
-      li:hover{
-        background: @item-hover-bg;
-        font-size: 14px;
-        color: @text-color !important;
-        line-height: 30px;
-        height: 30px;
-      }
+    .ant-tree.ant-tree-directory {
+      max-height: ~"calc(100vh - 288px)";
+      overflow-y: auto;
+      overflow-x: hidden;
     }
   }
   .primaryColor {

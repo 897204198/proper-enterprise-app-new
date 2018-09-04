@@ -338,9 +338,20 @@ export default class OopSearch extends React.Component {
       showDropMenu: false
     })
   }
+  // 清除后台查出来的model里的数据 和UI 无关
   clearSearchOption = ()=>{
     this.props.dispatch({
       type: 'global/clearSearchData'
+    })
+  }
+  // 清除输入框的输入信息 UI相关
+  clearSearchCondition = (callback)=>{
+    this.setState({
+      inputValue: '',
+      inputValueArr: [],
+      searchOptionsDesc: []
+    }, ()=>{
+      callback && callback();
     })
   }
   onMouseOver = (event)=>{

@@ -58,7 +58,6 @@ const UserBasicInfoForm = Form.create({onValuesChange})((props) => {
   return (
     <Spin spinning={loading}>
       <Form
-        style={{marginTop: 24}}
         className={classNames({[styles.warningWrapper]: warningWrapper})}>
         <div>
           {getFieldDecorator('id', {
@@ -251,6 +250,7 @@ const UserGroupRelevance = (props) => {
           />
       </Card>);
 };
+
 @inject(['authUser', 'global'])
 @connect(({authUser, global, loading}) => ({
   authUser,

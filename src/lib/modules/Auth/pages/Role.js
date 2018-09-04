@@ -380,6 +380,31 @@ export default class Role extends PureComponent {
     this.getMenus(record.id);
   }
 
+  // 批量删除
+  handleRemoveAll = (selectedRowKeys) => {
+    const me = this;
+    Modal.confirm({
+      title: '提示',
+      content: `确定删除选中的${selectedRowKeys.length}条数据吗`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        me.props.dispatch({
+          type: 'authRole/removeRoles',
+          payload: {
+            ids: selectedRowKeys.toString()
+          },
+          callback: (res) => {
+            oopToast(res, '删除成功');
+            if (me.oopTable) {
+              me.oopTable.clearSelection();
+              me.refresh();
+            }
+          }
+        });
+      }
+    });
+  }
   // 删除功能
   handleRemove = (ids) => {
     let idsArray = [];
@@ -392,7 +417,7 @@ export default class Role extends PureComponent {
       type: 'authRole/removeRoles',
       payload: { ids: idsArray.toString() },
       callback: (res) => {
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功');
         this.onLoad();
       }
     });
@@ -406,7 +431,7 @@ export default class Role extends PureComponent {
       type: 'authRole/removeRoles',
       payload: { ids: ([id]).toString() },
       callback: (res) => {
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功');
         this.onLoad();
         self.setState({
           modalVisible: false
@@ -872,7 +897,7 @@ export default class Role extends PureComponent {
         text: '删除',
         name: 'delete',
         icon: 'delete',
-        onClick: (items)=>{ this.handleRemove(items) },
+        onClick: (items)=>{ this.handleRemoveAll(items) },
         display: items=>(items.length),
       }
     ];

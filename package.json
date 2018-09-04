@@ -26,7 +26,7 @@
     "@babel/polyfill": "^7.0.0-beta.36",
     "@pea/framework": "0.4.4-rc02",
     "@pea/lib": "0.4.4-rc02",
-    "antd": "3.5.0",
+    "antd": "^3.8.4",
     "av-core": "^1.1.1",
     "babel-preset-umi": "^0.2.8",
     "babel-runtime": "^6.9.2",

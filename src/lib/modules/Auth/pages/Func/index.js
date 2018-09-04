@@ -37,7 +37,9 @@ const formatter = (data, id) => {
       disabled = true;
     }
     const result = {
-      ...item,
+      title: item.title || item.name,
+      value: item.id,
+      key: item.id,
       disabled
     };
     if (item.children && item.children.length) {
@@ -437,7 +439,6 @@ export default class Func extends PureComponent {
     });
   }
   onCreate = ()=>{
-    this.refreshMenusAndLeftTree()
     this.setState({
       addOrEditModalTitle: '新建',
       modalVisible: true,
@@ -588,7 +589,7 @@ export default class Func extends PureComponent {
     return (
       <PageHeaderLayout>
         <OopTreeTable
-          ref={(el)=>{ this.oopTreeTable = el }}
+          ref={(el)=>{ el && (this.oopTreeTable = el) }}
           table={{
             title: `${tableTitle}下级菜单`,
             grid: oopSearchGrid,
@@ -604,9 +605,10 @@ export default class Func extends PureComponent {
             }
           }}
           tree={{
-            showIcon: true,
             title: '菜单列表',
             treeLoading: loading,
+            defaultSelectedKeys: ['-1'],
+            defaultExpandedKeys: ['-1'],
             treeData,
             treeTitle: 'name',
             treeKey: 'id',
@@ -617,7 +619,7 @@ export default class Func extends PureComponent {
             },
           }}
           size={size}
-          onTableTreeNodeSelect={this.handleTableTreeNodeSelect}
+          onTreeNodeSelect={this.handleTableTreeNodeSelect}
         />
         <OopModal
           title={`${addOrEditModalTitle}功能`}

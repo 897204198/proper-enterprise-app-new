@@ -125,7 +125,7 @@ export default class OopModal extends PureComponent {
     <div key={tab.key} className={styles.oopTabContainer} name={tab.key}>
       <div style={{fontSize: 16, fontWeight: 'bold'}}>{tab.title}</div>
       {hLine}
-      {isCreate ? (tab.tips ? <Alert message={tab.tips} type="info" showIcon /> : null) : null}
+      {isCreate ? (tab.tips ? <Alert message={tab.tips} type="info" showIcon style={{marginBottom: 16}} /> : null) : null}
       <div>{tab.content}</div>
     </div>)));
   }
@@ -154,7 +154,7 @@ export default class OopModal extends PureComponent {
           <Popconfirm
           title="确认删除吗？"
           onConfirm={onDelete}>
-          <Button style={{float: 'left'}}>删除</Button>
+          <Button style={{float: 'left'}} type="danger">删除</Button>
         </Popconfirm>)}
         {defaultActiveKey === activeKey ? (
             <Fragment>
@@ -162,7 +162,16 @@ export default class OopModal extends PureComponent {
               <Button type="primary" onClick={onOk} loading={loading}>保存</Button>
             </Fragment>
           ) :
-          closeConfirm && closeConfirm.visible ? <Popconfirm title="信息存在改动，是否关闭？" onConfirm={onCancel} onCancel={this.handleCloseConfirmCancel}><Button>关闭</Button></Popconfirm> :
+          closeConfirm && closeConfirm.visible ? (
+            <Popconfirm
+              title="信息存在改动，是否关闭？"
+              onConfirm={onCancel}
+              onCancel={this.handleCloseConfirmCancel}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button>关闭</Button>
+            </Popconfirm>) :
           <Button onClick={onCancel}>关闭</Button>
          }
       </Fragment>
