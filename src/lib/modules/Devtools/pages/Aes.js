@@ -8,7 +8,14 @@ import { oopToast } from '../../../../framework/common/oopUtils';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const CreateForm = Form.create()((props) => {
-  const { loading, conInfo, submitForm, form, decryptCode, encryptCode, type } = props;
+  const { loading, conInfo, submitForm, form, encryptCode, decryptCode, type } = props;
+  const req = { required: true, whitespace: true, message: `${type}不能为空`, };
+  let str = '';
+  if (type === 'ENCRYPT') {
+    str = '加密'
+  } else {
+    str = '解密'
+  }
   const handleClick = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -17,33 +24,38 @@ const CreateForm = Form.create()((props) => {
   }
   return (
     <Spin spinning={loading}>
-      <Form>
-        <FormItem>
-          {form.getFieldDecorator('aes')(
-            <Card bordered={false}>
-              <Divider orientation="left" style={{ marginTop: 0 }}>{conInfo.title}</Divider>
-              <Row>
-                <Col lg={4} />
-                <Col lg={6} span={24} style={{ marginBottom: 20 }}>
-                  <Input placeholder={conInfo.leftDef} /></Col>
-                <Col lg={4} span={24} style={{ textAlign: 'center', marginBottom: 20 }}>
-                  <Button type="primary" onClick={handleClick}>{conInfo.buttonText}</Button></Col>
-                <Col lg={6} span={24} >
-                  <TextArea
-                    placeholder={conInfo.rightDef}
-                    value={type === 'ENCRYPT' ? encryptCode : decryptCode}
-                  />
-                </Col>
-                <Col lg={4} />
-              </Row>
-            </Card>
-          )}
+     <Form style={{marginBottom: 20}}>
+      <Card bordered={false}>
+      <Row>
+      <Divider orientation="left" style={{ marginTop: 0 }}>{conInfo.title}</Divider>
+        <FormItem
+          extra={`请输入需要AES ${str}内容,进行AES进行${str}，右侧为${str}结果`}
+          >
+          {form.getFieldDecorator('aes', {
+            rules: [req]
+          })(
+            <Col offset={1}span={9} style={{ marginBottom: 20 }}>
+              <Input placeholder={`请输入需要AES ${str}内容`} />
+            </Col>
+          )
+          }
+        <Col span={4} style={{ textAlign: 'center', marginBottom: 20 }}>
+          <Button type="primary" onClick={handleClick} style={{width: '70%', textAlign: 'center'}}>{conInfo.buttonText}</Button>
+        </Col>
+        <Col span={9} >
+          <TextArea
+            autosize
+            placeholder={conInfo.rightDef}
+            value={type === 'ENCRYPT' ? encryptCode : decryptCode}
+          />
+        </Col>
         </FormItem>
-      </Form>
+      </Row>
+      </Card>
+    </Form>
     </Spin>
   )
 })
-
 @inject(['devtoolsAes', 'global'])
   @connect(({ devtoolsAes, global, loading }) => ({
     devtoolsAes,

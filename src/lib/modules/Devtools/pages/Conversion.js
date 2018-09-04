@@ -9,6 +9,10 @@ const FormItem = Form.Item;
 const { TextArea } = Input;
 const CreateForm = Form.create()((props) => {
   const { loading, conInfo, submitForm, form, headerVal, tokenVal, type } = props;
+  let req = { required: true, whitespace: true, message: `${type}不能为空`, };
+  if (type === 'header') {
+    req = { required: true, whitespace: true, pattern: /^\{"id{1}":"\S{1,}","name{1}":"\S{1,}"\}$/, message: 'JWT装换格式错误', }
+  }
   const handleClick = () =>{
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -17,29 +21,34 @@ const CreateForm = Form.create()((props) => {
   }
   return (
     <Spin spinning={loading}>
-     <Form>
-      <FormItem>
-        {form.getFieldDecorator('jswHeader')(
-          <Card bordered={false}>
-            <Divider orientation="left" style={{ marginTop: 0 }}>{conInfo.title}</Divider>
-            <Row>
-              <Col offset={1}span={9} style={{ marginBottom: 20 }}>
-                <Input placeholder={conInfo.leftDef} />
-              </Col>
-              <Col span={4} style={{ textAlign: 'center', marginBottom: 20 }}>
-                <Button type="primary" onClick={handleClick} style={{width: '70%', textAlign: 'center'}}>{conInfo.buttonText}</Button>
-              </Col>
-              <Col span={9} >
-                <TextArea
-                  autosize
-                  placeholder={conInfo.rightDef}
-                  value={type === 'header' ? headerVal : tokenVal}
-                />
-              </Col>
-            </Row>
-          </Card>
-        )}
-      </FormItem>
+     <Form style={{marginBottom: 20}}>
+      <Card bordered={false}>
+      <Row>
+      <Divider orientation="left" style={{ marginTop: 0 }}>{conInfo.title}</Divider>
+        <FormItem
+          extra={`请输入JWT转换内容，${conInfo.leftDef}`}
+          >
+          {form.getFieldDecorator('jswHeader', {
+            rules: [req]
+          })(
+            <Col offset={1}span={9} style={{ marginBottom: 20 }}>
+              <Input placeholder="请输入JWT转换内容" />
+            </Col>
+          )
+          }
+        <Col span={4} style={{ textAlign: 'center', marginBottom: 20 }}>
+          <Button type="primary" onClick={handleClick} style={{width: '70%', textAlign: 'center'}}>{conInfo.buttonText}</Button>
+        </Col>
+        <Col span={9} >
+          <TextArea
+            autosize
+            placeholder={conInfo.rightDef}
+            value={type === 'header' ? headerVal : tokenVal}
+          />
+        </Col>
+        </FormItem>
+      </Row>
+      </Card>
     </Form>
     </Spin>
   )

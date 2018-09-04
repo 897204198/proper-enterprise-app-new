@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Input, Select, Form, Button, Col, Row, Table, Card, Modal, List } from 'antd';
+import { Input, Select, Form, Button, Col, Row, Table, Card, Modal, List, Popover } from 'antd';
 import { inject } from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
 import styles from './Mongoshell.less';
@@ -182,7 +182,12 @@ export default class Mongoshell extends React.Component {
   render() {
     const { global: {size} } = this.props;
     const { searchType, data, columns, viewVisible, info } = this.state;
-
+    const newInfo = {
+      ...info
+    }
+    if (Object.keys(newInfo).length > 0) {
+      newInfo._id = JSON.stringify(newInfo._id);
+    }
     return (
       <PageHeaderLayout content={
         <CreateForm
@@ -206,13 +211,15 @@ export default class Mongoshell extends React.Component {
               itemLayout="horizontal"
               split={false}
               size="small"
-              dataSource={Object.keys(info)}
+              dataSource={Object.keys(newInfo)}
               renderItem={item => (
                 <List.Item>
                   <List.Item.Meta
                     title={item}
                   />
-                  <div>{info[item].toString()}</div>
+                  <Popover content={newInfo[item].toString()}>
+                  <div>{newInfo[item].toString()}</div>
+                  </Popover>
                 </List.Item>
               )}
             />
