@@ -1,4 +1,4 @@
-import { fetchById, remove, saveOrUpdate, getTreeData, treeListDelete, treeListEdit, treeListAdd, getTableData, tableInit } from '../services/systemDictionaryS';
+import { fetchById, remove, saveOrUpdate, getTreeData, treeListDelete, treeListEdit, treeListAdd, getTableData } from '../services/systemDictionaryS';
 
 export default {
   namespace: 'systemDictionary',
@@ -50,10 +50,6 @@ export default {
     },
     *treeListDelete({payload, callback}, {call}) {
       const resp = yield call(treeListDelete, payload);
-      if (callback) callback(resp)
-    },
-    *tableInit({payload, callback}, {call}) {
-      const resp = yield call(tableInit, payload);
       if (callback) callback(resp)
     },
     *getTableData({payload, callback}, {call}) {

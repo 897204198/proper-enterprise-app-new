@@ -189,7 +189,8 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
   systemDictionary,
   global,
   loading: loading.models.systemDictionary,
-  gridLoading: loading.effects['systemDictionary/getTableData']
+  gridLoading: loading.effects['systemDictionary/getTableData'],
+  treeLoading: loading.effects['systemDictionary/getTreeData'],
 }))
 export default class Dictionary extends React.PureComponent {
   state = {
@@ -474,10 +475,6 @@ export default class Dictionary extends React.PureComponent {
     });
   }
   handleTableTreeNodeSelect = ()=>{
-    console.log(1)
-    this.oopTreeTable.oopSearch.setState({
-      inputValue: ''
-    });
     const treeNode = this.oopTreeTable.getCurrentSelectTreeNode();
     if (treeNode.key === '-1') {
       this.setState({
@@ -511,7 +508,7 @@ export default class Dictionary extends React.PureComponent {
   }
   render() {
     const {systemDictionary: {entity, treeData },
-      global: { size }, gridLoading, loading } = this.props;
+      global: { size }, gridLoading, treeLoading, loading } = this.props;
     const { visible, info, tableTitle, handleSelect, deBugTableData, filterTableData, searchState,
       deleteDisable, editDisable, addOrEditModalTitle, closeConfirmConfig, warningWrapper, warningField } = this.state;
     const activeTableData = searchState ? filterTableData : deBugTableData;
@@ -650,7 +647,7 @@ export default class Dictionary extends React.PureComponent {
               },
             },
             title: '数据字典项',
-            treeLoading: loading,
+            treeLoading,
             treeData,
             treeTitle: 'catalogName',
             treeKey: 'id',
