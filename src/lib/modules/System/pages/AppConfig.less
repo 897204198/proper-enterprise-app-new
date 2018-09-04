@@ -1,13 +1,21 @@
-.wrapper {
+.ant-table-tbody {
   :global {
-    .ant-tree-iconEle {
-      display: none !important;
+    .useData {
+      width: 300 !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
 .warningWrapper {
   .hasWarning {
     :global {
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       .has-error {
         .ant-input, .ant-input-number, .ant-select-selection {
           border-color: #f5222d;

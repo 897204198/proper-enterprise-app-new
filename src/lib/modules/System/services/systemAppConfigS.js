@@ -35,7 +35,7 @@ export async function treeListAdd(params) {
   });
 }
 export async function treeListDelete(params) {
-  return request(`/admin/app/applications/catalogs/${params.code}`, {
+  return request(`/admin/app/applications/catalogs/${params.dataRef.code}`, {
     method: 'DELETE',
   });
 }

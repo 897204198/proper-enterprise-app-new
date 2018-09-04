@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import classNames from 'classnames';
-import {Modal, Form, Spin, Input, Button, Radio, InputNumber, Select } from 'antd';
+import {Modal, Form, Spin, Input, Button, Radio, InputNumber, Select, Popover } from 'antd';
 import {connect} from 'dva';
 import { inject } from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
@@ -261,7 +261,7 @@ export default class Dictionary extends React.PureComponent {
       catalogType: '',
       sort: '',
     })
-    this.oopTreeTable.handleClosePopover()
+    this.oopTreeTable.oopTree.handleClosePopover()
   }
   handlePopoverAddSub = (values) =>{
     this.treeListAdd(values)
@@ -271,10 +271,10 @@ export default class Dictionary extends React.PureComponent {
       catalogType: '',
       sort: '',
     })
-    this.oopTreeTable.handleClosePopover()
+    this.oopTreeTable.oopTree.handleClosePopover()
   }
   handlePopoverC = () =>{
-    this.oopTreeTable.handleClosePopover()
+    this.oopTreeTable.oopTree.handleClosePopover()
   }
   rightClick = (data) =>{
     const newData = {
@@ -353,9 +353,10 @@ export default class Dictionary extends React.PureComponent {
     })
   }
   treeListDelete = (record) => {
+    console.log(record)
     this.props.dispatch({
       type: 'systemDictionary/treeListDelete',
-      payload: record.id,
+      payload: record.dataRef.id,
       callback: (res)=>{
         oopToast(res, '删除成功', '删除失败');
         this.getTreeData();
@@ -372,16 +373,16 @@ export default class Dictionary extends React.PureComponent {
       }
     })
   }
-  treeListDelete = (record) => {
-    this.props.dispatch({
-      type: 'systemDictionary/treeListDelete',
-      payload: record.id,
-      callback: (res)=>{
-        oopToast(res, '删除成功', '删除失败');
-        this.getTreeData();
-      }
-    })
-  }
+  // treeListDelete = (record) => {
+  //   this.props.dispatch({
+  //     type: 'systemDictionary/treeListDelete',
+  //     payload: record.id,
+  //     callback: (res)=>{
+  //       oopToast(res, '删除成功', '删除失败');
+  //       this.getTreeData();
+  //     }
+  //   })
+  // }
   handleModalCancel = () => {
     this.setModalVisible(false)
     setTimeout(()=>{
@@ -473,6 +474,7 @@ export default class Dictionary extends React.PureComponent {
     });
   }
   handleTableTreeNodeSelect = ()=>{
+    console.log(1)
     this.oopTreeTable.oopSearch.setState({
       inputValue: ''
     });
@@ -514,14 +516,31 @@ export default class Dictionary extends React.PureComponent {
       deleteDisable, editDisable, addOrEditModalTitle, closeConfirmConfig, warningWrapper, warningField } = this.state;
     const activeTableData = searchState ? filterTableData : deBugTableData;
     const columns = [
-      { title: '字典项', dataIndex: 'catalog', width: 90, render: (text, record)=>(
-        <span
-          onClick={()=>this.handleView(record)}
-          style={{textDecoration: 'underline', cursor: 'pointer'}}>
-          {text}
-      </span>)},
-      { title: '字典编码', dataIndex: 'code', width: 80 },
-      { title: '字典值', dataIndex: 'name', width: 60 },
+      { title: '字典项', dataIndex: 'catalog', width: 20, render: (text, record)=> {
+        return (
+        <Popover content={text}>
+          <div onClick={()=>this.handleView(record)} style={{textDecoration: 'underline', cursor: 'pointer', width: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+              {text}
+          </div>
+        </Popover>)
+      }
+      },
+      { title: '字典编码', dataIndex: 'code', width: 140, render: (text)=> {
+        return (
+        <Popover content={text}>
+          <div style={{width: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+              {text}
+          </div>
+        </Popover>)
+      }},
+      { title: '字典值', dataIndex: 'name', width: 140, render: (text)=> {
+        return (
+        <Popover content={text}>
+          <div style={{width: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+              {text}
+          </div>
+        </Popover>)
+      } },
       { title: '排序', dataIndex: 'order', width: 60 },
       { title: '是否默认', dataIndex: 'deft', width: 80, render: text => (
         <Fragment>
@@ -607,7 +626,7 @@ export default class Dictionary extends React.PureComponent {
     return (
       <PageHeaderLayout>
         <OopTreeTable
-          ref={(el)=>{ this.oopTreeTable = el }}
+          ref={(el)=>{ el && (this.oopTreeTable = el) }}
           table={{
             title: `${tableTitle}数据字典`,
             grid: {list: activeTableData},
@@ -630,20 +649,20 @@ export default class Dictionary extends React.PureComponent {
                 this.rightClick(data)
               },
             },
-            defaultSelectedKeys: ['-1'],
             title: '数据字典项',
             treeLoading: loading,
             treeData,
             treeTitle: 'catalogName',
             treeKey: 'id',
-            showLine: true,
             treeRoot: {
               key: '-1',
               title: '所有',
             },
+            defaultSelectedKeys: ['-1'],
+            defaultExpandedKeys: ['-1'],
           }}
           size={size}
-          onTableTreeNodeSelect={this.handleTableTreeNodeSelect}
+          onTreeNodeSelect={this.handleTableTreeNodeSelect}
         />
         <OopModal
           title={`${addOrEditModalTitle}功能`}

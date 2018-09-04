@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import {connect} from 'dva';
-import { Form, Modal, Input, Button, Select, Spin } from 'antd';
+import { Form, Modal, Input, Button, Select, Spin, Popover } from 'antd';
 import {inject} from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
 import OopTreeTable from '../../../components/OopTreeTable';
@@ -202,7 +202,9 @@ export default class AppConfig extends PureComponent {
       visible: false
     },
     visible: false,
-    info: {}
+    info: {},
+    deleteDisable: false,
+    editDisable: false,
   }
   componentDidMount() {
     this.getTreeData();
@@ -369,9 +371,22 @@ export default class AppConfig extends PureComponent {
       typeName: data.typeName,
       code: data.code,
     }
-    this.setState({
-      ...newData
-    });
+    // this.setState({
+    //   ...newData
+    // });
+    if (data.key === '-1') {
+      this.setState({
+        ...newData,
+        editDisable: true,
+        deleteDisable: true,
+      })
+    } else {
+      this.setState({
+        ...newData,
+        editDisable: false,
+        deleteDisable: false,
+      })
+    }
   }
   handlePopoverAddSub = (values) =>{
     this.treeListAdd(values)
@@ -380,7 +395,7 @@ export default class AppConfig extends PureComponent {
       code: '',
       // sort: '',
     })
-    this.oopTreeTable.handleClosePopover()
+    this.oopTreeTable.oopTree.handleClosePopover()
   }
   handlePopoverEditSub = (values) => {
     const {code, typeName} = values;
@@ -395,12 +410,13 @@ export default class AppConfig extends PureComponent {
       typeName: '',
       code: '',
     })
-    this.oopTreeTable.handleClosePopover()
+    this.oopTreeTable.oopTree.handleClosePopover()
   }
   handlePopoverC = () =>{
-    this.oopTreeTable.handleClosePopover()
+    this.oopTreeTable.oopTree.handleClosePopover()
   }
   treeListDelete = (record) => {
+    console.log(record)
     this.props.dispatch({
       type: 'systemAppConfig/treeListDelete',
       payload: record,
@@ -458,17 +474,44 @@ export default class AppConfig extends PureComponent {
       }
     });
     const { visible, info, tableTitle, entity, modalVisible, handleSelect,
-      closeConfirmConfig, warningWrapper, warningField } = this.state;
+      closeConfirmConfig, warningWrapper, warningField, deleteDisable, editDisable } = this.state;
     const columns = [
-      {title: '应用名称', dataIndex: 'name', render: (text, record)=>(
-        <span
-          onClick={()=>this.handleView(record)}
-          style={{textDecoration: 'underline', cursor: 'pointer'}}>
-          {text}
-      </span>)},
-      {title: '应用图标', dataIndex: 'icon'},
-      {title: '应用页', dataIndex: 'page'},
-      {title: '应用数据', dataIndex: 'data', width: 300}
+      {title: '应用名称', dataIndex: 'name', width: 80, render: (text, record)=>(
+        <Popover content={text}>
+          <div
+            onClick={()=>this.handleView(record)}
+            style={{textDecoration: 'underline', cursor: 'pointer', width: 80}}>
+            {text}
+        </div>
+      </Popover>
+      )},
+      // {title: '应用图标', dataIndex: 'icon'},
+      { title: '应用图标', dataIndex: 'icon', width: 80, render: (text)=> {
+        return (
+        <Popover content={text}>
+          <div style={{width: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+              {text}
+          </div>
+        </Popover>)
+      } },
+      // {title: '应用页', dataIndex: 'page'},
+      { title: '应用页', dataIndex: 'page', width: 80, render: (text)=> {
+        return (
+        <Popover content={text}>
+          <div style={{width: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+              {text}
+          </div>
+        </Popover>)
+      } },
+      {title: '应用数据', dataIndex: 'data', width: 300, render: (text)=> {
+        return (
+        <Popover content={text}>
+          <div className="useData" style={{width: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+              {text}
+          </div>
+        </Popover>)
+      }
+      }
     ];
     const topButtons = [
       {
@@ -504,6 +547,7 @@ export default class AppConfig extends PureComponent {
       {
         icon: 'folder-add',
         text: '增加',
+        disabled: false,
         name: 'add',
         onClick: (record) => {
           this.treeListAdd(record)
@@ -517,6 +561,7 @@ export default class AppConfig extends PureComponent {
       {
         icon: 'edit',
         text: '编辑',
+        disabled: editDisable,
         name: 'edit',
         onClick: (record) => {
           this.treeListEdit(record)
@@ -535,6 +580,7 @@ export default class AppConfig extends PureComponent {
         confirm: '确认删除这条信息吗？',
         icon: 'delete',
         text: '删除',
+        disabled: deleteDisable,
         name: 'remove',
         onClick: (record) => {
           this.treeListDelete(record)
@@ -544,7 +590,7 @@ export default class AppConfig extends PureComponent {
     return (
       <PageHeaderLayout wrapperClassName={styles.wrapper}>
         <OopTreeTable
-          ref={(el)=>{ this.oopTreeTable = el }}
+          ref={(el)=>{ el && (this.oopTreeTable = el) }}
           table={{
             title: `${tableTitle}应用配置`,
             grid: oopSearchGrid,
@@ -567,7 +613,6 @@ export default class AppConfig extends PureComponent {
                 this.rightClick(data)
               },
             },
-            showLine: true,
             title: '应用管理',
             treeLoading: loading,
             treeData,
@@ -577,9 +622,11 @@ export default class AppConfig extends PureComponent {
               key: '-1',
               title: '全部',
             },
+            defaultSelectedKeys: ['-1'],
+            defaultExpandedKeys: ['-1'],
           }}
           size={size}
-          onTableTreeNodeSelect={this.handleTableTreeNodeSelect}
+          onTreeNodeSelect={this.handleTableTreeNodeSelect}
         />
         <OopModal
           title={entity.id ? '编辑应用配置' : '新建应用配置'}
@@ -615,14 +662,11 @@ export default class AppConfig extends PureComponent {
         />
         <Modal
           visible={visible}
-          title="数据字典配置"
+          title="应用配置"
           onCancel={()=>this.handleClose()}
           footer={<Button type="primary" onClick={()=>this.handleClose()}>确定</Button>}
         >
           <DescriptionList size={size} col="1">
-            {/* <Description term="应用类别">
-              {info.catalog}
-            </Description> */}
             <Description term="应用名称">
               {info.name}
             </Description>
@@ -636,7 +680,11 @@ export default class AppConfig extends PureComponent {
               {info.style}
             </Description>
             <Description term="应用数据">
-              {info.data}
+              <Popover content={info.data}>
+                <div className="useData" style={{width: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                    {info.data}
+                </div>
+              </Popover>
             </Description>
           </DescriptionList>
         </Modal>

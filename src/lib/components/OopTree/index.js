@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Tree, Spin, Input, Icon} from 'antd';
+import ReactDOM from 'react-dom';
+import { Tree, Spin, Input, Icon, Menu, Modal} from 'antd';
 import styles from './index.less';
 
+const {confirm} = Modal;
 const { TreeNode, DirectoryTree } = Tree
 const { Search } = Input
 const getParentKey = (key, tree, props) => {
@@ -19,6 +21,78 @@ const getParentKey = (key, tree, props) => {
   }
   return parentKey;
 };
+const clickEvent = (e)=>{
+  let flag = false;
+  e.path.forEach((item)=>{
+    if (item.className === 'rightClickPopover') {
+      flag = true;
+    }
+  })
+  const dom = document.querySelector('.rightClickPopover');
+  if (!flag && dom) {
+    dom.parentNode.parentNode.removeChild(dom.parentNode);
+  }
+}
+const preventDefaultEvent = (e)=>{
+  e.preventDefault();
+}
+const renderMenu = (divDom, that)=>{
+  let menuHTML = null;
+  let menuList = null;
+  if (that.props.onRightClickConfig) {
+    const {menuList: temp} = that.props.onRightClickConfig
+    menuList = temp
+  }
+  menuList !== null && (that.state.popoverConfig.treeMenuState === 'button' ? menuHTML = (
+    <Menu style={{width: 120}}>
+      {
+        menuList.map((item)=>{
+          const {name} = item;
+          if (!item.confirm) {
+            return (
+              <Menu.Item disabled={item.disabled} className={`popoverLine ${item.name}`} key={name} onClick={(nameParam)=>{ that.handelPopover(nameParam) }}>
+                <div style={{paddingLeft: 0}}>
+                  <Icon type={item.icon} style={{fontSize: 16}} />
+                      <span >{item.text}</span>
+                </div>
+              </Menu.Item>
+            )
+          } else {
+            return (
+              <Menu.Item disabled={item.disabled} className={item.name} key={name} onClick={()=>{ that.confirm(item) }}>
+                <div style={{paddingLeft: 0}}>
+                  <Icon type={item.icon} style={{ fontSize: 16}} />
+                    <span>{item.text}</span>
+                </div>
+              </Menu.Item>
+            )
+          }
+        })
+      }
+    </Menu>) : ''
+  )
+  ReactDOM.render(
+    <div className="rightClickPopover">
+      {menuHTML}
+    </div>,
+    divDom
+  );
+}
+const creatDiv = (renderDom, targetDom)=>{
+  const divDom = document.createElement('div');
+  renderDom.style.position = 'relative';
+  divDom.style.position = 'absolute';
+  divDom.style.zIndex = 9999;
+  divDom.style.top = '26px'
+  if (targetDom.offsetWidth > 80) {
+    divDom.style.left = '100px'
+  } else {
+    divDom.style.left = `${30 + targetDom.offsetWidth}px`
+  }
+  divDom.style.zIndex = '9999'
+  renderDom.appendChild(divDom)
+  return divDom
+}
 export default class OopTree extends PureComponent {
   constructor(props) {
     super(props);
@@ -29,6 +103,11 @@ export default class OopTree extends PureComponent {
       searchValue: '',
       autoExpandParent: true,
       selectedKeys: [...defaultSelectedKeys],
+      popoverConfig: {
+        treeMenuState: 'button',
+        popoverInfo: null,
+        popoverRenderDom: {},
+      },
     }
   }
   // 缓存树节点的所有数据
@@ -51,8 +130,79 @@ export default class OopTree extends PureComponent {
       });
     }
   }
+  handleOnRightClick = ({event, node}) => {
+    if (event.target.tagName === 'I' || event.target.className.indexOf('ant-tree-node-selected') >= 0 || !this.props.onRightClickConfig || event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-open') {
+      return
+    };
+    this.props.onRightClickConfig.rightClick(node.props.dataRef);
+    let targetDom = null;
+    if (event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-normal') {
+      [targetDom] = event.target.children[0].children
+    } else {
+      targetDom = event.target;
+    }
+    const renderDom = targetDom.parentNode.parentNode.parentNode;
+    this.handleClosePopover();
+    const divDom = creatDiv(renderDom, targetDom)
+    const data = {
+      popoverInfo: node,
+      treeMenuState: 'button',
+      popoverRenderDom: divDom,
+    }
+    this.setState({
+      popoverConfig: data
+    }, ()=>{
+      renderMenu(divDom, this)
+    }); 
+  }
+  confirm = (item) => {
+    this.handleClosePopover()
+    const {props} = this.state.popoverConfig.popoverInfo;
+    console.log(props)
+    const { onClick } = item;
+    confirm({
+      title: item.confirm,
+      onOk() {
+        onClick(props)
+      },
+      onCancel() {
+      },
+    });
+  }
   componentDidMount() {
     this.treeNodeDataListCache = [];
+    if (this.props.onRightClickConfig) {
+      document.addEventListener('click', clickEvent)
+      document.querySelector('.getTreeDom').addEventListener('contextmenu', preventDefaultEvent)
+    }
+  }
+  componentWillUnmount() {
+    if (this.props.onRightClickConfig) {
+      document.removeEventListener('click', clickEvent);
+      document.querySelector('.getTreeDom').addEventListener('contextmenu', preventDefaultEvent)
+    }
+  }
+  handleClosePopover = ()=>{
+    this.forceUpdate();
+    const dom = document.querySelector('.rightClickPopover')
+    dom && dom.parentNode.parentNode.removeChild(dom.parentNode);
+  }
+  handelPopover = (type) =>{
+    let menuList = null;
+    if ((this.props.onRightClickConfig)) {
+      const {menuList: temp} = this.props.onRightClickConfig
+      menuList = temp
+    }
+    menuList.forEach((item)=>{
+      if (item.name === type.key) {
+        ReactDOM.render(
+          <div className="rightClickPopover">
+            {item.render}
+          </div>,
+          this.state.popoverConfig.popoverRenderDom
+        )
+      }
+    })
   }
   renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue)=> {
     const treeNodes = data.map((node) => {
@@ -146,21 +296,41 @@ export default class OopTree extends PureComponent {
       }
     }
   };
+  setTitle = ()=>{
+    document.querySelectorAll('.ant-tree-title').forEach((item)=>{
+      if (item.offsetWidth > 180) {
+        item.classList.add('setTitle')
+      }
+      let txt = null;
+      if (item.children && item.children[0] && item.children[0].childNodes) {
+        if (item.children[0]) {
+          if (item.children[0].childNodes) {
+            txt = item.children[0].childNodes[2].nodeValue;
+            item.setAttribute('title', txt)
+          }
+        }
+      }
+    })
+  }
   render() {
     const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
     const { treeData, treeTitle, treeKey, treeRoot, treeLoading, defaultSelectedKeys, defaultExpandedKeys, ...treeConfig} = this.props;
+    this.setTitle();
     return (
       <Spin spinning={treeLoading}>
         <div className={styles.OopTree}>
           <Search style={{ marginBottom: 8}} placeholder="搜索" onChange={this.handleOnChange} />
           <DirectoryTree
             expandAction="doubleClick"
+            className="getTreeDom"
             defaultExpandAll={true}
             onExpand={this.onExpand}
             expandedKeys={expandedKeys}
             autoExpandParent={autoExpandParent}
             onSelect={this.handleOnSelect}
             selectedKeys={selectedKeys}
+            onRightClick={this.handleOnRightClick}
+            ref={(el)=>{ this.tree = el }}
             {...treeConfig}
           >
             {this.renderTreeNodes(treeData, treeTitle, treeKey, treeRoot, searchValue)}
