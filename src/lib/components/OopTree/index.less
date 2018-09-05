@@ -11,7 +11,6 @@
     .setTitle {
       display: inline-block;
       width: 180px;
-      // max-height: ~"calc(100vh - 288px)";
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -37,6 +36,11 @@
         line-height: 30px;
         height: 30px;
       }
+    }
+    .ant-tree.ant-tree-directory {
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: ~"calc(100vh - 288px)";
     }
   }
   .primaryColor {

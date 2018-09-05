@@ -36,6 +36,11 @@ const clickEvent = (e)=>{
 const preventDefaultEvent = (e)=>{
   e.preventDefault();
 }
+const scollEvents = (e)=>{
+  console.log(e)
+  const dom = document.querySelector('.rightClickPopover')
+  dom && dom.parentNode.parentNode.removeChild(dom.parentNode);
+}
 const renderMenu = (divDom, that)=>{
   let menuHTML = null;
   let menuList = null;
@@ -78,13 +83,13 @@ const renderMenu = (divDom, that)=>{
     divDom
   );
 }
-const creatDiv = (renderDom)=>{
+const creatDiv = (renderDom, y)=>{
   const divDom = document.createElement('div');
   renderDom.style.position = 'relative';
   divDom.style.position = 'absolute';
   divDom.style.zIndex = 9999;
-  divDom.style.top = '26px'
-  divDom.style.left = '100px'
+  divDom.style.top = `${y - 184}px`
+  divDom.style.left = '120px'
   divDom.style.zIndex = '9999'
   renderDom.appendChild(divDom)
   return divDom
@@ -126,25 +131,20 @@ export default class OopTree extends PureComponent {
       });
     }
   }
-  findParentNode = (dom) =>{
-    if (dom.parentNode.tagName === 'LI') {
-      return dom.parentNode
-    } else {
-      const parent = dom.parentNode
-      return this.findParentNode(parent)
-    }
-  }
+  // findParentNode = (dom) =>{
+  //   if (dom.parentNode.tagName === 'LI') {
+  //     return dom.parentNode
+  //   } else {
+  //     const parent = dom.parentNode
+  //     return this.findParentNode(parent)
+  //   }
+  // }
   handleOnRightClick = ({event, node}) => {
-    const domLi = this.findParentNode(event.target)
+    // const domLi = this.findParentNode(event.target)
     this.props.onRightClickConfig.rightClick(node.props.dataRef);
-    // let targetDom = null;
-    // if (event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-normal') {
-    //   [targetDom] = event.target.children[0].children
-    // } else {
-    //   targetDom = event.target;
-    // }
     this.handleClosePopover();
-    const divDom = creatDiv(domLi)
+    const y = document.documentElement.scrollTop + event.clientY
+    const divDom = creatDiv(document.querySelector('.getTreeDom').parentNode, y)
     const data = {
       popoverInfo: node,
       treeMenuState: 'button',
@@ -174,12 +174,14 @@ export default class OopTree extends PureComponent {
     if (this.props.onRightClickConfig) {
       document.addEventListener('click', clickEvent)
       document.querySelector('.getTreeDom').addEventListener('contextmenu', preventDefaultEvent)
+      document.querySelector('.ant-tree.ant-tree-directory').addEventListener('scroll', scollEvents)
     }
   }
   componentWillUnmount() {
     if (this.props.onRightClickConfig) {
       document.removeEventListener('click', clickEvent);
-      document.querySelector('.getTreeDom').addEventListener('contextmenu', preventDefaultEvent)
+      document.querySelector('.ant-tree.ant-tree-directory').removeEventListener('scroll', scollEvents)
+      document.querySelector('.getTreeDom').removeEventListener('contextmenu', preventDefaultEvent)
     }
   }
   handleClosePopover = ()=>{
