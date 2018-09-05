@@ -85,7 +85,15 @@ function onValuesChange(props, changedValues, allValues) {
 }
 const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
   const { form, loading, warningWrapper, entity, treeData, selectValue } = props;
-  const { getFieldDecorator } = form;
+  const { getFieldDecorator, getFieldValue } = form;
+  const handleConfirmJson = (rule, value, callback) => {
+    try {
+      JSON.parse(getFieldValue('data'))
+    } catch (err) {
+      callback('输入JSON格式错误')
+    }
+    callback()
+  }
   return (
     <Spin spinning={loading}>
       <Form key="form" className={ classNames({[styles.warningWrapper]: warningWrapper})} style={{marginTop: 24}}>
@@ -170,7 +178,9 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
           {getFieldDecorator('data', {
             initialValue: entity.data,
             rules: [{
-              required: false, pattern: /^\{"\S{1,}":"\S{1,}"\}$/, message: '输入的格式错误',
+              required: false, message: '输入的格式错误',
+            }, {
+              validator: handleConfirmJson
             }],
           })(
             <TextArea autosize={{ minRows: 2 }} placeholder="请输入应用数据" />
@@ -480,7 +490,7 @@ export default class AppConfig extends PureComponent {
         <Popover content={text}>
           <div
             onClick={()=>this.handleView(record)}
-            style={{textDecoration: 'underline', cursor: 'pointer', width: 80}}>
+            style={{textDecoration: 'underline', cursor: 'pointer', width: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
             {text}
         </div>
       </Popover>

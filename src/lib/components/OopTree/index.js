@@ -78,17 +78,13 @@ const renderMenu = (divDom, that)=>{
     divDom
   );
 }
-const creatDiv = (renderDom, targetDom)=>{
+const creatDiv = (renderDom)=>{
   const divDom = document.createElement('div');
   renderDom.style.position = 'relative';
   divDom.style.position = 'absolute';
   divDom.style.zIndex = 9999;
   divDom.style.top = '26px'
-  if (targetDom.offsetWidth > 80) {
-    divDom.style.left = '100px'
-  } else {
-    divDom.style.left = `${30 + targetDom.offsetWidth}px`
-  }
+  divDom.style.left = '100px'
   divDom.style.zIndex = '9999'
   renderDom.appendChild(divDom)
   return divDom
@@ -130,20 +126,25 @@ export default class OopTree extends PureComponent {
       });
     }
   }
-  handleOnRightClick = ({event, node}) => {
-    if (event.target.tagName === 'I' || event.target.className.indexOf('ant-tree-node-selected') >= 0 || !this.props.onRightClickConfig || event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-open') {
-      return
-    };
-    this.props.onRightClickConfig.rightClick(node.props.dataRef);
-    let targetDom = null;
-    if (event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-normal') {
-      [targetDom] = event.target.children[0].children
+  findParentNode = (dom) =>{
+    if (dom.parentNode.tagName === 'LI') {
+      return dom.parentNode
     } else {
-      targetDom = event.target;
+      const parent = dom.parentNode
+      return this.findParentNode(parent)
     }
-    const renderDom = targetDom.parentNode.parentNode.parentNode;
+  }
+  handleOnRightClick = ({event, node}) => {
+    const domLi = this.findParentNode(event.target)
+    this.props.onRightClickConfig.rightClick(node.props.dataRef);
+    // let targetDom = null;
+    // if (event.target.className === 'ant-tree-node-content-wrapper ant-tree-node-content-wrapper-normal') {
+    //   [targetDom] = event.target.children[0].children
+    // } else {
+    //   targetDom = event.target;
+    // }
     this.handleClosePopover();
-    const divDom = creatDiv(renderDom, targetDom)
+    const divDom = creatDiv(domLi)
     const data = {
       popoverInfo: node,
       treeMenuState: 'button',
@@ -158,10 +159,9 @@ export default class OopTree extends PureComponent {
   confirm = (item) => {
     this.handleClosePopover()
     const {props} = this.state.popoverConfig.popoverInfo;
-    console.log(props)
     const { onClick } = item;
     confirm({
-      title: item.confirm,
+      title: `"${props.dataRef.catalogName}"—— ${item.confirm}`,
       onOk() {
         onClick(props)
       },

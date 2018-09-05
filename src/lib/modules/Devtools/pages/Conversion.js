@@ -10,8 +10,23 @@ const { TextArea } = Input;
 const CreateForm = Form.create()((props) => {
   const { loading, conInfo, submitForm, form, headerVal, tokenVal, type } = props;
   let req = { required: true, whitespace: true, message: `${type}不能为空`, };
+  const { getFieldValue } = form;
+  let handleConfirmJson = null;
   if (type === 'header') {
-    req = { required: true, whitespace: true, pattern: /^\{"id{1}":"\S{1,}","name{1}":"\S{1,}"\}$/, message: 'JWT装换格式错误', }
+    req = { required: true, whitespace: true, message: 'JWT不能为空', }
+    handleConfirmJson = (rule, value, callback) => {
+      try {
+        const obj = JSON.parse(getFieldValue('jswHeader'))
+        if (Object.keys(obj).length > 2) {
+          callback('输入JSON格式错误')
+        } else if (Object.keys(obj)[0] !== 'id' || Object.keys(obj)[1] !== 'name') {
+          callback('输入JSON格式错误')
+        }
+      } catch (err) {
+        callback('输入JSON格式错误')
+      }
+      callback()
+    }
   }
   const handleClick = () =>{
     form.validateFields((err, fieldsValue) => {
@@ -29,7 +44,10 @@ const CreateForm = Form.create()((props) => {
           extra={`请输入JWT转换内容，${conInfo.leftDef}`}
           >
           {form.getFieldDecorator('jswHeader', {
-            rules: [req]
+            rules: [
+              req, {
+              validator: handleConfirmJson
+            }]
           })(
             <Col offset={1}span={9} style={{ marginBottom: 20 }}>
               <Input placeholder="请输入JWT转换内容" />
