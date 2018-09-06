@@ -354,7 +354,6 @@ export default class Dictionary extends React.PureComponent {
     })
   }
   treeListDelete = (record) => {
-    console.log(record)
     this.props.dispatch({
       type: 'systemDictionary/treeListDelete',
       payload: record.dataRef.id,

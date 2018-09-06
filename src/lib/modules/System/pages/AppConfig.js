@@ -183,7 +183,7 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
               validator: handleConfirmJson
             }],
           })(
-            <TextArea autosize={{ minRows: 2 }} placeholder="请输入应用数据" />
+            <TextArea autosize={{ minRows: 5 }} placeholder="请输入应用数据" />
           )}
         </FormItem>
       </Form>
@@ -259,7 +259,6 @@ export default class AppConfig extends PureComponent {
   }
   // 新建或编辑应用配置
   createOrEditApp = (entity) => {
-    console.log(entity)
     if (entity) {
       this.setState({
         entity,
@@ -303,16 +302,13 @@ export default class AppConfig extends PureComponent {
         const obj = {};
         dataArr.forEach((item)=>{
           const arr = item.replace(':', ',').split(',');
-          // obj[arr[0]] = arr[1];
           [, obj[arr[0]]] = arr;
         })
         value.data = obj;
       }
       value.appId = value.id;
-      // value.data === '' ? delete value.data : '';
       value.data === '' ? value.data = {} : '';
       delete value.id;
-      console.log(value)
       this.props.dispatch({
         type: 'systemAppConfig/saveOrUpdate',
         payload: value,
@@ -360,9 +356,7 @@ export default class AppConfig extends PureComponent {
     });
   }
   onDeleteFromEdit = () => {
-    // console.log(this.state.entity)
     const ids = this.state.entity.id
-    console.log(ids)
     this.props.dispatch({
       type: 'systemAppConfig/deleteApp',
       payload: {ids},
@@ -426,7 +420,6 @@ export default class AppConfig extends PureComponent {
     this.oopTreeTable.oopTree.handleClosePopover()
   }
   treeListDelete = (record) => {
-    console.log(record)
     this.props.dispatch({
       type: 'systemAppConfig/treeListDelete',
       payload: record,
@@ -690,11 +683,9 @@ export default class AppConfig extends PureComponent {
               {info.style}
             </Description>
             <Description term="应用数据">
-              <Popover content={info.data}>
-                <div className="useData" style={{width: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
-                    {info.data}
-                </div>
-              </Popover>
+              <div className="useData" style={{width: 400}}>
+                  {info.data}
+              </div>
             </Description>
           </DescriptionList>
         </Modal>

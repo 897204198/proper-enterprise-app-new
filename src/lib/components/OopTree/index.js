@@ -160,8 +160,9 @@ export default class OopTree extends PureComponent {
     this.handleClosePopover()
     const {props} = this.state.popoverConfig.popoverInfo;
     const { onClick } = item;
+    const txt = props.dataRef.catalogName || props.dataRef.typeName
     confirm({
-      title: `"${props.dataRef.catalogName}"—— ${item.confirm}`,
+      title: `"${txt}"—— ${item.confirm}`,
       onOk() {
         onClick(props)
       },
