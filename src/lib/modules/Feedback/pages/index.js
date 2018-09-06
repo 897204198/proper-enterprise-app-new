@@ -290,6 +290,7 @@ export default class Feedback extends React.Component {
         <Modal
           wrapClassName="feedbackModal"
           title="意见反馈"
+          maskClosable={false}
           visible={viewVisible}
           destroyOnClose={true}
           bodyStyle={{padding: 0}}
