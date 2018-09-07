@@ -1,6 +1,6 @@
 {
   "name": "@pea/framework",
-  "version": "0.4.4-rc10",
+  "version": "0.4.4-rc11",
   "description": "pea/framework",
   "main": "index.js",
   "scripts": {

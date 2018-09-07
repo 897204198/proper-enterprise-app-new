@@ -1,6 +1,6 @@
 {
   "name": "@pea/lib",
-  "version": "0.4.4-rc15",
+  "version": "0.4.4-rc16",
   "description": "pea/lib",
   "main": "index.js",
   "scripts": {
