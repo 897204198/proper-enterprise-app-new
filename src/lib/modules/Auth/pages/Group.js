@@ -727,10 +727,6 @@ export default class Group extends PureComponent {
                 />
             }]}
         />
-        {/* <CreateForm
-          {...parentMethods}
-          modalVisible={modalVisible}
-        /> */}
         <Modal
           title="用户组信息"
           visible={viewVisible}
@@ -755,12 +751,8 @@ export default class Group extends PureComponent {
             </DescriptionList>
             <Divider style={{ marginBottom: 16 }} />
             <DescriptionList size={size} col="1" title="包含的用户信息">
-              <Description>{groupUsers.map(item=>item.name.concat(', '))}</Description>
+              <Description>{groupUsers.map(item=>item.name).join(', ')}</Description>
             </DescriptionList>
-            {/* <Divider style={{ marginBottom: 16 }} />
-            <DescriptionList size={size} col="1" title="用户组信息">
-              <Description>{userGroups.map(item=>item.name.concat(', '))}</Description>
-            </DescriptionList> */}
           </Spin>
         </Modal>
       </PageHeaderLayout>

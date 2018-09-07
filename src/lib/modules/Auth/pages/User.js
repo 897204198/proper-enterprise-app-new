@@ -303,7 +303,7 @@ export default class User extends React.PureComponent {
   handleDelete = ()=>{
     const record = this.props.authUser.userBasicInfo;
     this.onDelete(record);
-    this.clearModalForms();
+    this.handleAddOrEditModalCancel(false)
   }
   onDelete = (record) => {
     const me = this

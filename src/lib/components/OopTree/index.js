@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
+import Throttle from 'lodash-decorators/throttle';
 import { Tree, Spin, Input, Icon, Menu, Modal} from 'antd';
 import styles from './index.less';
 
@@ -35,11 +36,6 @@ const clickEvent = (e)=>{
 }
 const preventDefaultEvent = (e)=>{
   e.preventDefault();
-}
-const scollEvents = (e)=>{
-  console.log(e)
-  const dom = document.querySelector('.rightClickPopover')
-  dom && dom.parentNode.parentNode.removeChild(dom.parentNode);
 }
 const renderMenu = (divDom, that)=>{
   let menuHTML = null;
@@ -154,7 +150,7 @@ export default class OopTree extends PureComponent {
       popoverConfig: data
     }, ()=>{
       renderMenu(divDom, this)
-    }); 
+    });
   }
   confirm = (item) => {
     this.handleClosePopover()
@@ -162,7 +158,7 @@ export default class OopTree extends PureComponent {
     const { onClick } = item;
     const txt = props.dataRef.catalogName || props.dataRef.typeName
     confirm({
-      title: `"${txt}"—— ${item.confirm}`,
+      title: `'${txt}'-${item.confirm}`,
       onOk() {
         onClick(props)
       },
@@ -175,14 +171,20 @@ export default class OopTree extends PureComponent {
     if (this.props.onRightClickConfig) {
       document.addEventListener('click', clickEvent)
       document.querySelector('.getTreeDom').addEventListener('contextmenu', preventDefaultEvent)
-      document.querySelector('.ant-tree.ant-tree-directory').addEventListener('scroll', scollEvents)
+      document.querySelector('.ant-tree.ant-tree-directory').addEventListener('scroll', this.scollEvents)
     }
+  }
+  @Throttle(300)
+  scollEvents() {
+    const dom = this.parentNode.querySelector('.rightClickPopover');
+    dom && dom.parentNode.remove();
   }
   componentWillUnmount() {
     if (this.props.onRightClickConfig) {
       document.removeEventListener('click', clickEvent);
-      document.querySelector('.ant-tree.ant-tree-directory').removeEventListener('scroll', scollEvents)
-      document.querySelector('.getTreeDom').removeEventListener('contextmenu', preventDefaultEvent)
+      document.querySelector('.ant-tree.ant-tree-directory').removeEventListener('scroll', this.scollEvents);
+      document.querySelector('.getTreeDom').removeEventListener('contextmenu', preventDefaultEvent);
+      this.scollEvents.cancel();
     }
   }
   handleClosePopover = ()=>{

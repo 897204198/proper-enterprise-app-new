@@ -70,13 +70,18 @@ export default function request(url, options) {
     // credentials: 'same-origin',
   };
   const newOptions = { ...defaultOptions, ...options };
-  if (newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'DELETE') {
+  if (newOptions.method && ['post', 'put', 'delete'].includes(newOptions.method.toString().toLowerCase())) {
     newOptions.headers = {
       Accept: '*/*',
       'Content-Type': 'application/json; charset=utf-8',
       ...newOptions.headers,
     };
-    newOptions.body = JSON.stringify(newOptions.body);
+    if (typeof newOptions.body === 'string') {
+      // 如果请求参数是个字符串 那么修改其 'Content-Type'
+      newOptions.headers['Content-Type'] = 'text/plain; charset=utf-8';
+    } else if (typeof newOptions.body === 'object') {
+      newOptions.body = JSON.stringify(newOptions.body);
+    }
   }
   const { headers } = newOptions;
   newOptions.headers = {

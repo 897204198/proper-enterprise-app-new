@@ -1020,27 +1020,6 @@ export default class Role extends PureComponent {
             }
           ]}
         />
-        {/* <CreateForm
-          formVisible={formVisible}
-          loading={loading}
-          currentTabKey={currentTabKey}
-          closeForm={this.closeForm}
-          submitForm={this.submitForm}
-          isCreate={isCreate}
-          roleInfo={roleInfo}
-          roleList={roleList}
-          roleMenus={roleMenus}
-          checkedMenuKeys={checkedMenuKeys}
-          checkedResourceKeys={checkedResourceKeys}
-          handleMenuKeys={this.handleMenuKeys}
-          handleTabChange={this.handleTabChange}
-          allUsers={allUsers}
-          roleUsers={roleUsers}
-          allGroups={allGroups}
-          roleGroups={roleGroups}
-          handleUserChange={this.handleUserChange}
-          handleGroupChange={this.handleGroupChange}
-        /> */}
         <Modal
           title="角色信息"
           width={800}
@@ -1076,11 +1055,11 @@ export default class Role extends PureComponent {
           </DescriptionList>
           <Divider style={{ marginBottom: 16 }} />
           <DescriptionList size={size} col="1" title="包含的用户信息">
-            <Description>{roleUsers.map(item=>item.name.concat(', '))}</Description>
+            <Description>{roleUsers.map(item=>item.name).join(', ')}</Description>
           </DescriptionList>
           <Divider style={{ marginBottom: 16 }} />
           <DescriptionList size={size} col="1" title="用户组信息">
-            <Description>{roleGroups.map(item=>item.name.concat(', '))}</Description>
+            <Description>{roleGroups.map(item=>item.name).join(', ')}</Description>
           </DescriptionList>
         </Modal>
       </PageHeaderLayout>

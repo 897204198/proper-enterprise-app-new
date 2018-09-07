@@ -3,6 +3,14 @@ import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button, Icon} 
 import OopSystemCurrent from '../OopSystemCurrent';
 import { getUuid } from '../../../framework/common/oopUtils';
 
+const isAndroid = ()=>{
+  const {userAgent} = navigator;
+  return userAgent.includes('Android') || userAgent.includes('Adr');
+}
+// const isIOS = ()=>{
+//   const {userAgent} = navigator;
+//   return !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+// }
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
@@ -15,9 +23,19 @@ const hackDatePickerIOSFocus = (e)=>{
     el.setAttribute('readonly', 'readonly');
   }
 }
+// 移动应用下 Android系统 Input组件 focus弹出软键盘滚动问题
+const hackInputAndroidFocusKeyboardOcclusion = (e)=>{
+  if (true || isAndroid()) {
+    const inputEl = e.target;
+    setTimeout(()=>{
+      inputEl.scrollIntoViewIfNeeded && inputEl.scrollIntoViewIfNeeded(true);
+      inputEl.scrollIntoView && inputEl.scrollIntoView(true);
+    }, 300)
+  }
+}
 export default (name, props, children)=> {
   const Map = {
-    Input: <Input {...props} />,
+    Input: <Input {...props} onFocus={(e) => { hackInputAndroidFocusKeyboardOcclusion(e) }} />,
     Button: <Button {...props} />,
     Icon: <Icon {...props} />,
     TextArea: <TextArea {...props} />,

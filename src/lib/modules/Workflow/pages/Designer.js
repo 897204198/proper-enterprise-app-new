@@ -95,7 +95,7 @@ const CreateModal = connect()((props) => {
 export default class Designer extends PureComponent {
   state = {
     lists: [],
-    buttonSize: 'small',
+    buttonSize: 'default',
     showUploadList: false,
     deleteLists: [],
     viewVisible: false
@@ -239,9 +239,17 @@ export default class Designer extends PureComponent {
 
   // 删除选中的所有元素
   deleteAll = () => {
-    for (let i = 0; i < this.state.deleteLists.length; i++) {
-      this.deleteItem(this.state.deleteLists[i]);
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确定删除选中的${this.state.deleteLists.length}条数据吗`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        for (let i = 0; i < this.state.deleteLists.length; i++) {
+          this.deleteItem(this.state.deleteLists[i]);
+        }
+      }
+    });
   }
 
   // 跳转到activiti
@@ -340,7 +348,7 @@ export default class Designer extends PureComponent {
 
   render() {
     const { workflowDesigner: { data }, loading, global: {size} } = this.props;
-    const { buttonSize, showUploadList, viewVisible } = this.state;
+    const { deleteLists, buttonSize, showUploadList, viewVisible } = this.state;
     this.state.lists = data.data;
 
     const itemMenu = [
@@ -358,21 +366,27 @@ export default class Designer extends PureComponent {
     return (
       <PageHeaderLayout content={
         <div>
-          <Input.Search style={{marginBottom: '16px'}} onSearch={value => this.handleSearch(value)} enterButton="搜索" size={size} />
+          <Input.Search
+            style={{marginBottom: '16px'}}
+            onSearch={value => this.handleSearch(value)}
+            enterButton="搜索"
+            size={size}
+            placeholder="请输入流程名称"
+          />
           <Button className={styles.headerButton} icon="plus" type="primary" size={buttonSize} onClick={() => this.create(true)}>
             新建
           </Button>
-          <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
-            <Button className={styles.headerButton} icon="select" type="primary" size={buttonSize}>
-              导入
-            </Button>
-          </Upload>
-          <Button className={styles.headerButton} icon="check-square-o" size={buttonSize} onClick={() => this.checkAll()}>
+          <span style={{float: 'right'}}>
+            <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
+              <Button className={styles.headerButton} icon="select" size={buttonSize}>
+                导入
+              </Button>
+            </Upload>
+          </span>
+          <Button className={styles.headerButton} icon={deleteLists.length ? 'check-square' : 'check-square-o'} size={buttonSize} onClick={() => this.checkAll()}>
             全选
           </Button>
-          {<Popconfirm title="确定删除选中的数据吗?" onConfirm={() => this.deleteAll()}>
-            <Button icon="delete" size={buttonSize}>批量删除</Button>
-          </Popconfirm>}
+          {deleteLists.length > 0 ? <Button icon="delete" size={buttonSize} type="danger" onClick={() => this.deleteAll()}>批量删除</Button> : null}
         </div>
       }>
         <div>
