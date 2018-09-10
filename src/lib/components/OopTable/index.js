@@ -13,6 +13,13 @@ const downloadContext = (context)=>{
     message.success('数据导出成功！')
   })
 }
+// 计算rowButtons的长度 18:图标的宽度 17:中间竖线的长度+margin 32:td的内边距 5:再加5px的余量 怕有人对icon自定义大小影响长度导致换行
+const caculateRowButtonWidth = (n)=>{
+  if (n <= 0) {
+    return 0;
+  }
+  return (n * 18) + ((n - 1) * 17) + 32 + 5
+}
 
 export default class OopTable extends PureComponent {
   state = {
@@ -76,7 +83,7 @@ export default class OopTable extends PureComponent {
     const cols = [...columns]
     rowButtons.length && cols.push({
       title: '操作',
-      width: rowButtons.length < 3 ? 100 : rowButtons.length * 50,
+      width: caculateRowButtonWidth(rowButtons.length),
       render: (text, record)=>{
         const actions = [];
         const renderButtons = ((item)=> {
@@ -205,11 +212,34 @@ export default class OopTable extends PureComponent {
       })
     }
   }
+  getTableClassName = ()=>{
+    const {onRowSelect, scroll} = this.props;
+    const className = [];
+    if (onRowSelect) {
+      className.push(styles.rowHover);
+    }
+    if (scroll) {
+      className.push(styles.oopFixedTable);
+    }
+    return className.length ? className.join(' ') : '';
+  }
+  getTableRowKey = (record)=>{
+    const {rowKey} = this.props;
+    if (!rowKey) {
+      return record.id || record.key
+    }
+    if (typeof rowKey === 'string') {
+      return record[rowKey];
+    }
+    if (typeof rowKey === 'function') {
+      return rowKey(record);
+    }
+  }
   render() {
     const { grid: {list, pagination },
       columns, loading, topButtons = [], rowButtons = [], checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
-      _onSelect, _onSelectAll } = this.props
+      _onSelect, _onSelectAll, ...otherProps} = this.props
     const cols = this.createRowButtons(columns, rowButtons)
     const rowSelectionCfg = checkable ? {
       onChange: this.rowSelectionChange,
@@ -247,9 +277,9 @@ export default class OopTable extends PureComponent {
           }
         </div>
         <Table
-          className={onRowSelect ? styles.rowHover : ''}
+          className={this.getTableClassName()}
           dataSource={list}
-          rowKey={record => record[rowKey || 'id']}
+          rowKey={record => this.getTableRowKey(record)}
           rowSelection={rowSelectionCfg}
           columns={cols}
           loading={loading}
@@ -264,6 +294,7 @@ export default class OopTable extends PureComponent {
           onChange={this.onChange}
           size={size}
           onRow={onRowSelect ? this.rowClick : undefined}
+          {...otherProps}
         />
       </div>
     )

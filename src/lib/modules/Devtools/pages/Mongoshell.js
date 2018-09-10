@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Input, Select, Form, Button, Col, Row, Table, Card, Modal, List, Popover } from 'antd';
+import { Input, Select, Form, Button, Col, Row, Card, Modal, List, Popover } from 'antd';
 import { inject } from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import OopTable from '../../../components/OopTable';
 import styles from './Mongoshell.less';
 
 const { Option } = Select;
@@ -86,6 +87,7 @@ const CreateForm = Form.create()((props) => {
                     rules: [
                       { required: true, message: '查询语句不能为空' }
                     ],
+                    initialValue: '{}'
                   })(
                     <Input placeholder="请输入查询语句" />
                   )}
@@ -137,7 +139,7 @@ export default class Mongoshell extends React.Component {
           for (const key of Object.keys(res[0])) {
             if (!(res[0][key] instanceof Object)) {
               columns.push({
-                title: key, dataIndex: key, key, render: (
+                title: key, width: 180, dataIndex: key, key, render: (
                   text => (text ? (
                     <span>
                       {text.toString()}
@@ -156,10 +158,12 @@ export default class Mongoshell extends React.Component {
               </span>
             )
           );
+          columns[0].fixed = 'left';
+          columns[0].width = 150;
         }
         self.setState({
           data: res,
-          columns: columns.length > 6 ? columns.slice(0, 5) : columns
+          columns
         });
       }
     });
@@ -178,9 +182,17 @@ export default class Mongoshell extends React.Component {
       viewVisible: flag
     });
   }
-
+  caculateWidth = (columns)=>{
+    if (columns.length === 0) {
+      return 0
+    }
+    return columns.map(it=>it.width).filter(it=>it !== undefined).reduce((prevResult, item)=>{
+      const result = prevResult + item;
+      return result;
+    });
+  }
   render() {
-    const { global: {size} } = this.props;
+    const { global: {size}, loading} = this.props;
     const { searchType, data, columns, viewVisible, info } = this.state;
     const newInfo = {
       ...info
@@ -197,13 +209,25 @@ export default class Mongoshell extends React.Component {
         />
       }>
         <Card>
-          <Table columns={columns} dataSource={data} size={size} rowKey={record=>(record._id ? record._id.$oid : 'null')} />
+          <OopTable
+            loading={loading}
+            columns={columns}
+            grid={{list: data}}
+            size={size}
+            rowKey={record=>(record._id ? record._id.$oid : 'null')}
+            checkable={false}
+            scroll={{ x: this.caculateWidth(columns), y: 468 }}
+          />
         </Card>
         <Modal
+          width="800px"
           title="mongo shell GUI"
           visible={viewVisible}
           footer={<Button type="primary" onClick={()=>this.handleViewModalVisible(false)}>确定</Button>}
           onCancel={()=>this.handleViewModalVisible(false)}
+          style={{
+            top: 20
+          }}
         >
           <div>
             <List

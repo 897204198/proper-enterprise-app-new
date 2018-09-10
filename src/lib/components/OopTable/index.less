@@ -31,5 +31,23 @@
     .ant-table-middle > .ant-table-content > .ant-table-body > table > .ant-table-tbody > tr > td {
       padding: 8px 8px;
     }
+    .ant-table-fixed {
+      table-layout: fixed;
+    }
+    .ant-table-fixed tr th, .ant-table-fixed tr td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ant-table-fixed-left .ant-table-fixed {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
+    .ant-table-scroll {
+      .ant-table-header {
+        overflow-y: hidden;
+      }
+    }
   }
 }

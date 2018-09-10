@@ -10,6 +10,7 @@
  */
 import React, { PureComponent, Fragment } from 'react';
 import {connect} from 'dva';
+import {routerRedux} from 'dva/router';
 import { Input, Button, Popover, Alert, message } from 'antd';
 import OopWorkflowMain from '../../../OopWorkflowMain';
 import {getParamObj} from '../../../../../framework/utils/utils';
@@ -33,9 +34,10 @@ const PopPage = (props)=>{
 export default class WorkflowMainPop extends PureComponent {
   constructor(props) {
     super(props);
-    const { param, from } = getParamObj(this.props.location.search);
+    const { param, from = '' } = getParamObj(this.props.location.search);
     const {isLaunch, taskOrProcDefKey, procInstId, name, businessObj, stateCode, processDefinitionId} = JSON.parse(decodeURIComponent(atob(param)));
     this.state = {
+      param,
       buttonLoading: false,
       activeTabKey: 'handle',
       from,
@@ -82,6 +84,7 @@ export default class WorkflowMainPop extends PureComponent {
   // 邮件推送通知后的操作
   afterSubmitByEmailNotify = ()=>{
     console.log('close web');
+    window.close();
     history.back();
   }
   submitWorkflow = ()=>{
@@ -89,31 +92,21 @@ export default class WorkflowMainPop extends PureComponent {
     this.oopWorkflowMain.submitWorkflow(()=>{
       message.success('流程提交成功');
       // 如果从手机推送通知进来 点击办理之后 跟点击右上主页图标 逻辑一致
-      if (this.state.from === 'app') {
-        this.afterSubmitByAppNotify();
-      } else if (this.state.from === 'email') {
-        this.afterSubmitByEmailNotify();
-      } else {
-        history.back();
-        this.setButtonLoading(false);
-      }
+      setTimeout(()=>{
+        this.afterSubmit();
+      }, 1000);
     });
   }
   launchWorkflow = ()=>{
     this.setButtonLoading(true);
     this.oopWorkflowMain.launchWorkflow(()=>{
-      history.back()
-      this.setButtonLoading(false)
+      this.setButtonLoading(false);
       message.success('流程发起成功');
-      // 移动端手机 发起流程之后关闭页面
-      if (this.state.from === 'app') {
-        this.afterSubmitByAppNotify();
-      } else if (this.state.from === 'email') {
-        this.afterSubmitByEmailNotify();
-      } else {
-        history.back();
-        this.setButtonLoading(false);
-      }
+      // 移动端手机 发起流程之后跳转到历史页
+      setTimeout(()=>{
+        const {param} = this.state;
+        this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
+      }, 500);
     })
   }
   setButtonLoading = (flag)=>{
@@ -148,6 +141,16 @@ export default class WorkflowMainPop extends PureComponent {
     this.setState({
       activeTabKey: key
     })
+  }
+  afterSubmit = ()=>{
+    if (this.state.from === 'app') {
+      this.afterSubmitByAppNotify();
+    } else if (this.state.from === 'email') {
+      this.afterSubmitByEmailNotify();
+    } else {
+      history.back();
+      this.setButtonLoading(false);
+    }
   }
   render() {
     const {taskOrProcDefKey, isLaunch, businessObj: {formKey}} = this.state;

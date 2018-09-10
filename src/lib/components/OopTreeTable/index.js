@@ -40,12 +40,12 @@ export default class OopTreeTable extends PureComponent {
     const treeConfig = this.props.tree;
     const tableConfig = this.props.table;
     const { treeLoading } = treeConfig;
-    const { gridLoading, grid, columns, topButtons = [], rowButtons = [], oopSearch, onRightClickConfig } = tableConfig;
+    const { title, gridLoading, grid, columns, topButtons = [], rowButtons = [], oopSearch, onRightClickConfig, ...otherTableProps } = tableConfig;
     const {size} = this.props;
     return (
       <Row gutter={16} className={styles.OopTreeTable}>
         <Col span={18} push={6}>
-          <Card bordered={false} title={tableConfig.title}>
+          <Card bordered={false} title={title}>
             <OopSearch
               {...oopSearch}
               ref={(el)=>{ el && (this.oopSearch = el && el.getWrappedInstance()) }}
@@ -58,7 +58,7 @@ export default class OopTreeTable extends PureComponent {
               size={size}
               topButtons={topButtons}
               rowButtons={rowButtons}
-              {...tableConfig}
+              {...otherTableProps}
               ref={(el)=>{ el && (this.oopTable = el) }}
             />
           </Card>

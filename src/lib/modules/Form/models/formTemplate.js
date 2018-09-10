@@ -47,6 +47,18 @@ export default {
       const resp = yield call(queryTemplateByFormkeydefinition, payload);
       if (callback) callback(resp)
     },
+    *copyById({ payload, callback }, { call, put }) {
+      const resp = yield call(queryTemplateById, payload);
+      delete resp.result.id;
+      delete resp.result._id;
+      delete resp.result.formkeydefinition;
+      resp.result.name = `${resp.result.name}_copy`;
+      yield put({
+        type: 'saveEntity',
+        payload: resp
+      })
+      if (callback) callback(resp)
+    },
   },
 
   reducers: {

@@ -62,7 +62,7 @@ export default class Launch extends React.PureComponent {
               }
             },
           });
-          this.props.dispatch(routerRedux.push(`/webapp/workflow/workflowMainPop?param=${param}&from=app`));
+          this.props.dispatch(routerRedux.push(`/webapp/workflow/workflowMainPop?param=${param}`));
         } else {
           message.error('该流程未部署或参数解析错误');
         }

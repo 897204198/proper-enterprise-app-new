@@ -1,12 +1,14 @@
 import React from 'react';
 import { Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message } from 'antd';
 import {connect} from 'dva';
+import Debounce from 'lodash-decorators/debounce';
 import OopFormDesigner from '../../../components/OopFormDesigner';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import { inject } from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
 import { oopToast } from '../../../../framework/common/oopUtils';
+
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -28,7 +30,7 @@ const TYPE_ENUM = [
 ]
 const ModalFormBasic = Form.create()((props) => {
   const { form, loading, visible, title, onModalCancel,
-    onModalSubmit, formBasic, checkFormkeydefinition } = props;
+    onModalSubmit, formBasic, checkFormkeydefinition, self } = props;
   const submitForm = ()=>{
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -51,7 +53,9 @@ const ModalFormBasic = Form.create()((props) => {
       pattern: /^[_0-9A-Za-z]+$/,
       message: '字段名称不能为空,且必须是"_"、数字或英文字符'
     }, {
-      validator: checkFormkeydefinition
+      validator(rules, value, callback) {
+        checkFormkeydefinition(rules, value, callback, self);
+      }
     }];
   }
   return (
@@ -134,6 +138,13 @@ const ModalFormBasic = Form.create()((props) => {
               </RadioGroup>
             )}
           </FormItem>
+          <div style={{display: 'none'}}>
+            {form.getFieldDecorator('formDetails', {
+              initialValue: formBasic.formDetails
+            })(
+              <TextArea autosize={{ minRows: 2, maxRows: 5 }} disabled={true} />
+            )}
+          </div>
         </Form>
       </Spin>
     </Modal>
@@ -148,6 +159,7 @@ const ModalFormBasic = Form.create()((props) => {
 }))
 export default class Template extends React.PureComponent {
   state = {
+    title: '新建表单模板',
     formDesignerModalVisible: false,
     formBasicModalVisible: false,
     formDetails: {
@@ -166,6 +178,9 @@ export default class Template extends React.PureComponent {
   componentDidMount() {
     this.onLoad();
   }
+  componentWillUnmount() {
+    this.checkFormkeydefinition.cancel();
+  }
   onLoad = ()=>{
     this.props.dispatch({
       type: 'formTemplate/fetch',
@@ -177,6 +192,9 @@ export default class Template extends React.PureComponent {
     });
   }
   handleEdit = (record)=>{
+    this.setState({
+      title: '编辑表单模板'
+    })
     this.setFormBasicModalVisible(true);
     this.props.dispatch({
       type: 'formTemplate/fetchById',
@@ -203,6 +221,16 @@ export default class Template extends React.PureComponent {
     this.currentRowRecordId = id;
     this.setFormDesignerModalVisible(true);
   }
+  handleCopy = (record)=>{
+    this.setState({
+      title: '复制表单模板'
+    })
+    this.setFormBasicModalVisible(true);
+    this.props.dispatch({
+      type: 'formTemplate/copyById',
+      payload: record.id
+    });
+  }
   handleCreate = ()=>{
     this.setFormBasicModalVisible(true)
   }
@@ -213,6 +241,9 @@ export default class Template extends React.PureComponent {
       this.props.dispatch({
         type: 'formTemplate/clearEntity'
       });
+      this.setState({
+        title: '新建表单模板'
+      })
     }, 300)
   }
   handleModalSubmit = (values)=>{
@@ -269,9 +300,10 @@ export default class Template extends React.PureComponent {
       }
     })
   }
-
-  checkFormkeydefinition = (rule, value, callback) => {
-    this.props.dispatch({
+  @Debounce(300)
+  checkFormkeydefinition(rule, value, callback, me) {
+    console.log(this)
+    me.props.dispatch({
       type: 'formTemplate/queryByFormkeydefinition',
       payload: value,
       callback: (cb)=>{
@@ -316,6 +348,12 @@ export default class Template extends React.PureComponent {
     ];
     const rowButtons = [
       {
+        text: '复制表单',
+        name: 'copy',
+        icon: 'copy',
+        onClick: (record)=>{ this.handleCopy(record) }
+      },
+      {
         text: '设计表单',
         name: 'design',
         icon: 'layout',
@@ -357,12 +395,13 @@ export default class Template extends React.PureComponent {
         </Card>
         <ModalFormBasic
           visible={this.state.formBasicModalVisible}
-          title="表单模板"
+          title={this.state.title}
           onModalCancel={this.handleModalCancel}
           onModalSubmit={this.handleModalSubmit}
           formBasic={entity}
           loading={loading}
           checkFormkeydefinition={this.checkFormkeydefinition}
+          self={this}
         />
         <Modal
           visible={this.state.formDesignerModalVisible}
