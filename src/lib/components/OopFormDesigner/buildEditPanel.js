@@ -308,6 +308,7 @@ export default (item, eventsCollection)=>{
             code: value,
             url: optionProps.url,
             showPropName: optionProps.showPropName,
+            editable: optionProps.editable === 1
           }
           // TODO 300毫秒节流
           updateCenterPanel(`${name}${prefix}_label`, optionProps.name);

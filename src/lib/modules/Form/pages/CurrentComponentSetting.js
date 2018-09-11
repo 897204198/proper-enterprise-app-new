@@ -54,6 +54,12 @@ const ModalForm = Form.create()((props) => {
       component: {name: 'Input', props: {placeholder: '回填到页面的值'}},
       name: 'showPropName'
     }, {
+      label: '是否可编辑',
+      key: 'Select',
+      component: {name: 'Select', children: [{label: '是', value: 1}, {label: '否', value: 0}]},
+      name: 'editable',
+      initialValue: 0
+    }, {
       label: '排序',
       key: 'InputNumber',
       component: {name: 'InputNumber', props: {placeholder: '排序'}},
@@ -174,6 +180,15 @@ export default class CurrentComponentSetting extends React.PureComponent {
         {title: '编码', dataIndex: 'code'},
         {title: 'URL', dataIndex: 'url'},
         {title: '回显的属性值', dataIndex: 'showPropName'},
+        {title: '是否可编', dataIndex: 'editable', render: (text)=>{
+          if (text === 1) {
+            return '是';
+          } else if (text === 0) {
+            return '否';
+          } else {
+            return '';
+          }
+        }},
         {title: '排序', dataIndex: 'sort'}
       ]
     };

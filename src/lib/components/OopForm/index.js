@@ -25,14 +25,9 @@ export default class OopForm extends React.PureComponent {
   dictCatalogRequestCount = 0;
   dataUrlRequestCount = 0;
   componentWillUnmount() {
-    // TODO 是否需要清空OopForm$model里的数据字典
-    // this.props.dispatch({
-    //   type: 'OopForm$model/clearDictData',
-    //   payload: {
-    //     catalog: dictCatalog,
-    //     name
-    //   }
-    // })
+    this.props.dispatch({
+      type: 'OopForm$model/clearData'
+    })
   }
   loadDictData = (dictCatalog)=>{
     this.props.dispatch({

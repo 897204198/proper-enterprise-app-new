@@ -2,8 +2,7 @@ import * as service from './service';
 
 export default {
   namespace: 'OopForm$model',
-  state: {
-  },
+  state: {},
   effects: {
     *findDictData({ payload = {}}, {call, put}) {
       const {catalog} = payload;
@@ -44,6 +43,9 @@ export default {
           disabled: it[disabledPropName] === undefined ? false : it[disabledPropName],
         }))
       }
+    },
+    clearData() {
+      return {}
     }
   }
 };

@@ -1,5 +1,5 @@
 import React, {Fragment, PureComponent} from 'react';
-import {Spin, Input } from 'antd';
+import {Spin, Input, Button } from 'antd';
 import {connect} from 'dva/index';
 import moment from 'moment';
 import DescriptionList from '../../../framework/components/DescriptionList';
@@ -21,7 +21,8 @@ export default class OopSystemCurrent extends PureComponent {
     this.state = {
       id: value.id || null,
       text: value.text || null,
-      code: value.code || null
+      code: value.code || null,
+      edit: false
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -78,6 +79,54 @@ export default class OopSystemCurrent extends PureComponent {
       }
     }
   }
+  showText = ()=>{
+    const {editable, disabled} = this.props;
+    const {text, edit} = this.state;
+    const result = (typeof text) === 'number' ? moment(text).format('YYYY-MM-DD HH:mm:ss') : text;
+    if (disabled) {
+      return result;
+    }
+    const confirm = ()=>{
+      const {value} = this.currentComEditInput.input;
+      if (!value) {
+        this.setState({
+          edit: false
+        })
+      } else {
+        this.setState({
+          text: value,
+          edit: false
+        }, ()=>{
+          const state = {
+            ...this.state
+          }
+          delete state.edit;
+          this.triggerChange(state);
+        })
+      }
+    }
+    const cancel = ()=>{
+      this.setState({
+        edit: false
+      })
+    }
+    const editClick = ()=>{
+      this.setState({
+        edit: true
+      })
+    }
+    if (edit) {
+      return (
+        <div className={styles.editWrapper}>
+          <Input defaultValue={text} style={{width: '208px'}} ref={ (el)=>{ this.currentComEditInput = el } } />
+          <Button type="primary" onClick={confirm}>确定</Button><Button onClick={cancel}>取消</Button>
+        </div>)
+    }
+    if (editable === true) {
+      return (<div><span>{result}</span><a style={{marginLeft: 8}} onClick={editClick}>编辑</a></div>)
+    }
+    return result;
+  }
   render() {
     const {global: {size}, label, loading} = this.props;
     return (
@@ -90,7 +139,7 @@ export default class OopSystemCurrent extends PureComponent {
                 <Input type="hidden" value={this.state.text} />
                 <Input type="hidden" value={this.state.code} />
               </Fragment>
-              <Description term={label}>{(typeof this.state.text) === 'number' ? moment(this.state.text).format('YYYY-MM-DD HH:mm:ss') : this.state.text}</Description>
+              <Description term={label}>{this.showText()}</Description>
             </div>
           </DescriptionList>
         </Spin>
