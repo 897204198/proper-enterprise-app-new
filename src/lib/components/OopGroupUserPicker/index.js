@@ -5,13 +5,20 @@ import {inject} from '../../../framework/common/inject';
 
 
 @inject(['OopGroupUserPicker$model', 'global'])
-@connect(({ workflowManager, global, loading }) => ({
-  workflowManager,
+@connect(({ OopGroupUserPicker$model, global, loading }) => ({
+  OopGroupUserPicker$model,
   tableLoading: loading.effects['OopGroupUserPicker$model/findUser'],
   listLoading: loading.effects['OopGroupUserPicker$model/findGroup'],
   global,
 }))
 export default class OopGroupUserPicker extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    const { value = [] } = props;
+    this.state = {
+      selectedRowItems: [...value],
+    };
+  }
   handleButtonClick = () => {
     const self = this;
     this.props.dispatch({
@@ -21,7 +28,7 @@ export default class OopGroupUserPicker extends React.PureComponent {
         userGroupEnable: 'ALL'
       },
       callback: () => {
-        const { workflowManager: {group} } = self.props;
+        const { OopGroupUserPicker$model: {group} } = self.props;
         if (group.length > 0) {
           this.findUser(group[0].id);
         }
@@ -37,6 +44,9 @@ export default class OopGroupUserPicker extends React.PureComponent {
   }
 
   handleChange = (data) => {
+    this.setState({
+      selectedRowItems: data
+    })
     const {onChange} = this.props;
     if (onChange) {
       onChange(data);
@@ -45,10 +55,10 @@ export default class OopGroupUserPicker extends React.PureComponent {
 
   render() {
     const {
-      value = [],
-      workflowManager: {group = [], user = []},
+      OopGroupUserPicker$model: {group = [], user = []},
       listLoading,
-      tableLoading
+      tableLoading,
+      disabled
     } = this.props
 
     const columns = [
@@ -69,6 +79,8 @@ export default class OopGroupUserPicker extends React.PureComponent {
     };
 
     const tableCfg = {
+      columns,
+      filterColums,
       data: user,
       loading: tableLoading,
       onLoad: this.findUser,
@@ -85,11 +97,10 @@ export default class OopGroupUserPicker extends React.PureComponent {
         buttonCfg={{
           icon: 'user',
           onClick: this.handleButtonClick,
-          text: '指定处理人'
+          text: '指定处理人',
+          disabled
         }}
-        columns={columns}
-        defaultSelected={{ data: value, title: ' 已选处理人:' }}
-        filterColums={filterColums}
+        defaultSelected={ this.state.selectedRowItems}
         modalTitle="指定处理人"
         onChange={this.handleChange}
         tableCfg={tableCfg}

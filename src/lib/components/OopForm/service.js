@@ -11,15 +11,30 @@ export async function fetchDictionary(param) {
 export async function findUrlData(urlObj) {
   if (typeof urlObj === 'object') {
     const {value} = urlObj;
-    // restful
-    if (value.includes('/')) {
-      return request(value);
+    if (value) {
+      // restful
+      if (value.includes('/')) {
+        return request(value);
+      }
+      // Mongo
+      if (value.includes('_')) {
+        const ms = new MongoService(value);
+        return ms.fetch();
+      }
     }
-    // Mongo
-    if (value.includes('_')) {
-      const ms = new MongoService(value);
-      return ms.fetch();
-    }
+    return new Promise((resolve)=>{
+      setTimeout(()=>{
+        resolve({
+          result: []
+        });
+      }, 1000)
+    });
   }
-  return new Promise();
+  return new Promise((resolve)=>{
+    setTimeout(()=>{
+      resolve({
+        result: []
+      });
+    }, 1000)
+  });
 }

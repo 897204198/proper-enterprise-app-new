@@ -137,20 +137,22 @@ export default class OopTree extends PureComponent {
   // }
   handleOnRightClick = ({event, node}) => {
     // const domLi = this.findParentNode(event.target)
-    this.props.onRightClickConfig.rightClick(node.props.dataRef);
-    this.handleClosePopover();
-    const y = document.documentElement.scrollTop + event.clientY
-    const divDom = creatDiv(document.querySelector('.getTreeDom').parentNode, y)
-    const data = {
-      popoverInfo: node,
-      treeMenuState: 'button',
-      popoverRenderDom: divDom,
+    if (this.props.onRightClickConfig) {
+      this.props.onRightClickConfig.rightClick(node.props.dataRef);
+      this.handleClosePopover();
+      const y = document.documentElement.scrollTop + event.clientY
+      const divDom = creatDiv(document.querySelector('.getTreeDom').parentNode, y)
+      const data = {
+        popoverInfo: node,
+        treeMenuState: 'button',
+        popoverRenderDom: divDom,
+      }
+      this.setState({
+        popoverConfig: data
+      }, ()=>{
+        renderMenu(divDom, this)
+      });
     }
-    this.setState({
-      popoverConfig: data
-    }, ()=>{
-      renderMenu(divDom, this)
-    });
   }
   confirm = (item) => {
     this.handleClosePopover()

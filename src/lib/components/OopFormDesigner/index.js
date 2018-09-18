@@ -136,6 +136,16 @@ export default class OopFormDesigner extends React.PureComponent {
         component: {
           name: 'OopSystemCurrent',
           props: {url: '/auth/current/user', showPropName: 'name', code: 'currentLoginUser', label: '当前登录人'}}
+      },
+      {
+        label: '上传组件',
+        key: 'OopUpload',
+        component: {
+          name: 'OopUpload',
+          props: {
+            buttonText: '上传文件'
+          },
+        }
       }
     ],
     rowItems: this.props.formDetails.formJson,
@@ -316,13 +326,25 @@ export default class OopFormDesigner extends React.PureComponent {
       this.state.currentRowItem.initialValue = '';
       this.state.currentRowItem.component.children = [];
       this.state.currentRowItem.component.dictCatalog = value;
+      // 外部数据源切换
+    } else if (attr === 'dataUrl') {
+      this.state.currentRowItem.initialValue = '';
+      this.state.currentRowItem.component.children = [];
+      this.state.currentRowItem.component.dataUrl = value;
       // 数据来源切换
     } else if (attr === 'changeDataSource') {
       if (value === 'changeless') {
         delete this.state.currentRowItem.component.dictCatalog;
+        delete this.state.currentRowItem.component.dataUrl;
       }
       if (value === 'dict') {
+        delete this.state.currentRowItem.component.dataUrl;
         this.state.currentRowItem.component.dictCatalog = '请选择';
+        this.state.currentRowItem.component.children = [];
+      }
+      if (value === 'outer') {
+        delete this.state.currentRowItem.component.dictCatalog;
+        this.state.currentRowItem.component.dataUrl = {};
         this.state.currentRowItem.component.children = [];
       }
     } else {
@@ -340,7 +362,7 @@ export default class OopFormDesigner extends React.PureComponent {
       const {name, component} = item;
       const value = fieldsValue[name];
       item.initialValue = value;
-      if (component.dictCatalog) {
+      if (component.dictCatalog || component.dataUrl) {
         component.children = [];
       }
       // “系统当前” 组件 在设置表单的时候 不设置默认值

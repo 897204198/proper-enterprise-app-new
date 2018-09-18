@@ -123,8 +123,8 @@ export default class OopModal extends PureComponent {
     return tabs.map(tab=>(
       tab.disabled ? null : (
     <div key={tab.key} className={styles.oopTabContainer} name={tab.key}>
-      <div style={{fontSize: 16, fontWeight: 'bold'}}>{tab.title}</div>
-      {hLine}
+      {tab.title ? <div style={{fontSize: 16, fontWeight: 'bold'}}>{tab.title}</div> : null}
+      {tab.title ? hLine : null}
       {isCreate ? (tab.tips ? <Alert message={tab.tips} type="info" showIcon style={{marginBottom: 16}} /> : null) : null}
       <div>{tab.content}</div>
     </div>)));
@@ -151,11 +151,12 @@ export default class OopModal extends PureComponent {
     const footer = (
       <Fragment>
         {isCreate ? null : (
-          <Popconfirm
+          props.onDelete ? (
+        <Popconfirm
           title="确认删除吗？"
           onConfirm={onDelete}>
           <Button style={{float: 'left'}} type="danger">删除</Button>
-        </Popconfirm>)}
+        </Popconfirm>) : null)}
         {defaultActiveKey === activeKey ? (
             <Fragment>
               <Button onClick={this.handleCancel}>取消</Button>
@@ -215,13 +216,15 @@ export default class OopModal extends PureComponent {
       tab.disabled = tab.disabled === undefined ?
         (tab.main ? false : _props.isCreate)
         : tab.disabled;
-    })
-    const antdTabs = this.state.naviTabsVisible ? (
-    <Tabs tabPosition="right" onTabClick={this.onTabClick} size="small" activeKey={this.state.activeKey}>
-      {_props.tabs.map(tab=>(<TabPane tab={tab.title} key={tab.key} disabled={tab.disabled} />))}
-    </Tabs>) : null;
-    _props.title = (
-      <span style={{display: 'flex', alignItems: 'center'}}>
+    });
+    // 每个tab必须有title否则 不显示左侧浮动的导航栏
+    if (_props.tabs.every(it=>(it.title !== undefined))) {
+      const antdTabs = this.state.naviTabsVisible ? (
+        <Tabs tabPosition="right" onTabClick={this.onTabClick} size="small" activeKey={this.state.activeKey}>
+          {_props.tabs.map(tab=>(<TabPane tab={tab.title} key={tab.key} disabled={tab.disabled} />))}
+        </Tabs>) : null;
+      _props.title = (
+        <span style={{display: 'flex', alignItems: 'center'}}>
       <Popover
         placement="left"
         content={antdTabs}
@@ -231,6 +234,7 @@ export default class OopModal extends PureComponent {
       </Popover>
       <span style={{marginLeft: 8}}>{_props.title}</span>
     </span>);
+    }
     return _props;
   }
   // 计算滚动的高度

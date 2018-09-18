@@ -70,12 +70,12 @@ const getDataDictItem = (item, onChange)=>{
     label: '数据来源',
     component: {
       name: 'Select',
-      children: [{label: '固定选项', value: 'changeless'}, {label: '字典数据源', value: 'dict'}],
+      children: [{label: '固定选项', value: 'changeless'}, {label: '字典数据源', value: 'dict'}, {label: '外部数据源', value: 'outer'}],
       props: {onChange: (v)=>{
         onChange(componentName, v);
       }}
     },
-    initialValue: component.dictCatalog ? 'dict' : 'changeless'
+    initialValue: component.dictCatalog ? 'dict' : (component.dataUrl ? 'outer' : 'changeless')
   };
 }
 export default (item, eventsCollection)=>{
@@ -196,6 +196,95 @@ export default (item, eventsCollection)=>{
         name: dataDictItem.name,
         value: 'changeless',
       }
+    },
+    {
+      name: `${name}${prefix}_dataUrl`,
+      label: '外部数据源配置',
+      component: {
+        name: 'Input',
+        props: {type: 'hidden'}
+      },
+      display: {
+        name: dataDictItem.name,
+        value: 'outer',
+      }
+    },
+    {
+      name: `${name}${prefix}_dataUrl_value`,
+      component: {
+        name: 'Input',
+        props: {
+          placeholder: '请求URL'
+        },
+        rules: [{
+          require: true
+        }]
+      },
+      initialValue: component.dataUrl && component.dataUrl.value,
+      display: {
+        name: dataDictItem.name,
+        value: 'outer',
+      }
+    },
+    {
+      name: `${name}${prefix}_dataUrl_labelPropName`,
+      component: {
+        name: 'Input',
+        props: {
+          placeholder: '回显的属性名'
+        },
+        rules: [{
+          require: true
+        }]
+      },
+      initialValue: component.dataUrl && component.dataUrl.labelPropName,
+      display: {
+        name: dataDictItem.name,
+        value: 'outer',
+      }
+    },
+    {
+      name: `${name}${prefix}_dataUrl_valuePropName`,
+      component: {
+        name: 'Input',
+        props: {
+          placeholder: '保存的属性值'
+        },
+        rules: [{
+          require: true
+        }]
+      },
+      initialValue: component.dataUrl && component.dataUrl.valuePropName,
+      display: {
+        name: dataDictItem.name,
+        value: 'outer',
+      }
+    },
+    {
+      name: `${name}${prefix}_dataUrl_button`,
+      component: (
+      <Button
+        type="primary"
+        onClick={()=>{
+        const dataUrl = {
+          value: document.getElementById(`${name}${prefix}_dataUrl_value`).value,
+          labelPropName: document.getElementById(`${name}${prefix}_dataUrl_labelPropName`).value,
+          valuePropName: document.getElementById(`${name}${prefix}_dataUrl_valuePropName`).value
+        }
+        if (!dataUrl.value || !dataUrl.labelPropName || !dataUrl.valuePropName) {
+          message.error('必填项不能为空')
+        }
+        onSelectChange(`${name}${prefix}_dataUrl`, {});
+        setTimeout(()=>{
+          onSelectChange(`${name}${prefix}_dataUrl`, dataUrl);
+        }, 350)
+      }}>
+        测试
+      </Button>),
+      display: {
+        name: dataDictItem.name,
+        value: 'outer',
+      }
     }];
     const childrenArr = children.map((cld, i)=>(
       {
@@ -288,8 +377,7 @@ export default (item, eventsCollection)=>{
         props: {placeholder: name, onChange: onNameChange}
       },
       initialValue: name
-    }
-    ];
+    }];
     const currentSysArgsComp = {
       name: `${name}${prefix}_dict`,
       label: '当前系统参数',
@@ -323,6 +411,26 @@ export default (item, eventsCollection)=>{
       initialValue: component.props.code,
     };
     formConfig.formJson.push(currentSysArgsComp);
+    formConfig = {...formConfig, formLayout: 'vertical'};
+  } else if ('OopUpload'.includes(cName)) {
+    formConfig.formJson = [{
+      name: `${name}${prefix}_label`,
+      label: '标题',
+      component: {
+        name: 'Input',
+        props: {placeholder: label, onChange}
+      },
+      initialValue: label
+    },
+    {
+      name: `${name}${prefix}_name`,
+      label: 'name',
+      component: {
+        name: 'Input',
+        props: {placeholder: name, onChange: onNameChange}
+      },
+      initialValue: name
+    }];
     formConfig = {...formConfig, formLayout: 'vertical'};
   }
   const ruleChange = (event)=>{
@@ -369,6 +477,6 @@ export default (item, eventsCollection)=>{
     component: requireRulesRadio,
     initialValue: getRulesValue(rules)
   }]
-  formConfig.formJson = formConfig.formJson.concat(rulesArr)
+  formConfig.formJson = formConfig.formJson.concat(rulesArr);
   return (<OopForm {...formConfig} showSetValueIcon={true} />);
 }

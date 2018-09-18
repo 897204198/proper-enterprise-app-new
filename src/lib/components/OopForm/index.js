@@ -105,7 +105,7 @@ export default class OopForm extends React.PureComponent {
       // 如果是有url数据源的组件
       if (component.children && component.children.length === 0 && component.dataUrl) {
         const {dataUrl} = component;
-        if (dataUrl.value !== '请选择') {
+        if (dataUrl.value) {
           if (!OopForm$model[dataUrl.value] || OopForm$model[dataUrl.value].length === 0) {
             if (this.dataUrlRequestCount <= 3) {
               this.loadUrlData(dataUrl);
