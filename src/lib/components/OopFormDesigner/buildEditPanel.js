@@ -432,6 +432,35 @@ export default (item, eventsCollection)=>{
       initialValue: name
     }];
     formConfig = {...formConfig, formLayout: 'vertical'};
+  } else if ('OopText'.includes(cName)) {
+    formConfig.formJson = [{
+      name: `${name}${prefix}_label`,
+      label: '标题',
+      component: {
+        name: 'Input',
+        props: {placeholder: label, onChange}
+      },
+      initialValue: label
+    },
+    {
+      name: `${name}${prefix}_name`,
+      label: 'name',
+      component: {
+        name: 'Input',
+        props: {placeholder: name, onChange: onNameChange}
+      },
+      initialValue: name
+    },
+    {
+      name: `${name}${prefix}_props_text`,
+      label: '请输入内容',
+      component: {
+        name: 'TextArea',
+        props: {onChange}
+      },
+      initialValue: component.props && component.props.text
+    }];
+    formConfig = {...formConfig, formLayout: 'vertical'};
   }
   const ruleChange = (event)=>{
     const {value} = event.target;

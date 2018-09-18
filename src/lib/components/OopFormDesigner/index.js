@@ -146,6 +146,16 @@ export default class OopFormDesigner extends React.PureComponent {
             buttonText: '上传文件'
           },
         }
+      },
+      {
+        label: '文本组件',
+        key: 'OopText',
+        component: {
+          name: 'OopText',
+          props: {
+            editable: true
+          },
+        }
       }
     ],
     rowItems: this.props.formDetails.formJson,

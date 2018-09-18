@@ -2,6 +2,7 @@ import React from 'react';
 import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button, Icon} from 'antd';
 import OopSystemCurrent from '../OopSystemCurrent';
 import OopUpload from '../OopUpload';
+import OopText from '../OopText';
 import { getUuid } from '../../../framework/common/oopUtils';
 
 const isAndroid = ()=>{
@@ -54,6 +55,7 @@ export default (name, props, children)=> {
     DatePicker: <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} />,
     OopSystemCurrent: <OopSystemCurrent {...props} />,
     OopUpload: <OopUpload accept="image/*" {...props} />,
+    OopText: <OopText {...props} />,
   }
   const component = Map[name];
   if (!component) {
