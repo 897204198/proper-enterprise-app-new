@@ -147,7 +147,7 @@ export default (item, eventsCollection)=>{
       const showTimeChange = (event)=>{
         console.log(event);
         // 刷新showTime
-        updateCenterPanel(event.target.name, {format: 'HH:mm'});
+        updateCenterPanel(event.target.name, event.target.value ? {format: 'HH:mm'} : null);
         // TODO 350延时躲过节流函数
         setTimeout(()=>{
           // 刷新format

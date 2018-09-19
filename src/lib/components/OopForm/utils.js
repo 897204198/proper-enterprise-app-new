@@ -1,12 +1,12 @@
 import React from 'react';
-import { Form, Icon, Tooltip, Popover, Input } from 'antd';
+import { Form, Icon, Tooltip, Popover, Input, Spin } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
 
 
 export const formGenerator = (formConfig)=>{
-  const {formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
+  const {loading, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
     rowItemSetValue, dragable = false, showSetValueIcon = false} = formConfig;
   const formItemLayout = formLayout === 'horizontal' ? {
     labelCol: {
@@ -39,6 +39,7 @@ export const formGenerator = (formConfig)=>{
         let formItem = null;
         let _rules = null;
         if (name && component) {
+          // component增加loading属性
           if (rules.length) {
             _rules = transformRules(rules);
           }
@@ -63,7 +64,8 @@ export const formGenerator = (formConfig)=>{
         formLayout={formLayout}
         formItemList={formItemList}
         formTitle={formTitle}
-        onMove={rowItemDrag} />) : (<div className={className}><h3>{formTitle}</h3><Form layout={formLayout}>{formItemList}</Form></div>));
+        loading={loading}
+        onMove={rowItemDrag} />) : (<Spin spinning={loading}><div className={className}><h3>{formTitle}</h3><Form layout={formLayout}>{formItemList}</Form></div></Spin>));
 }
 
 const createComponent = (component)=>{

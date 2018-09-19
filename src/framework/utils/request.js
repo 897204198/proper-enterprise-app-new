@@ -88,9 +88,12 @@ export default function request(url, options) {
     ...headers,
     'X-PEP-TOKEN': window.localStorage.getItem('proper-auth-login-token')
   }
-  // 如果请求不属于指定的域 那么删除 X-PEP-TOKEN
-  if (!newUrl.includes(peaDynamicRequestPrefix)) {
-    delete newOptions.headers['X-PEP-TOKEN']
+  // 如果请求不属于指定的域 那么删除 X-PEP-TOKEN TODO
+  if (peaDynamicRequestPrefix && !newUrl.includes(peaDynamicRequestPrefix)) {
+    delete newOptions.headers['X-PEP-TOKEN'];
+  }
+  if (!peaDynamicRequestPrefix && newUrl.includes('http')) {
+    delete newOptions.headers['X-PEP-TOKEN'];
   }
   return fetch(newUrl, newOptions)
     .then(checkStatus)

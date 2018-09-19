@@ -3,6 +3,7 @@ import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button, Icon} 
 import OopSystemCurrent from '../OopSystemCurrent';
 import OopUpload from '../OopUpload';
 import OopText from '../OopText';
+import OopGroupUserPicker from '../OopGroupUserPicker';
 import { getUuid } from '../../../framework/common/oopUtils';
 
 const isAndroid = ()=>{
@@ -46,7 +47,8 @@ export default (name, props, children)=> {
         {
           children.map(item=>(<Option key={getUuid(5)} value={item.value}>{item.label}</Option>))
         }
-      </Select>),
+      </Select>
+    ),
     RadioGroup: (
       <RadioGroup options={children} {...props} />),
     CheckboxGroup: (
@@ -54,8 +56,9 @@ export default (name, props, children)=> {
     InputNumber: <InputNumber {...props} />,
     DatePicker: <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} />,
     OopSystemCurrent: <OopSystemCurrent {...props} />,
-    OopUpload: <OopUpload accept="image/*" {...props} />,
+    OopUpload: <OopUpload accept="image/*" listType="picture" type={['.jpg', '.jpeg', '.png', '.gif', '.bmp']} {...props} />,
     OopText: <OopText {...props} />,
+    OopGroupUserPicker: <OopGroupUserPicker {...props} />,
   }
   const component = Map[name];
   if (!component) {

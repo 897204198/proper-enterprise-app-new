@@ -4,20 +4,22 @@ export default {
   namespace: 'OopForm$model',
   state: {},
   effects: {
-    *findDictData({ payload = {}}, {call, put}) {
+    *findDictData({ payload = {}, callback}, {call, put}) {
       const {catalog} = payload;
       const response = yield call(service.fetchDictionary, {catalog});
       yield put({
         type: 'saveDictData',
         payload: {response, catalog}
       })
+      if (callback) callback({response, catalog});
     },
-    *findUrlData({payload = {}}, {call, put}) {
+    *findUrlData({payload = {}, callback}, {call, put}) {
       const response = yield call(service.findUrlData, payload);
       yield put({
         type: 'saveUrlData',
         payload: {response, dataUrl: payload}
       })
+      if (callback) callback({response, dataUrl: payload});
     }
   },
   reducers: {

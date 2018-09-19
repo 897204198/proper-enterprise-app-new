@@ -18,7 +18,7 @@ const caculateRowButtonWidth = (n)=>{
   if (n <= 0) {
     return 0;
   }
-  return (n * 18) + ((n - 1) * 17) + 32 + 5
+  return n === 1 ? 60 : (n * 18) + ((n - 1) * 17) + 32 + 5
 }
 
 export default class OopTable extends PureComponent {

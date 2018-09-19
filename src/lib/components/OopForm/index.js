@@ -15,12 +15,15 @@ function isItemShow(itemValue, displayValue) {
 
 @inject('OopForm$model')
 @Form.create()
-@connect(({OopForm$model})=>({
-  OopForm$model
+@connect(({OopForm$model, loading})=>({
+  OopForm$model,
+  loading: loading.models.OopForm$model
 }), null, null, {withRef: true})
 export default class OopForm extends React.PureComponent {
+  state = {
+  }
   componentDidMount() {
-    console.log('componentDidMount')
+    console.log('componentDidMount');
   }
   dictCatalogRequestCount = 0;
   dataUrlRequestCount = 0;
@@ -29,11 +32,21 @@ export default class OopForm extends React.PureComponent {
       type: 'OopForm$model/clearData'
     })
   }
-  loadDictData = (dictCatalog)=>{
+  loadDictData = (dictCatalog, name)=>{
+    console.log('before', name)
+    this.setState({
+      [name]: true
+    })
     this.props.dispatch({
       type: 'OopForm$model/findDictData',
       payload: {
         catalog: dictCatalog
+      },
+      callback: ()=>{
+        console.log('after', name)
+        this.setState({
+          [name]: false
+        })
       }
     })
   }
@@ -62,9 +75,9 @@ export default class OopForm extends React.PureComponent {
     const { OopForm$model, disabled = false, formJson = [], defaultValue = {}, form } = this.props;
     // const changeEventSequence = new Set();
     formJson.forEach((item)=>{
-      const {initialValue, component, display} = item;
+      const {name, initialValue, component, display} = item;
       // initialValue是数组但是长度为0 或者 没有initialValue;
-      const value = defaultValue[item.name];
+      const value = defaultValue[name];
       if ((Array.isArray(initialValue) && initialValue.length === 0)
         || initialValue === undefined) {
         item.initialValue = value
@@ -93,7 +106,7 @@ export default class OopForm extends React.PureComponent {
         if (dictCatalog !== '请选择') {
           if (!OopForm$model[dictCatalog] || OopForm$model[dictCatalog].length === 0) {
             if (this.dictCatalogRequestCount <= 3) {
-              this.loadDictData(dictCatalog);
+              this.loadDictData(dictCatalog, name);
               this.dictCatalogRequestCount += 1;
             }
           } else {

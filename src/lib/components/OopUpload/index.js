@@ -1,5 +1,6 @@
 import React from 'react';
 import { Upload, Button, Icon, message} from 'antd';
+import OopPreview from '../OopPreview';
 import { getApplicationContextUrl } from '../../../framework/utils/utils';
 
 const getFileDownloadUrl = (id)=>{
@@ -13,8 +14,13 @@ export default class OopUpload extends React.PureComponent {
   constructor(props) {
     super(props);
     const { defaultFileList = [], value = [] } = this.props;
-    const fileList = [...defaultFileList, ...value];
+    const fileList = [...defaultFileList.concat(value)];
     fileList.length && fileList.forEach((item, index)=>{
+      if (typeof item === 'string') {
+        item = {
+          id: item
+        }
+      }
       const {id, url, uid} = item;
       if (!uid) {
         item.uid = -(++index);
@@ -29,6 +35,8 @@ export default class OopUpload extends React.PureComponent {
     this.state = {
       fileList,
       uploading: false,
+      previewVisible: false,
+      previewUrl: ''
     }
   }
   beforeUpload = (file) => {
@@ -66,6 +74,10 @@ export default class OopUpload extends React.PureComponent {
       action: `${getApplicationContextUrl()}/file`,
       beforeUpload: this.beforeUpload,
       fileList: this.state.fileList,
+      showUploadList: {
+        showRemoveIcon: !this.props.disabled,
+        showPreviewIcon: true
+      },
       onRemove: (file) => {
         this.setState(({ fileList }) => {
           const index = fileList.indexOf(file);
@@ -83,6 +95,17 @@ export default class OopUpload extends React.PureComponent {
           })));
         });
       },
+      onPreview: (file)=>{
+        this.setState({
+          previewUrl: file.url
+        }, ()=>{
+          setTimeout(()=>{
+            this.setState({
+              previewVisible: true
+            })
+          });
+        })
+      },
       extra,
       ...this.props
     };
@@ -95,7 +118,9 @@ export default class OopUpload extends React.PureComponent {
       if (info.file.status === 'done') {
         message.success('上传成功!');
         const {file: {response}, fileList} = info;
-        fileList[fileList.length - 1].url = getFileDownloadUrl(response);
+        const lastFile = fileList[fileList.length - 1];
+        lastFile.id = response;
+        lastFile.url = getFileDownloadUrl(response);
         this.setState(() => ({
           fileList: [...fileList],
           uploading: false
@@ -119,12 +144,35 @@ export default class OopUpload extends React.PureComponent {
     }
     return props;
   }
+  preViewPic = ()=>{
+    this.setState({
+      previewVisible: false,
+    }, ()=>{
+      setTimeout(()=>{
+        this.setState({
+          previewUrl: ''
+        })
+      }, 300);
+    })
+  }
   render() {
     const props = this.getInitProps();
+    const {previewVisible, previewUrl} = this.state;
     return (
-      <Upload {...props}>
-        {props.extra}
-      </Upload>
+      <div>
+        <Upload {...props}>
+          {props.extra}
+        </Upload>
+        {previewVisible ? (
+        <OopPreview
+          visible={previewVisible}
+          onCancel={() => this.preViewPic()}
+          img={{
+            src: previewUrl,
+            alt: '预览'
+          }}
+        />) : null}
+      </div>
     );
   }
 }

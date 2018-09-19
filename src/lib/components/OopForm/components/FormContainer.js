@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form } from 'antd';
+import { Form, Spin } from 'antd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
 import DrageItem from './DrageItem';
@@ -11,8 +11,9 @@ export default class FormContainer extends Component {
     onMove(dragIndex, hoverIndex);
   }
   render() {
-    const { formItemList } = this.props;
+    const { formItemList, loading } = this.props;
     return (
+    <Spin spinning={loading}>
       <div className={this.props.className}>
         <Form layout={this.props.formLayout}>
           <h3>{this.props.formTitle}</h3>
@@ -25,6 +26,7 @@ export default class FormContainer extends Component {
             />)) }
         </Form>
       </div>
+    </Spin>
     )
   }
 }

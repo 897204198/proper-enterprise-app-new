@@ -156,6 +156,13 @@ export default class OopFormDesigner extends React.PureComponent {
             editable: true
           },
         }
+      },
+      {
+        label: '选人组件',
+        key: 'OopGroupUserPicker',
+        component: {
+          name: 'OopGroupUserPicker'
+        }
       }
     ],
     rowItems: this.props.formDetails.formJson,
@@ -360,7 +367,11 @@ export default class OopFormDesigner extends React.PureComponent {
     } else {
       this.state.currentRowItem[attr] = value;
     }
-    this.forceUpdate()
+    this.forceUpdate();
+    // Select 清空选中的值
+    if (this.state.currentRowItem.component.name === 'Select') {
+      this.oopForm.getForm().setFieldsValue({[this.state.currentRowItem.name]: undefined})
+    }
   }
   getFormConfig = ()=>{
     const {rowItems, formLayout, formTitle} = this.state;
