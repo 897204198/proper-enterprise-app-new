@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Layout, Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider } from 'antd';
+import { Layout, Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import Debounce from 'lodash-decorators/debounce';
@@ -64,7 +64,7 @@ export default class GlobalHeader extends PureComponent {
   render() {
     const {
       currentUser, collapsed, fetchingNotices, isMobile, logo,
-      onNoticeVisibleChange, onMenuClick, onNoticeClear, onMainClick
+      onNoticeVisibleChange, onMenuClick, onNoticeClear, onMainClick, onMsgClick
     } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
@@ -108,6 +108,11 @@ export default class GlobalHeader extends PureComponent {
           />
           <div className={styles.action} onClick={onMainClick}>
             <Icon type="home" />
+          </div>
+          <div className={styles.action} onClick={onMsgClick} style={{display: 'inline-block'}}>
+            <Tooltip title="webIM">
+              <Icon type="message" theme="outlined" />
+            </Tooltip>
           </div>
           <NoticeIcon
             className={styles.action}

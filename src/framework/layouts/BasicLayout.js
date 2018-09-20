@@ -15,6 +15,7 @@ import { getRoutes } from '../utils/utils';
 import logo from '../../assets/logo.svg';
 import {inject} from '../common/inject';
 import styles from './BasicLayout.less';
+import {webImUrl} from '../../config/config';
 import * as properties from '../../config/properties';
 
 
@@ -114,7 +115,7 @@ export default class BasicLayout extends React.PureComponent {
   getBashRedirect = () => {
     // According to the url parameter to redirect
     // 这里是重定向的,重定向到 url 的 redirect 参数所示地址
-    const urlParams = new URL(window.location.href);
+    const urlParams = new URL(window.location.href); // eslint-disable-line
 
     const redirect = urlParams.searchParams.get('redirect');
     // Remove the parameters in the url
@@ -167,6 +168,17 @@ export default class BasicLayout extends React.PureComponent {
   }
   handleMainClick = ()=>{
     this.props.dispatch(routerRedux.push('/main'));
+  }
+  handleMsgClick = ()=>{
+    if (!webImUrl) {
+      message.error('请配置webIM地址！');
+      return
+    }
+    let a = document.createElement('a');
+    a.href = webImUrl;
+    a.target = '_blank';
+    a.click();
+    a = null;
   }
   getRedirect = (menus) => {
     if (redirectData.length > 0) {
@@ -229,6 +241,7 @@ export default class BasicLayout extends React.PureComponent {
             onMenuClick={this.handleMenuClick}
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
             onMainClick={this.handleMainClick}
+            onMsgClick={this.handleMsgClick}
           />
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>
