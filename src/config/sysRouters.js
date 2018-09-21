@@ -37,5 +37,8 @@ const routers = {
   '/personal-center': {
     component: ()=>import('../framework/modules/Base/pages/PersonalCenter')
   },
+  '/webapp/antd-mobile': {
+    component: ()=>import('../lib/components/WebApp/AntdMobile')
+  },
 };
 export default routers

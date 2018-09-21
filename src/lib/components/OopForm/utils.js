@@ -6,7 +6,7 @@ import FormContainer from './components/FormContainer';
 
 
 export const formGenerator = (formConfig)=>{
-  const {loading, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
+  const {loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
     rowItemSetValue, dragable = false, showSetValueIcon = false} = formConfig;
   const formItemLayout = formLayout === 'horizontal' ? {
     labelCol: {

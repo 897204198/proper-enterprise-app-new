@@ -210,7 +210,7 @@ export default class OopTabTableModal extends React.PureComponent {
               </div>
             </div>
             <OopTreeTable
-              ref={(el)=>{ this.oopTreeTable = el }}
+              ref={(el)=>{ el && (this.oopTreeTable = el) }}
               table={{
                 columns: tableCfg.columns,
                 dataDefaultSelectedRowKeys: selectedRowKeys,
