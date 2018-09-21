@@ -4,7 +4,7 @@ import {connect} from 'dva';
 import PropTypes from 'prop-types';
 import { Layout, Button, Icon } from 'antd';
 import { getRouterData } from '../common/frameHelper';
-import {getParamObj} from '../utils/utils';
+import {getParamObj, isApp} from '../utils/utils';
 import NotFound from '../components/Exception/404';
 import routers from '../../config/sysRouters';
 import styles from './WebAppLayout.less';
@@ -73,17 +73,6 @@ export default class WebAppLayout extends React.PureComponent {
       onClick: handleHome
     },
   }
-  isAndroid = ()=>{
-    const {userAgent} = navigator;
-    return userAgent.includes('Android') || userAgent.includes('Adr');
-  }
-  isIOS = ()=>{
-    const {userAgent} = navigator;
-    return !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-  }
-  isApp = ()=>{
-    return this.isIOS() || this.isAndroid()
-  }
   componentWillMount() {
     window.localStorage.setItem('If_Can_Back', '');
     // window.localStorage.setItem('pea_dynamic_request_prefix', 'https://icmp2.propersoft.cn/icmp/server-dev');
@@ -98,10 +87,10 @@ export default class WebAppLayout extends React.PureComponent {
     const routerData = getRouterData();
     return (
       <div className={styles.webAppContainer}>
-        {this.isApp() ?
+        {isApp() ?
           (<Header title={this.state.title} leftButton={this.state.headerLeftButton} rightButton={this.state.headerRightButton} />)
         : null}
-        <Layout style={{paddingTop: this.isApp() ? 44 : 0}}>
+        <Layout style={{paddingTop: isApp() ? 44 : 0}}>
           <Content>
             <Switch>
               { // 路径为‘/webapp/*’的页面会被 默认认为是H5的页面 自动加载到WebAppLayout下

@@ -9,17 +9,9 @@ import { Tabs, Spin, Timeline, message } from 'antd';
 import {inject} from '../../../framework/common/inject';
 import OopForm from '../OopForm';
 import OopPreview from '../OopPreview';
-import {getApplicationContextUrl} from '../../../framework/utils/utils';
+import {isApp, getApplicationContextUrl} from '../../../framework/utils/utils';
 import styles from './index.less';
 
-const isAndroid = ()=>{
-  const {userAgent} = navigator;
-  return userAgent.includes('Android') || userAgent.includes('Adr');
-}
-const isIOS = ()=>{
-  const {userAgent} = navigator;
-  return !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-}
 const { TabPane } = Tabs;
 const BusinessPanel = (props)=>{
   const {self, formConfig = {}, defaultValue = {}, formLoading, isLaunch, taskOrProcDefKey, approvalRemarksRequire = false} = props;
@@ -90,7 +82,7 @@ const BusinessPanel = (props)=>{
 export default class OopWorkflowMain extends PureComponent {
   state = {
     imagePreviewVisible: false,
-    isApp: isAndroid() || isIOS(),
+    isApp: isApp(),
     approvalRemarksRequire: false,
     imageLoading: true
   }

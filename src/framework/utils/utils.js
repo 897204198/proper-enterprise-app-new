@@ -375,3 +375,14 @@ export const getApplicationContextUrl = ()=>{
   // return `${protocol}//${host}${pathname.substr(0, pathname.lastIndexOf('/'))}${prefix}`;
   return prefix;
 }
+export const isAndroid = ()=>{
+  const {userAgent} = navigator;
+  return userAgent.includes('Android') || userAgent.includes('Adr');
+}
+export const isIOS = ()=>{
+  const {userAgent} = navigator;
+  return !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+}
+export const isApp = ()=>{
+  return isIOS() || isAndroid()
+}

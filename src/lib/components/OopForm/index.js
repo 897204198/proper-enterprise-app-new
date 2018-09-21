@@ -2,9 +2,10 @@ import React from 'react';
 import {connect} from 'dva';
 import { Form } from 'antd';
 import moment from 'moment';
-import {formGenerator} from './utils';
+import {appFormGenerator, formGenerator} from './utils';
 import styles from './index.less';
 import {inject} from '../../../framework/common/inject';
+import {isApp} from '../../../framework/utils/utils';
 
 
 // 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
@@ -147,6 +148,6 @@ export default class OopForm extends React.PureComponent {
     //   }
     // });
     const formConfig = {...this.props, form, className: styles.container };
-    return formGenerator(formConfig)
+    return isApp() ? appFormGenerator(formConfig) : formGenerator(formConfig);
   }
 }

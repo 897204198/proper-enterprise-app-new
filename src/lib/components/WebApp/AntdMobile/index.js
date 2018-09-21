@@ -46,14 +46,14 @@ Object.keys(extra).forEach((key) => {
   }
 });
 
-const typeData = [{label: '婚假'}, {label: '事件'}, {label: '产假'}, {label: '病假'}, {label: '调休'}]
+const typeData = [{key: 1, label: '婚假', value: 1}, {key: 2, label: '事件', value: 2}, {key: 3, label: '产假', value: 3}]
 
 
 @Form.create()
 export default class H5NumberInputExample extends React.Component {
   originbodyScrollY = document.getElementsByTagName('body')[0].style.overflowY;
   state = {
-    type: 'money',
+    type: 1,
     hasError: false,
     show: false
   }
@@ -114,31 +114,46 @@ export default class H5NumberInputExample extends React.Component {
           )}
      */
     const { getFieldDecorator } = this.props.form;
-    const { type } = this.state;
     return (
       <div style={{width: '100%'}}>
         <List>
           {getFieldDecorator('datetime', {
             initialValue: '',
           })(
-            <List.Item
-              arrow="horizontal"
-              onClick={() => {
-                document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
-                this.setState({
-                  show: true,
-                });
-              }}
-            >
-              请假时间
-            </List.Item>
+            <div>
+              <List.Item
+                arrow="horizontal"
+                onClick={() => {
+                  document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
+                  this.setState({
+                    show: true,
+                  });
+                }}
+              >
+                <span style={{color: 'red'}}>*</span>请假时间
+              </List.Item>
+              <Calendar
+                locale={zhCN}
+                pickTime={true}
+                showShortcut={true}
+                visible={this.state.show}
+                onCancel={this.onCancel}
+                onConfirm={this.onConfirm}
+                onSelectHasDisableDate={this.onSelectHasDisableDate}
+                getDateExtra={this.getDateExtra}
+                defaultDate={now}
+                minDate={new Date(+now - 5184000000)}
+                maxDate={new Date(+now + 31536000000)}
+              />
+            </div>
           )}
           {getFieldDecorator('type', {
-            initialValue: '',
+            initialValue: this.state.type,
           })(
             <Picker
-              data={typeData}
+             data={typeData}
              cols={1}
+             onChange={v => this.setState({ type: v })}
              className="forss">
               <List.Item arrow="horizontal">请假类型</List.Item>
             </Picker>
@@ -150,7 +165,7 @@ export default class H5NumberInputExample extends React.Component {
             }]
           })(
             <InputItem
-              type={type}
+              type="number"
               placeholder="精确到小时"
               clear
               moneyKeyboardWrapProps={moneyKeyboardWrapProps}
@@ -163,7 +178,7 @@ export default class H5NumberInputExample extends React.Component {
             }]
           })(
             <TextareaItem
-              placeholder="请假事由"
+              title="请假事由"
               rows={5}
               count={100}
             />
@@ -172,22 +187,7 @@ export default class H5NumberInputExample extends React.Component {
             <Button type="primary" onClick={this.handleSubmit}>提交</Button>
           </WingBlank>
         </List>
-        <Calendar
-          locale={zhCN}
-          pickTime={true}
-          showShortcut={true}
-          visible={this.state.show}
-          onCancel={this.onCancel}
-          onConfirm={this.onConfirm}
-          onSelectHasDisableDate={this.onSelectHasDisableDate}
-          getDateExtra={this.getDateExtra}
-          defaultDate={now}
-          minDate={new Date(+now - 5184000000)}
-          maxDate={new Date(+now + 31536000000)}
-        />
       </div>
     );
   }
 }
-// const H5NumberInputExampleWrapper = createForm()(H5NumberInputExample);
-// export default H5NumberInputExampleWrapper;

@@ -1,15 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
 import { Modal, Tooltip, Icon } from 'antd';
-import styles from './index.less';
+import { isApp } from '../../../framework/utils/utils';
 
-const isAndroid = ()=>{
-  const {userAgent} = navigator;
-  return userAgent.includes('Android') || userAgent.includes('Adr');
-}
-const isIOS = ()=>{
-  const {userAgent} = navigator;
-  return !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-}
+import styles from './index.less';
 
 export default class OopPreview extends PureComponent {
   state = {
@@ -20,7 +13,7 @@ export default class OopPreview extends PureComponent {
   }
 
   componentDidMount() {
-    if (isAndroid() || isIOS()) {
+    if (isApp()) {
       this.getNaturalSize2();
     } else {
       this.getNaturalSize();
@@ -218,7 +211,7 @@ export default class OopPreview extends PureComponent {
   }
 
   render() {
-    const { img, isApp } = this.props;
+    const { img } = this.props;
     const { scales, degs, horWidth, verWidth } = this.state;
     const index = degs / 90;
     const Footer = (

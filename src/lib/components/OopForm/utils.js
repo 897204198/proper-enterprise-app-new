@@ -1,5 +1,7 @@
 import React from 'react';
 import { Form, Icon, Tooltip, Popover, Input, Spin } from 'antd';
+import List from 'antd-mobile/lib/list';
+import 'antd-mobile/lib/list/style';
 import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
@@ -67,23 +69,6 @@ export const formGenerator = (formConfig)=>{
         loading={loading}
         onMove={rowItemDrag} />) : (<Spin spinning={loading}><div className={className}><h3>{formTitle}</h3><Form layout={formLayout}>{formItemList}</Form></div></Spin>));
 }
-
-const createComponent = (component)=>{
-  if (typeof component === 'object') {
-    if (component.name) {
-      // object desc
-      const {name, props = {}, children = [] } = component;
-      if (name) {
-        return getComponent(name, props, children)
-      }
-    } else if (component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)') {
-      // React component
-      return component
-    }
-  } else if (typeof component === 'function') {
-    return component()
-  }
-}
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout,
     rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue} = formItemConfig;
@@ -125,4 +110,83 @@ const getFormItem = (formItemInner, formItemConfig)=>{
             style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
         </Tooltip>
       </div>) : null}</div>);
+}
+
+
+// appFormGenerator 为了移动端展示用 没有设计的功能
+export const appFormGenerator = (formConfig)=>{
+  const {loading = false, formTitle, className, formJson, form} = formConfig;
+  console.log(loading)
+  // 把正则的字符串形式转义成正则形式 fe: "/^0-9*$/" => /^0-9*$/
+  const transformRules = (rules)=>{
+    const arr = cloneDeep(rules);
+    arr.forEach((it)=>{
+      const {pattern} = it
+      if (pattern && pattern.constructor.name === 'String') {
+        it.pattern = new RegExp(pattern.split('/')[1]);
+      }
+    });
+    return arr;
+  }
+  const {getFieldDecorator} = form;
+  const formItemList = [];
+  if (Array.isArray(formJson) && formJson.length > 0) {
+    for (let i = 0; i < formJson.length; i++) {
+      const formItemConfig = formJson[i];
+      const {name, initialValue, rules = [], component, show = true } = formItemConfig;
+      if (show === true) {
+        let formItem = null;
+        let _rules = null;
+        if (name && component) {
+          if (rules.length) {
+            _rules = transformRules(rules);
+          }
+          const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules})(
+            createComponent(component)
+          );
+          formItem = getListItem(formItemInner,
+            {...formItemConfig});
+          formItemList.push(formItem);
+        }
+      }
+    }
+  }
+  if (formItemList.length === 0) {
+    console.error('the arguments `formJson` no be length === 0')
+    return null
+  }
+  return (<div className={className}><h3>{formTitle}</h3><List>{formItemList}</List></div>);
+}
+// 获取ListItem
+const getListItem = (formItemInner, formItemConfig)=>{
+  const {name, label, wrapper, wrapperClass} = formItemConfig;
+  const FormItem = Form.Item;
+  return wrapper ? (
+    <div className={wrapperClass} key={name}>
+      {formItemInner}
+    </div>) : (
+    <div key={name}>
+      <FormItem
+        key={name}
+        label={label}
+      >
+        {formItemInner}
+      </FormItem></div>);
+}
+// 获取web端和移动端组件
+const createComponent = (component)=>{
+  if (typeof component === 'object') {
+    if (component.name) {
+      // object desc
+      const {name, props = {}, children = [] } = component;
+      if (name) {
+        return getComponent(name, props, children)
+      }
+    } else if (component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)') {
+      // React component
+      return component
+    }
+  } else if (typeof component === 'function') {
+    return component()
+  }
 }

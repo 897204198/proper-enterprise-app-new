@@ -5,15 +5,8 @@ import OopUpload from '../OopUpload';
 import OopText from '../OopText';
 import OopGroupUserPicker from '../OopGroupUserPicker';
 import { getUuid } from '../../../framework/common/oopUtils';
+import { isAndroid } from '../../../framework/utils/utils';
 
-const isAndroid = ()=>{
-  const {userAgent} = navigator;
-  return userAgent.includes('Android') || userAgent.includes('Adr');
-}
-// const isIOS = ()=>{
-//   const {userAgent} = navigator;
-//   return !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-// }
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
@@ -28,7 +21,7 @@ const hackDatePickerIOSFocus = (e)=>{
 }
 // 移动应用下 Android系统 Input组件 focus弹出软键盘滚动问题
 const hackInputAndroidFocusKeyboardOcclusion = (e)=>{
-  if (true || isAndroid()) {
+  if (isAndroid()) {
     const inputEl = e.target;
     setTimeout(()=>{
       inputEl.scrollIntoViewIfNeeded && inputEl.scrollIntoViewIfNeeded(true);
