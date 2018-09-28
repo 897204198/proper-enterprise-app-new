@@ -12,58 +12,87 @@ import OopPreview from '../OopPreview';
 import {isApp, getApplicationContextUrl} from '../../../framework/utils/utils';
 import styles from './index.less';
 
+// 根据表单的权限设置 过滤掉不显示的字段 或者 设置某些字段为只读
+const authorityFormField = (formConfig)=>{
+  const {formJson, formProperties} = formConfig;
+  if (formProperties) {
+    const filter = (it)=>{
+      if (formProperties[it.name]) {
+        const {props = {}} = it.component;
+        props.disabled = !formProperties[it.name].writable;
+        it.component.props = {
+          ...it.component.props,
+          ...props
+        }
+        if (!it.rules) {
+          it.rules = [];
+        }
+        it.rules = [...it.rules];
+        it.rules.push({required: formProperties[it.name].require, message: '此项为必填项'})
+        return it
+      }
+    }
+    formConfig.formJson = formJson.map(filter).filter(it=>it !== undefined);
+  }
+};
+
 const { TabPane } = Tabs;
 const BusinessPanel = (props)=>{
   const {self, formConfig = {}, defaultValue = {}, formLoading, isLaunch, taskOrProcDefKey, approvalRemarksRequire = false} = props;
   // 清空approvalRemarks审批说明字段
   defaultValue.approvalRemarks = null;
-  const ApprovalPanelJson = [{
-    label: '审批意见',
-    name: 'passOrNot',
-    component: {
-      name: 'RadioGroup',
-      children: [
-        {label: '同意', value: 1},
-        {label: '不同意', value: 0},
-      ],
-      props: {
-        onChange: (e)=>{
-          self.setState({
-            approvalRemarksRequire: e.target.value === 0
-          }, ()=>{
-            if (e.target.value === 1) {
-              const form = self.oopForm.getForm();
-              form.validateFields(['approvalRemarks'], { force: true });
-            }
-          })
-        }
-      }
-    },
-    initialValue: 1
-  },
-  {
-    label: '审批说明',
-    name: 'approvalRemarks',
-    component: {
-      name: 'TextArea',
-      props: {
-        placeholder: '请对审核意见进行说明',
-      },
-    },
-    rules: [{
-      required: approvalRemarksRequire,
-      message: '请填写审批意见',
-    }],
-  }];
-
-  // 如果审批节点 包含 审批意见 表单为只读
-  if (!isLaunch) {
+  // { *如果审批节点 包含 审批意见 表单为只读*}  以前的逻辑
+  // 如果设置了表单权限 那么按照权限来 必填也一样 如果没有设置表单权限 那么一律只读可见 必填按照表单设计的来 2018-9-26
+  if (formConfig.formProperties) {
+    // 解析form的权限 设置require相关
+    authorityFormField(formConfig);
+  } else {
     if (!formConfig.formJson) {
       formConfig.formJson = [];
     }
     formConfig.formJson.forEach((item)=>{ item.component.props = {...item.component.props, disabled: true} });
-    // 如果是历史节点 没有taskOrProcDefKey 没有审批意见
+  }
+  if (!isLaunch) {
+    // 如果是历史节点 没有taskOrProcDefKey 没有审批意见 否则有审批意见
     if (taskOrProcDefKey) {
+      const ApprovalPanelJson = [{
+        label: '审批意见',
+        name: 'passOrNot',
+        component: {
+          name: 'RadioGroup',
+          children: [
+            {label: '同意', value: 1},
+            {label: '不同意', value: 0},
+          ],
+          props: {
+            onChange: (e)=>{
+              self.setState({
+                approvalRemarksRequire: e.target.value === 0
+              }, ()=>{
+                if (e.target.value === 1) {
+                  const form = self.oopForm.getForm();
+                  form.validateFields(['approvalRemarks'], { force: true });
+                }
+              })
+            }
+          }
+        },
+        initialValue: 1
+      },
+      {
+        label: '审批说明',
+        name: 'approvalRemarks',
+        component: {
+          name: 'TextArea',
+          props: {
+            placeholder: '请对审核意见进行说明',
+          },
+        },
+        rules: [{
+          required: approvalRemarksRequire,
+          message: '请填写审批意见',
+        }],
+      }];
       formConfig.formJson = formConfig.formJson.concat(ApprovalPanelJson);
     }
   }
@@ -134,7 +163,7 @@ export default class OopWorkflowMain extends PureComponent {
   }
   // 获取流程处理tab
   getHandleTabComponent = ()=>{
-    const { name = null, baseWorkflow: {formEntity}, businessObj: {formData, formTitle}, formLoading, isLaunch, taskOrProcDefKey} = this.props;
+    const { name = null, baseWorkflow: {formEntity}, businessObj: {formData, formTitle, formProperties}, formLoading, isLaunch, taskOrProcDefKey} = this.props;
     if (formEntity === undefined || formEntity.formDetails === undefined) {
       return null;
     }
@@ -150,7 +179,7 @@ export default class OopWorkflowMain extends PureComponent {
           taskOrProcDefKey={taskOrProcDefKey}
           formLoading={formLoading}
           defaultValue={formData}
-          formConfig={{...formConfig, formTitle}}
+          formConfig={{...formConfig, formTitle, formProperties}}
           approvalRemarksRequire={this.state.approvalRemarksRequire} />
       </div>
     )

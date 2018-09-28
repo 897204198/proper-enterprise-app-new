@@ -116,7 +116,6 @@ const getFormItem = (formItemInner, formItemConfig)=>{
 // appFormGenerator 为了移动端展示用 没有设计的功能
 export const appFormGenerator = (formConfig)=>{
   const {loading = false, formTitle, className, formJson, form} = formConfig;
-  console.log(loading)
   // 把正则的字符串形式转义成正则形式 fe: "/^0-9*$/" => /^0-9*$/
   const transformRules = (rules)=>{
     const arr = cloneDeep(rules);
@@ -133,7 +132,7 @@ export const appFormGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, initialValue, rules = [], component, show = true } = formItemConfig;
+      const {name, label, initialValue, rules = [], component, show = true } = formItemConfig;
       if (show === true) {
         let formItem = null;
         let _rules = null;
@@ -141,8 +140,13 @@ export const appFormGenerator = (formConfig)=>{
           if (rules.length) {
             _rules = transformRules(rules);
           }
-          const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules})(
-            createComponent(component)
+          const obj = {initialValue, rules: _rules};
+          // antd-mobile Picker的默认值为数组
+          if (component.name === 'Select') {
+            obj.initialValue = [initialValue];
+          }
+          const formItemInner = getFieldDecorator(name, obj)(
+            createComponent({...component, label})
           );
           formItem = getListItem(formItemInner,
             {...formItemConfig});
@@ -155,32 +159,32 @@ export const appFormGenerator = (formConfig)=>{
     console.error('the arguments `formJson` no be length === 0')
     return null
   }
-  return (<div className={className}><h3>{formTitle}</h3><List>{formItemList}</List></div>);
+  return (
+    <Spin spinning={loading}>
+      <div className={className}>
+        <h3>{formTitle}</h3>
+        <List>{formItemList}</List>
+      </div>
+    </Spin>);
 }
 // 获取ListItem
 const getListItem = (formItemInner, formItemConfig)=>{
-  const {name, label, wrapper, wrapperClass} = formItemConfig;
-  const FormItem = Form.Item;
+  const {name, wrapper, wrapperClass} = formItemConfig;
   return wrapper ? (
     <div className={wrapperClass} key={name}>
       {formItemInner}
     </div>) : (
     <div key={name}>
-      <FormItem
-        key={name}
-        label={label}
-      >
-        {formItemInner}
-      </FormItem></div>);
+      {formItemInner}</div>);
 }
 // 获取web端和移动端组件
 const createComponent = (component)=>{
   if (typeof component === 'object') {
     if (component.name) {
       // object desc
-      const {name, props = {}, children = [] } = component;
+      const {name, label, props = {}, children = [] } = component;
       if (name) {
-        return getComponent(name, props, children)
+        return getComponent(name, label, props, children)
       }
     } else if (component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)') {
       // React component

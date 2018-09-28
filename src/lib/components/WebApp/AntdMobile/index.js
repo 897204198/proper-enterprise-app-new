@@ -1,22 +1,8 @@
 import React from 'react';
 import { Form } from 'antd';
-import List from 'antd-mobile/lib/list';
-import 'antd-mobile/lib/list/style';
-import InputItem from 'antd-mobile/lib/input-item';
-import 'antd-mobile/lib/input-item/style';
-import Toast from 'antd-mobile/lib/toast';
-import 'antd-mobile/lib/toast/style';
-import Button from 'antd-mobile/lib/button';
-import 'antd-mobile/lib/button/style';
-import WingBlank from 'antd-mobile/lib/wing-blank';
-import 'antd-mobile/lib/wing-blank/style';
-import Calendar from 'antd-mobile/lib/calendar';
-import 'antd-mobile/lib/calendar/style';
-import Picker from 'antd-mobile/lib/picker';
-import 'antd-mobile/lib/picker/style';
-import TextareaItem from 'antd-mobile/lib/textarea-item';
-import 'antd-mobile/lib/textarea-item/style';
+import {TextareaItem, Picker, Calendar, DatePicker, WingBlank, InputItem, List, Button, Toast } from 'antd-mobile';
 import zhCN from 'antd-mobile/lib/calendar/locale/zh_CN';
+import zhCN2 from 'antd-mobile/lib/date-picker/locale/zh_CN';
 
 // 通过自定义 moneyKeyboardWrapProps 修复虚拟键盘滚动穿透问题
 // https://github.com/ant-design/ant-design-mobile/issues/307
@@ -55,7 +41,8 @@ export default class H5NumberInputExample extends React.Component {
   state = {
     type: 1,
     hasError: false,
-    show: false
+    show: false,
+    datetime2: new Date(Date.now())
   }
   onChange = (value) => {
     if (value.replace(/\s/g, '').length < 11) {
@@ -114,75 +101,79 @@ export default class H5NumberInputExample extends React.Component {
           )}
      */
     const { getFieldDecorator } = this.props.form;
+    const comList = [getFieldDecorator('datetime2', {
+      initialValue: this.state.datetime2,
+    })(
+      <DatePicker locale={zhCN2}>
+        <List.Item arrow="horizontal">Datetime</List.Item>
+      </DatePicker>
+    ), getFieldDecorator('datetime', {
+      initialValue: '',
+    })(
+      <div>
+        <List.Item
+          arrow="horizontal"
+          onClick={() => {
+            document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
+            this.setState({
+              show: true,
+            });
+          }}
+        >
+          <span style={{color: 'red'}}>*</span>请假时间
+        </List.Item>
+        <Calendar
+          locale={zhCN}
+          pickTime={true}
+          showShortcut={true}
+          visible={this.state.show}
+          onCancel={this.onCancel}
+          onConfirm={this.onConfirm}
+          onSelectHasDisableDate={this.onSelectHasDisableDate}
+          getDateExtra={this.getDateExtra}
+          defaultDate={now}
+          minDate={new Date(+now - 5184000000)}
+          maxDate={new Date(+now + 31536000000)}
+        />
+      </div>
+    ), getFieldDecorator('type', {
+      initialValue: this.state.type,
+    })(
+      <Picker
+        data={typeData}
+        cols={1}
+        onChange={v => this.setState({ type: v })}
+        className="forss">
+        <List.Item arrow="horizontal">请假类型</List.Item>
+      </Picker>
+    ), getFieldDecorator('hour', {
+      initialValue: 100,
+      rules: [{
+        required: true
+      }]
+    })(
+      <InputItem
+        type="number"
+        placeholder="精确到小时"
+        clear
+        moneyKeyboardWrapProps={moneyKeyboardWrapProps}
+      >请假小时数(8h/d)</InputItem>
+    ), getFieldDecorator('remarks', {
+      initialValue: '',
+      rules: [{
+        required: true
+      }]
+    })(
+      <TextareaItem
+        title="请假事由"
+        rows={5}
+        count={100}
+      />
+    )];
     return (
       <div style={{width: '100%'}}>
         <List>
-          {getFieldDecorator('datetime', {
-            initialValue: '',
-          })(
-            <div>
-              <List.Item
-                arrow="horizontal"
-                onClick={() => {
-                  document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
-                  this.setState({
-                    show: true,
-                  });
-                }}
-              >
-                <span style={{color: 'red'}}>*</span>请假时间
-              </List.Item>
-              <Calendar
-                locale={zhCN}
-                pickTime={true}
-                showShortcut={true}
-                visible={this.state.show}
-                onCancel={this.onCancel}
-                onConfirm={this.onConfirm}
-                onSelectHasDisableDate={this.onSelectHasDisableDate}
-                getDateExtra={this.getDateExtra}
-                defaultDate={now}
-                minDate={new Date(+now - 5184000000)}
-                maxDate={new Date(+now + 31536000000)}
-              />
-            </div>
-          )}
-          {getFieldDecorator('type', {
-            initialValue: this.state.type,
-          })(
-            <Picker
-             data={typeData}
-             cols={1}
-             onChange={v => this.setState({ type: v })}
-             className="forss">
-              <List.Item arrow="horizontal">请假类型</List.Item>
-            </Picker>
-          )}
-          {getFieldDecorator('hour', {
-            initialValue: 100,
-            rules: [{
-              required: true
-            }]
-          })(
-            <InputItem
-              type="number"
-              placeholder="精确到小时"
-              clear
-              moneyKeyboardWrapProps={moneyKeyboardWrapProps}
-            >请假小时数(8h/d)</InputItem>
-          )}
-          {getFieldDecorator('remarks', {
-            initialValue: '',
-            rules: [{
-              required: true
-            }]
-          })(
-            <TextareaItem
-              title="请假事由"
-              rows={5}
-              count={100}
-            />
-          )}
+          {comList}
           <WingBlank style={{marginTop: 12}}>
             <Button type="primary" onClick={this.handleSubmit}>提交</Button>
           </WingBlank>

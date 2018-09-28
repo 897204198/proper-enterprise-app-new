@@ -92,7 +92,7 @@ export default class OopForm extends React.PureComponent {
           item.initialValue = moment(new Date(item.initialValue), format);
         }
       }
-      // 如果是只读的组件
+      // 如果是表单只读 那么设置组件的props为disabled
       if (disabled) {
         if (!component.$$typeof) {
           if (!component.props) {

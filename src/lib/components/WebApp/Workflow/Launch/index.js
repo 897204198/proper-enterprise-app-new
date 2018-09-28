@@ -30,14 +30,15 @@ export default class Launch extends React.PureComponent {
       type: 'workflowDesigner/fetchByProcDefKey',
       payload: this.state.procDefKey,
       callback: (res)=>{
-        const { result: {key, name, startFormKey, id} } = res;
+        const { result: {key, name, startFormKey, id, formProperties} } = res;
         if (key && name && startFormKey && id) {
           const {btoa, encodeURIComponent, JSON} = window;
           const param = btoa(encodeURIComponent(JSON.stringify({
             isLaunch: true,
             taskOrProcDefKey: key,
             businessObj: {
-              formKey: startFormKey
+              formKey: startFormKey,
+              formProperties
             },
             name,
             processDefinitionId: id,

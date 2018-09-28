@@ -1,5 +1,7 @@
 import { queryWorkflowList, removeWorkflowList, createWorkflow, repositoryWorkflow, queryByProcDefKey } from '../services/workflowDesignerS';
-import { formatDate } from '../../../../framework/utils/utils';
+import { formatDate, getApplicationContextUrl } from '../../../../framework/utils/utils';
+
+const token = window.localStorage.getItem('proper-auth-login-token');
 
 export default {
   namespace: 'workflowDesigner',
@@ -69,8 +71,8 @@ export default {
     getList(state, action) {
       const lists = action.payload;
       for (let i = 0; i < lists.data.length; i++) {
-        const url = `/workflow/service/app/rest/models/${lists.data[i].id}/thumbnail?version=${Date.now()}`;
-        lists.data[i].sourceExtraUrl = `${location.protocol}//${location.host}${url}`;
+        const url = `${getApplicationContextUrl()}/workflow/service/app/rest/models/${lists.data[i].id}/thumbnail?version=${Date.now()}&access_token=${token}`;
+        lists.data[i].sourceExtraUrl = url;
         lists.data[i].isChecked = false;
         lists.data[i].lastUpdated = formatDate(lists.data[i].lastUpdated);
       }

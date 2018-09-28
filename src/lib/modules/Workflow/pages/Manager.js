@@ -49,7 +49,7 @@ export default class Manager extends React.PureComponent {
     isLaunch: false,
     taskOrProcDefKey: null,
     businessObj: null,
-    procInstId: null
+    procInstId: null,
   }
 
   componentDidMount() {
@@ -72,7 +72,6 @@ export default class Manager extends React.PureComponent {
       }
     });
   }
-
   handleSearchTask = (param = {})=>{
     const { pagination } = param;
     const params = {
@@ -81,7 +80,6 @@ export default class Manager extends React.PureComponent {
     }
     this.taskSearch.load(params);
   }
-
   handleSearchDesign = (inputValue, filter) => {
     const { workflowManager: { design } } = this.props;
     const filterList = inputValue ? filter(design.data, ['name', 'processVersion']) : design.data;
@@ -93,7 +91,6 @@ export default class Manager extends React.PureComponent {
       }
     });
   }
-
   handleSearchProcess = (param = {})=>{
     const { pagination } = param;
     const params = {
@@ -102,7 +99,6 @@ export default class Manager extends React.PureComponent {
     }
     this.processSearch.load(params);
   }
-
   handleSearchTaskAssignee = (param = {})=>{
     const { pagination } = param;
     const params = {
@@ -111,7 +107,19 @@ export default class Manager extends React.PureComponent {
     }
     this.taskAssigneeSearch.load(params);
   }
-
+  // 部署流程
+  handleProcessDeployed = (record)=>{
+    console.log('handleProcessDeployed', record);
+    this.props.dispatch({
+      type: 'workflowDesigner/repository',
+      payload: record.id,
+      callback: (res) => {
+        oopToast(res, '部署成功', '部署失败');
+        this.fetchDesign();
+      }
+    });
+  }
+  // tab切换
   handleTabsChange = (key) => {
     const self = this;
     const { children } = this.tabs.props
@@ -134,24 +142,26 @@ export default class Manager extends React.PureComponent {
       }
     });
   }
+  // 发起流程
   handleProcessLaunch = (record)=>{
     console.log('handleProcessLaunch', record);
     this.props.dispatch({
       type: 'workflowDesigner/fetchByProcDefKey',
       payload: record.key,
       callback: (res)=>{
-        const { result: {key, name, startFormKey, id} } = res;
+        const { result: {key, name, startFormKey, id, formProperties} } = res;
         if (key && name && startFormKey && id) {
           this.setState({
             wfVisible: true,
             isLaunch: true,
             taskOrProcDefKey: key,
             businessObj: {
-              formKey: startFormKey
+              formKey: startFormKey,
+              formProperties
             },
             name,
             processDefinitionId: id,
-            stateCode: 'DONE'
+            stateCode: 'DONE',
           })
         } else {
           message.error('该流程未部署或参数解析错误');
@@ -159,6 +169,7 @@ export default class Manager extends React.PureComponent {
       }
     });
   }
+  // 待办
   handleProcessSubmit = (record)=>{
     console.log('handleProcessSubmit', record)
     const {pepProcInst: {procInstId, processTitle}, taskId, name} = record;
@@ -186,17 +197,7 @@ export default class Manager extends React.PureComponent {
       }
     });
   }
-  handleProcessDeployed = (record)=>{
-    console.log('handleProcessDeployed', record);
-    this.props.dispatch({
-      type: 'workflowDesigner/repository',
-      payload: record.id,
-      callback: (res) => {
-        oopToast(res, '部署成功', '部署失败');
-        this.fetchDesign();
-      }
-    });
-  }
+  // 发起历史
   handleProcessView = (record)=>{
     console.log('handleProcessView', record);
     const {procInstId, processDefinitionId, stateCode} = record;

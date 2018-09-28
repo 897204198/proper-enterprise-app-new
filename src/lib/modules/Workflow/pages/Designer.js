@@ -62,7 +62,7 @@ const CreateForm = Form.create()((props) => {
   )
 });
 
-const CreateModal = connect()((props) => {
+const CreateModal = (props) => {
   const { viewVisible, createOk, createCancel } = props;
   const okHandle = () => {
     const form = this.CreateForm.getForm();
@@ -83,7 +83,7 @@ const CreateModal = connect()((props) => {
       <CreateForm ref={(el)=>{ this.CreateForm = el; }} />
     </Modal>
   );
-});
+};
 
 @inject(['workflowDesigner'])
 @connect(({ workflowDesigner, global, loading }) => ({
@@ -350,7 +350,6 @@ export default class Designer extends PureComponent {
     const { workflowDesigner: { data }, loading, global: {size} } = this.props;
     const { deleteLists, buttonSize, showUploadList, viewVisible } = this.state;
     this.state.lists = data.data;
-
     const itemMenu = [
       {key: 'item_0', type: 'lock', content: '权限'},
       {key: 'item_1', type: 'file-text', content: '复制'},

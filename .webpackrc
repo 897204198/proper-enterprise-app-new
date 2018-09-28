@@ -1,7 +1,8 @@
 {
   "entry": "src/framework/index/index.js",
   "extraBabelPlugins": [
-    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": true }]
+    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": true }],
+    ["import", { "libraryName": "antd-mobile", "libraryDirectory": "es", "style": true }, "antd-mobile"]
   ],
   "env": {
     "development": {
