@@ -34,11 +34,18 @@ export default class OopTable extends PureComponent {
     })
   }
   onChange = (pagination, filters, sorter)=>{
-    this.props.onLoad && this.props.onLoad({pagination: {
+    const filtersParam = {}
+    if (Object.values(filters)[0].length) {
+      for (const k in filters) {
+        filtersParam[k] = filters[k].toString()
+      }
+    }
+    this.props.onLoad && this.props.onLoad({
       pageNo: pagination.current,
       pageSize: pagination.pageSize,
-      sorter
-    }})
+      sorter,
+      ...filtersParam
+    });
   }
   clearSelection = ()=>{
     this.setState({

@@ -9,7 +9,7 @@ const getFileDownloadUrl = (id)=>{
     return `${getApplicationContextUrl()}/file/${id}?access_token=${token}`;
   }
 }
-
+const imgSuffix = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
 export default class OopUpload extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -40,7 +40,11 @@ export default class OopUpload extends React.PureComponent {
     }
   }
   beforeUpload = (file) => {
-    const { type = [], size } = this.props;
+    const { type = [], size, maxFiles = -1 } = this.props;
+    if (this.state.fileList.length === maxFiles) {
+      message.error(`文件上传数量已达上限${maxFiles}个`);
+      return false;
+    }
     const fileName = file.name.split('.').pop();
     if (type.length && !type.includes('.'.concat(fileName))) {
       message.error(`文件只能是${type.join('、')}格式!`);
@@ -69,7 +73,7 @@ export default class OopUpload extends React.PureComponent {
   };
   getInitProps = ()=>{
     const extra = this.defaultExtra();
-    const props = {
+    const defaultProps = {
       name: 'file',
       action: `${getApplicationContextUrl()}/file`,
       beforeUpload: this.beforeUpload,
@@ -96,25 +100,36 @@ export default class OopUpload extends React.PureComponent {
         });
       },
       onPreview: (file)=>{
-        this.setState({
-          previewUrl: file.url
-        }, ()=>{
-          setTimeout(()=>{
-            this.setState({
-              previewVisible: true
-            })
+        const fileNameSuffix = file.name.split('.').pop();
+        // 只有图片的情况再预览
+        if (imgSuffix.includes(fileNameSuffix)) {
+          this.setState({
+            previewUrl: file.url
+          }, ()=>{
+            setTimeout(()=>{
+              this.setState({
+                previewVisible: true
+              })
+            });
           });
-        })
+        } else {
+          const downloadUrl = getFileDownloadUrl(file.id);
+          let a = document.createElement('a');
+          a.href = downloadUrl;
+          a.target = '_blank';
+          a.click();
+          a = null;
+        }
       },
       extra,
       ...this.props
     };
     const token = window.localStorage.getItem('proper-auth-login-token');
-    props.headers = {
+    defaultProps.headers = {
       'X-PEP-TOKEN': token
     }
-    const {onChange} = props;
-    props.onChange = (info)=> {
+    const {onChange} = defaultProps;
+    defaultProps.onChange = (info)=> {
       if (info.file.status === 'done') {
         message.success('上传成功!');
         const {file: {response}, fileList} = info;
@@ -142,7 +157,7 @@ export default class OopUpload extends React.PureComponent {
         })
       }
     }
-    return props;
+    return defaultProps;
   }
   preViewPic = ()=>{
     this.setState({

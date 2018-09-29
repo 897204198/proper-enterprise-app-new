@@ -17,8 +17,8 @@ Components | Data Entry | OopUpload | 上传图片 |
 #### OopUpload
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| modelName | 模块名称 | string | - |
 | extra | 上传按钮的自定义形式 | ReactNode | - |
-| type | 支持上传文件的类型 | object[] | - |
+| type | 支持上传文件的类型 | string[] (例如：['.jpg','.png','.jpeg']) | - |
 | size | 限制上传图片的大小 | string | - |
+| maxFiles | 上传文件的个数 | string | -1 |
 其他属性详见[upload](https://ant.design/components/upload-cn/)

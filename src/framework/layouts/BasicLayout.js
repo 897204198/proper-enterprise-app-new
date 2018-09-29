@@ -175,7 +175,15 @@ export default class BasicLayout extends React.PureComponent {
       return
     }
     let a = document.createElement('a');
-    a.href = webImUrl;
+    let url = null;
+    if (webImUrl.includes('?')) {
+      url = `${webImUrl}&`
+    } else {
+      url = `${webImUrl}?`
+    }
+    const token = window.localStorage.getItem('proper-auth-login-token');
+    url = url.concat(`token=${token}`);
+    a.href = url;
     a.target = '_blank';
     a.click();
     a = null;
