@@ -43,5 +43,8 @@ const routers = {
   '/webapp/antd-mobile': {
     component: ()=>import('../lib/components/WebApp/AntdMobile')
   },
+  '/webapp/other/reset-pwd': {
+    component: ()=>import('../lib/components/WebApp/Other/ResetPwd')
+  },
 };
 export default routers
