@@ -345,7 +345,13 @@ const systePage = {
     "diplomaId": null
   }]
 }
-
+const messageOfficial = {
+  "count" : 1,
+  "data":[
+    {"id":1,"name":"aa","type":"推送","keyboards":"哈哈","set":{"app":true,"email":false,"mes":true},"des":"666","switch":false},
+    {"id":2,"name":"bb","type":"推送","keyboards":"哈哈","set":{"app":false,"email":false,"mes":true},"des":"666","switch":true}
+  ]
+}
 function queryList(type) {
   let list = {};
   if (type === 'authusers') {
@@ -362,6 +368,8 @@ function queryList(type) {
     list = systemDic;
   } else if (type === 'systempagepush') {
     list = systePage;
+  } else if (type === 'officialSearch') {
+    list = messageOfficial;
   }
   return list;
 }

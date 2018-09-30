@@ -23,5 +23,7 @@ jsconfig.json
 
 /cli/templates
 
+# vscode
+/.vscode
 # extends code from platform or product
 

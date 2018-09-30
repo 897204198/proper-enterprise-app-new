@@ -6,6 +6,9 @@ const routers = {
   '/base': {// 默认系统登陆注册页面路由
     component: ()=>import('../framework/layouts/UserLayout')
   },
+  '/setting': {
+    component: ()=>import('../lib/modules/Setting/pages/Mes')
+  },
   '/base/login': {
     component: ()=>import('../framework/modules/Base/pages/Login')
   },

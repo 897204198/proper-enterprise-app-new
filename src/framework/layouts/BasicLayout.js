@@ -144,8 +144,9 @@ export default class BasicLayout extends React.PureComponent {
     });
   }
   handleMenuClick = ({ key }) => {
-    if (key === 'triggerError') {
-      this.props.dispatch(routerRedux.push('/exception/trigger-exception'));
+    if (key === 'setting') {
+      if (this.props.history.location.pathname === '/setting') return;
+      this.props.dispatch(routerRedux.push('/setting'));
       return;
     }
     if (key === 'logout') {

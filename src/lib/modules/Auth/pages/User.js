@@ -441,6 +441,7 @@ export default class User extends React.PureComponent {
       ...param,
       userEnable: 'ALL'
     }
+    // console.log(this)
     this.oopSearch.load(params)
   }
   addUserRoles = (typeAdd, id, typeRoles) => {
@@ -638,7 +639,6 @@ export default class User extends React.PureComponent {
         display: record=>(!record.superuser)
       },
     ]
-
     return (
       <PageHeaderLayout content={
         <OopSearch

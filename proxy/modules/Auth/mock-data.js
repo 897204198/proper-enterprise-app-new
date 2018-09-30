@@ -39,6 +39,9 @@ module.exports = {
     {"id":"pep-system-pagePush","name":"APP推送信息配置","route":"/system/pagePush","sequenceNumber":0,"icon":"message","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-system","menuCode":null,"root":false},
     {"id":"pep-feedback","name":"意见反馈","route":"feedback","sequenceNumber":1,"icon":"form","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
     {"id":"pep-workflow-manager","name":"流程管理","route":"/workflow/manager","sequenceNumber":0,"icon":"table","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-workflow","root":false,"leaf":true},
+    {"id":"pep-message","name":"消息配置管理","route":"/message","sequenceNumber":9,"icon":"appstore","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
+    {"id":"pep-message-app","name":"应用配置","route":"/message/client/app","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
+    {"id":"pep-message-official","name":"文案配置","route":"/message/client/official","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
   ],
   "GET:/auth/users": {
     "count":100,
