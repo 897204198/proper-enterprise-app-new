@@ -13,9 +13,7 @@ const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
 const { Option } = Select;
-// const isWeb = !isApp();
-console.log(isApp)
-const isWeb = true;
+const isWeb = !isApp();
 const dateFormat = 'YYYY-MM-DD';
 // 移动应用下 IOS系统时间组件自动focus
 const hackDatePickerIOSFocus = (e)=>{
@@ -57,6 +55,15 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children)=
     case 'DatePicker':
       component = <DatePickerM { ...props} locale={zhCN2}><List.Item arrow="horizontal">{componentLabel}</List.Item></DatePickerM>;
       break;
+    // case 'RadioGroup':
+    //   component = (
+    //   <List renderHeader={() => 'RadioItem demo'}>{children.map(i => (
+    //     <RadioM.RadioItem checked={i.value}>
+    //       {i.label}
+    //     </RadioM.RadioItem>
+    //   ))}
+    //   </List>);
+    //   break;
     default: null
   }
   return component;

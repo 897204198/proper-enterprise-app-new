@@ -35,7 +35,7 @@ export default class WorkflowMainPop extends PureComponent {
   constructor(props) {
     super(props);
     const { param, from = '' } = getParamObj(this.props.location.search);
-    const {isLaunch, taskOrProcDefKey, procInstId, name, businessObj, stateCode, processDefinitionId} = JSON.parse(decodeURIComponent(atob(param)));
+    const {isLaunch, taskOrProcDefKey, procInstId, name, businessObj, stateCode, processDefinitionId, tabActiveKey} = JSON.parse(decodeURIComponent(atob(param)));
     this.state = {
       param,
       buttonLoading: false,
@@ -47,7 +47,8 @@ export default class WorkflowMainPop extends PureComponent {
       name,
       businessObj,
       processDefinitionId,
-      stateCode
+      stateCode,
+      tabActiveKey
     }
   }
   componentDidMount() {

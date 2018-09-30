@@ -113,7 +113,8 @@ export default class OopWorkflowMain extends PureComponent {
     imagePreviewVisible: false,
     isApp: isApp(),
     approvalRemarksRequire: false,
-    imageLoading: true
+    imageLoading: true,
+    tabActiveKey: this.props.tabActiveKey ? this.props.tabActiveKey : 'handle'
   }
   // 表单是否加载完成
   isComplete = false;
@@ -132,6 +133,9 @@ export default class OopWorkflowMain extends PureComponent {
           this.isComplete = true
         }
       })
+      if (this.state.tabActiveKey === 'progress') {
+        this.handleTabsChange(this.state.tabActiveKey);
+      }
     }
   }
   // 清空表单对象
@@ -285,7 +289,7 @@ export default class OopWorkflowMain extends PureComponent {
       {title: '流程图', key: 'image', content: processImageTab},
     ]
     const tabs = (
-      <Tabs defaultActiveKey={panes[0].key} onChange={this.handleTabsChange}>
+      <Tabs defaultActiveKey={this.state.tabActiveKey} onChange={this.handleTabsChange}>
         {panes.map(tab=>(
           tab && <TabPane key={tab.key} tab={tab.title} disabled={tab.disabled}>{tab.content}</TabPane>
         ))
