@@ -6,6 +6,7 @@ import {inject} from '../../../../../framework/common/inject';
 import {getParamObj} from '../../../../../framework/utils/utils';
 import * as properties from '../../../../../config/properties';
 import logo from '../../../../../assets/logo.svg';
+import {oopToast} from '../../../../../framework/common/oopUtils';
 import styles from './index.less';
 
 const FormItem = Form.Item;
@@ -58,10 +59,10 @@ const SuccessPanel = ()=>{
 }
 
 
-@inject('baseLogin')
+@inject('basePersonalCenter')
 @connect(({ baseLogin, loading }) => ({
   baseLogin,
-  submitting: loading.effects['baseLogin/login'],
+  submitting: loading.effects['basePersonalCenter/changePassword'],
 }))
 export default class LoginPage extends Component {
   constructor(props) {
@@ -75,14 +76,21 @@ export default class LoginPage extends Component {
   handleSubmit = (form) => {
     form.validateFieldsAndScroll((err, data) => {
       if (err) return;
-      console.log(this.state.token);
+      delete data.confirmPwd;
+      const param = {
+        ...data,
+        token: this.state.token
+      }
       this.props.dispatch({
-        type: 'baseLogin/login',
-        payload: data,
-        callback: ()=>{
-          this.setState({
-            submited: true
-          })
+        type: 'basePersonalCenter/changePassword',
+        payload: param,
+        callback: (resp)=>{
+          oopToast(resp, '重置密码成功', '重置密码失败');
+          if (resp.status === 'ok') {
+            this.setState({
+              submited: true
+            })
+          }
         }
       });
     });

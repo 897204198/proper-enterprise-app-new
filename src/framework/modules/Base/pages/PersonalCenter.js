@@ -4,9 +4,7 @@ import { Breadcrumb, Tabs, Form, Input, Button, Spin, Icon } from 'antd';
 import {connect} from 'dva';
 import {inject} from '../../../common/inject';
 import OopUpload from '../../../../lib/components/OopUpload/index';
-import OopPreview from '../../../../lib/components/OopPreview';
 import { oopToast } from '../../../common/oopUtils';
-import { getApplicationContextUrl } from '../../../utils/utils';
 import styles from './PersonalCenter.less';
 
 const { TabPane } = Tabs;
@@ -29,7 +27,7 @@ const formItemLayoutWithOutLabel = {
 };
 const PersonalInfoForm = Form.create()((props) => {
   const { form, entity, loading, avatarLoading, handleSubmit, nameChange, emailChange,
-    phoneChange, avatarChange, handleChange, fileList, handlePreview } = props;
+    phoneChange, avatarChange } = props;
   const { validateFields, resetFields } = form;
   const extra = (
     <div style={{ color: '#08c' }}>
@@ -40,15 +38,14 @@ const PersonalInfoForm = Form.create()((props) => {
   const submit = (e) => {
     e.preventDefault();
     validateFields((err, values) => {
-      const id = values.avatar
-        && values.avatar.file
-        && values.avatar.file.response;
-      if (id) {
-        values.avatar = id;
+      if (err) return
+      const { avatar = [] } = values;
+      if (avatar.length) {
+        values.avatar = avatar[0].id;
+      } else {
+        values.avatar = '';
       }
-      if (!err) {
-        handleSubmit(values, resetFields);
-      }
+      handleSubmit(values, resetFields);
     })
   };
   const validateName = (rule, value, callback) => {
@@ -161,15 +158,10 @@ const PersonalInfoForm = Form.create()((props) => {
             ],
           })(
             <OopUpload
-              modelName="basePersonalCenter"
               listType="picture-card"
               extra={extra}
-              showUploadList={{ showPreviewIcon: true, showRemoveIcon: false }}
-              onChange={handleChange}
-              type={['.jpeg', '.png']}
-              size={200 / 1024}
-              fileList={fileList}
-              onPreview={handlePreview}
+              maxFiles={1}
+              type={['.jpeg', '.png', '.jpg']}
             />
           )}
         </FormItem>
@@ -346,7 +338,6 @@ export default class PersonalCenter extends React.PureComponent {
     whenPrePassword: false,
     whenPassword: false,
     fileList: [],
-    previewVisible: false
   };
 
   componentDidMount() {
@@ -368,10 +359,6 @@ export default class PersonalCenter extends React.PureComponent {
     this.props.dispatch({
       type: 'basePersonalCenter/fetchById',
       payload: id,
-      callback: (res) => {
-        const {result: {avatar}} = res;
-        this.updateAvatar(avatar);
-      }
     });
   }
 
@@ -388,26 +375,15 @@ export default class PersonalCenter extends React.PureComponent {
       callback: (res) => {
         oopToast(res, '更新个人信息成功', '更新失败，请填写正确的信息');
         cb();
-        const {result: {avatar}} = res;
-        this.updateAvatar(avatar);
+        this.setState(
+          {
+            whenName: false,
+            whenEmail: false,
+            whenPhone: false,
+            whenAvatar: false,
+          }
+        )
       }
-    });
-  }
-
-  // 更新上传头像列表
-  updateAvatar = (avatar) => {
-    const tokenFix = window.localStorage.getItem('proper-auth-login-token');
-    const url = avatar ? ((avatar.indexOf('http') === 0 || avatar.indexOf('data:image/') === 0) ?
-      avatar : `${getApplicationContextUrl()}/file/${avatar}?access_token=${tokenFix}`) : '';
-    const fileList = url ? [{
-      uid: -1,
-      status: 'done',
-      type: 'image/',
-      url,
-      thumbUrl: url
-    }] : [];
-    this.setState({
-      fileList
     });
   }
 
@@ -527,44 +503,9 @@ export default class PersonalCenter extends React.PureComponent {
     }
   }
 
-  // 图片上传onChange事件
-  handleChange = ({file, fileList}) => {
-    fileList = fileList.filter((item) => {
-      return item.type.indexOf('image/') === 0;
-    });
-    fileList = fileList.slice(-1);
-    if (file.status === 'uploading') {
-      this.setState({
-        avatarLoading: true,
-        fileList
-      });
-      return;
-    }
-    if (file.status === 'done') {
-      this.setState({
-        avatarLoading: false,
-        fileList
-      });
-    }
-  }
-
-  // 头像预览
-  handlePreview = () =>{
-    this.setState({
-      previewVisible: true
-    })
-  }
-
-  // 关闭头像预览
-  handleCancel = () => {
-    this.setState({
-      previewVisible: false
-    });
-  }
-
   render() {
     const { basePersonalCenter: { entity }, loading } = this.props;
-    const { avatarLoading, whenName, whenEmail, whenPhone, fileList, previewVisible,
+    const { avatarLoading, whenName, whenEmail, whenPhone, fileList,
       whenAvatar, whenOldPassword, whenPrePassword, whenPassword } = this.state;
     const when = (whenName || whenEmail || whenPhone || whenAvatar
       || whenOldPassword || whenPrePassword || whenPassword);
@@ -592,17 +533,6 @@ export default class PersonalCenter extends React.PureComponent {
           fileList={fileList}
           handlePreview={this.handlePreview}
         />
-        {previewVisible ? (
-          <OopPreview
-            visible={previewVisible}
-            onCancel={this.handleCancel}
-            img={{
-              src: fileList[0] ? fileList[0].thumbUrl : '',
-              alt: '头像',
-              filename: fileList[0] ? fileList[0].uid : '',
-            }}
-          />
-        ) : ''}
       </div>)
   }
 }

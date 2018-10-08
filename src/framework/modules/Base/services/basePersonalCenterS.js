@@ -1,8 +1,15 @@
 import request from '../../../../framework/utils/request';
 
 export async function changePassword(param) {
-  return request('/auth/users/password', {
+  const url = `/auth/users/password/${param.password}`;
+  const headers = {}
+  // 兼容邮件重置密码的请求
+  if (param.token) {
+    headers['X-PEP-TOKEN'] = param.token
+  }
+  return request(url, {
     method: 'PUT',
-    body: param
+    body: param,
+    headers
   });
 }

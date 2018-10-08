@@ -55,6 +55,7 @@ export default class OopGroupUserPicker extends React.PureComponent {
 
   render() {
     const {
+      placeholder = '请选择',
       OopGroupUserPicker$model: {group = [], user = []},
       listLoading,
       tableLoading,
@@ -97,11 +98,11 @@ export default class OopGroupUserPicker extends React.PureComponent {
         buttonCfg={{
           icon: 'user',
           onClick: this.handleButtonClick,
-          text: '指定处理人',
+          text: placeholder,
           disabled
         }}
         defaultSelected={ this.state.selectedRowItems}
-        modalTitle="指定处理人"
+        modalTitle={placeholder}
         onChange={this.handleChange}
         tableCfg={tableCfg}
         treeCfg={treeCfg}

@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import {Tag, Button, Tooltip } from 'antd';
+import {Tag, Button, Tooltip, Modal} from 'antd';
 import OopModal from '../OopModal';
 import OopTreeTable from '../OopTreeTable';
 import styles from './index.less';
@@ -142,6 +142,19 @@ export default class OopTabTableModal extends React.PureComponent {
     this.handleTableLoad();
     return false;
   }
+  clearAll = ()=>{
+    Modal.confirm({
+      title: '提示',
+      content: `确定删除选中的${this.state.selectedRecord.length}条数据吗`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        this.setState({
+          selectedRecord: []
+        })
+      }
+    });
+  }
   render() {
     const {
       buttonCfg = {
@@ -207,6 +220,7 @@ export default class OopTabTableModal extends React.PureComponent {
                       }}>{item.name}</Tag>
                   )
                 })}
+                {selectedRecord.length ? (<Tag onClick={this.clearAll}>清空选择</Tag>) : null}
               </div>
             </div>
             <OopTreeTable

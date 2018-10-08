@@ -3,6 +3,33 @@ import { Upload, Button, Icon, message} from 'antd';
 import OopPreview from '../OopPreview';
 import { getApplicationContextUrl } from '../../../framework/utils/utils';
 
+const assemblingFileList = (arr)=>{
+  if (!arr || !arr.length) {
+    return [];
+  }
+  return arr.map((item, index)=>{
+    if (!item) {
+      return undefined;
+    }
+    if (typeof item === 'string') {
+      item = {
+        key: item,
+        id: item
+      }
+    }
+    const {id, url, uid} = item;
+    if (!uid) {
+      item.uid = -(++index);
+    }
+    if (!url && id) {
+      // 兼容http模式 base64模式 proper自己的服务器模式（即一个ID）
+      item.url = (id.includes('http') || id.includes('data:image/')) ?
+        id : getFileDownloadUrl(id);
+      item.thumbUrl = item.url;
+    }
+    return item;
+  }).filter(it=>it !== undefined);
+}
 const getFileDownloadUrl = (id)=>{
   if (id) {
     const token = window.localStorage.getItem('proper-auth-login-token');
@@ -14,29 +41,21 @@ export default class OopUpload extends React.PureComponent {
   constructor(props) {
     super(props);
     const { defaultFileList = [], value = [] } = this.props;
-    const fileList = [...defaultFileList.concat(value)];
-    fileList.length && fileList.forEach((item, index)=>{
-      if (typeof item === 'string') {
-        item = {
-          id: item
-        }
-      }
-      const {id, url, uid} = item;
-      if (!uid) {
-        item.uid = -(++index);
-      }
-      if (!url && id) {
-        // 兼容http模式 base64模式 proper自己的服务器模式（即一个ID）
-        item.url = (id.includes('http') || id.includes('data:image/')) ?
-          id : getFileDownloadUrl(id);
-        item.thumbUrl = item.url;
-      }
-    });
+    const fileList = assemblingFileList([...defaultFileList.concat(value)]);
     this.state = {
       fileList,
       uploading: false,
       previewVisible: false,
       previewUrl: ''
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps) {
+      const { defaultFileList = [], value = [] } = nextProps;
+      const fileList = assemblingFileList([...defaultFileList.concat(value)]);
+      this.setState({
+        fileList
+      })
     }
   }
   beforeUpload = (file) => {
@@ -62,7 +81,6 @@ export default class OopUpload extends React.PureComponent {
     }));
     return true;
   }
-
   defaultExtra = ()=>{
     const {uploading} = this.state;
     return (
@@ -100,9 +118,10 @@ export default class OopUpload extends React.PureComponent {
         });
       },
       onPreview: (file)=>{
-        const fileNameSuffix = file.name.split('.').pop();
+        const {listType} = this.props;
         // 只有图片的情况再预览
-        if (imgSuffix.includes(fileNameSuffix)) {
+        const fileNameSuffix = file.name && file.name.split('.').pop();
+        if (imgSuffix.includes(fileNameSuffix) || 'picture,picture-card'.includes(listType)) {
           this.setState({
             previewUrl: file.url
           }, ()=>{
@@ -155,6 +174,23 @@ export default class OopUpload extends React.PureComponent {
         this.setState({
           uploading: false
         })
+      } else if (info.file.status === 'removed') {
+        // TODO ??? 不解  *再添加了componentWillReceiveProps 生命周期之后 删除不了上传的文件 这块特意处理了一下*
+        this.setState(({ fileList }) => {
+          const index = fileList.indexOf(info.file);
+          const newFileList = fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        }, ()=>{
+          onChange && onChange(this.state.fileList.map(it=>({
+            id: it.id,
+            name: it.name,
+            url: it.url,
+            uid: it.uid,
+          })));
+        });
       }
     }
     return defaultProps;

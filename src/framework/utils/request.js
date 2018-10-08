@@ -86,7 +86,10 @@ export default function request(url, options) {
   const { headers } = newOptions;
   newOptions.headers = {
     ...headers,
-    'X-PEP-TOKEN': window.localStorage.getItem('proper-auth-login-token')
+  }
+  // 请求可以覆盖默认的X-PEP-TOKEN
+  if (!newOptions.headers['X-PEP-TOKEN']) {
+    newOptions.headers['X-PEP-TOKEN'] = window.localStorage.getItem('proper-auth-login-token');
   }
   // 如果请求不属于指定的域 那么删除 X-PEP-TOKEN TODO
   if (peaDynamicRequestPrefix && !newUrl.includes(peaDynamicRequestPrefix)) {
