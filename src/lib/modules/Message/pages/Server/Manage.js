@@ -1,17 +1,17 @@
 import React, {Fragment} from 'react';
 import {connect} from 'dva';
 import { Card, Modal, Switch} from 'antd';
-import CreateAppForm from '../forms/CreateAppForm';
-import AppConfForm from '../forms/AppConfForm';
-import MailConfForm from '../forms/MailConfForm';
-import MessageConfForm from '../forms/MessageConfForm';
+import CreateAppForm from '../Forms/CreateAppForm';
+import AppConfForm from '../Forms/AppConfForm';
+import MailConfForm from '../Forms/MailConfForm';
+import MessageConfForm from '../Forms/MessageConfForm';
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
-import FormModal from '../forms/components/FormModal';
+import FormModal from '../Forms/components/FormModal';
 import { inject } from '../../../../../framework/common/inject';
 import { oopToast } from '../../../../../framework/common/oopUtils';
-import './manage.less';
+import './Manage.less';
 
 const formItemLayout = {
   labelCol: {

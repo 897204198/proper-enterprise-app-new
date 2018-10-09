@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Form, Button, Input, Radio, Spin } from 'antd';
 import classNames from 'classnames';
 import ColorPicker from './components/ColorPicker';
-import styles from '../Server/manage.less';
+import styles from '../Server/Manage.less';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;

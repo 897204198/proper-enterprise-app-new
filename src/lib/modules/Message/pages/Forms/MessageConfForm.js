@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Spin } from 'antd';
 import classNames from 'classnames';
-import styles from '../Server/manage.less';
+import styles from '../Server/Manage.less';
 
 const FormItem = Form.Item;
 const formItemLayout = {

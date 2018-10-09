@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Collapse, Form, Input, Spin } from 'antd';
 import classNames from 'classnames';
-import styles from '../Server/manage.less';
+import styles from '../Server/Manage.less';
 import OopUpload from '../../../../components/OopUpload/index'
 import AppCheck from './components/AppCheck'
 // import {valueObj2FormValues} from '../Server/utils'

@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import {Modal, Button, Icon, Popconfirm } from 'antd';
-import styles from './formModal.less';
+import styles from './FormModal.less';
 
 const { confirm } = Modal;
 
