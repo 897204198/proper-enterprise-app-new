@@ -1,7 +1,5 @@
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
-import { routerRedux } from 'dva/router';
-import app from '../index';
 import { prefix, devMode } from '../../config/config';
 
 const codeMessage = {
@@ -34,9 +32,12 @@ function checkStatus(response) {
       description: msg || errortext,
     });
   });
-  const error = new Error(errortext);
-  error.name = response.status;
-  error.response = response;
+  // const error = new Error(errortext)
+  const error = {
+    name: response.status,
+    errortext,
+    response
+  }
   throw error;
 }
 
@@ -136,12 +137,8 @@ export default function request(url, options) {
       });
     })
     .catch((e) => {
-      const { dispatch } = app._store;
-      const status = e.name;
-      if (status === 401) {
-        window.localStorage.removeItem('proper-auth-login-token');
-        dispatch(routerRedux.push('/base/login'));
-        return;
+      if (e.name === 401) {
+        throw e
       }
       return new Promise((resolve)=>{
         resolve({

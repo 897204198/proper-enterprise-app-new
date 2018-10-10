@@ -5,6 +5,7 @@ import createHistory from 'history/createHashHistory';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
+import { routerRedux } from 'dva/router';
 import {version} from 'antd';
 import './index.less';
 import syspk from '../../../package.json';
@@ -12,7 +13,15 @@ import pfpk from '../package.json';
 import plpk from '../../lib/package.json';
 // 1. Initialize
 const app = dva({
-  history: createHistory()
+  history: createHistory(),
+  onError(err, dispatch) {
+    // 401状态处理
+    if (window.location.hash.split('#')[1] !== '/base/login') {
+      window.sessionStorage.setItem('proper-route-noAuthPage', window.location.hash);
+      window.localStorage.removeItem('proper-auth-login-token');
+      dispatch(routerRedux.push('/base/login'));
+    }
+  }
 });
 
 // 2. Plugins

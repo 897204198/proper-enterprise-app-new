@@ -2,9 +2,7 @@
  * MongoService 链接MongoDB的前端工具 基于av-core
  */
 import AV from 'av-core';
-import { routerRedux } from 'dva/router';
 import { prefix, devMode } from '../../config/config';
-import app from '../index';
 
 export default class MongoService {
   constructor(tableName, url, ctx) {
@@ -23,9 +21,7 @@ export default class MongoService {
   }
   errorFn = (resolve, err)=>{
     if (err.status === 401) {
-      const { dispatch } = app._store;
-      window.localStorage.removeItem('proper-auth-login-token');
-      dispatch(routerRedux.push('/base/login'));
+      throw err
     }
     resolve({
       status: 'error',

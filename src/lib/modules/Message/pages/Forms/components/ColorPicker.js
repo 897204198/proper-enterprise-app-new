@@ -2,12 +2,12 @@ import React from 'react'
 import reactCSS from 'reactcss'
 import { SketchPicker } from 'react-color'
 
-const primaryColor = require('../../../../../../config/theme.js')['primary-color']
+const primaryColor = require('@/config/theme.js')['primary-color']
 
 export default class ColorPicker extends React.Component {
   state = {
     displayColorPicker: false,
-    defaultColor: '#1890ff',
+    defaultColor: primaryColor || '#1890ff',
   };
 
   handleClick = () => {
@@ -19,12 +19,15 @@ export default class ColorPicker extends React.Component {
   };
 
   handleChange = (color) => {
-    this.setState({ color: color.hex })
+    this.setState({ defaultColor: color.hex })
     this.props.colorChange({ color })
   };
-
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.color && this.props.color !== nextProps.color) {
+      this.setState({ defaultColor: nextProps.color })
+    }
+  }
   render() {
-    const { color } = this.props
     const { defaultColor } = this.state
     const styles = reactCSS({
       default: {
@@ -32,7 +35,7 @@ export default class ColorPicker extends React.Component {
           width: '36px',
           height: '14px',
           borderRadius: '2px',
-          background: color || primaryColor || defaultColor,
+          background: defaultColor,
         },
         swatch: {
           padding: '5px',
@@ -66,7 +69,7 @@ export default class ColorPicker extends React.Component {
           this.state.displayColorPicker ? (
             <div style={ styles.popover }>
                 <div style={ styles.cover } onClick={ this.handleClose } />
-                <SketchPicker color={ this.state.color } onChange={ this.handleChange } />
+                <SketchPicker color={ this.state.defaultColor } onChange={ this.handleChange } />
             </div>
           ) : null
         }

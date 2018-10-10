@@ -238,9 +238,12 @@ export default class Manage extends React.PureComponent {
         formData.validateFieldsAndScroll((err, data) => {
           if (err) return;
           if (!data.appKey) {
-            const { id, appKey } = me.state.curRecord
-            data.id = id
+            const { appKey } = me.state.curRecord
             data.appKey = appKey
+          }
+          if (!data.id) {
+            const { id } = me.state.curRecord
+            data.id = id
           }
           const opt = {
             type,

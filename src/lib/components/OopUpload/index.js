@@ -169,6 +169,7 @@ export default class OopUpload extends React.PureComponent {
       } else if (info.file.status === 'error') {
         if (info.file.error && info.file.error.status === 401) {
           // TODO 处理401
+          throw info.file.error
         }
         message.error('上传失败!');
         this.setState({

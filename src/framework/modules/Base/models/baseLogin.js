@@ -18,8 +18,11 @@ export default {
       // Login successfully
       if (response && response.status === 'ok') {
         window.localStorage.setItem('proper-auth-login-token', response.result);
+        const lastPage = window.sessionStorage.getItem('proper-route-noAuthPage');
+        window.localStorage.removeItem('proper-route-lastPage');
         // yield put(routerRedux.push('/main'));
-        window.location.href = `${window.location.origin}${window.location.pathname}`;
+        const loginPage = lastPage || window.location.pathname;
+        window.location.href = `${window.location.origin}${loginPage}`;
         // document.cookie = `X-PEP-TOKEN=${response.result};path=/`;
         yield put({
           type: 'toggleShowError',
