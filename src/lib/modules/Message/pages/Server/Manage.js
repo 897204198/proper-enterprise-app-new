@@ -360,6 +360,7 @@ export default class Manage extends React.PureComponent {
         title: '启/停用',
         dataIndex: 'enable',
         key: 'enable',
+        filterMultiple: false,
         filters: [
           { text: '已启用', value: true },
           { text: '已停用', value: false },
