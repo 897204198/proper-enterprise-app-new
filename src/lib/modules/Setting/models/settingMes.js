@@ -1,4 +1,4 @@
-import {getMesList} from '../services/settingMesS'
+import {getMesList, upMesList} from '../services/settingMesS'
 
 export default {
   namespace: 'settingMes',
@@ -10,8 +10,17 @@ export default {
       const resp = yield call(getMesList, payload);
       yield put({
         type: 'saveList',
-        payload: {list: resp.result.data}
+        payload: {list: resp.result}
       })
+    },
+    *update({ payload = {}, callback}, { call}) {
+      const resp = yield call(upMesList, payload);
+      // console.log(resp)
+      if (callback) callback(resp)
+      // yield put({
+      //   type: 'saveList',
+      //   payload: {list: resp.result}
+      // })
     }
   },
   reducers: {

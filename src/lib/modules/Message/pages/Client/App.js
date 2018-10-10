@@ -14,26 +14,26 @@ const Appset = (props) => {
     <div className={styles.leftbox}>
       <div className={styles.title}>
         <img src={icon} alt="icon" />
-        <span>掌上协同办公</span>
+        <span>{appInfo.appName}</span>
       </div>
       <div className={styles.officeinfo}>
         <div>
             <Badge
-              status={appInfo.able ? 'processing' : 'default'}
-              text={appInfo.able ? '已启用' : '未启用'} />
+              status={appInfo.enable ? 'processing' : 'default'}
+              text={appInfo.enable ? '已启用' : '未启用'} />
         </div>
         <div>
           <span>应用编码:</span>
-          <span className={styles.con}>{appInfo.code}</span>
+          <span className={styles.con}>{appInfo.appKey}</span>
         </div>
         <div>
           <span>token设置:</span>
-          <span className={styles.con}>{appInfo.token}</span>
+          <span className={styles.con}>{appInfo.appToken}</span>
         </div>
       </div>
       <div className={styles.officeDes}>
         <span>描述:</span>
-        <span className={styles.con}>{appInfo.des}</span>
+        <span className={styles.con}>{appInfo.appDesc}</span>
       </div>
     </div>
     <div className={styles.rightbox}>
@@ -78,14 +78,13 @@ export default class App extends React.PureComponent {
   }
   onLoad = ()=> {
     this.props.dispatch({
-      type: 'messageApp/fetch'
+      type: 'messageApp/getAppInfo'
     });
   }
   appPage() {
-    // console.log(this.props.messageApp)
     const { appInfo } = this.props.messageApp
     const { appInfo: {app = {}, mail = {}, message = {}, isSuccess} } = this.props.messageApp
-    if (isSuccess) {
+    if (!isSuccess) {
       return (
         <PageHeaderLayout content={<Appset appInfo = {appInfo} />}>
           <div className={styles.cardbox}>

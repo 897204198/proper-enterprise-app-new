@@ -1,4 +1,4 @@
-import { getOfficial } from '../services/messageOfficialS';
+import { getOfficial, putOfficial } from '../services/messageOfficialS';
 
 export default {
   namespace: 'messageOfficial',
@@ -8,19 +8,21 @@ export default {
       pagination: {}
     }
   },
-  effect: {
+  effects: {
     *fetch({ payload = {} }, { call, put }) {
       const resp = yield call(getOfficial, payload);
-      console.log(resp);
       yield put({
         type: 'saveList',
         payload: {list: resp.result.data, extraParams: payload.extraParams}
       })
+    },
+    *putInfo({ payload = {}, callback}, { call}) {
+      const resp = yield call(putOfficial, payload);
+      if (callback) callback(resp);
     }
   },
   reducers: {
     saveList(state, action) {
-      console.log(state);
       return {
         ...state,
         data: {
