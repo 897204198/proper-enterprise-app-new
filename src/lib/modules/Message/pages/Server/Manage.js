@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {connect} from 'dva';
-import { Card, Modal, Switch} from 'antd';
+import { Card, Modal, Switch, Popover } from 'antd';
 import CreateAppForm from '../Forms/CreateAppForm';
 import AppConfForm from '../Forms/AppConfForm';
 import MailConfForm from '../Forms/MailConfForm';
@@ -11,7 +11,9 @@ import OopTable from '../../../../components/OopTable';
 import FormModal from '../Forms/components/FormModal';
 import { inject } from '../../../../../framework/common/inject';
 import { oopToast } from '../../../../../framework/common/oopUtils';
-import './Manage.less';
+import styles from './Manage.less';
+
+// const primaryColor = require('@/config/theme.js')['primary-color']
 
 const formItemLayout = {
   labelCol: {
@@ -330,6 +332,7 @@ export default class Manage extends React.PureComponent {
   }
 
   render() {
+    // const defaultColor = primaryColor || '#1890ff'
     const {
       messageManage: { appBasicInfo },
       loading,
@@ -353,8 +356,30 @@ export default class Manage extends React.PureComponent {
           )
         }
       },
-      {title: '编码', dataIndex: 'appKey'},
-      {title: 'token', dataIndex: 'appToken'},
+      {
+        title: '编码',
+        dataIndex: 'appKey',
+        className: styles.wordDetail,
+        render: (text) => {
+          return (
+            <Popover content={text} placement="bottom">
+              <span>{text}</span>
+            </Popover>
+          )
+        }
+      },
+      {
+        title: 'token',
+        dataIndex: 'appToken',
+        className: styles.wordDetail,
+        render: (text) => {
+          return (
+            <Popover content={text} placement="bottom">
+              <span>{text}</span>
+            </Popover>
+          )
+        }
+      },
       {title: '描述', dataIndex: 'appDesc'},
       {
         title: '启/停用',
@@ -406,6 +431,11 @@ export default class Manage extends React.PureComponent {
         text: 'APP配置',
         name: 'PushConf',
         icon: 'shake',
+        // style: (record) => {
+        //   return {
+        //     color: record.havePushConf ? defaultColor : '#d9d9d9'
+        //   }
+        // },
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置App推送配置',
@@ -420,6 +450,11 @@ export default class Manage extends React.PureComponent {
         text: '邮件配置',
         name: 'EmailConf',
         icon: 'mail',
+        // style: (record) => {
+        //   return {
+        //     color: record.havePushConf ? defaultColor : '#d9d9d9'
+        //   }
+        // },
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置邮件配置',
@@ -434,6 +469,11 @@ export default class Manage extends React.PureComponent {
         text: '短信配置',
         name: 'SMSConf',
         icon: 'message',
+        // style: (record) => {
+        //   return {
+        //     color: record.havePushConf ? defaultColor : '#d9d9d9'
+        //   }
+        // },
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置短信配置',
