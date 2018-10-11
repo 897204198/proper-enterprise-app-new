@@ -213,7 +213,10 @@ export default class App extends React.PureComponent {
   setToken = () => {
     this.props.dispatch({
       type: 'messageApp/setToken',
-      payload: this.state.tokenCode
+      payload: this.state.tokenCode,
+      callback: () => {
+        this.onLoad()
+      }
     })
   }
   appPage() {

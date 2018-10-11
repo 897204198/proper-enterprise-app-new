@@ -28,7 +28,7 @@ export default {
   effects: {
     *getToken({ payload = {}, callback}, { call, put}) {
       const resp = yield call(getTokenCode, payload)
-      if (resp.state !== 'err') {
+      if (resp.status !== 'err') {
         const respt = yield call(getServeTOken)
         yield put({
           type: 'saveToken',
@@ -40,12 +40,13 @@ export default {
         if (callback) callback(resp.result, respt.result)
       }
     },
-    *setToken({payload = {}}, {call, put}) {
+    *setToken({payload = {}, callback}, {call, put}) {
       const resp = yield call(setTokenCode, payload)
       yield put({
         type: 'saveToken',
         payload: resp.result
       })
+      if (callback) callback(resp)
     },
     *getAppInfo({ payload = {} }, { call, put }) {
       const resp = yield call(getAppInfo, payload);
