@@ -1,10 +1,6 @@
 import React, {Fragment} from 'react';
 import {connect} from 'dva';
 import { Card, Modal, Switch, Popover } from 'antd';
-import CreateAppForm from '../Forms/CreateAppForm';
-import AppConfForm from '../Forms/AppConfForm';
-import MailConfForm from '../Forms/MailConfForm';
-import MessageConfForm from '../Forms/MessageConfForm';
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
@@ -43,26 +39,26 @@ export default class Manage extends React.PureComponent {
     closeConfirmConfig: {
       visible: false
     },
-    warningWrapper: false, // from 是否记录修改状态
-    warningField: {}, // from 字段变化
-    curForm: 'appForm', // 当前加载form
+    // warningWrapper: false, // from 是否记录修改状态
+    // warningField: {}, // from 字段变化
+    curForm: 'CreateAppForm', // 当前加载form
     formApis: {
-      appForm: {
+      CreateAppForm: {
         post: 'addApp',
         put: 'editAppById',
         delete: 'deleteAppById'
       },
-      appConfForm: {
+      AppConfForm: {
         post: 'pushAppConf',
         put: 'editAppConf',
         delete: 'deleteAppConf'
       },
-      mailConfForm: {
+      MailConfForm: {
         post: 'pushMailConf',
         put: 'editMailConf',
         delete: 'deleteMailConf'
       },
-      messageConfForm: {
+      MessageConfForm: {
         post: 'pushSMSConf',
         put: 'editSMSConf',
         delete: 'deleteSMSConf'
@@ -97,7 +93,7 @@ export default class Manage extends React.PureComponent {
       addOrEditModalTitle: '新建应用信息',
       modalVisible: true,
       isCreate: true,
-      curForm: 'appForm'
+      curForm: 'CreateAppForm'
     });
     this.props.dispatch({
       type: 'messageManage/getAppKey',
@@ -146,11 +142,11 @@ export default class Manage extends React.PureComponent {
   //     type: 'messageManage/clear'
   //   });
   // }
-  handleCloseConfirmCancel = (warningWrapper) => {
-    this.setState({
-      warningWrapper
-    })
-  }
+  // handleCloseConfirmCancel = (warningWrapper) => {
+  //   this.setState({
+  //     warningWrapper
+  //   })
+  // }
 
   handleAddOrEditModalCancel = () => {
     this.handleModalVisible(false);
@@ -159,9 +155,7 @@ export default class Manage extends React.PureComponent {
         isCreate: true,
         closeConfirmConfig: {
           visible: false
-        },
-        warningWrapper: false,
-        warningField: {},
+        }
       });
 
       this.props.dispatch({
@@ -218,9 +212,7 @@ export default class Manage extends React.PureComponent {
           isCreate: false,
           closeConfirmConfig: {
             visible: false
-          },
-          warningWrapper: false,
-          warningField: {},
+          }
         });
         oopToast(res, '保存成功', '保存失败');
         me.handleAddOrEditModalCancel()
@@ -296,7 +288,7 @@ export default class Manage extends React.PureComponent {
   deleteConf = () => {
     const me = this
     const type = this.state.formApis[this.state.curForm].delete
-    if (this.state.curForm === 'appForm') {
+    if (this.state.curForm === 'CreateAppForm') {
       this.onDelete(this.state.curRecord)
     } else {
       this.props.dispatch({
@@ -307,9 +299,7 @@ export default class Manage extends React.PureComponent {
             isCreate: false,
             closeConfirmConfig: {
               visible: false
-            },
-            warningWrapper: false,
-            warningField: {},
+            }
           })
           oopToast(res, '修改成功', '修改失败')
           me.handleAddOrEditModalCancel()
@@ -330,7 +320,16 @@ export default class Manage extends React.PureComponent {
       }
     });
   }
-
+  getFormComponent = (props) => {
+    const MyComponent = require(`../Forms/${this.state.curForm}`).default
+    return (
+      <MyComponent
+        ref={(el) => {
+          this.form = el;
+        }}
+      {...props} />
+    )
+  }
   render() {
     const defaultColor = primaryColor || '#1890ff'
     const {
@@ -339,9 +338,8 @@ export default class Manage extends React.PureComponent {
       gridLoading,
       global: { size, oopSearchGrid }
     } = this.props;
-    const { isCreate, modalVisible, addOrEditModalTitle, closeConfirmConfig,
-      warningField, warningWrapper, curForm } = this.state;
-    const buttonType = curForm === 'appForm' ? (isCreate ? '' : '删除') : '清空配置'
+    const { isCreate, modalVisible, addOrEditModalTitle, closeConfirmConfig, curForm } = this.state;
+    const buttonType = curForm === 'CreateAppForm' ? (isCreate ? '' : '删除') : '清空配置'
     const colorIconStyle = {
       height: '8px',
       width: '16px',
@@ -364,7 +362,7 @@ export default class Manage extends React.PureComponent {
         className: styles.wordDetail,
         render: (text) => {
           return (
-            <Popover content={text} placement="bottomLeft">
+            <Popover content={text} placement={text.length > 15 ? 'bottomLeft' : 'bottom'}>
               <span>{text}</span>
             </Popover>
           )
@@ -376,7 +374,7 @@ export default class Manage extends React.PureComponent {
         className: styles.wordDetail,
         render: (text) => {
           return (
-            <Popover content={text} placement="bottomLeft">
+            <Popover content={text} placement={text.length > 15 ? 'bottomLeft' : 'bottom'}>
               <span>{text}</span>
             </Popover>
           )
@@ -388,7 +386,7 @@ export default class Manage extends React.PureComponent {
         className: styles.wordDetail,
         render: (text) => {
           return (
-            <Popover content={text} placement="bottom">
+            <Popover content={text} placement={text.length > 15 ? 'bottomLeft' : 'bottom'}>
               <span>{text}</span>
             </Popover>
           )
@@ -435,7 +433,7 @@ export default class Manage extends React.PureComponent {
         onClick: (record) => {
           this.onEdit(record, {
             title: '编辑应用配置',
-            form: 'appForm',
+            form: 'CreateAppForm',
             action: 'fetchApp',
             isCreate: false
           })
@@ -453,7 +451,7 @@ export default class Manage extends React.PureComponent {
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置App推送配置',
-            form: 'appConfForm',
+            form: 'AppConfForm',
             action: 'fetchAppConf',
             isCreate: !record.havePushConf
           })
@@ -472,7 +470,7 @@ export default class Manage extends React.PureComponent {
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置邮件配置',
-            form: 'mailConfForm',
+            form: 'MailConfForm',
             action: 'fetchMailConf',
             isCreate: !record.haveEmailConf
           })
@@ -491,7 +489,7 @@ export default class Manage extends React.PureComponent {
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置短信配置',
-            form: 'messageConfForm',
+            form: 'MessageConfForm',
             action: 'fetchSMSConf',
             isCreate: !record.haveSMSConf
           })
@@ -507,65 +505,14 @@ export default class Manage extends React.PureComponent {
         display: record=>(!record.superuser)
       },
     ]
-    const forms = {
-      appForm: {
-        key: 'createApp',
-        content: <CreateAppForm
-          ref={(el) => {
-            this.form = el;
-          }}
-          isCreate={isCreate}
-          changeToken={this.changeToken}
-          changeColor={this.changeColor}
-          warningWrapper={warningWrapper}
-          formItemLayout={formItemLayout}
-          appBasicInfo={appBasicInfo}
-          warningField={warningField}
-          loading={!!loading}
-          conductValuesChange={this.handleUserInfoFormChange} />
-      },
-      appConfForm: {
-        key: 'appConf',
-        content: <AppConfForm
-          ref={(el) => {
-            if (el) this.form = el;
-          }}
-          isCreate={isCreate}
-          warningWrapper={warningWrapper}
-          formItemLayout={formItemLayout}
-          appBasicInfo={appBasicInfo}
-          warningField={warningField}
-          loading={!!loading}
-          conductValuesChange={this.handleUserInfoFormChange} />
-      },
-      mailConfForm: {
-        key: 'mailConf',
-        content: <MailConfForm
-          ref={(el) => {
-            if (el) this.form = el;
-          }}
-          isCreate={isCreate}
-          warningWrapper={warningWrapper}
-          formItemLayout={formItemLayout}
-          appBasicInfo={appBasicInfo}
-          warningField={warningField}
-          loading={!!loading}
-          conductValuesChange={this.handleUserInfoFormChange} />
-      },
-      messageConfForm: {
-        key: 'messageConf',
-        content: <MessageConfForm
-          ref={(el) => {
-            if (el) this.form = el;
-          }}
-          isCreate={isCreate}
-          warningWrapper={warningWrapper}
-          formItemLayout={formItemLayout}
-          appBasicInfo={appBasicInfo}
-          warningField={warningField}
-          loading={!!loading}
-          conductValuesChange={this.handleUserInfoFormChange} />
-      }
+    const props = {
+      isCreate,
+      appBasicInfo,
+      formItemLayout,
+      loading: !!loading,
+      changeToken: this.changeToken,
+      changeColor: this.changeColor,
+      conductValuesChange: this.handleUserInfoFormChange
     }
     return (
       <PageHeaderLayout content={
@@ -603,7 +550,7 @@ export default class Manage extends React.PureComponent {
           isCreate={isCreate}
           loading={!!loading}
           buttonType={buttonType}
-          content={forms[curForm].content}
+          content={this.getFormComponent(props)}
         />
       </PageHeaderLayout>);
   }
