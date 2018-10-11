@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { Card, Row, Col, Divider, Icon, Popconfirm, Badge, Input, Button, Popover } from 'antd'
 import {connect} from 'dva';
 import {inject} from '../../../../../framework/common/inject';
-import { serverUrl } from '../../services/messageAppS'
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import AppConfForm from '../Forms/AppConfForm';
 import MailConfForm from '../Forms/MailConfForm';
@@ -107,10 +106,13 @@ export default class App extends React.PureComponent {
   onLoad = ()=> {
     this.props.dispatch({
       type: 'messageApp/getToken',
-      callback: (res) => {
+      callback: (res, ret) => {
         this.props.dispatch({
           type: 'messageApp/getAppInfo',
-          payload: res
+          payload: {
+            token: res,
+            url: ret
+          }
         });
       }
     })
@@ -160,12 +162,13 @@ export default class App extends React.PureComponent {
     }
   }
   submitData = (params) => {
-    const { isSuccess } = this.props.messageApp
+    const { isSuccess, sUrl } = this.props.messageApp
     this.props.dispatch({
       type: `messageApp/fetch${this.state.action}`,
       payload: {
         data: params.data,
-        token: isSuccess
+        token: isSuccess,
+        url: sUrl
       },
       callback: (res) => {
         oopToast(res, '修改成功')
@@ -175,11 +178,12 @@ export default class App extends React.PureComponent {
     })
   }
   deleteConf = () => {
-    const { isSuccess } = this.props.messageApp
+    const { isSuccess, sUrl } = this.props.messageApp
     this.props.dispatch({
       type: `messageApp/del${this.state.action}`,
       payload: {
-        token: isSuccess
+        token: isSuccess,
+        url: sUrl
       },
       callback: (res) => {
         oopToast(res, '删除成功')
@@ -188,11 +192,12 @@ export default class App extends React.PureComponent {
     })
   }
   deleteConfig = (params) => {
-    const { isSuccess } = this.props.messageApp
+    const { isSuccess, sUrl } = this.props.messageApp
     this.props.dispatch({
       type: `messageApp/del${params}`,
       payload: {
-        token: isSuccess
+        token: isSuccess,
+        url: sUrl
       },
       callback: (res) => {
         oopToast(res, '删除成功')
@@ -376,9 +381,9 @@ export default class App extends React.PureComponent {
   }
   render() {
     const { addOrEditModalTitle, modalVisible, curForm, warningWrapper, warningField, closeConfirmConfig } = this.state
-    const { pushInfo = {}, mailInfo = {}, smsInfo = {}, loading, isSuccess } = this.props.messageApp
+    const { pushInfo = {}, mailInfo = {}, smsInfo = {}, loading, isSuccess, sUrl } = this.props.messageApp
     const upObj = {
-      action: `${serverUrl}/notice/server/config/file?access_token=${isSuccess}`,
+      action: `${sUrl}/notice/server/config/file?access_token=${isSuccess}`,
     }
     const forms = {
       appConfForm: {

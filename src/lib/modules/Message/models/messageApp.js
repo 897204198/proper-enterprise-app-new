@@ -11,6 +11,7 @@ import {
   delSmsConfById,
   getTokenCode,
   setTokenCode,
+  getServeTOken,
 } from '../services/messageAppS'
 
 export default {
@@ -20,6 +21,7 @@ export default {
     pushInfo: {},
     mailInfo: {},
     smsInfo: {},
+    sUrl: '',
     clientToken: '',
     isSuccess: ''
   },
@@ -27,11 +29,15 @@ export default {
     *getToken({ payload = {}, callback}, { call, put}) {
       const resp = yield call(getTokenCode, payload)
       if (resp.state !== 'err') {
+        const respt = yield call(getServeTOken)
         yield put({
           type: 'saveToken',
-          payload: resp.result
+          payload: {
+            token: resp.result,
+            url: respt.result
+          }
         })
-        if (callback) callback(resp.result)
+        if (callback) callback(resp.result, respt.result)
       }
     },
     *setToken({payload = {}}, {call, put}) {
@@ -98,7 +104,8 @@ export default {
     saveToken(state, {payload}) {
       return {
         ...state,
-        isSuccess: payload
+        isSuccess: payload.token,
+        sUrl: payload.url
       }
     }
   }

@@ -12,9 +12,12 @@ export async function setTokenCode(param) {
     method: 'PUT'
   })
 }
-export async function getAppInfo(param) {
+export async function getServeTOken() {
+  return request('/notice/serverUrl')
+}
+export async function getAppInfo(params) {
   // return request('/notice/server/push/config?access_token=testAppServerToken3')
-  return request(`${serverUrl}/notice/server/app/appKey?access_token=${param}`, {
+  return request(`${params.url}/notice/server/app/appKey?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
     headers: {
@@ -23,9 +26,9 @@ export async function getAppInfo(param) {
     }
   });
 }
-export async function getPushInfo(param) {
+export async function getPushInfo(params) {
   // return request('/notice/server/push/config?access_token=testAppServerToken3')
-  return request(`${serverUrl}/notice/server/push/config?access_token=${param}`, {
+  return request(`${params.url}/notice/server/push/config?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
     headers: {
@@ -34,9 +37,9 @@ export async function getPushInfo(param) {
     }
   });
 }
-export async function getMailInfo(param) {
+export async function getMailInfo(params) {
   // return request('/notice/server/push/config?access_token=testAppServerToken3')
-  return request(`${serverUrl}/notice/server/config/EMAIL?access_token=${param}`, {
+  return request(`${params.url}/notice/server/config/EMAIL?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
     headers: {
@@ -45,9 +48,9 @@ export async function getMailInfo(param) {
     }
   });
 }
-export async function getSmsInfo(param) {
+export async function getSmsInfo(params) {
   // return request('/notice/server/push/config?access_token=testAppServerToken3')
-  return request(`${serverUrl}/notice/server/config/SMS?access_token=${param}`, {
+  return request(`${params.url}/notice/server/config/SMS?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
     headers: {
@@ -58,7 +61,7 @@ export async function getSmsInfo(param) {
 }
 // 编辑APP配置信息
 export async function editAppConfById(params) {
-  return request(`${serverUrl}/notice/server/push/config?access_token=${params.token}`, {
+  return request(`${params.url}/notice/server/push/config?access_token=${params.token}`, {
     method: 'PUT',
     body: params.data,
     headers: {
@@ -67,7 +70,7 @@ export async function editAppConfById(params) {
   });
 }
 export async function editMailConfById(params) {
-  return request(`${serverUrl}/notice/server/config/EMAIL?access_token=${params.token}`, {
+  return request(`${params.url}/notice/server/config/EMAIL?access_token=${params.token}`, {
     method: 'PUT',
     body: params.data,
     headers: {
@@ -76,7 +79,7 @@ export async function editMailConfById(params) {
   });
 }
 export async function editSmsConfById(params) {
-  return request(`${serverUrl}/notice/server/config/SMS?access_token=${params.token}`, {
+  return request(`${params.url}/notice/server/config/SMS?access_token=${params.token}`, {
     method: 'PUT',
     body: params.data,
     headers: {
@@ -85,7 +88,7 @@ export async function editSmsConfById(params) {
   });
 }
 export async function delAppConfById(params) {
-  return request(`${serverUrl}/notice/server/push/config?access_token=${params.token}`, {
+  return request(`${params.url}/notice/server/push/config?access_token=${params.token}`, {
     method: 'DELETE',
     headers: {
       'X-PEP-TOKEN': 'testAppServerToken'
@@ -93,7 +96,7 @@ export async function delAppConfById(params) {
   });
 }
 export async function delMailConfById(params) {
-  return request(`${serverUrl}/notice/server/config/EMAIL?access_token=${params.token}`, {
+  return request(`${params.url}/notice/server/config/EMAIL?access_token=${params.token}`, {
     method: 'DELETE',
     headers: {
       'X-PEP-TOKEN': 'testAppServerToken'
@@ -101,7 +104,7 @@ export async function delMailConfById(params) {
   });
 }
 export async function delSmsConfById(params) {
-  return request(`${serverUrl}/notice/server/config/SMS?access_token=${params.token}`, {
+  return request(`${params.url}/notice/server/config/SMS?access_token=${params.token}`, {
     method: 'DELETE',
     headers: {
       'X-PEP-TOKEN': 'testAppServerToken'
