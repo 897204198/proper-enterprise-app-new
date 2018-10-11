@@ -1,37 +1,60 @@
-import { getOfficial, putOfficial } from '../services/messageOfficialS';
+import { getOfficial, putOfficial, delOfficial, postOfficial, getFilterList } from '../services/messageOfficialS';
 
 export default {
   namespace: 'messageOfficial',
   state: {
-    data: {
-      list: [],
-      pagination: {}
-    }
+    editItem: {},
+    filterList: []
   },
   effects: {
-    *fetch({ payload = {} }, { call, put }) {
+    *getInfo({ payload = {}, callback }, { call, put }) {
       const resp = yield call(getOfficial, payload);
       yield put({
-        type: 'saveList',
-        payload: {list: resp.result.data, extraParams: payload.extraParams}
+        type: 'saveitem',
+        payload: {
+          editItem: resp.result
+        }
       })
+      if (callback) callback(resp.result);
+    },
+    *postInfo({ payload = {}, callback}, { call}) {
+      const resp = yield call(postOfficial, payload);
+      if (callback) callback(resp);
     },
     *putInfo({ payload = {}, callback}, { call}) {
       const resp = yield call(putOfficial, payload);
       if (callback) callback(resp);
+    },
+    *delInfo({ payload = {}, callback}, { call}) {
+      const resp = yield call(delOfficial, payload);
+      if (callback) callback(resp);
+    },
+    *filterList({ payload = {}}, {call, put}) {
+      const resp = yield call(getFilterList, payload)
+      yield put({
+        type: 'saveFilterList',
+        payload: resp.result
+      })
     }
   },
   reducers: {
-    saveList(state, action) {
+    saveitem(state, {payload}) {
       return {
         ...state,
-        data: {
-          list: action.payload.list,
-          pagination: {
-            extraParams: action.payload.extraParams
-          }
-        }
+        editItem: payload.editItem
       };
+    },
+    clear(state) {
+      return {
+        ...state,
+        editItem: {}
+      }
+    },
+    saveFilterList(state, {payload}) {
+      return {
+        ...state,
+        filterList: payload
+      }
     }
   }
 };

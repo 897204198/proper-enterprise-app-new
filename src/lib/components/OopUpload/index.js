@@ -141,11 +141,12 @@ export default class OopUpload extends React.PureComponent {
         }
       },
       extra,
-      headers: {
-        'X-PEP-TOKEN': window.localStorage.getItem('proper-auth-login-token')
-      },
       ...this.props
     };
+    const token = window.localStorage.getItem('proper-auth-login-token');
+    defaultProps.headers = {
+      'X-PEP-TOKEN': token
+    }
     const {onChange} = defaultProps;
     defaultProps.onChange = (info)=> {
       if (info.file.status === 'done') {
@@ -192,6 +193,15 @@ export default class OopUpload extends React.PureComponent {
           })));
         });
       }
+    }
+    const {action, headers} = defaultProps;
+    const peaDynamicRequestPrefix = window.localStorage.getItem('pea_dynamic_request_prefix')
+    // 如果请求不属于指定的域 那么删除 X-PEP-TOKEN TODO
+    if (peaDynamicRequestPrefix && !action.includes(peaDynamicRequestPrefix)) {
+      delete headers['X-PEP-TOKEN'];
+    }
+    if (!peaDynamicRequestPrefix && action.includes('http')) {
+      delete headers['X-PEP-TOKEN'];
     }
     return defaultProps;
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox } from 'antd'
+import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popover } from 'antd'
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
@@ -44,11 +44,9 @@ export default class Official extends React.PureComponent {
   state = {
     addOrEditModalTitle: null,
     // modalVisible: false,
-    // list: [],
-    push: true,
-    mail: true,
-    sms: true,
-    viewModalVisible: false,
+    isCreate: true,
+    viewModalVisible: false
+    // collapseName: ['push', 'mail', 'sms']
   };
   componentDidMount() {
     this.onLoad();
@@ -63,29 +61,57 @@ export default class Official extends React.PureComponent {
     };
     this.oopSearch.load(params);
   };
+  oopSearchCallback = () => {
+    this.props.dispatch({
+      type: 'messageOfficial/filterList'
+    })
+  }
   onCreate() {
     this.setState({
       addOrEditModalTitle: '新建',
-      viewModalVisible: true
+      viewModalVisible: true,
+      isCreate: true,
+      push: true,
+      mail: true,
+      sms: true,
     });
+    this.props.dispatch({
+      type: 'messageOfficial/clear'
+    })
   }
-  batchDelete = () => {
-
+  batchDelete = (item) => {
+    this.props.dispatch({
+      type: 'messageOfficial/delInfo',
+      payload: item,
+      callback: (res) => {
+        oopToast(res, '删除成功');
+        this.onLoad();
+      }
+    })
   }
-  onEdit() {
+  onEdit = (record) => {
     this.setState({
       addOrEditModalTitle: '编辑',
-      viewModalVisible: true
+      viewModalVisible: true,
+      isCreate: false
+    });
+    this.props.dispatch({
+      type: 'messageOfficial/getInfo',
+      payload: record.id
     });
   }
-  onDelete = () => {
+  onDelete = (record) => {
+    const ids = []
+    ids.push(record.id)
+    this.batchDelete(ids)
   }
   switchEnable = (value) => {
+    value.enable = !value.enable
     this.props.dispatch({
       type: 'messageOfficial/putInfo',
       payload: value,
       callback: (res) => {
-        oopToast(res, '保存成功');
+        oopToast(res, '启用/停用成功');
         this.onLoad();
       }
     })
@@ -107,6 +133,7 @@ export default class Official extends React.PureComponent {
       officialDetail.description = values.description
       officialDetail.catalog = values.catalog
       officialDetail.details = []
+      officialDetail.id = values.id
       if (push) {
         const pushInfo = {}
         pushInfo.title = values.apptitle
@@ -127,16 +154,31 @@ export default class Official extends React.PureComponent {
         smsInfo.type = 'sms'
         officialDetail.details.push(smsInfo)
       }
-      this.props.dispatch({
-        type: 'messageOfficial/putInfo',
-        payload: officialDetail,
-        callback: (res) => {
-          this.setState({
-            viewModalVisible: false
-          })
-          oopToast(res, '推送方式配置成功')
-        }
-      })
+      if (this.state.isCreate) {
+        this.props.dispatch({
+          type: 'messageOfficial/postInfo',
+          payload: officialDetail,
+          callback: (res) => {
+            this.setState({
+              viewModalVisible: false
+            })
+            oopToast(res, '保存成功')
+            this.onLoad();
+          }
+        })
+      } else {
+        this.props.dispatch({
+          type: 'messageOfficial/putInfo',
+          payload: officialDetail,
+          callback: (res) => {
+            this.setState({
+              viewModalVisible: false
+            })
+            oopToast(res, '保存成功')
+            this.onLoad();
+          }
+        })
+      }
     });
   }
   handleDelete = () => {
@@ -165,54 +207,93 @@ export default class Official extends React.PureComponent {
   render() {
     const officialGrid = this.props.global.oopSearchGrid;
     // const gridLoading = this.props.gridLoading;
+    const { editItem = {}, filterList = [] } = this.props.messageOfficial
     const { gridLoading } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { viewModalVisible, addOrEditModalTitle, push, mail, sms } = this.state;
-    const officialInfo = {};
+    const { viewModalVisible, addOrEditModalTitle, push, mail, sms} = this.state
+    // const collapseName = ['push', 'mail', 'sms'];
+    let pushObj = {}
+    let mailObj = {}
+    let smsObj = {}
+    if (editItem.details) {
+      for (const item of editItem.details) {
+        if (item.type === 'push') {
+          pushObj = Object.assign(pushObj, item)
+        }
+        if (item.type === 'mail') {
+          mailObj = Object.assign(mailObj, item)
+        }
+        if (item.type === 'sms') {
+          smsObj = Object.assign(smsObj, item)
+        }
+      }
+    }
+    // const collapseName = []
+    // for (const item of editItem.details) {
+    //   collapseName.push(item.type)
+    // }
+    const filterArray = []
+    for (const item of filterList) {
+      const child = {}
+      child.text = item.name
+      child.value = item.code
+      filterArray.push(child)
+    }
     const columns = [
       { title: '文案名称', dataIndex: 'name' },
       {
         title: '业务类别',
         dataIndex: 'catalog',
-        filters: [
-          { text: '消息', value: 'Joe' },
-          { text: '通知', value: 'Jim' }
-        ]
+        filters: filterArray
       },
       { title: '关键字', dataIndex: 'code' },
       {
         title: '配置情况',
         dataIndex: 'set',
-        render: () => {
+        render: (text, record) => {
+          let pushState = false
+          let mailState = false
+          let smsState = false
+          for (const item of record.details) {
+            if (item.type === 'push') {
+              pushState = true
+            }
+            if (item.type === 'mail') {
+              mailState = true
+            }
+            if (item.type === 'sms') {
+              smsState = true
+            }
+          }
           // const { app, email, mes } = text;
-          // return (
-          //   <div className={styles.seticon}>
-          //     <Popover placement="bottom" content="点击进行APP配置">
-          //       <a onClick={() => {}}>
-          //         <Icon
-          //           type="shake"
-          //           className={app === false ? styles.grayicon : null}
-          //         />
-          //       </a>
-          //     </Popover>
-          //     <Popover placement="bottom" content="点击进行邮件配置">
-          //       <a onClick={() => {}}>
-          //         <Icon
-          //           type="mail"
-          //           className={email === false ? styles.grayicon : null}
-          //         />
-          //       </a>
-          //     </Popover>
-          //     <Popover placement="bottom" content="点击进行短信配置">
-          //       <a onClick={() => {}}>
-          //         <Icon
-          //           type="message"
-          //           className={mes === false ? styles.grayicon : null}
-          //         />
-          //       </a>
-          //     </Popover>
-          //   </div>
-          // );
+          return (
+            <div className={styles.seticon}>
+              <Popover placement="bottom" content="点击进行APP配置">
+                <a onClick={() => {}}>
+                  <Icon
+                    type="shake"
+                    className={pushState === false ? styles.grayicon : null}
+                  />
+                </a>
+              </Popover>
+              <Popover placement="bottom" content="点击进行邮件配置">
+                <a onClick={() => {}}>
+                  <Icon
+                    type="mail"
+                    className={mailState === false ? styles.grayicon : null}
+                  />
+                </a>
+              </Popover>
+              <Popover placement="bottom" content="点击进行短信配置">
+                <a onClick={() => {}}>
+                  <Icon
+                    type="message"
+                    className={smsState === false ? styles.grayicon : null}
+                  />
+                </a>
+              </Popover>
+            </div>
+          );
         }
       },
       { title: '描述', dataIndex: 'description' },
@@ -220,8 +301,8 @@ export default class Official extends React.PureComponent {
         title: '启/停用',
         dataIndex: 'enable',
         filters: [
-          { text: '停用', value: 'Joe' },
-          { text: '启用', value: 'Jim' }
+          { text: '停用', value: false },
+          { text: '启用', value: true }
         ],
         render: (text, record) => {
           return text ? (
@@ -235,7 +316,7 @@ export default class Official extends React.PureComponent {
               <Switch
                 checkedChildren="启"
                 unCheckedChildren="停"
-                onChange={this.switchEnable}
+                onChange={() => { this.switchEnable(record) }}
               />
           );
         }
@@ -255,6 +336,7 @@ export default class Official extends React.PureComponent {
         text: '删除',
         name: 'delete',
         icon: 'delete',
+        confirm: '确认删除吗？',
         onClick: (items) => {
           this.batchDelete(items);
         },
@@ -277,7 +359,8 @@ export default class Official extends React.PureComponent {
         icon: 'delete',
         confirm: '确认删除吗？',
         onClick: (record) => {
-          this.onDelete(record);
+          this.onDelete(record)
+          // this.batchDelete(record);
         },
         display: record => !record.superuser
       }
@@ -333,6 +416,7 @@ export default class Official extends React.PureComponent {
             placeholder="请输入"
             enterButtonText="搜索"
             moduleName="templates"
+            onLoadCallback={this.oopSearchCallback}
             ref={(el) => {
               this.oopSearch = el && el.getWrappedInstance();
             }}
@@ -344,7 +428,7 @@ export default class Official extends React.PureComponent {
             grid={officialGrid}
             columns={columns}
             loading={gridLoading}
-            onLoad={this.refresh}
+            onLoad={this.onLoad}
             size="small"
             topButtons={topButtons}
             rowButtons={rowButtons}
@@ -368,13 +452,13 @@ export default class Official extends React.PureComponent {
             <Form>
               <div>
                 {getFieldDecorator('id', {
-                  initialValue: officialInfo.id
+                  initialValue: editItem.id
                 })(<Input type="hidden" />)}
               </div>
               <FormItem {...formItemLayout} label="启/停用">
                 {getFieldDecorator('enable', {
                   initialValue:
-                    officialInfo.enable == null ? true : officialInfo.enable
+                  editItem.enable == null ? false : editItem.enable
                 })(
                   <RadioGroup>
                     <Radio value={true}>启用</Radio>
@@ -384,7 +468,7 @@ export default class Official extends React.PureComponent {
               </FormItem>
               <FormItem {...formItemLayout} label="业务类别">
                 {getFieldDecorator('catalog', {
-                  initialValue: officialInfo.catalog,
+                  initialValue: editItem.catalog,
                   rules: [
                     {
                       required: true,
@@ -395,7 +479,7 @@ export default class Official extends React.PureComponent {
               </FormItem>
               <FormItem {...formItemLayout} label="文案名称">
                 {getFieldDecorator('name', {
-                  initialValue: officialInfo.name,
+                  initialValue: editItem.name,
                   rules: [
                     {
                       required: true,
@@ -406,7 +490,7 @@ export default class Official extends React.PureComponent {
               </FormItem>
               <FormItem {...formItemLayout} label="关键字">
                 {getFieldDecorator('code', {
-                  initialValue: officialInfo.code,
+                  initialValue: editItem.code,
                   rules: [
                     {
                       required: true,
@@ -417,7 +501,7 @@ export default class Official extends React.PureComponent {
               </FormItem>
               <FormItem {...formItemLayout} label="描述">
                 {getFieldDecorator('description', {
-                  initialValue: officialInfo.description
+                  initialValue: editItem.description
                 })(<TextArea rows={4} placeholder="请输入描述" />)}
               </FormItem>
               <div className={styles.collapseParent}>
@@ -428,7 +512,7 @@ export default class Official extends React.PureComponent {
                         <div>
                           <FormItem {...formItemLayout} label="文案标题模板">
                             {getFieldDecorator('apptitle', {
-                              initialValue: officialInfo.apptitle,
+                              initialValue: pushObj.title,
                               rules: [
                                 {
                                   required: true,
@@ -439,7 +523,7 @@ export default class Official extends React.PureComponent {
                           </FormItem>
                           <FormItem {...formItemLayout} label="文案内容模板">
                             {getFieldDecorator('appcon', {
-                              initialValue: officialInfo.appcon,
+                              initialValue: pushObj.template,
                               rules: [
                                 {
                                   required: true,
@@ -456,7 +540,6 @@ export default class Official extends React.PureComponent {
                           <div />
                         )
                     }
-
                   </Panel>
                   <Panel header={mailCheck()} key="mail">
                     {
@@ -464,7 +547,7 @@ export default class Official extends React.PureComponent {
                         <div>
                           <FormItem {...formItemLayout} label="文案标题模板">
                             {getFieldDecorator('mailtitle', {
-                              initialValue: officialInfo.mailtitle,
+                              initialValue: mailObj.title,
                               rules: [
                                 {
                                   required: true,
@@ -475,7 +558,7 @@ export default class Official extends React.PureComponent {
                           </FormItem>
                           <FormItem {...formItemLayout} label="文案内容模板">
                             {getFieldDecorator('mailcon', {
-                              initialValue: officialInfo.mailcon,
+                              initialValue: mailObj.template,
                               rules: [
                                 {
                                   required: true,
@@ -501,7 +584,7 @@ export default class Official extends React.PureComponent {
                       sms ? (
                         <FormItem {...formItemLayout} label="文案内容模板">
                           {getFieldDecorator('mescon', {
-                            initialValue: officialInfo.mescon,
+                            initialValue: smsObj.template,
                             rules: [
                               {
                                 required: true,
