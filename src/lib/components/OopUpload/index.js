@@ -141,12 +141,11 @@ export default class OopUpload extends React.PureComponent {
         }
       },
       extra,
+      headers: {
+        'X-PEP-TOKEN': window.localStorage.getItem('proper-auth-login-token')
+      },
       ...this.props
     };
-    const token = window.localStorage.getItem('proper-auth-login-token');
-    defaultProps.headers = {
-      'X-PEP-TOKEN': token
-    }
     const {onChange} = defaultProps;
     defaultProps.onChange = (info)=> {
       if (info.file.status === 'done') {

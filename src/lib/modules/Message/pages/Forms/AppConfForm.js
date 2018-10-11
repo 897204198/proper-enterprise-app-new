@@ -132,7 +132,7 @@ const XmConfForm = Form.create()((props) => {
   )
 })
 const IosConfForm = Form.create()((props) => {
-  const {form, appBasicInfo, warningField, warningWrapper, onChange, onFileChange, checked } = props;
+  const {form, appBasicInfo, warningField, warningWrapper, onChange, onFileChange, checked, uploadOption } = props;
   const iosConf = appBasicInfo.iosConf || {certPassword: '', certificateId: []}
   const { getFieldDecorator } = form;
   return (
@@ -162,7 +162,10 @@ const IosConfForm = Form.create()((props) => {
                 className={warningField && warningField.certificateId && styles.hasWarning}>
                 {
                   getFieldDecorator('certificateId', {
-                    initialValue: iosConf.certificateId,
+                    initialValue: [{
+                      id: iosConf.certificateId,
+                      name: iosConf.certificateId
+                    }],
                     rules: [{
                       required: true, message: '请上传证书',
                     }],
@@ -171,8 +174,9 @@ const IosConfForm = Form.create()((props) => {
                       listType="text"
                       onChange={onFileChange}
                       maxFiles={1}
-                      type={['.x-pkcs12']}
+                      type={['.p12']}
                       size={200 / 1024}
+                      {...uploadOption}
                     />
                   )
                 }
@@ -208,8 +212,9 @@ export default class AppConfForm extends React.PureComponent {
   }
   handleFileChange = (data) => {
     const { setFieldsValue } = this.iosConf
+    const id = data.length === 0 ? '' : data[0].id
     setFieldsValue({
-      certificateId: data[0].id
+      certificateId: id
     })
   }
   handleChange = (name, value) => {
@@ -246,6 +251,9 @@ export default class AppConfForm extends React.PureComponent {
               return
             }
             data.pushPackage = packageValue.pushPackage || null
+            if (Array.isArray(data.certificateId)) {
+              data.certificateId = data.certificateId[0].id
+            }
             appConfDatas[key] = data
             Object.assign(newDatas, appConfDatas)
           })

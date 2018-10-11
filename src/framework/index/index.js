@@ -16,10 +16,12 @@ const app = dva({
   history: createHistory(),
   onError(err, dispatch) {
     // 401状态处理
-    if (window.location.hash.split('#')[1] !== '/base/login') {
-      window.sessionStorage.setItem('proper-route-noAuthPage', window.location.hash);
-      window.localStorage.removeItem('proper-auth-login-token');
-      dispatch(routerRedux.push('/base/login'));
+    if (err.name === 401) {
+      if (window.location.hash.split('#')[1] !== '/base/login') {
+        window.sessionStorage.setItem('proper-route-noAuthPage', window.location.hash);
+        window.localStorage.removeItem('proper-auth-login-token');
+        dispatch(routerRedux.push('/base/login'));
+      }
     }
   }
 });

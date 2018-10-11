@@ -13,7 +13,7 @@ import { inject } from '../../../../../framework/common/inject';
 import { oopToast } from '../../../../../framework/common/oopUtils';
 import styles from './Manage.less';
 
-// const primaryColor = require('@/config/theme.js')['primary-color']
+const primaryColor = require('@/config/theme.js')['primary-color']
 
 const formItemLayout = {
   labelCol: {
@@ -332,7 +332,7 @@ export default class Manage extends React.PureComponent {
   }
 
   render() {
-    // const defaultColor = primaryColor || '#1890ff'
+    const defaultColor = primaryColor || '#1890ff'
     const {
       messageManage: { appBasicInfo },
       loading,
@@ -342,17 +342,19 @@ export default class Manage extends React.PureComponent {
     const { isCreate, modalVisible, addOrEditModalTitle, closeConfirmConfig,
       warningField, warningWrapper, curForm } = this.state;
     const buttonType = curForm === 'appForm' ? (isCreate ? '' : '删除') : '清空配置'
-    const spanStyle = {
+    const colorIconStyle = {
       height: '8px',
-      width: '14px',
+      width: '16px',
       display: 'inline-block',
       marginRight: '5px'
     }
     const column = [
       {
-        title: '应用名称', dataIndex: 'appName', render: (text, record) => {
+        title: '应用名称',
+        dataIndex: 'appName',
+        render: (text, record) => {
           return (
-            <div><span style={{...spanStyle, backgroundColor: record.color}} /><span>{text}</span></div>
+            <div><span style={{...colorIconStyle, backgroundColor: record.color}} /><span>{text}</span></div>
           )
         }
       },
@@ -362,7 +364,7 @@ export default class Manage extends React.PureComponent {
         className: styles.wordDetail,
         render: (text) => {
           return (
-            <Popover content={text} placement="bottom">
+            <Popover content={text} placement="bottomLeft">
               <span>{text}</span>
             </Popover>
           )
@@ -374,17 +376,29 @@ export default class Manage extends React.PureComponent {
         className: styles.wordDetail,
         render: (text) => {
           return (
+            <Popover content={text} placement="bottomLeft">
+              <span>{text}</span>
+            </Popover>
+          )
+        }
+      },
+      {
+        title: '描述',
+        dataIndex: 'appDesc',
+        className: styles.wordDetail,
+        render: (text) => {
+          return (
             <Popover content={text} placement="bottom">
               <span>{text}</span>
             </Popover>
           )
         }
       },
-      {title: '描述', dataIndex: 'appDesc'},
       {
         title: '启/停用',
         dataIndex: 'enable',
         key: 'enable',
+        width: 120,
         filterMultiple: false,
         filters: [
           { text: '已启用', value: true },
@@ -431,11 +445,11 @@ export default class Manage extends React.PureComponent {
         text: 'APP配置',
         name: 'PushConf',
         icon: 'shake',
-        // style: (record) => {
-        //   return {
-        //     color: record.havePushConf ? defaultColor : '#d9d9d9'
-        //   }
-        // },
+        style: (record) => {
+          return {
+            color: record.havePushConf ? defaultColor : '#d9d9d9'
+          }
+        },
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置App推送配置',
@@ -450,11 +464,11 @@ export default class Manage extends React.PureComponent {
         text: '邮件配置',
         name: 'EmailConf',
         icon: 'mail',
-        // style: (record) => {
-        //   return {
-        //     color: record.havePushConf ? defaultColor : '#d9d9d9'
-        //   }
-        // },
+        style: (record) => {
+          return {
+            color: record.haveEmailConf ? defaultColor : '#d9d9d9'
+          }
+        },
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置邮件配置',
@@ -469,11 +483,11 @@ export default class Manage extends React.PureComponent {
         text: '短信配置',
         name: 'SMSConf',
         icon: 'message',
-        // style: (record) => {
-        //   return {
-        //     color: record.havePushConf ? defaultColor : '#d9d9d9'
-        //   }
-        // },
+        style: (record) => {
+          return {
+            color: record.haveSMSConf ? defaultColor : '#d9d9d9'
+          }
+        },
         onClick: (record) => {
           this.onEdit(record, {
             title: '配置短信配置',
