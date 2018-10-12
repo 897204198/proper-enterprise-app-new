@@ -1,10 +1,8 @@
 import React from 'react';
-import { Col, Collapse, Form, Input, Spin } from 'antd';
+import { Col, Collapse, Form, Input, Spin, Checkbox } from 'antd';
 import classNames from 'classnames';
 import styles from '../Server/Manage.less';
 import OopUpload from '../../../../components/OopUpload/index'
-import AppCheck from './components/AppCheck'
-// import {valueObj2FormValues} from '../Server/utils'
 /* eslint no-loop-func: [0] */
 const FormItem = Form.Item;
 const { Panel } = Collapse;
@@ -50,15 +48,21 @@ const PackageConfForm = Form.create()((props) => {
   )
 })
 const HwConfForm = Form.create()((props) => {
-  const {form, appBasicInfo, warningField, warningWrapper, onChange, checked } = props;
+  const {form, appBasicInfo, warningField, warningWrapper, checkChange, checked, renderCheckbox } = props;
   const huaweiConf = appBasicInfo.huaweiConf || {appId: '', appSecret: ''}
   const {getFieldDecorator} = form;
+  const checkboxProps = {
+    checked,
+    name: 'huaweiConf',
+    headerName: '华为',
+    onCheckChange: checkChange
+  }
   return (
     <Form className={classNames({[styles.warningWrapper]: warningWrapper})}>
       <FormItem className={styles.appConfForm} >
           <Col span={18} offset={3}>
             <Collapse bordered={false} activeKey={checked ? ['1'] : []}>
-              <Panel header={<AppCheck headerName="华为" checkChange={onChange} name="huaweiConf" checked={checked} />} key="1" style={customPanelStyle}>
+              <Panel header={renderCheckbox(checkboxProps)} key="1" style={customPanelStyle}>
                 <FormItem
                   {...formItemLayout}
                   label="APP ID"
@@ -99,15 +103,21 @@ const HwConfForm = Form.create()((props) => {
   )
 })
 const XmConfForm = Form.create()((props) => {
-  const {form, appBasicInfo, warningField, warningWrapper, onChange, checked } = props;
+  const {form, appBasicInfo, warningField, warningWrapper, checkChange, checked, renderCheckbox } = props;
   const xiaomiConf = appBasicInfo.xiaomiConf || {appSecret: ''}
   const {getFieldDecorator} = form;
+  const checkboxProps = {
+    checked,
+    name: 'xiaomiConf',
+    headerName: '小米',
+    onCheckChange: checkChange
+  }
   return (
     <Form className={classNames({[styles.warningWrapper]: warningWrapper})}>
       <FormItem className={styles.appConfForm} >
           <Col span={18} offset={3}>
             <Collapse bordered={false} activeKey={checked ? ['1'] : []}>
-              <Panel header={<AppCheck headerName="小米" checkChange={onChange} name="xiaomiConf" checked={checked} />} key="1" style={customPanelStyle}>
+              <Panel header={renderCheckbox(checkboxProps)} key="1" style={customPanelStyle}>
                 <FormItem
                   {...formItemLayout}
                   label="APP Secret"
@@ -132,15 +142,21 @@ const XmConfForm = Form.create()((props) => {
   )
 })
 const IosConfForm = Form.create()((props) => {
-  const {form, appBasicInfo, warningField, warningWrapper, onChange, onFileChange, checked, uploadOption } = props;
+  const {form, appBasicInfo, warningField, warningWrapper, checkChange, fileChange, checked, renderCheckbox, uploadOption } = props;
   const iosConf = appBasicInfo.iosConf || {certPassword: '', certificateId: []}
   const { getFieldDecorator } = form;
+  const checkboxProps = {
+    checked,
+    name: 'iosConf',
+    headerName: 'IOS',
+    onCheckChange: checkChange
+  }
   return (
     <Form className={classNames({[styles.warningWrapper]: warningWrapper})}>
       <FormItem className={styles.appConfForm} >
           <Col span={18} offset={3}>
             <Collapse bordered={false} activeKey={checked ? ['1'] : []}>
-            <Panel header={<AppCheck headerName="IOS" checkChange={onChange} name="iosConf" checked={checked} />} key="1" style={customPanelStyle}>
+            <Panel header={renderCheckbox(checkboxProps)} key="1" style={customPanelStyle}>
               <FormItem
                 {...formItemLayout}
                 label="Keystore Password"
@@ -164,7 +180,7 @@ const IosConfForm = Form.create()((props) => {
                   getFieldDecorator('certificateId', {
                     initialValue: iosConf.certificateId.length !== 0 ? [{
                       id: iosConf.certificateId,
-                      name: iosConf.certificateId
+                      name: iosConf.certificateName
                     }] : '',
                     rules: [{
                       required: true, message: '请上传证书',
@@ -172,7 +188,7 @@ const IosConfForm = Form.create()((props) => {
                   })(
                       <OopUpload
                       listType="text"
-                      onChange={onFileChange}
+                      onChange={fileChange}
                       maxFiles={1}
                       type={['.p12']}
                       size={200 / 1024}
@@ -217,13 +233,27 @@ export default class AppConfForm extends React.PureComponent {
       certificateId: id
     })
   }
-  handleChange = (name, value) => {
+  handleCheckChange = (name, value) => {
     this.setState({
       checkStatus: {
         ...this.state.checkStatus,
         [name]: value
       }
     })
+  }
+  renderCheckbox = (props) => {
+    const { headerName, name, checked } = props
+    const onChange = (e) => {
+      this.handleCheckChange(name, e.target.checked)
+    }
+    return (
+          <Checkbox
+            checked={checked}
+            onChange={onChange}
+          >
+            {headerName}
+          </Checkbox>
+    )
   }
   getFormDatas = () => {
     const { huaweiConf, xiaomiConf, iosConf} = this.state.checkStatus
@@ -279,22 +309,22 @@ export default class AppConfForm extends React.PureComponent {
             this.huaweiConf = el;
           }}
           checked={huaweiConf}
-          onChange={this.handleChange}
+          renderCheckbox={this.renderCheckbox}
           {...this.props} />
         <XmConfForm
           ref={(el) => {
             this.xiaomiConf = el;
           }}
           checked={xiaomiConf}
-          onChange={this.handleChange}
+          renderCheckbox={this.renderCheckbox}
           {...this.props} />
         <IosConfForm
           ref={(el) => {
             this.iosConf = el;
           }}
           checked={iosConf}
-          onChange={this.handleChange}
-          onFileChange={this.handleFileChange}
+          renderCheckbox={this.renderCheckbox}
+          fileChange={this.handleFileChange}
           {...this.props} />
       </Spin>
     );
