@@ -20,10 +20,7 @@ export async function getAppInfo(params) {
   return request(`${params.url}/notice/server/app/appKey?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
-    headers: {
-      // 'X-PEP-TOKEN': param
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function getPushInfo(params) {
@@ -31,10 +28,7 @@ export async function getPushInfo(params) {
   return request(`${params.url}/notice/server/push/config?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
-    headers: {
-      // 'X-PEP-TOKEN': param
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function getMailInfo(params) {
@@ -42,10 +36,7 @@ export async function getMailInfo(params) {
   return request(`${params.url}/notice/server/config/EMAIL?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
-    headers: {
-      // 'X-PEP-TOKEN': param
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function getSmsInfo(params) {
@@ -53,10 +44,7 @@ export async function getSmsInfo(params) {
   return request(`${params.url}/notice/server/config/SMS?access_token=${params.token}`, {
     method: 'GET',
     // body: param,
-    headers: {
-      // 'X-PEP-TOKEN': param
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 // 编辑APP配置信息
@@ -64,50 +52,59 @@ export async function editAppConfById(params) {
   return request(`${params.url}/notice/server/push/config?access_token=${params.token}`, {
     method: 'PUT',
     body: params.data,
-    headers: {
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function editMailConfById(params) {
   return request(`${params.url}/notice/server/config/EMAIL?access_token=${params.token}`, {
     method: 'PUT',
     body: params.data,
-    headers: {
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function editSmsConfById(params) {
   return request(`${params.url}/notice/server/config/SMS?access_token=${params.token}`, {
     method: 'PUT',
     body: params.data,
-    headers: {
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function delAppConfById(params) {
   return request(`${params.url}/notice/server/push/config?access_token=${params.token}`, {
     method: 'DELETE',
-    headers: {
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function delMailConfById(params) {
   return request(`${params.url}/notice/server/config/EMAIL?access_token=${params.token}`, {
     method: 'DELETE',
-    headers: {
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
   });
 }
 export async function delSmsConfById(params) {
   return request(`${params.url}/notice/server/config/SMS?access_token=${params.token}`, {
     method: 'DELETE',
-    headers: {
-      'X-PEP-TOKEN': 'testAppServerToken'
-    }
+    defaultActionWhenNoAuthentication: false
+  });
+}
+export async function addAppConfById(params) {
+  return request(`${params.url}/notice/server/push/config?access_token=${params.token}`, {
+    method: 'POST',
+    body: params.data,
+    defaultActionWhenNoAuthentication: false
+  });
+}
+export async function addMailConfById(params) {
+  return request(`${params.url}/notice/server/config/EMAIL?access_token=${params.token}`, {
+    method: 'POST',
+    body: params.data,
+    defaultActionWhenNoAuthentication: false
+  });
+}
+export async function addSmsConfById(params) {
+  return request(`${params.url}/notice/server/config/SMS?access_token=${params.token}`, {
+    method: 'POST',
+    body: params.data,
+    defaultActionWhenNoAuthentication: false
   });
 }

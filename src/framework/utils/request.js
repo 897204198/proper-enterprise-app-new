@@ -147,7 +147,7 @@ export default function request(url, options) {
       }
       return new Promise((resolve)=>{
         resolve({
-          status: e.response.status,
+          status: e.constructor.name === 'TypeError' ? 500 : e.response.status,
           result: []
         });
       });

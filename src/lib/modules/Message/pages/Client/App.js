@@ -98,6 +98,7 @@ export default class App extends React.PureComponent {
       visible: false
     },
     action: '',
+    confs: '',
     curForm: 'appConfForm', // 当前加载form
   }
   componentDidMount() {
@@ -112,16 +113,33 @@ export default class App extends React.PureComponent {
           payload: {
             token: res,
             url: ret
+          },
+          callback: (response) => {
+            // console.log(response)
+            if (response.status === 401) {
+              this.props.dispatch({
+                type: 'messageApp/setToken'
+              })
+            } else {
+              this.props.dispatch({
+                type: 'messageApp/getConf',
+                payload: {
+                  token: res,
+                  url: ret
+                }
+              })
+            }
           }
         });
       }
     })
   }
-  onEdit = (name, url) => {
+  onEdit = (name, url, conf) => {
     this.setState({
       modalVisible: true,
       curForm: name,
-      action: url
+      action: url,
+      confs: conf
     })
     // this.props.dispatch({
     //   type: `messageApp/${url}`,
@@ -138,7 +156,6 @@ export default class App extends React.PureComponent {
   }
   handleSubmit = () => {
     let formData = {}
-
     const me = this
     if (this.form.getForm) {
       formData = this.form.getForm();
@@ -162,20 +179,36 @@ export default class App extends React.PureComponent {
     }
   }
   submitData = (params) => {
-    const { isSuccess, sUrl } = this.props.messageApp
-    this.props.dispatch({
-      type: `messageApp/fetch${this.state.action}`,
-      payload: {
-        data: params.data,
-        token: isSuccess,
-        url: sUrl
-      },
-      callback: (res) => {
-        oopToast(res, '修改成功')
-        this.handleAddOrEditModalCancel()
-        this.onLoad()
-      }
-    })
+    const { isSuccess, sUrl, appInfo} = this.props.messageApp
+    if (appInfo[this.state.confs]) {
+      this.props.dispatch({
+        type: `messageApp/fetch${this.state.action}`,
+        payload: {
+          data: params.data,
+          token: isSuccess,
+          url: sUrl
+        },
+        callback: (res) => {
+          oopToast(res, '修改成功')
+          this.handleAddOrEditModalCancel()
+          this.onLoad()
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: `messageApp/add${this.state.action}`,
+        payload: {
+          data: params.data,
+          token: isSuccess,
+          url: sUrl
+        },
+        callback: (res) => {
+          oopToast(res, '添加成功')
+          this.handleAddOrEditModalCancel()
+          this.onLoad()
+        }
+      })
+    }
   }
   deleteConf = () => {
     const { isSuccess, sUrl } = this.props.messageApp
@@ -268,7 +301,7 @@ export default class App extends React.PureComponent {
                 <div className={styles.footerSet}>
                   <div className={styles.footItem}>
                     <Icon type="edit" />
-                    <span onClick={() => this.onEdit('appConfForm', 'AppConf')}>编辑配置</span>
+                    <span onClick={() => this.onEdit('appConfForm', 'AppConf', 'havePushConf')}>编辑配置</span>
                   </div>
                   <Divider type="vertical" className={styles.divider} />
                   <div className={styles.footItem}>
@@ -309,7 +342,7 @@ export default class App extends React.PureComponent {
                 <div className={styles.footerSet}>
                   <div className={styles.footItem}>
                     <Icon type="edit" />
-                    <span onClick={() => this.onEdit('mailConfForm', 'MailConf')}>编辑配置</span>
+                    <span onClick={() => this.onEdit('mailConfForm', 'MailConf', 'haveEmailConf')}>编辑配置</span>
                   </div>
                   <Divider type="vertical" className={styles.divider} />
                   <div className={styles.footItem}>
@@ -354,7 +387,7 @@ export default class App extends React.PureComponent {
                 <div className={styles.footerSet}>
                   <div className={styles.footItem}>
                     <Icon type="edit" />
-                    <span onClick={() => this.onEdit('messageConfForm', 'SmsConf')}>编辑配置</span>
+                    <span onClick={() => this.onEdit('messageConfForm', 'SmsConf', 'haveSMSConf')}>编辑配置</span>
                   </div>
                   <Divider type="vertical" className={styles.divider} />
                   <div className={styles.footItem}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popover } from 'antd'
+import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popover, Popconfirm } from 'antd'
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
@@ -23,15 +23,36 @@ const formItemLayout = {
     sm: { span: 16 },
   },
 };
-const isInArray = (arr, value) => {
-  if (arr.indexOf && typeof (arr.indexOf) === 'function') {
-    const index = arr.indexOf(value);
-    if (index >= 0) {
-      return true;
-    }
-  }
-  return false;
+const ClearInfo = (props) => {
+  const { delfun} = props
+  const title = (
+    <div>
+      <div>清空内容将清空当前的文案</div>
+      <div>标题及内容，是否确定清空？</div>
+    </div>
+  )
+  const confirmIcon = (
+    <Icon
+      type="close-circle"
+      theme="filled"
+      style={{ color: 'red' }}
+    />
+  )
+  return (
+    <Popconfirm title={title} okText="确定" cancelText="取消" icon={confirmIcon} onConfirm={() => delfun()}>
+      <Button>清空内容</Button>
+    </Popconfirm>
+  )
 }
+// const isInArray = (arr, value) => {
+//   if (arr.indexOf && typeof (arr.indexOf) === 'function') {
+//     const index = arr.indexOf(value);
+//     if (index >= 0) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 @Form.create()
 @inject(['messageOfficial', 'global'])
 @connect(({ messageOfficial, global, loading }) => ({
@@ -45,7 +66,10 @@ export default class Official extends React.PureComponent {
     addOrEditModalTitle: null,
     // modalVisible: false,
     isCreate: true,
-    viewModalVisible: false
+    viewModalVisible: false,
+    push: false,
+    mail: false,
+    sms: false,
     // collapseName: ['push', 'mail', 'sms']
   };
   componentDidMount() {
@@ -71,9 +95,9 @@ export default class Official extends React.PureComponent {
       addOrEditModalTitle: '新建',
       viewModalVisible: true,
       isCreate: true,
-      push: true,
-      mail: true,
-      sms: true,
+      push: false,
+      mail: false,
+      sms: false,
     });
     this.props.dispatch({
       type: 'messageOfficial/clear'
@@ -93,7 +117,10 @@ export default class Official extends React.PureComponent {
     this.setState({
       addOrEditModalTitle: '编辑',
       viewModalVisible: true,
-      isCreate: false
+      isCreate: false,
+      push: false,
+      mail: false,
+      sms: false,
     });
     this.props.dispatch({
       type: 'messageOfficial/getInfo',
@@ -118,8 +145,14 @@ export default class Official extends React.PureComponent {
   }
   handleViewModalVisible = (flag) => {
     this.setState({
-      viewModalVisible: flag
+      viewModalVisible: flag,
+      push: false,
+      mail: false,
+      sms: false,
     });
+    this.props.dispatch({
+      type: 'messageOfficial/clear'
+    })
   };
   onSubmitForm = () => {
     const { push, mail, sms } = this.state
@@ -159,9 +192,7 @@ export default class Official extends React.PureComponent {
           type: 'messageOfficial/postInfo',
           payload: officialDetail,
           callback: (res) => {
-            this.setState({
-              viewModalVisible: false
-            })
+            this.handleViewModalVisible(false)
             oopToast(res, '保存成功')
             this.onLoad();
           }
@@ -171,9 +202,7 @@ export default class Official extends React.PureComponent {
           type: 'messageOfficial/putInfo',
           payload: officialDetail,
           callback: (res) => {
-            this.setState({
-              viewModalVisible: false
-            })
+            this.handleViewModalVisible(false)
             oopToast(res, '保存成功')
             this.onLoad();
           }
@@ -185,25 +214,57 @@ export default class Official extends React.PureComponent {
   }
   clearcon = () => {
   }
-  panelChange = (key) => {
-    const arr = ['push', 'mail', 'sms']
-    for (let i = 0; i < arr.length; i++) {
-      if (isInArray(key, arr[i])) {
+  clearData = (...values) => {
+    const valueObj = {}
+    for (let i = 0; i < values.length; i++) {
+      valueObj[values[i]] = '';
+      // this.props.form.setFieldsValue(values[i])
+    }
+    this.props.form.setFieldsValue(valueObj)
+  }
+  componentWillReceiveProps(nextProps) {
+    const { editItem = {}} = nextProps.messageOfficial
+    console.log(editItem)
+    let push = false
+    let mail = false
+    let sms = false
+    if (editItem.details && editItem.details.length > 0) {
+      for (const item of editItem.details) {
+        if (item.type === 'push') {
+          push = true
+        }
+        if (item.type === 'mail') {
+          mail = true
+        }
+        if (item.type === 'sms') {
+          sms = true
+        }
         this.setState({
-          [arr[i]]: true
-        })
-      } else {
-        this.setState({
-          [arr[i]]: false
+          push,
+          mail,
+          sms
         })
       }
     }
   }
-  clearData = (...values) => {
-    for (let i = 0; i < values.length; i++) {
-      this.props.form.setFieldsValue(values[i])
+  checkChange = (types, title, con) => {
+    if (!this.state[types]) {
+      this.setState({
+        [types]: !this.state[types]
+      }, () => {
+        const copyObj = this.props.form.getFieldsValue(['copytitle', 'copycon'])
+        this.props.form.setFieldsValue({
+          [title]: copyObj.copytitle,
+          [con]: copyObj.copycon
+        })
+      })
+    } else {
+      this.setState({
+        [types]: !this.state[types]
+      })
     }
-  }
+    // e.stopPropagation();
+  };
   render() {
     const officialGrid = this.props.global.oopSearchGrid;
     // const gridLoading = this.props.gridLoading;
@@ -365,26 +426,26 @@ export default class Official extends React.PureComponent {
         display: record => !record.superuser
       }
     ];
-    const appCheck = () => {
+    const appCheck = (title, con) => {
       return (
         <div>
-          <Checkbox onClick={checkChange} checked={push} />
+          <Checkbox onClick={() => this.checkChange('push', title, con)} checked={push} />
           <span>APP推送</span>
         </div>
       );
     };
-    const mailCheck = () => {
+    const mailCheck = (title, con) => {
       return (
         <div>
-          <Checkbox onClick={checkChange} checked={mail} />
+          <Checkbox onClick={() => this.checkChange('mail', title, con)} checked={mail} />
           <span>邮件</span>
         </div>
       );
     };
-    const mesCheck = () => {
+    const mesCheck = (title, con) => {
       return (
         <div>
-          <Checkbox onClick={checkChange} checked={sms} />
+          <Checkbox onClick={() => this.checkChange('sms', title, con)} checked={sms} />
           <span>短信</span>
         </div>
       );
@@ -398,9 +459,6 @@ export default class Official extends React.PureComponent {
           >{`${addOrEditModalTitle}文案信息`}</span>
         </span>
       );
-    };
-    const checkChange = () => {
-      // e.stopPropagation();
     };
     // const clearconfirm = () => {};
     // const clearcancel = () => {};
@@ -458,7 +516,7 @@ export default class Official extends React.PureComponent {
               <FormItem {...formItemLayout} label="启/停用">
                 {getFieldDecorator('enable', {
                   initialValue:
-                  editItem.enable == null ? false : editItem.enable
+                  editItem.enable == null ? true : editItem.enable
                 })(
                   <RadioGroup>
                     <Radio value={true}>启用</Radio>
@@ -504,9 +562,23 @@ export default class Official extends React.PureComponent {
                   initialValue: editItem.description
                 })(<TextArea rows={4} placeholder="请输入描述" />)}
               </FormItem>
+              <FormItem {...formItemLayout} label="文案标题模板">
+                {getFieldDecorator('copytitle', {
+                  initialValue: '',
+                })(<Input placeholder="请输入文案标题模板" />)}
+              </FormItem>
+              <FormItem {...formItemLayout} label="文案内容模板">
+                {getFieldDecorator('copycon', {
+                  initialValue: '',
+                })(
+                  <TextArea rows={4} placeholder="请输入文案内容模板" />
+                )}
+                {/* <Button onClick={() => { this.clearData('copytitle', 'copycon') }}>清空内容</Button> */}
+                <ClearInfo delfun={() => this.clearData('copytitle', 'copycon')} />
+              </FormItem>
               <div className={styles.collapseParent}>
-                <Collapse showArrow={false} defaultActiveKey={['push', 'mail', 'sms']} onChange={this.panelChange}>
-                  <Panel header={appCheck()} key="push">
+                <Collapse showArrow={false} activeKey={ push ? ['push'] : []}>
+                  <Panel header={appCheck('apptitle', 'appcon')} key="push">
                     {
                       push ? (
                         <div>
@@ -533,7 +605,8 @@ export default class Official extends React.PureComponent {
                             })(
                               <TextArea rows={4} placeholder="请输入文案内容模板" />
                             )}
-                            <Button onClick={() => { this.clearData('apptitle', 'appcon') }}>清空内容</Button>
+                            {/* <Button onClick={() => { this.clearData('apptitle', 'appcon') }}>清空内容</Button> */}
+                            <ClearInfo delfun={() => this.clearData('apptitle', 'appcon')} />
                           </FormItem>
                         </div>
                       ) : (
@@ -541,7 +614,9 @@ export default class Official extends React.PureComponent {
                         )
                     }
                   </Panel>
-                  <Panel header={mailCheck()} key="mail">
+                </Collapse>
+                <Collapse showArrow={false} activeKey={ mail ? ['mail'] : []}>
+                  <Panel header={mailCheck('mailtitle', 'mailcon')} key="mail">
                     {
                       mail ? (
                         <div>
@@ -571,7 +646,8 @@ export default class Official extends React.PureComponent {
                                 placeholder="请输入文案内容模板"
                               />
                             )}
-                            <Button onClick={() => { this.clearData('mailcon', 'mailtitle') }}>清空内容</Button>
+                            {/* <Button onClick={() => { this.clearData('mailcon', 'mailtitle') }}>清空内容</Button> */}
+                            <ClearInfo delfun={() => this.clearData('mailcon', 'mailtitle')} />
                           </FormItem>
                         </div>
                       ) : (
@@ -579,7 +655,9 @@ export default class Official extends React.PureComponent {
                         )
                     }
                   </Panel>
-                  <Panel header={mesCheck()} key="sms">
+                </Collapse>
+                <Collapse showArrow={false} activeKey={ sms ? ['sms'] : [] }>
+                  <Panel header={mesCheck('', 'mescon')} key="sms">
                     {
                       sms ? (
                         <FormItem {...formItemLayout} label="文案内容模板">
@@ -594,7 +672,8 @@ export default class Official extends React.PureComponent {
                           })(
                             <TextArea rows={4} placeholder="请输入文案内容模板" />
                           )}
-                          <Button onClick={() => { this.clearData('mescon') }}>清空内容</Button>
+                          {/* <Button onClick={() => { this.clearData('mescon') }}>清空内容</Button> */}
+                          <ClearInfo delfun={() => this.clearData('mescon')} />
                         </FormItem>
                       ) : (
                           <div />

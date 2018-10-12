@@ -12,6 +12,9 @@ import {
   getTokenCode,
   setTokenCode,
   getServeTOken,
+  addAppConfById,
+  addMailConfById,
+  addSmsConfById,
 } from '../services/messageAppS'
 
 export default {
@@ -48,15 +51,23 @@ export default {
       })
       if (callback) callback(resp)
     },
-    *getAppInfo({ payload = {} }, { call, put }) {
+    *getAppInfo({ payload = {}, callback }, { call, put }) {
       const resp = yield call(getAppInfo, payload);
+      if (callback) callback(resp)
+      yield put({
+        type: 'saveAppInfo',
+        payload: {
+          appInfo: resp.result
+        }
+      })
+    },
+    *getConf({ payload = {} }, { call, put }) {
       const push = yield call(getPushInfo, payload);
       const mail = yield call(getMailInfo, payload);
       const sms = yield call(getSmsInfo, payload);
       yield put({
-        type: 'saveAppInfo',
+        type: 'saveConf',
         payload: {
-          appInfo: resp.result,
           pushInfo: push.result,
           mailInfo: mail.result,
           smsInfo: sms.result
@@ -91,12 +102,29 @@ export default {
       const resp = yield call(delSmsConfById, payload);
       if (callback) callback(resp)
     },
+    *addAppConf({payload = {}, callback}, {call}) {
+      const resp = yield call(addAppConfById, payload);
+      if (callback) callback(resp)
+    },
+    *addMailConf({payload = {}, callback}, {call}) {
+      const resp = yield call(addMailConfById, payload);
+      if (callback) callback(resp)
+    },
+    *addSmsConf({payload = {}, callback}, {call}) {
+      const resp = yield call(addSmsConfById, payload);
+      if (callback) callback(resp)
+    }
   },
   reducers: {
-    saveAppInfo(state, { payload: {appInfo, pushInfo, mailInfo, smsInfo} }) {
+    saveAppInfo(state, { payload: {appInfo} }) {
       return {
         ...state,
-        appInfo,
+        appInfo
+      }
+    },
+    saveConf(state, { payload: {pushInfo, mailInfo, smsInfo} }) {
+      return {
+        ...state,
         pushInfo,
         mailInfo,
         smsInfo
@@ -107,6 +135,12 @@ export default {
         ...state,
         isSuccess: payload.token,
         sUrl: payload.url
+      }
+    },
+    setToken(state) {
+      return {
+        ...state,
+        isSuccess: ''
       }
     }
   }
