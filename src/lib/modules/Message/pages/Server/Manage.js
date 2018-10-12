@@ -122,9 +122,10 @@ export default class Manage extends React.PureComponent {
     const me = this
     me.props.dispatch({
       type: 'messageManage/deleteAppById',
-      payload: {id: record.id},
+      payload: {ids: record.id},
       callback(res) {
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功', '删除失败')
+        me.handleAddOrEditModalCancel()
         me.onLoad()
       }
     })

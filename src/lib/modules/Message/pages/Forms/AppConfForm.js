@@ -162,10 +162,10 @@ const IosConfForm = Form.create()((props) => {
                 className={warningField && warningField.certificateId && styles.hasWarning}>
                 {
                   getFieldDecorator('certificateId', {
-                    initialValue: [{
+                    initialValue: iosConf.certificateId.length !== 0 ? [{
                       id: iosConf.certificateId,
                       name: iosConf.certificateId
-                    }],
+                    }] : '',
                     rules: [{
                       required: true, message: '请上传证书',
                     }],

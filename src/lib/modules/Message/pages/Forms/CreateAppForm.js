@@ -95,7 +95,7 @@ const CreateAppForm = Form.create()((props) => {
                   required: true, message: 'token不能为空',
                 }],
               })(
-                <Input />
+                <Input disabled={true} />
               )}
             </Col>
             <Col span={4}>
