@@ -70,7 +70,7 @@ const BusinessPanel = (props)=>{
                 approvalRemarksRequire: e.target.value === 0
               }, ()=>{
                 if (e.target.value === 1) {
-                  const form = self.oopForm.getForm();
+                  const form = self.oopForm.wrappedInstance.getForm();
                   form.validateFields(['approvalRemarks'], { force: true });
                 }
               })
@@ -98,7 +98,7 @@ const BusinessPanel = (props)=>{
   }
   return (
     <Spin spinning={formLoading}>
-      <OopForm {...formConfig} defaultValue={defaultValue} ref={(el)=>{ if (el) { self.oopForm = el } }} />
+      <OopForm {...formConfig} defaultValue={defaultValue} wrappedComponentRef={(el)=>{ if (el) { self.oopForm = el } }} />
     </Spin>);
 }
 
@@ -307,16 +307,21 @@ export default class OopWorkflowMain extends PureComponent {
       });
       return
     }
-    const form = this.oopForm.getForm();
-    form.validateFields({force: true}, (err, formData)=>{
+    const oopForm = this.oopForm.wrappedInstance;
+    const form = oopForm.getForm();
+    form.validateFields({force: true}, (err, data)=>{
       if (err) {
         setButtonLoading(false);
+        oopForm.showValidErr(err);
         return
       }
+      const formData = oopForm.getFormData(data);
+      oopForm.showPageLoading(true);
       this.props.dispatch({
         type: 'baseWorkflow/submitWorkflow',
         payload: {taskOrProcDefKey, formData},
         callback: (res)=>{
+          oopForm.showPageLoading(false);
           callback && callback(res)
         }
       })
@@ -332,16 +337,21 @@ export default class OopWorkflowMain extends PureComponent {
       });
       return
     }
-    const form = this.oopForm.getForm();
-    form.validateFields((err, formData)=>{
+    const oopForm = this.oopForm.wrappedInstance;
+    const form = oopForm.getForm();
+    form.validateFields((err, data)=>{
       if (err) {
-        setButtonLoading(false)
+        setButtonLoading(false);
+        oopForm.showValidErr(err);
         return
       }
+      const formData = oopForm.getFormData(data);
+      oopForm.showPageLoading(true);
       this.props.dispatch({
         type: 'baseWorkflow/launchWorkflow',
         payload: {taskOrProcDefKey, formData},
         callback: (res)=>{
+          oopForm.showPageLoading(false);
           callback && callback(res)
         }
       })

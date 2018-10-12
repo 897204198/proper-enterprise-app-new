@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'dva';
 import { Form } from 'antd';
 import moment from 'moment';
-import {appFormGenerator, formGenerator} from './utils';
+import {appFormGenerator, formGenerator, toastValidErr, toastLoading} from './utils';
 import styles from './index.less';
 import {inject} from '../../../framework/common/inject';
 import {isApp} from '../../../framework/utils/utils';
@@ -15,7 +15,7 @@ function isItemShow(itemValue, displayValue) {
 }
 
 @inject('OopForm$model')
-@Form.create()
+@Form.create({wrappedComponentRef: true})
 @connect(({OopForm$model, loading})=>({
   OopForm$model,
   loading: loading.models.OopForm$model
@@ -24,7 +24,7 @@ export default class OopForm extends React.PureComponent {
   state = {
   }
   componentDidMount() {
-    console.log('componentDidMount');
+    console.log('OopForm componentDidMount');
   }
   dictCatalogRequestCount = 0;
   dataUrlRequestCount = 0;
@@ -57,20 +57,43 @@ export default class OopForm extends React.PureComponent {
       payload: url
     })
   }
-  // renderForm = (name, value)=>{
-  //   console.log(name, value);
-  //   this.props.formJson.forEach((item)=>{
-  //     if (item.name === name) {
-  //       item.initialValue = value
-  //     }
-  //   })
-  //   setTimeout(()=>{
-  //     this.forceUpdate();
-  //   });
-  // }
   // 是否是数据字典值
   isDictValue = (value)=>{
     return value && typeof value === 'object' && value.catalog !== undefined && value.code !== undefined
+  }
+  getForm = ()=> {
+    return this.props.form;
+  }
+  getFormData = (formData)=>{
+    if (isApp()) {
+      // app的am组件中 Select所 对应的组件是 Picker， 此组件的值类型为[]; 所以这里处理一下
+      const data = {
+        ...formData
+      }
+      const { formJson = [] } = this.props;
+      const selectCom = formJson.find(it=>it.component.name === 'Select');
+      if (selectCom) {
+        const {name} = selectCom;
+        if (Array.isArray(data[name])) {
+          const [first] = data[name]
+          data[name] = first;
+        }
+      }
+      return data;
+    }
+    return formData;
+  }
+  // 移动端才提示
+  showValidErr = (err)=>{
+    if (isApp()) {
+      const { formJson = [] } = this.props;
+      toastValidErr(err, formJson);
+    }
+  }
+  showPageLoading = (flag)=>{
+    if (isApp()) {
+      toastLoading(flag);
+    }
   }
   render() {
     const { OopForm$model, disabled = false, formJson = [], defaultValue = {}, form } = this.props;
@@ -85,11 +108,15 @@ export default class OopForm extends React.PureComponent {
       } else {
         item.initialValue = this.isDictValue(value) ? JSON.stringify(value) : (value || initialValue);
       }
-      // 处理DatePicker的值
+      // 处理DatePicker的值 如果是移动端不需要转化成moment对象
       if (component.name === 'DatePicker') {
         if (item.initialValue) {
-          const format = (component.props && component.props.format) || 'YYYY-MM-DD';
-          item.initialValue = moment(new Date(item.initialValue), format);
+          if (isApp()) {
+            item.initialValue = new Date(item.initialValue);
+          } else {
+            const format = (component.props && component.props.format) || 'YYYY-MM-DD';
+            item.initialValue = moment(new Date(item.initialValue), format);
+          }
         }
       }
       // 如果是表单只读 那么设置组件的props为disabled

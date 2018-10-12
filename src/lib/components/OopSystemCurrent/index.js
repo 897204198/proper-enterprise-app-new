@@ -139,7 +139,7 @@ export default class OopSystemCurrent extends PureComponent {
                 <Input type="hidden" value={this.state.text} />
                 <Input type="hidden" value={this.state.code} />
               </Fragment>
-              <Description term={label}>{this.showText()}</Description>
+              <Description term={label} style={{display: 'flex', justifyContent: 'space-between'}}>{this.showText()}</Description>
             </div>
           </DescriptionList>
         </Spin>

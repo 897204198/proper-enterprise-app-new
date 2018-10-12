@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { Form, Icon, Tooltip, Popover, Input, Spin } from 'antd';
-import List from 'antd-mobile/lib/list';
-import 'antd-mobile/lib/list/style';
+import {List, Toast} from 'antd-mobile';
 import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
+import styles from './index.less';
 
 
 export const formGenerator = (formConfig)=>{
@@ -143,10 +143,12 @@ export const appFormGenerator = (formConfig)=>{
           const obj = {initialValue, rules: _rules};
           // antd-mobile Picker的默认值为数组
           if (component.name === 'Select') {
-            obj.initialValue = [initialValue];
+            if (typeof (obj.initialValue) === 'string') {
+              obj.initialValue = [initialValue];
+            }
           }
           const formItemInner = getFieldDecorator(name, obj)(
-            createComponent({...component, label})
+            createComponent({...component, label, rules})
           );
           formItem = getListItem(formItemInner,
             {...formItemConfig});
@@ -169,22 +171,33 @@ export const appFormGenerator = (formConfig)=>{
 }
 // 获取ListItem
 const getListItem = (formItemInner, formItemConfig)=>{
-  const {name, wrapper, wrapperClass} = formItemConfig;
+  const {name, label, component, rules, wrapper, wrapperClass} = formItemConfig;
+  let listItem = (<div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>{formItemInner}</div>);
+  if ('RadioGroup,CheckboxGroup'.includes(component.name)) {
+    const rule = rules && rules.find(it=>it.required);
+    listItem = (
+  <div key={name} className={component.props.disabled && 'oopform-list-item-disabled'}>
+    <div className="am-list-item am-list-item-middle">
+      <div className="am-list-line">
+        <div className="am-list-content">{rule ? (<Fragment><span className={styles.required}>*</span>{label}</Fragment>) : label}</div>
+        <div className="am-list-extra">{formItemInner}</div>
+      </div>
+    </div>
+  </div>);
+  }
   return wrapper ? (
     <div className={wrapperClass} key={name}>
       {formItemInner}
-    </div>) : (
-    <div key={name}>
-      {formItemInner}</div>);
+    </div>) : listItem;
 }
 // 获取web端和移动端组件
 const createComponent = (component)=>{
   if (typeof component === 'object') {
     if (component.name) {
       // object desc
-      const {name, label, props = {}, children = [] } = component;
+      const {name, label, props = {}, children = [], rules} = component;
       if (name) {
-        return getComponent(name, label, props, children)
+        return getComponent(name, label, props, children, rules);
       }
     } else if (component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)') {
       // React component
@@ -192,5 +205,27 @@ const createComponent = (component)=>{
     }
   } else if (typeof component === 'function') {
     return component()
+  }
+}
+
+// 提示表单验证信息
+export const toastValidErr = (validErr, formJson)=>{
+  // 移动端错误提示
+  if (validErr && formJson.length) {
+    setTimeout(()=>{
+      const {message, field} = validErr[Object.keys(validErr)[0]].errors[0];
+      const {label} = formJson.find(it=>it.name === field);
+      Toast.info(`${label}${message}`);
+    });
+  }
+}
+// 移动端提示表单loading
+export const toastLoading = (flag)=>{
+  if (flag) {
+    setTimeout(()=>{
+      Toast.loading('Loading...', 600);
+    });
+  } else {
+    Toast.hide();
   }
 }

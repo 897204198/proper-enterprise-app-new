@@ -38,7 +38,7 @@ export default class WorkflowMainPop extends PureComponent {
     const {isLaunch, taskOrProcDefKey, procInstId, name, businessObj, stateCode, processDefinitionId, tabActiveKey} = JSON.parse(decodeURIComponent(atob(param)));
     this.state = {
       param,
-      buttonLoading: false,
+      buttonLoading: true,
       activeTabKey: 'handle',
       from,
       isLaunch,
@@ -59,6 +59,10 @@ export default class WorkflowMainPop extends PureComponent {
         type: 'workflowManager/findBusinessObjByTaskId',
         payload: taskOrProcDefKey,
         callback: (res) => {
+          if (typeof res === 'string') {
+            message.error('此流程已被他人办理');
+            return
+          }
           // TODO 多个forms情况先不予考虑
           const {forms} = res;
           const obj = forms.length ? forms[0] : null;
@@ -67,6 +71,7 @@ export default class WorkflowMainPop extends PureComponent {
             obj.formData = obj.formData[obj.formKey]
           }
           this.setState({
+            buttonLoading: false,
             businessObj: {
               ...this.state.businessObj,
               ...obj
@@ -74,6 +79,12 @@ export default class WorkflowMainPop extends PureComponent {
           })
         }
       });
+    } else {
+      setTimeout(()=>{
+        this.setState({
+          buttonLoading: false,
+        })
+      }, 500)
     }
   }
   // app推送通知后的操作
@@ -89,26 +100,30 @@ export default class WorkflowMainPop extends PureComponent {
     history.back();
   }
   submitWorkflow = ()=>{
-    this.setButtonLoading(true);
-    this.oopWorkflowMain.submitWorkflow(()=>{
-      message.success('流程提交成功');
-      // 如果从手机推送通知进来 点击办理之后 跟点击右上主页图标 逻辑一致
-      setTimeout(()=>{
-        this.afterSubmit();
-      }, 1000);
-    });
+    if (this.oopWorkflowMain) {
+      this.setButtonLoading(true);
+      this.oopWorkflowMain.submitWorkflow(()=>{
+        message.success('流程提交成功');
+        // 如果从手机推送通知进来 点击办理之后 跟点击右上主页图标 逻辑一致
+        setTimeout(()=>{
+          this.afterSubmit();
+        }, 1000);
+      });
+    }
   }
   launchWorkflow = ()=>{
-    this.setButtonLoading(true);
-    this.oopWorkflowMain.launchWorkflow(()=>{
-      this.setButtonLoading(false);
-      message.success('流程发起成功');
-      // 移动端手机 发起流程之后跳转到历史页
-      setTimeout(()=>{
-        const {param} = this.state;
-        this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
-      }, 500);
-    })
+    if (this.oopWorkflowMain) {
+      this.setButtonLoading(true);
+      this.oopWorkflowMain.launchWorkflow(()=>{
+        this.setButtonLoading(false);
+        message.success('流程发起成功');
+        // 移动端手机 发起流程之后跳转到历史页
+        setTimeout(()=>{
+          const {param} = this.state;
+          this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
+        }, 500);
+      })
+    }
   }
   setButtonLoading = (flag)=>{
     this.setState({
