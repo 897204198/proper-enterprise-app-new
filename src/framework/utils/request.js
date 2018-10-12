@@ -67,8 +67,10 @@ export default function request(url, options) {
   if (url.indexOf('http:') === 0 || url.indexOf('https:') === 0) {
     newUrl = url
   }
+  // defaultActionWhenNoAuthentication 没有访问权限时的默认行为值 默认为true 即跳转到登陆页
   const defaultOptions = {
     // credentials: 'same-origin',
+    defaultActionWhenNoAuthentication: true
   };
   const newOptions = { ...defaultOptions, ...options };
   if (newOptions.method && ['post', 'put', 'delete'].includes(newOptions.method.toString().toLowerCase())) {
@@ -123,6 +125,8 @@ export default function request(url, options) {
           thePromise = response.text();
         } else if (contentType.indexOf('application/json') !== -1) {
           thePromise = response.json();
+        } else if (contentType.indexOf('application/x-msdownload') !== -1) {
+          thePromise = response.blob();
         }
       } else {
         thePromise = response;
@@ -137,12 +141,13 @@ export default function request(url, options) {
       });
     })
     .catch((e) => {
-      if (e.name === 401) {
+      const { defaultActionWhenNoAuthentication } = newOptions;
+      if (e.name === 401 && defaultActionWhenNoAuthentication === true) {
         throw e
       }
       return new Promise((resolve)=>{
         resolve({
-          status,
+          status: e.response.status,
           result: []
         });
       });
