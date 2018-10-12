@@ -17,7 +17,8 @@ const app = dva({
   onError(err, dispatch) {
     // 401状态处理
     if (err.name === 401) {
-      if (window.location.hash.split('#')[1] !== '/base/login') {
+      const hash = window.location.hash.split('#')[1]
+      if (hash && hash !== '/base/login') {
         window.sessionStorage.setItem('proper-route-noAuthPage', window.location.hash);
         window.localStorage.removeItem('proper-auth-login-token');
         dispatch(routerRedux.push('/base/login'));
