@@ -8,7 +8,7 @@ import MailConfForm from '../Forms/MailConfForm';
 import MessageConfForm from '../Forms/MessageConfForm';
 import FormModal from '../Forms/components/FormModal';
 import icon from '../../../../../assets/icon.png'
-import iconBig from '../../../../../assets/iconBig.png'
+// import iconBig from '../../../../../assets/iconBig.png'
 import styles from './App.less'
 import { oopToast } from '../../../../../framework/common/oopUtils';
 
@@ -43,7 +43,7 @@ const Appset = (props) => {
         </div>
         <div>
           <span>token设置:</span>
-          <span className={styles.con}>{appInfo.appToken}</span>
+          <span className={styles.con}>{subtoken(appInfo.appToken)}</span>
         </div>
       </div>
       <div className={styles.officeDes}>
@@ -51,9 +51,9 @@ const Appset = (props) => {
         <span className={styles.con}>{appInfo.appDesc}</span>
       </div>
     </div>
-    <div className={styles.rightbox}>
+    {/* <div className={styles.rightbox}>
       <img src={iconBig} alt="bigicon" />
-    </div>
+    </div> */}
   </div>
   )
 }
@@ -78,6 +78,9 @@ const ClearInfo = (props) => {
       <span>清除配置</span>
     </Popconfirm>
   )
+}
+const subtoken = (token = '') => {
+  return `${token.substring(0, 5)}*********`
 }
 @inject(['messageApp', 'global'])
 @connect(({messageApp, global, loading}) => ({
@@ -288,6 +291,7 @@ export default class App extends React.PureComponent {
                   <span className={styles.marginLeft}>{packName.name}</span>
                 </div>
                 <div className={styles.setType}>
+                <Col md={24} lg={14}>
                   <span>配置情况:</span>
                   <Icon
                     type="android"
@@ -297,6 +301,10 @@ export default class App extends React.PureComponent {
                     type="apple"
                     theme="outlined"
                     className={ pushInfo.iosConf ? styles.marginLight : styles.marginDark} />
+                </Col>
+                <Col md={24} lg={10}>
+                  <div />
+                </Col>
                 </div>
                 <div className={styles.footerSet}>
                   <div className={styles.footItem}>
@@ -327,17 +335,33 @@ export default class App extends React.PureComponent {
                 </div>
                 <div className={styles.des}>
                   <span>服务地址:</span>
-                  <span className={styles.marginLeft}>{mailInfo.mailServerHost}</span>
+                  <Popover placement="topLeft" content={mailInfo.mailServerHost} arrowPointAtCenter>
+                    <span className={styles.marginLeft}>
+                    { typeof (mailInfo.mailServerHost) === 'string' && (mailInfo.mailServerHost).length > 5 ? `${(mailInfo.mailServerHost).substring(0, 5)}...` : mailInfo.mailServerHost}
+                    </span>
+                  </Popover>
+                  {/* <span className={styles.marginLeft}>{mailInfo.mailServerHost}</span> */}
                 </div>
                 <div className={styles.setType}>
-                  <div className={styles.leftbox}>
-                    <span>端口:</span>
-                    <span className={styles.marginLeft}>{mailInfo.mailServerPort}</span>
-                  </div>
-                  <div className={styles.rightbox}>
-                    <span>默认发送人:</span>
-                    <span className={styles.marginLeft}>{mailInfo.mailServerDefaultFrom}</span>
-                  </div>
+                {/* <Row gutter={24}> */}
+                  <Col md={24} lg={8}>
+                    <div className={styles.leftbox}>
+                      <span>端口:</span>
+                      <span className={styles.marginLeft}>{mailInfo.mailServerPort}</span>
+                    </div>
+                  </Col>
+                  <Col md={24} lg={16}>
+                    <div className={styles.rightbox}>
+                      <span>默认发送人:</span>
+                      <Popover placement="topLeft" content={mailInfo.mailServerDefaultFrom} arrowPointAtCenter>
+                        <span className={styles.marginLeft}>
+                        { typeof (mailInfo.mailServerDefaultFrom) === 'string' && (mailInfo.mailServerDefaultFrom).length > 5 ? `${(mailInfo.mailServerDefaultFrom).substring(0, 5)}...` : mailInfo.mailServerDefaultFrom}
+                        </span>
+                      </Popover>
+                      {/* <span className={styles.marginLeft}>{mailInfo.mailServerDefaultFrom}</span> */}
+                    </div>
+                  </Col>
+                {/* </Row> */}
                 </div>
                 <div className={styles.footerSet}>
                   <div className={styles.footItem}>
@@ -375,14 +399,28 @@ export default class App extends React.PureComponent {
                   </Popover>
                 </div>
                 <div className={styles.setType}>
+                <Col md={24} lg={14}>
                   <div className={styles.leftbox}>
                     <span>管理员账号:</span>
-                    <span className={styles.marginLeft}>{smsInfo.userId}</span>
+                    <Popover placement="topLeft" content={smsInfo.userId} arrowPointAtCenter>
+                      <span className={styles.marginLeft}>
+                      { typeof (smsInfo.userId) === 'string' && (smsInfo.userId).length > 5 ? `${(smsInfo.userId).substring(0, 5)}...` : smsInfo.userId}
+                      </span>
+                    </Popover>
+                    {/* <span className={styles.marginLeft}>{smsInfo.userId}</span> */}
                   </div>
+                </Col>
+                <Col md={24} lg={10}>
                   <div className={styles.rightbox}>
                     <span>字符集:</span>
-                    <span className={styles.marginLeft}>{smsInfo.smsCharset}</span>
+                    <Popover placement="topLeft" content={smsInfo.smsCharset} arrowPointAtCenter>
+                      <span className={styles.marginLeft}>
+                      { typeof (smsInfo.smsCharset) === 'string' && (smsInfo.smsCharset).length > 4 ? `${(smsInfo.smsCharset).substring(0, 4)}...` : smsInfo.smsCharset}
+                      </span>
+                    </Popover>
+                    {/* <span className={styles.marginLeft}>{smsInfo.smsCharset}</span> */}
                   </div>
+                </Col>
                 </div>
                 <div className={styles.footerSet}>
                   <div className={styles.footItem}>

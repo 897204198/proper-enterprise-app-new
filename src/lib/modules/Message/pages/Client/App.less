@@ -1,149 +1,148 @@
-.topbox{
+.topbox {
   font-weight: 500;
-  &::after{
+  &::after {
     display: block;
-    content: ' ';
+    content: " ";
     clear: both;
     overflow: hidden;
   }
-  .leftbox{
+  .leftbox {
     float: left;
-    .title{
+    .title {
       span {
         margin-left: 8px;
         font-size: 16px;
         font-weight: 700;
       }
     }
-    .officeinfo{
+    .officeinfo {
       margin-top: 15px;
       margin-left: 40px;
-      >div{
+      > div {
         display: inline-block;
-        &:not(:first-child){
+        &:not(:first-child) {
           margin-left: 80px;
         }
-        .con{
+        .con {
           margin-left: 8px;
         }
       }
     }
-    .officeDes{
+    .officeDes {
       margin-top: 15px;
       margin-left: 40px;
-      .con{
+      .con {
         margin-left: 8px;
       }
     }
   }
-  .rightbox{
+  .rightbox {
     float: right;
-    img{
+    img {
       width: 128px;
       height: 128px;
     }
   }
 }
-.cardbox{
-  :global{
-    .ant-card{
-      .ant-card-body{
-        padding:0;
+.cardbox {
+  :global {
+    .ant-card {
+      .ant-card-body {
+        padding: 0;
       }
     }
   }
-  .card{
-    display: inline-block ;
+  .card {
+    display: inline-block;
     width: 100%;
-    .typeItem{
-      >div{
+    .typeItem {
+      > div {
         margin-left: 20px;
         margin-right: 20px;
       }
-      .itemtop{
+      .itemtop {
         height: 48px;
         line-height: 48px;
-        span{
+        span {
           margin-left: 8px;
           font-weight: 700;
           font-size: 14px;
         }
       }
-      .des{
+      .des {
         margin-top: 10px;
-        .marginLeft{
+        .marginLeft {
           margin-left: 8px;
         }
       }
-      .setType{
+      .setType {
         margin-top: 10px;
         margin-bottom: 10px;
-        .marginDark{
+        .marginDark {
           margin-left: 8px;
           color: #aaa;
         }
-        .marginLight{
+        .marginLight {
           margin-left: 8px;
           color: #1890ff;
         }
-        .leftbox{
-          float: left;
-          .marginLeft{
-            margin-left: 8px;
+        .leftbox {
+          // float: left;
+          .marginLeft {
+            margin-left: 4px;
           }
         }
-        .rightbox{
-          float: right;
-          .marginLeft{
-            margin-left: 8px;
+        .rightbox {
+          // float: right;
+          .marginLeft {
+            margin-left: 4px;
           }
         }
-        &::after{
+        &::after {
           display: table;
-          content: '';
+          content: "";
           clear: both;
         }
       }
-      .footerSet{
+      .footerSet {
         position: relative;
         display: flex;
-        background:rgb(247, 247, 247);
+        background: rgb(247, 247, 247);
         height: 48px;
         margin-left: 0;
         margin-right: 0;
         line-height: 48px;
-        .footItem{
+        .footItem {
           flex: 1;
           text-align: center;
-          &:hover{
+          &:hover {
             cursor: pointer;
           }
-          span{
+          span {
             margin-left: 8px;
           }
         }
-        .divider{
+        .divider {
           margin-top: 17.5px;
         }
       }
     }
   }
 }
-.tokenCard{
+.tokenCard {
   width: 380px;
-  margin:  0 auto;
+  margin: 0 auto;
   text-align: center;
-  :global{
-    .ant-input{
+  :global {
+    .ant-input {
       margin-top: 20px;
     }
-    .ant-btn{
+    .ant-btn {
       margin-top: 20px;
       margin-bottom: 60px;
     }
-    
   }
-  .tokenTitle{
+  .tokenTitle {
     font-weight: 700;
     text-align: center;
     margin-top: 30px;

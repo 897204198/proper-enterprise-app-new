@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popover, Popconfirm } from 'antd'
+import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popover, Popconfirm, Select } from 'antd'
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
@@ -13,6 +13,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
 const { Panel } = Collapse;
+const { Option } = Select;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -154,6 +155,17 @@ export default class Official extends React.PureComponent {
       type: 'messageOfficial/clear'
     })
   };
+  handleBatchRemove = (items) => {
+    Modal.confirm({
+      title: '提示',
+      content: `确定删除选中的${items.length}条数据吗`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        this.batchDelete(items)
+      }
+    });
+  }
   onSubmitForm = () => {
     const { push, mail, sms } = this.state
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -224,7 +236,7 @@ export default class Official extends React.PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     const { editItem = {}} = nextProps.messageOfficial
-    console.log(editItem)
+    // console.log(editItem)
     let push = false
     let mail = false
     let sms = false
@@ -252,11 +264,13 @@ export default class Official extends React.PureComponent {
       this.setState({
         [types]: !this.state[types]
       }, () => {
-        const copyObj = this.props.form.getFieldsValue(['copytitle', 'copycon'])
-        this.props.form.setFieldsValue({
-          [title]: copyObj.copytitle,
-          [con]: copyObj.copycon
-        })
+        if (this.state.isCreate) {
+          const copyObj = this.props.form.getFieldsValue(['copytitle', 'copycon'])
+          this.props.form.setFieldsValue({
+            [title]: copyObj.copytitle,
+            [con]: copyObj.copycon
+          })
+        }
       })
     } else {
       this.setState({
@@ -300,6 +314,11 @@ export default class Official extends React.PureComponent {
       child.value = item.code
       filterArray.push(child)
     }
+    // const options = () => {
+    //   return filterList.map((option) => {
+    //     return <Option key={option.code} value={option.code}>{option.name}</Option>
+    //   })
+    // }
     const columns = [
       { title: '文案名称', dataIndex: 'name' },
       {
@@ -399,7 +418,7 @@ export default class Official extends React.PureComponent {
         icon: 'delete',
         confirm: '确认删除吗？',
         onClick: (items) => {
-          this.batchDelete(items);
+          this.handleBatchRemove(items);
         },
         display: items => items.length
       }
@@ -533,7 +552,13 @@ export default class Official extends React.PureComponent {
                       message: '业务类别不能为空'
                     }
                   ]
-                })(<Input placeholder="请输入业务类别" />)}
+                })(<Select>
+                {
+                  filterList.map((option) => {
+                    return <Option key={option.code} value={option.code}>{option.name}</Option>
+                  })
+                }
+                </Select>)}
               </FormItem>
               <FormItem {...formItemLayout} label="文案名称">
                 {getFieldDecorator('name', {
