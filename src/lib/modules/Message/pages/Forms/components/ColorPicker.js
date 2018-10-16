@@ -49,6 +49,7 @@ export default class ColorPicker extends React.Component {
         popover: {
           position: 'absolute',
           zIndex: '2',
+          top: '-360px'
         },
         cover: {
           position: 'fixed',

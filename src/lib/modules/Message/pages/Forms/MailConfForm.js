@@ -56,12 +56,12 @@ const MailConfForm = Form.create()((props) => {
           className={warningField && warningField.mailServerUsername && styles.hasWarning}
         >
           {getFieldDecorator('mailServerUsername', {
-            initialValue: appBasicInfo.mailServerUsername,
+            initialValue: appBasicInfo.mailServerUsername || '',
             rules: [{
               required: true, message: '帐号不能为空',
             }],
           })(
-            <Input placeholder="请输入管理员帐号, 长度20个字, 不能包含中文" />
+            <Input placeholder="请输入管理员帐号, 长度20个字, 不能包含中文" autocomplete="off" />
           )}
         </FormItem>
         <FormItem
@@ -70,12 +70,12 @@ const MailConfForm = Form.create()((props) => {
           className={warningField && warningField.mailServerPassword && styles.hasWarning}
         >
           {getFieldDecorator('mailServerPassword', {
-            initialValue: appBasicInfo.mailServerPassword,
+            initialValue: appBasicInfo.mailServerPassword || '',
             rules: [{
               required: true, message: '密码不能为空',
             }],
           })(
-            <Input placeholder="请输入密码, 长度20个字" />
+            <Input placeholder="请输入密码, 长度20个字" type="password" autocomplete="off" />
           )}
         </FormItem>
         <FormItem

@@ -236,7 +236,7 @@ export default class Manage extends React.PureComponent {
             const { appKey } = me.state.curRecord
             data.appKey = appKey
           }
-          if (!data.id) {
+          if (!data.id && !isCreate) {
             const { id } = me.state.curRecord
             data.id = id
           }
