@@ -332,7 +332,7 @@ export default class Manage extends React.PureComponent {
     )
   }
   render() {
-    const defaultColor = primaryColor || '#1890ff'
+    const defaultColor = primaryColor;
     const {
       messageManage: { appBasicInfo },
       loading,

@@ -63,7 +63,7 @@ const CreateForm = Form.create()((props) => {
               <Popconfirm
                 title="您确定要删除吗？"
                 onConfirm={handleDelte}>
-                  <Button style={{float: 'left'}}>删除</Button>
+                <Button style={{float: 'left'}}>删除</Button>
               </Popconfirm>
             ) : null
           }
@@ -351,11 +351,11 @@ export default class Appver extends React.Component {
                           <Popconfirm
                             title="您确定进行此次版本发布吗？"
                             onConfirm={() => this.handlePublish(item)}>
-                              <Tooltip placement="bottom" title="发布">
-                                <a>
-                                  <Icon type="cloud-upload-o" />
-                                </a>
-                              </Tooltip>
+                            <Tooltip placement="bottom" title="发布">
+                              <a>
+                                <Icon type="cloud-upload-o" />
+                              </a>
+                            </Tooltip>
                           </Popconfirm>
                         ) : null
                       }
@@ -367,11 +367,11 @@ export default class Appver extends React.Component {
                       <Popconfirm
                         title="您确定要删除吗？"
                         onConfirm={() => this.handleRemove(item)}>
-                          <Tooltip placement="bottom" title="删除">
-                            <a>
-                              <Icon type="delete" />
-                            </a>
-                          </Tooltip>
+                        <Tooltip placement="bottom" title="删除">
+                          <a>
+                            <Icon type="delete" />
+                          </a>
+                        </Tooltip>
                       </Popconfirm>
                     </p>
                   </div>
@@ -380,8 +380,8 @@ export default class Appver extends React.Component {
                       v{item.ver}
                     </p>
                     <div className={styles.listDiv}>
-                      <div className={styles.listDivLeft}><Icon type="apple-o" /><a href={item.iosUrl} target="_blank">下载链接</a></div>
-                      <div className={styles.listDivLeft}><Icon type="android-o" /><a href={item.androidUrl} target="_blank">下载链接</a></div>
+                      <div className={styles.listDivLeft}><Icon type="apple-o" /><a href={item.iosUrl} target="_blank" rel="noopener noreferrer" >下载链接</a></div>
+                      <div className={styles.listDivLeft}><Icon type="android-o" /><a href={item.androidUrl} target="_blank" rel="noopener noreferrer" >下载链接</a></div>
                       <div className={styles.listDivLeft}>
                         <Popover
                           content={this.showQrCode(item)}
