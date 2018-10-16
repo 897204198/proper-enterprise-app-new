@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popover, Popconfirm, Select } from 'antd'
+import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popconfirm, Select } from 'antd'
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
@@ -139,7 +139,11 @@ export default class Official extends React.PureComponent {
       type: 'messageOfficial/putInfo',
       payload: value,
       callback: (res) => {
-        oopToast(res, '启用/停用成功');
+        if (value.enable) {
+          oopToast(res, '启用成功');
+        } else {
+          oopToast(res, '停用成功');
+        }
         this.onLoad();
       }
     })
@@ -323,8 +327,9 @@ export default class Official extends React.PureComponent {
       { title: '文案名称', dataIndex: 'name' },
       {
         title: '业务类别',
-        dataIndex: 'catalog',
-        filters: filterArray
+        dataIndex: 'catalogName',
+        filters: filterArray,
+        filterMultiple: false,
       },
       { title: '关键字', dataIndex: 'code' },
       {
@@ -348,30 +353,30 @@ export default class Official extends React.PureComponent {
           // const { app, email, mes } = text;
           return (
             <div className={styles.seticon}>
-              <Popover placement="bottom" content="点击进行APP配置">
+              {/* <Popover placement="bottom" content="点击进行APP配置"> */}
                 <a onClick={() => {}}>
                   <Icon
                     type="shake"
                     className={pushState === false ? styles.grayicon : null}
                   />
                 </a>
-              </Popover>
-              <Popover placement="bottom" content="点击进行邮件配置">
+              {/* </Popover> */}
+              {/* <Popover placement="bottom" content="点击进行邮件配置"> */}
                 <a onClick={() => {}}>
                   <Icon
                     type="mail"
                     className={mailState === false ? styles.grayicon : null}
                   />
                 </a>
-              </Popover>
-              <Popover placement="bottom" content="点击进行短信配置">
+              {/* </Popover> */}
+              {/* <Popover placement="bottom" content="点击进行短信配置"> */}
                 <a onClick={() => {}}>
                   <Icon
                     type="message"
                     className={smsState === false ? styles.grayicon : null}
                   />
                 </a>
-              </Popover>
+              {/* </Popover> */}
             </div>
           );
         }
@@ -384,6 +389,7 @@ export default class Official extends React.PureComponent {
           { text: '停用', value: false },
           { text: '启用', value: true }
         ],
+        filterMultiple: false,
         render: (text, record) => {
           return text ? (
             <Switch

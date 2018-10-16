@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Card, Row, Col, Divider, Icon, Popconfirm, Badge, Input, Button, Popover } from 'antd'
+import { Card, Row, Col, Divider, Icon, Popconfirm, Badge, Input, Button, Popover, message } from 'antd'
 import {connect} from 'dva';
 import {inject} from '../../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
@@ -7,8 +7,8 @@ import AppConfForm from '../Forms/AppConfForm';
 import MailConfForm from '../Forms/MailConfForm';
 import MessageConfForm from '../Forms/MessageConfForm';
 import FormModal from '../Forms/components/FormModal';
-import icon from '../../../../../assets/icon.png'
-// import iconBig from '../../../../../assets/iconBig.png'
+import icon from '../../../../../assets/icon@30x30.png'
+// import iconBig from '../../../../../assets/icon@174x174.png'
 import styles from './App.less'
 import { oopToast } from '../../../../../framework/common/oopUtils';
 
@@ -121,8 +121,9 @@ export default class App extends React.PureComponent {
             // console.log(response)
             if (response.status === 401) {
               this.props.dispatch({
-                type: 'messageApp/setToken'
+                type: 'messageApp/clearToken'
               })
+              message.error('Token值错误')
             } else {
               this.props.dispatch({
                 type: 'messageApp/getConf',
@@ -293,14 +294,18 @@ export default class App extends React.PureComponent {
                 <div className={styles.setType}>
                 <Col md={24} lg={14}>
                   <span>配置情况:</span>
-                  <Icon
-                    type="android"
-                    theme="outlined"
-                    className={ pushInfo.huaweiConf || pushInfo.xiaomiConf ? styles.marginLight : styles.marginDark} />
-                  <Icon
-                    type="apple"
-                    theme="outlined"
-                    className={ pushInfo.iosConf ? styles.marginLight : styles.marginDark} />
+                  <a>
+                    <Icon
+                      type="android"
+                      theme="outlined"
+                      className={ pushInfo.huaweiConf || pushInfo.xiaomiConf ? styles.marginLight : styles.marginDark} />
+                  </a>
+                  <a>
+                    <Icon
+                      type="apple"
+                      theme="outlined"
+                      className={ pushInfo.iosConf ? styles.marginLight : styles.marginDark} />
+                  </a>
                 </Col>
                 <Col md={24} lg={10}>
                   <div />

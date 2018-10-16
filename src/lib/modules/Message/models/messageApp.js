@@ -137,7 +137,7 @@ export default {
         sUrl: payload.url
       }
     },
-    setToken(state) {
+    clearToken(state) {
       return {
         ...state,
         isSuccess: ''
