@@ -20,18 +20,20 @@ const codeMessage = {
   504: '网关超时',
 };
 
-function checkStatus(response) {
+function checkStatus(response, options) {
   if ((response.status >= 200 && response.status < 300) || response.headers.get('X-PEP-ERR-TYPE') === 'PEP_BIZ_ERR') {
     return response;
   }
   const errortext = codeMessage[response.status] || response.statusText;
-  response.text().then((msg)=>{
-    notification.error({
-      // message: `请求错误 ${response.status}: ${response.url}`,
-      message: `请求错误 ${response.status}`,
-      description: msg || errortext,
+  if (options.defaultActionWhenNoAuthentication === true) {
+    response.text().then((msg)=>{
+      notification.error({
+        // message: `请求错误 ${response.status}: ${response.url}`,
+        message: `请求错误 ${response.status}`,
+        description: msg || errortext,
+      });
     });
-  });
+  }
   // const error = new Error(errortext)
   const error = {
     name: response.status,
@@ -102,8 +104,9 @@ export default function request(url, options) {
     delete newOptions.headers['X-PEP-TOKEN'];
   }
   return fetch(newUrl, newOptions)
-    .then(checkStatus)
-    .then((response) => {
+    .then((response)=>{
+      return checkStatus(response, newOptions);
+    }).then((response) => {
       let codeStyle = null;
       let thePromise = null;
       if (response.status >= 200 && response.status < 300) {
