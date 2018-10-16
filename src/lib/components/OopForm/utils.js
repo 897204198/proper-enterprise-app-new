@@ -148,7 +148,7 @@ export const appFormGenerator = (formConfig)=>{
             }
           }
           const formItemInner = getFieldDecorator(name, obj)(
-            createComponent({...component, label, rules})
+            createComponent({...component, label, rules}, true)
           );
           formItem = getListItem(formItemInner,
             {...formItemConfig});
@@ -191,13 +191,13 @@ const getListItem = (formItemInner, formItemConfig)=>{
     </div>) : listItem;
 }
 // 获取web端和移动端组件
-const createComponent = (component)=>{
+const createComponent = (component, isApp)=>{
   if (typeof component === 'object') {
     if (component.name) {
       // object desc
       const {name, label, props = {}, children = [], rules} = component;
       if (name) {
-        return getComponent(name, label, props, children, rules);
+        return getComponent(name, label, props, children, rules, isApp);
       }
     } else if (component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)') {
       // React component

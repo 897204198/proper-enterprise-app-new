@@ -4,6 +4,7 @@ import {connect} from 'dva';
 import {routerRedux} from 'dva/router';
 import moment from 'moment';
 import InfiniteScroll from 'react-infinite-scroller';
+import TimeAgo from 'timeago-react';
 import classNames from 'classnames';
 import {inject} from '../../../../../framework/common/inject';
 import styles from './index.less';
@@ -215,11 +216,17 @@ export default class ToDo extends React.PureComponent {
                       <div className={styles.listItemWrapper}>
                         <div className={styles.listLine}>
                           <a onClick={ (event)=>{ this.handleProcessSubmit(item, event) }}>
-                            <div style={{padding: '12px 15px 12px 0', borderBottom: '1px solid #ddd'}}><div style={{color: '#333', width: '100%', fontWeight: 'bold'}}>{item.pepProcInst.processTitle}</div></div>
+                            <div className={styles.listTitle}>
+                              <span style={{color: '#333', fontWeight: 'bold'}}>{item.pepProcInst.processTitle}</span>
+                              <span><TimeAgo datetime={item.createTime} locale="zh_CN" /></span>
+                            </div>
                             <List.Item actions={[<Icon type="right" />]}>
                               <List.Item.Meta
                                 description={<Fragment>
-                                  <div><Icon type="clock-circle-o" className={styles.icon} /><span>到达时间 : </span><span>{moment(item.createTime).format('YYYY-MM-DD HH:mm')}</span></div>
+                                  <div>
+                                    <Icon type="clock-circle-o" className={styles.icon} /><span>到达时间 : </span>
+                                    <span>{moment(item.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                                  </div>
                                   <div style={{marginTop: 12}}><Icon type="user" className={styles.icon} /><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
                                 </Fragment>}
                               />
@@ -263,14 +270,18 @@ export default class ToDo extends React.PureComponent {
                       <div className={styles.listItemWrapper}>
                         <div className={styles.listLine}>
                           <a onClick={ (event)=>{ this.handleDoneProcessView(item, event) }}>
-                            <div style={{padding: '12px 15px 12px 0', borderBottom: '1px solid #ddd'}}>
-                              <div style={{color: '#333', width: '100%', fontWeight: 'bold'}}>{item.pepProcInst.processTitle || `${item.pepProcInst.startUserName}的${item.pepProcInst.processDefinitionName}`}</div>
+                            <div className={styles.listTitle}>
+                              <span style={{color: '#333', fontWeight: 'bold'}}>{item.pepProcInst.processTitle || `${item.pepProcInst.startUserName}的${item.pepProcInst.processDefinitionName}`}</span>
+                              <span><TimeAgo datetime={item.endTime} locale="zh_CN" /></span>
                             </div>
                             <List.Item actions={[<Icon type="right" />]}>
                               <List.Item.Meta
                                 description={
                                 <Fragment>
-                                  <div><Icon type="clock-circle-o" className={styles.icon} /><span>办理时间 : </span><span>{moment(item.endTime).format('YYYY-MM-DD HH:mm')}</span></div>
+                                  <div><Icon type="clock-circle-o" className={styles.icon} />
+                                    <span>办理时间 : </span>
+                                    <span style={{marginLeft: 8}}>{item.endTime}</span>
+                                  </div>
                                   <div style={{marginTop: 12}}><Icon type="user" className={styles.icon} /><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
                                 </Fragment>
                               }

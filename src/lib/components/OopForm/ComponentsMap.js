@@ -7,7 +7,7 @@ import OopUpload from '../OopUpload';
 import OopText from '../OopText';
 import OopGroupUserPicker from '../OopGroupUserPicker';
 import { getUuid } from '../../../framework/common/oopUtils';
-import { isApp, isAndroid } from '../../../framework/utils/utils';
+import { isAndroid } from '../../../framework/utils/utils';
 import styles from './index.less';
 
 
@@ -15,7 +15,6 @@ const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
 const { Option } = Select;
-const isWeb = !isApp();
 const dateFormat = 'YYYY-MM-DD';
 // 移动应用下 IOS系统时间组件自动focus
 const hackDatePickerIOSFocus = (e)=>{
@@ -67,7 +66,8 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
   }
   return component;
 }
-export default (name, label, props, children, rules)=> {
+export default (name, label, props, children, rules, isApp)=> {
+  const isWeb = !isApp;
   const Map = {
     Input: isWeb ? <Input {...props} onFocus={(e) => { hackInputAndroidFocusKeyboardOcclusion(e) }} /> : getAntdMobileComponent(name, label, props, children, rules),
     Button: isWeb ? <Button {...props} /> : getAntdMobileComponent(name, label, props, children, rules),

@@ -121,7 +121,7 @@ export default class OopWorkflowMain extends PureComponent {
   // 根据表单ID获取表单对象
   componentDidMount() {
     if (this.props.businessObj) {
-      const { businessObj: {formKey} } = this.props;
+      const { businessObj: {formKey}, setButtonLoading} = this.props;
       if (!formKey) {
         message.error('表单ID未设置')
         return
@@ -129,8 +129,12 @@ export default class OopWorkflowMain extends PureComponent {
       this.props.dispatch({
         type: 'baseWorkflow/fetchByFormCode',
         payload: formKey,
-        callback: ()=>{
-          this.isComplete = true
+        callback: (resp)=>{
+          this.isComplete = true;
+          if (resp.result.length === 0) {
+            setButtonLoading(true);
+            message.error(`表单编码为${formKey}的表单不存在`);
+          }
         }
       })
       if (this.state.tabActiveKey === 'progress') {
@@ -335,6 +339,10 @@ export default class OopWorkflowMain extends PureComponent {
       message.warning('有点卡哦，数据还没返回', ()=>{
         setButtonLoading(false);
       });
+      return
+    }
+    if (!this.oopForm.wrappedInstance) {
+      message.error('有点卡哦，数据还没返回');
       return
     }
     const oopForm = this.oopForm.wrappedInstance;

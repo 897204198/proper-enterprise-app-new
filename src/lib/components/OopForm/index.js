@@ -7,6 +7,9 @@ import styles from './index.less';
 import {inject} from '../../../framework/common/inject';
 import {isApp} from '../../../framework/utils/utils';
 
+// const isApp = ()=>{
+//   return false;
+// }
 
 // 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
 function isItemShow(itemValue, displayValue) {

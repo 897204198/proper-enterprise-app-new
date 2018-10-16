@@ -15,13 +15,19 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(login, payload);
+      console.log(response)
       // Login successfully
       if (response && response.status === 'ok') {
-        window.localStorage.setItem('proper-auth-login-token', response.result);
-        const loginPage = window.sessionStorage.getItem('proper-route-noAuthPage');
-        window.localStorage.removeItem('proper-route-lastPage');
-        // yield put(routerRedux.push('/main'));
-        window.location.href = `${window.location.origin}${window.location.pathname}${loginPage}`;
+        const {localStorage, sessionStorage, location} = window;
+        const {origin, pathname} = location;
+        let url = `${origin}${pathname}`;
+        localStorage.setItem('proper-auth-login-token', response.result);
+        const returnPage = sessionStorage.getItem('proper-route-noAuthPage');
+        if (returnPage) {
+          url += returnPage;
+        }
+        sessionStorage.removeItem('proper-route-noAuthPage');
+        window.location.href = url;
         // document.cookie = `X-PEP-TOKEN=${response.result};path=/`;
         yield put({
           type: 'toggleShowError',
