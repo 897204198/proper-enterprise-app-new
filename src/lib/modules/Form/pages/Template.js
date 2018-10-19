@@ -10,7 +10,6 @@ import { inject } from '../../../../framework/common/inject';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
 import { oopToast } from '../../../../framework/common/oopUtils';
 
-
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
@@ -30,11 +29,11 @@ const TYPE_ENUM = [
   {label: '工作流', value: 'WORKFLOW'},
 ]
 const onValuesChange = (props, changedValues) => {
-  if (changedValues.listDetails) {
-    if (changedValues.listDetails.length > 4) {
-      const selectArray = changedValues.listDetails.slice(0, 4)
+  if (changedValues.formTodoDisplayFields) {
+    if (changedValues.formTodoDisplayFields.length > 4) {
+      const selectArray = changedValues.formTodoDisplayFields.slice(0, 4)
       const fields = {}
-      fields[changedValues.listDetails] = selectArray
+      fields[changedValues.formTodoDisplayFields] = selectArray
       // props.formself.setFieldsValue(fields)
       message.error('最多可选择四项')
     }
@@ -48,7 +47,7 @@ const ModalFormBasic = Form.create({
   const submitForm = ()=>{
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      console.log(fieldsValue)
+      // console.log(fieldsValue)
       onModalSubmit(fieldsValue, form);
     });
   }
@@ -129,14 +128,14 @@ const ModalFormBasic = Form.create({
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label="展示"
+            label="待办列表显示"
           >
             {form.getFieldDecorator('listDetails', {
               initialValue: formBasic.listDetails || []
             })(
               <Select
               mode="multiple"
-              placeholder="请选择展示信息"
+              placeholder="请选择待办信息"
               allowClear={true}
               >
                 {
@@ -279,6 +278,21 @@ export default class Template extends React.PureComponent {
     }, 300)
   }
   handleModalSubmit = (values)=>{
+    const formDetail = values.formDetails
+    const formTodoDisplayFields = []
+    if (formDetail) {
+      const selectArray = JSON.parse(formDetail).formJson
+      for (const child of values.listDetails) {
+        const filterArray = selectArray.filter((item) => {
+          return item.name === child
+        })
+        formTodoDisplayFields.push({
+          label: filterArray[0].label,
+          name: filterArray[0].name
+        })
+      }
+      values.formTodoDisplayFields = formTodoDisplayFields
+    }
     this.props.dispatch({
       type: 'formTemplate/saveOrUpdate',
       payload: values,
@@ -356,7 +370,7 @@ export default class Template extends React.PureComponent {
   }
   handleDownload = (records) => {
     const record = JSON.parse(JSON.stringify(records));
-    const name = record._id.$oid
+    const name = record.formkeydefinition
     delete record.CT
     delete record.CU
     delete record.LT
@@ -376,13 +390,23 @@ export default class Template extends React.PureComponent {
     reader.onload = () => {
       this.ImportJSON = JSON.parse(reader.result)
       this.props.dispatch({
-        type: 'formTemplate/saveOrUpdate',
-        payload: this.ImportJSON,
-        callback: (res) => {
-          this.onLoad();
-          oopToast(res, '文件导入成功')
+        type: 'formTemplate/queryByFormkeydefinition',
+        payload: this.ImportJSON.formkeydefinition,
+        callback: (cb)=>{
+          if (cb.result.length === 0) {
+            this.props.dispatch({
+              type: 'formTemplate/saveOrUpdate',
+              payload: this.ImportJSON,
+              callback: (res) => {
+                this.onLoad();
+                oopToast(res, '文件导入成功')
+              }
+            })
+          } else {
+            message.error('表单编码已存在');
+          }
         }
-      })
+      });
     }
     reader.onerror = () => {
       message.error('文件上传失败')
@@ -419,6 +443,9 @@ export default class Template extends React.PureComponent {
         name: 'upload',
         type: 'default',
         icon: 'upload',
+        style: {
+          float: 'right'
+        },
         onClick: ()=>{ this.handleOpenfile() }
       }
     ];
@@ -473,7 +500,6 @@ export default class Template extends React.PureComponent {
             rowButtons={rowButtons}
             topButtons={topButtons}
             checkable={false}
-            // rowKey={record=>String(record._id)}
             size={size}
           />
         </Card>
