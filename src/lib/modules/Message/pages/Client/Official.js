@@ -187,20 +187,20 @@ export default class Official extends React.PureComponent {
         const pushInfo = {}
         pushInfo.title = values.apptitle
         pushInfo.template = values.appcon
-        pushInfo.type = 'push'
+        pushInfo.type = 'PUSH'
         officialDetail.details.push(pushInfo)
       }
       if (mail) {
         const mailInfo = {}
         mailInfo.title = values.mailtitle
         mailInfo.template = values.mailcon
-        mailInfo.type = 'mail'
+        mailInfo.type = 'EMAIL'
         officialDetail.details.push(mailInfo)
       }
       if (sms) {
         const smsInfo = {}
         smsInfo.template = values.mescon
-        smsInfo.type = 'sms'
+        smsInfo.type = 'SMS'
         officialDetail.details.push(smsInfo)
       }
       if (this.state.isCreate) {
@@ -246,13 +246,13 @@ export default class Official extends React.PureComponent {
     let sms = false
     if (editItem.details && editItem.details.length > 0) {
       for (const item of editItem.details) {
-        if (item.type === 'push') {
+        if (item.type === 'PUSH') {
           push = true
         }
-        if (item.type === 'mail') {
+        if (item.type === 'EMAIL') {
           mail = true
         }
-        if (item.type === 'sms') {
+        if (item.type === 'SMS') {
           sms = true
         }
         this.setState({
@@ -296,13 +296,13 @@ export default class Official extends React.PureComponent {
     let smsObj = {}
     if (editItem.details) {
       for (const item of editItem.details) {
-        if (item.type === 'push') {
+        if (item.type === 'PUSH') {
           pushObj = Object.assign(pushObj, item)
         }
-        if (item.type === 'mail') {
+        if (item.type === 'EMAIL') {
           mailObj = Object.assign(mailObj, item)
         }
-        if (item.type === 'sms') {
+        if (item.type === 'SMS') {
           smsObj = Object.assign(smsObj, item)
         }
       }
@@ -327,9 +327,14 @@ export default class Official extends React.PureComponent {
       { title: '文案名称', dataIndex: 'name' },
       {
         title: '业务类别',
-        dataIndex: 'catalogName',
+        dataIndex: 'catalog',
         filters: filterArray,
         filterMultiple: false,
+        render: (text, record) => {
+          return (
+            <span>{record.catalogName}</span>
+          )
+        }
       },
       { title: '关键字', dataIndex: 'code' },
       {
@@ -340,13 +345,13 @@ export default class Official extends React.PureComponent {
           let mailState = false
           let smsState = false
           for (const item of record.details) {
-            if (item.type === 'push') {
+            if (item.type === 'PUSH') {
               pushState = true
             }
-            if (item.type === 'mail') {
+            if (item.type === 'EMAIL') {
               mailState = true
             }
-            if (item.type === 'sms') {
+            if (item.type === 'SMS') {
               smsState = true
             }
           }

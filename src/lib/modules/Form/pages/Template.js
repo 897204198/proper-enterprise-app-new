@@ -1,4 +1,5 @@
 import React from 'react';
+import FileSaver from 'file-saver'
 import { Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message } from 'antd';
 import {connect} from 'dva';
 import Debounce from 'lodash-decorators/debounce';
@@ -28,7 +29,20 @@ const TYPE_ENUM = [
   {label: '问卷', value: 'QUESTION'},
   {label: '工作流', value: 'WORKFLOW'},
 ]
-const ModalFormBasic = Form.create()((props) => {
+const onValuesChange = (props, changedValues) => {
+  if (changedValues.listDetails) {
+    if (changedValues.listDetails.length > 4) {
+      const selectArray = changedValues.listDetails.slice(0, 4)
+      const fields = {}
+      fields[changedValues.listDetails] = selectArray
+      // props.formself.setFieldsValue(fields)
+      message.error('最多可选择四项')
+    }
+  }
+}
+const ModalFormBasic = Form.create({
+  onValuesChange
+})((props) => {
   const { form, loading, visible, title, onModalCancel,
     onModalSubmit, formBasic, checkFormkeydefinition, self } = props;
   const submitForm = ()=>{
@@ -41,11 +55,9 @@ const ModalFormBasic = Form.create()((props) => {
   const cancelForm = ()=>{
     onModalCancel(form)
   }
-
   const rule = {
     formkeydefinition: []
   };
-
   if (!formBasic.formkeydefinition) { // 新建状态
     rule.formkeydefinition = [{
       required: true,
@@ -113,6 +125,26 @@ const ModalFormBasic = Form.create()((props) => {
               initialValue: formBasic.version || 1.0
             })(
               <InputNumber placeholder="请输入版本" />
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="展示"
+          >
+            {form.getFieldDecorator('listDetails', {
+              initialValue: formBasic.listDetails || []
+            })(
+              <Select
+              mode="multiple"
+              placeholder="请选择展示信息"
+              allowClear={true}
+              >
+                {
+                  formBasic.formDetails && JSON.parse(formBasic.formDetails).formJson.map((item) => {
+                    return <Option key={item.name}>{item.label}</Option>
+                  })
+                }
+              </Select>
             )}
           </FormItem>
           <FormItem
@@ -322,6 +354,43 @@ export default class Template extends React.PureComponent {
       list: filterList
     })
   }
+  handleDownload = (records) => {
+    const record = JSON.parse(JSON.stringify(records));
+    const name = record._id.$oid
+    delete record.CT
+    delete record.CU
+    delete record.LT
+    delete record.LU
+    delete record.id
+    delete record._ClientVersion
+    delete record._InstallationId
+    delete record._id
+    const data = JSON.stringify(record)
+    const blob = new Blob([data], {type: ''})
+    FileSaver.saveAs(blob, `${name}.json`)
+  }
+  handleUpload = () => {
+    const file = document.getElementById('file').files[0]
+    const reader = new FileReader()
+    reader.readAsText(file)
+    reader.onload = () => {
+      this.ImportJSON = JSON.parse(reader.result)
+      this.props.dispatch({
+        type: 'formTemplate/saveOrUpdate',
+        payload: this.ImportJSON,
+        callback: (res) => {
+          this.onLoad();
+          oopToast(res, '文件导入成功')
+        }
+      })
+    }
+    reader.onerror = () => {
+      message.error('文件上传失败')
+    }
+  }
+  handleOpenfile = () => {
+    document.getElementById('file').click()
+  }
   render() {
     const {formTemplate: {entity}, loading, global: { size } } = this.props;
     const {list} = this.state;
@@ -345,6 +414,13 @@ export default class Template extends React.PureComponent {
         icon: 'plus',
         onClick: ()=>{ this.handleCreate() }
       },
+      {
+        text: '导入',
+        name: 'upload',
+        type: 'default',
+        icon: 'upload',
+        onClick: ()=>{ this.handleOpenfile() }
+      }
     ];
     const rowButtons = [
       {
@@ -372,6 +448,12 @@ export default class Template extends React.PureComponent {
         confirm: '是否要删除此条信息',
         onClick: (record)=>{ this.handleRemove(record) }
       },
+      {
+        text: '导出',
+        name: 'download',
+        icon: 'download',
+        onClick: (record)=>{ this.handleDownload(record) }
+      }
     ];
     return (
       <PageHeaderLayout content={
@@ -383,6 +465,7 @@ export default class Template extends React.PureComponent {
         />
       }>
         <Card bordered={false}>
+          <input type="file" id="file" hidden onChange={this.handleUpload} />
           <OopTable
             loading={loading}
             grid={{list}}
@@ -390,6 +473,7 @@ export default class Template extends React.PureComponent {
             rowButtons={rowButtons}
             topButtons={topButtons}
             checkable={false}
+            // rowKey={record=>String(record._id)}
             size={size}
           />
         </Card>
@@ -400,6 +484,8 @@ export default class Template extends React.PureComponent {
           onModalSubmit={this.handleModalSubmit}
           formBasic={entity}
           loading={loading}
+          formself={this.form}
+          ref={(el) => { this.form = el }}
           checkFormkeydefinition={this.checkFormkeydefinition}
           self={this}
         />

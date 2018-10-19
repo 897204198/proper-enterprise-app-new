@@ -36,6 +36,7 @@
     "dva-loading": "^1.0.4",
     "enquire-js": "^0.2.1",
     "fastclick": "^1.0.6",
+    "file-saver": "^2.0.0-rc.3",
     "immutability-helper": "^2.6.6",
     "lodash": "^4.17.4",
     "lodash-decorators": "^4.4.1",
