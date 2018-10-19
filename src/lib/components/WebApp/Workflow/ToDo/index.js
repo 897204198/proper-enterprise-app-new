@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react';
-import { List, Icon, Tabs, Spin } from 'antd';
+import { List, Icon, Tabs, Button, Spin} from 'antd';
+import { Modal, Toast } from 'antd-mobile';
 import {connect} from 'dva';
 import {routerRedux} from 'dva/router';
 import moment from 'moment';
@@ -31,12 +32,12 @@ function getActiveIndex(children, activeKey) {
   return -1;
 }
 
-@inject(['workflowManager', 'workflowDesigner', 'global'])
+@inject(['baseWorkflow', 'workflowManager', 'workflowDesigner', 'global'])
 @connect(({workflowManager, workflowDesigner, global, loading}) => ({
   workflowManager,
   workflowDesigner,
   global,
-  gridLoading: loading.effects['global/oopSearchResult']
+  gridLoading: loading.effects['global/oopSearchResult'],
 }))
 export default class ToDo extends React.PureComponent {
   state = {
@@ -170,7 +171,68 @@ export default class ToDo extends React.PureComponent {
   afterProcessSubmit = ()=>{
     this.handleTabsChange(this.state.activeKey);
   }
-
+  handleProcessAgree = (record)=>{
+    console.log(record);
+    Modal.alert('提示', '确定同意审批此流程吗？', [
+      { text: '取消'},
+      { text: '确认', onPress: () => agree() },
+    ]);
+    const agree = ()=>{
+      const {taskId, form} = record;
+      if (form.formData) {
+        const data = {
+          ...form.formData,
+          passOrNot: 1,
+          approvalRemarks: ''
+        }
+        Toast.loading('Loading...', 600);
+        this.props.dispatch({
+          type: 'baseWorkflow/submitWorkflow',
+          payload: {taskOrProcDefKey: taskId, formData: data},
+          callback: (res)=>{
+            Toast.hide();
+            if (res.status === 'ok') {
+              Toast.success('流程提交成功', 2);
+              this.fetchData();
+            } else {
+              Toast.fail(`流程提交失败,${res.result}`, 4);
+            }
+          }
+        })
+      }
+    }
+  }
+  renderListItem = (item, type)=>{
+    const {form: {formData}} = item;
+    // formData.formTodoDisplayFields = [
+    //   {label: '姓名', name: 'name'},
+    //   {label: '部门', name: 'organization'},
+    //   {label: '项目名称', name: 'projects'}
+    // ]
+    const listItem = (
+    <Fragment>
+      <div>
+        <Icon type="clock-circle-o" className={styles.icon} />
+        {
+          type === 'todo' ? (
+          <Fragment>
+            <span>到达时间 : </span>
+            <span>{moment(item.createTime).format('YYYY-MM-DD HH:mm')}</span>
+          </Fragment>) : (
+          <Fragment><span>办理时间 : </span>
+            <span style={{marginLeft: 8}}>{item.endTime}</span>
+          </Fragment>)
+        }
+      </div>
+      <div style={{marginTop: 12}}><Icon type="user" className={styles.icon} /><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
+    </Fragment>);
+    if (formData.formTodoDisplayFields && formData.formTodoDisplayFields.length) {
+      return formData.formTodoDisplayFields.map(it=>
+        (<div key={it.name}><span>{it.label} : </span><span>{formData[`${it.name}_text`]}</span></div>)
+      )
+    }
+    return listItem;
+  }
   render() {
     const {
       gridLoading
@@ -222,19 +284,14 @@ export default class ToDo extends React.PureComponent {
                             </div>
                             <List.Item actions={[<Icon type="right" />]}>
                               <List.Item.Meta
-                                description={<Fragment>
-                                  <div>
-                                    <Icon type="clock-circle-o" className={styles.icon} /><span>到达时间 : </span>
-                                    <span>{moment(item.createTime).format('YYYY-MM-DD HH:mm')}</span>
-                                  </div>
-                                  <div style={{marginTop: 12}}><Icon type="user" className={styles.icon} /><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
-                                </Fragment>}
+                                description={this.renderListItem(item, 'todo')}
                               />
                               <div className={styles.listContent}>
                                 {item.pepProcInst.stateValue}
                               </div>
                             </List.Item>
                           </a>
+                          <div className={styles.toolbar}><Button type="primary" onClick={(event)=>{ this.handleProcessAgree(item, event) }}>同意</Button></div>
                         </div>
                       </div>
                     )}
@@ -276,15 +333,7 @@ export default class ToDo extends React.PureComponent {
                             </div>
                             <List.Item actions={[<Icon type="right" />]}>
                               <List.Item.Meta
-                                description={
-                                <Fragment>
-                                  <div><Icon type="clock-circle-o" className={styles.icon} />
-                                    <span>办理时间 : </span>
-                                    <span style={{marginLeft: 8}}>{item.endTime}</span>
-                                  </div>
-                                  <div style={{marginTop: 12}}><Icon type="user" className={styles.icon} /><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
-                                </Fragment>
-                              }
+                                description={this.renderListItem(item)}
                               />
                               <div className={styles.listContent}>
                                 {item.pepProcInst.stateValue}

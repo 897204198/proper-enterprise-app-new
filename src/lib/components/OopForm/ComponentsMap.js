@@ -69,7 +69,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
 export default (name, label, props, children, rules, isApp)=> {
   const isWeb = !isApp;
   const Map = {
-    Input: isWeb ? <Input {...props} onFocus={(e) => { hackInputAndroidFocusKeyboardOcclusion(e) }} /> : getAntdMobileComponent(name, label, props, children, rules),
+    Input: isWeb ? <Input {...props} autoComplete="on" onFocus={(e) => { hackInputAndroidFocusKeyboardOcclusion(e) }} /> : getAntdMobileComponent(name, label, props, children, rules),
     Button: isWeb ? <Button {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     Icon: <Icon {...props} />,
     TextArea: isWeb ? <TextArea {...props} /> : getAntdMobileComponent(name, label, props, children, rules),

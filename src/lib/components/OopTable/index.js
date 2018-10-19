@@ -21,11 +21,21 @@ const caculateRowButtonWidth = (n)=>{
   return n === 1 ? 60 : (n * 18) + ((n - 1) * 17) + 32 + 5
 }
 
+const getFilterParams = (filters)=>{
+  const filtersParam = {}
+  if (Object.values(filters).length && Object.values(filters)[0].length) {
+    for (const k in filters) {
+      filtersParam[k] = filters[k].toString()
+    }
+  }
+  return filtersParam
+}
 export default class OopTable extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRowItems: [],
     changeRows: [],
+    filters: null
   }
   rowSelectionChange = (selectedRowKeys, selectedRowItems)=>{
     this.setState({
@@ -34,18 +44,17 @@ export default class OopTable extends PureComponent {
     })
   }
   onChange = (pagination, filters, sorter)=>{
-    const filtersParam = {}
-    if (Object.values(filters).length && Object.values(filters)[0].length) {
-      for (const k in filters) {
-        filtersParam[k] = filters[k].toString()
-      }
-    }
-    this.props.onLoad && this.props.onLoad({pagination: {
-      pageNo: pagination.current,
-      pageSize: pagination.pageSize,
-      sorter,
-      ...filtersParam
-    }});
+    this.setState({
+      filters
+    }, ()=>{
+      const filtersParam = getFilterParams(this.state.filters)
+      this.props.onLoad && this.props.onLoad({pagination: {
+        pageNo: pagination.current,
+        pageSize: pagination.pageSize,
+        sorter,
+        ...filtersParam
+      }});
+    });
   }
   clearSelection = ()=>{
     this.setState({

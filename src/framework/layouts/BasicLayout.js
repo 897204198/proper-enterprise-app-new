@@ -49,7 +49,7 @@ enquireScreen((b) => {
   isMobile = b;
 });
 
-@inject(['baseUser', 'baseLogin'])
+@inject(['global', 'baseUser', 'baseLogin'])
 @connect(({ baseUser, global, loading }) => ({
   currentUser: baseUser.currentUser,
   menus: baseUser.menus,

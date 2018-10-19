@@ -313,13 +313,14 @@ export default class OopWorkflowMain extends PureComponent {
     }
     const oopForm = this.oopForm.wrappedInstance;
     const form = oopForm.getForm();
-    form.validateFields({force: true}, (err, data)=>{
+    form.validateFields({force: true}, (err)=>{
       if (err) {
         setButtonLoading(false);
         oopForm.showValidErr(err);
         return
       }
-      const formData = oopForm.getFormData(data);
+      const formData = oopForm.getFormData();
+      console.log(formData);
       oopForm.showPageLoading(true);
       this.props.dispatch({
         type: 'baseWorkflow/submitWorkflow',
@@ -334,7 +335,7 @@ export default class OopWorkflowMain extends PureComponent {
   // 发起工作流的方法
   launchWorkflow = (callback)=>{
     console.log('launchWorkflow...');
-    const {taskOrProcDefKey, setButtonLoading} = this.props;
+    const {taskOrProcDefKey, setButtonLoading, baseWorkflow: {formEntity: {formTodoDisplayFields = []}}} = this.props;
     if (!this.isComplete) {
       message.warning('有点卡哦，数据还没返回', ()=>{
         setButtonLoading(false);
@@ -347,17 +348,18 @@ export default class OopWorkflowMain extends PureComponent {
     }
     const oopForm = this.oopForm.wrappedInstance;
     const form = oopForm.getForm();
-    form.validateFields((err, data)=>{
+    form.validateFields((err)=>{
       if (err) {
         setButtonLoading(false);
         oopForm.showValidErr(err);
         return
       }
-      const formData = oopForm.getFormData(data);
+      const formData = oopForm.getFormData();
+      console.log(formData);
       oopForm.showPageLoading(true);
       this.props.dispatch({
         type: 'baseWorkflow/launchWorkflow',
-        payload: {taskOrProcDefKey, formData},
+        payload: {taskOrProcDefKey, formData: {...formData, formTodoDisplayFields}},
         callback: (res)=>{
           oopForm.showPageLoading(false);
           callback && callback(res)

@@ -19,25 +19,29 @@ export default class OopWorkflowMainModal extends PureComponent {
     // popoverVisible: false
   }
   submitWorkflow = ()=>{
-    this.setState({
-      buttonLoading: true
-    })
-    this.oopWorkflowMain.submitWorkflow(()=>{
-      this.props.closeModal();
-      this.setState({
-        buttonLoading: false
-      })
-      message.success('流程提交成功');
-      this.props.afterProcessSubmit();
+    this.setButtonLoading(true);
+    this.oopWorkflowMain.submitWorkflow((res)=>{
+      if (res.status === 'ok') {
+        this.props.closeModal();
+        this.setButtonLoading(false)
+        message.success('流程提交成功');
+        this.props.afterProcessSubmit();
+      } else {
+        message.error(`流程提交失败,${res.result}`);
+      }
     })
   }
   launchWorkflow = ()=>{
     this.setButtonLoading(true)
-    this.oopWorkflowMain.launchWorkflow(()=>{
-      this.props.closeModal();
-      this.setButtonLoading(false)
-      message.success('流程提交成功');
-      this.props.afterProcessSubmit();
+    this.oopWorkflowMain.launchWorkflow((res)=>{
+      if (res.status === 'ok') {
+        this.props.closeModal();
+        this.setButtonLoading(false)
+        message.success('流程提交成功');
+        this.props.afterProcessSubmit();
+      } else {
+        message.error(`流程提交失败,${res.result}`);
+      }
     })
   }
   setButtonLoading = (flag)=>{
@@ -50,6 +54,7 @@ export default class OopWorkflowMainModal extends PureComponent {
   }
   handleCancel = ()=>{
     this.props.closeModal();
+    this.setButtonLoading(false);
   }
   handleAfterClose = ()=>{
     this.setState({
@@ -75,6 +80,7 @@ export default class OopWorkflowMainModal extends PureComponent {
   render() {
     const {visible, ...otherProps} = this.props;
     const {taskOrProcDefKey} = this.props;
+    console.log('buttonLoading', this.state.buttonLoading)
     const footer = (
       <Fragment>
         <Popover
@@ -91,7 +97,7 @@ export default class OopWorkflowMainModal extends PureComponent {
     return (
       <Modal
          width={800}
-         visible={this.props.visible}
+         visible={visible}
          footer={footer}
          onCancel={this.handleCancel}
          destroyOnClose={true}

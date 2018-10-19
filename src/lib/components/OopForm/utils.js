@@ -176,7 +176,7 @@ const getListItem = (formItemInner, formItemConfig)=>{
   if ('RadioGroup,CheckboxGroup'.includes(component.name)) {
     const rule = rules && rules.find(it=>it.required);
     listItem = (
-  <div key={name} className={component.props.disabled && 'oopform-list-item-disabled'}>
+  <div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>
     <div className="am-list-item am-list-item-middle">
       <div className="am-list-line">
         <div className="am-list-content">{rule ? (<Fragment><span className={styles.required}>*</span>{label}</Fragment>) : label}</div>

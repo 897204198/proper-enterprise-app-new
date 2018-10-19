@@ -131,6 +131,7 @@ export default {
           oopSearchGrid: {
             list: result.data || [],
             pagination: {
+              ...pagination,
               pageNo: pagination.pageNo,
               pageSize: pagination.pageSize,
               count: result.count || 0,
@@ -143,6 +144,7 @@ export default {
           oopSearchGrid: {
             list: [],
             pagination: {
+              ...pagination,
               pageNo: pagination.pageNo,
               pageSize: pagination.pageSize,
               count: 0,

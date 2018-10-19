@@ -130,19 +130,19 @@ export default class OopSystemCurrent extends PureComponent {
   render() {
     const {global: {size}, label, loading} = this.props;
     return (
-      <div className={styles.container} style={{marginTop: 0}}>
         <Spin spinning={!!loading}>
-          <DescriptionList col="1" size={size}>
-            <div>
-              <Fragment>
-                <Input type="hidden" value={this.state.id} />
-                <Input type="hidden" value={this.state.text} />
-                <Input type="hidden" value={this.state.code} />
-              </Fragment>
-              <Description term={label} style={{display: 'flex', justifyContent: 'space-between'}}>{this.showText()}</Description>
-            </div>
-          </DescriptionList>
-        </Spin>
-      </div>);
+          <div className={styles.container} style={{marginTop: 0}}>
+            <DescriptionList col="1" size={size} style={{width: '100%'}}>
+              <div>
+                <Fragment>
+                  <Input type="hidden" value={this.state.id} />
+                  <Input type="hidden" value={this.state.text} />
+                  <Input type="hidden" value={this.state.code} />
+                </Fragment>
+                <Description term={label} style={{display: 'flex', justifyContent: 'space-between'}}>{this.showText()}</Description>
+              </div>
+            </DescriptionList>
+          </div>
+        </Spin>);
   }
 }

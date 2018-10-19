@@ -67,13 +67,47 @@ export default class OopForm extends React.PureComponent {
   getForm = ()=> {
     return this.props.form;
   }
-  getFormData = (formData)=>{
+  // 获取OopForm表单中的数据
+  // 1.兼容antd-mobile的数据格式
+  // 2.如果是枚举类型增加名称的字段比如
+  // formData中下拉菜单的值为{vacationType: 'B'} 获取的值为{vacationType: 'B', vacationType_text: '事假'}
+  getFormData = ()=>{
+    const { formJson = [], form} = this.props;
+    const formData = form.getFieldsValue();
+    console.log(formData);
+    formJson.forEach((it)=>{
+      const {name, component: {name: cName, children, props}} = it;
+      const value = formData[name];
+      if ('Select,RadioGroup,CheckboxGroup'.includes(cName)) {
+        if (value || !formData[`${name}_text`]) {
+          // am的Picker组件为value为数组
+          if (Array.isArray(value)) {
+            formData[`${name}_text`] = children.find(c=>c.value === value[0]).label
+          } else {
+            formData[`${name}_text`] = children.find(c=>c.value === value).label
+          }
+        }
+      } else if ('OopSystemCurrent'.includes(cName)) {
+        if (value || !formData[`${name}_text`]) {
+          formData[`${name}_text`] = value.text
+        }
+      } else if ('DatePicker'.includes(cName)) {
+        if (value || !formData[`${name}_text`]) {
+          let dateStr = '';
+          if (value.constructor.name === 'Moment') {
+            dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD')
+          } else if (value.constructor.name === 'Date') {
+            dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD')
+          }
+          formData[`${name}_text`] = dateStr;
+        }
+      }
+    })
     if (isApp()) {
       // app的am组件中 Select所 对应的组件是 Picker， 此组件的值类型为[]; 所以这里处理一下
       const data = {
         ...formData
       }
-      const { formJson = [] } = this.props;
       const selectCom = formJson.find(it=>it.component.name === 'Select');
       if (selectCom) {
         const {name} = selectCom;
