@@ -28,20 +28,7 @@ const TYPE_ENUM = [
   {label: '问卷', value: 'QUESTION'},
   {label: '工作流', value: 'WORKFLOW'},
 ]
-const onValuesChange = (props, changedValues) => {
-  if (changedValues.formTodoDisplayFields) {
-    if (changedValues.formTodoDisplayFields.length > 4) {
-      const selectArray = changedValues.formTodoDisplayFields.slice(0, 4)
-      const fields = {}
-      fields[changedValues.formTodoDisplayFields] = selectArray
-      // props.formself.setFieldsValue(fields)
-      message.error('最多可选择四项')
-    }
-  }
-}
-const ModalFormBasic = Form.create({
-  onValuesChange
-})((props) => {
+const ModalFormBasic = Form.create()((props) => {
   const { form, loading, visible, title, onModalCancel,
     onModalSubmit, formBasic, checkFormkeydefinition, self } = props;
   const submitForm = ()=>{
@@ -69,6 +56,31 @@ const ModalFormBasic = Form.create({
       }
     }];
   }
+  const optionAble = (item) => {
+    const selectOptions = props.selected
+    if (selectOptions.length >= 4) {
+      for (let i = 0; i < selectOptions.length; i++) {
+        if (selectOptions[i] === item.name) {
+          return false
+        }
+      }
+      return true
+    } else {
+      return false
+    }
+  }
+  const rederOption = () => {
+    return (
+      formBasic.formDetails && JSON.parse(formBasic.formDetails).formJson.map((item) => {
+        return <Option key={item.name} disabled={optionAble(item)}>{item.label}</Option>
+      })
+    )
+  }
+  // const selecteFocus = () => {
+  //   if (props.selected.length >= 4) {
+  //     message.error('最多可以选择四项')
+  //   }
+  // }
   return (
     <Modal title={title} visible={visible} onOk={submitForm} onCancel={cancelForm} maskClosable={false}>
       <Spin spinning={loading}>
@@ -137,11 +149,11 @@ const ModalFormBasic = Form.create({
               mode="multiple"
               placeholder="请选择待办信息"
               allowClear={true}
+              onChange={(value) => { props.change(value) }}
+              // onFocus={() => { selecteFocus()}}
               >
                 {
-                  formBasic.formDetails && JSON.parse(formBasic.formDetails).formJson.map((item) => {
-                    return <Option key={item.name}>{item.label}</Option>
-                  })
+                  rederOption()
                 }
               </Select>
             )}
@@ -197,6 +209,7 @@ export default class Template extends React.PureComponent {
       formJson: [],
       formLayout: 'horizontal'
     },
+    selected: [],
     list: []
   }
   currentRowRecordId = null;
@@ -229,7 +242,12 @@ export default class Template extends React.PureComponent {
     this.setFormBasicModalVisible(true);
     this.props.dispatch({
       type: 'formTemplate/fetchById',
-      payload: record.id
+      payload: record.id,
+      callback: (res) => {
+        this.setState({
+          selected: res.result.listDetails
+        })
+      }
     });
   }
   handleRemove = (record)=>{
@@ -273,7 +291,8 @@ export default class Template extends React.PureComponent {
         type: 'formTemplate/clearEntity'
       });
       this.setState({
-        title: '新建表单模板'
+        title: '新建表单模板',
+        selected: false
       })
     }, 300)
   }
@@ -415,9 +434,17 @@ export default class Template extends React.PureComponent {
   handleOpenfile = () => {
     document.getElementById('file').click()
   }
+  selectChange = (value) => {
+    this.setState({
+      selected: value
+    })
+    if (value.length >= 4) {
+      message.error('最多可以选择四项')
+    }
+  }
   render() {
     const {formTemplate: {entity}, loading, global: { size } } = this.props;
-    const {list} = this.state;
+    const {list, selected} = this.state;
     const columns = [
       {title: '名称', dataIndex: 'name'},
       {title: '表单编码', dataIndex: 'formkeydefinition'},
@@ -513,6 +540,8 @@ export default class Template extends React.PureComponent {
           formself={this.form}
           ref={(el) => { this.form = el }}
           checkFormkeydefinition={this.checkFormkeydefinition}
+          change={this.selectChange}
+          selected={selected}
           self={this}
         />
         <Modal
