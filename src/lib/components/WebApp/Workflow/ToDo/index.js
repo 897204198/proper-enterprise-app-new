@@ -108,6 +108,7 @@ export default class ToDo extends React.PureComponent {
   handleProcessSubmit = (record)=>{
     console.log('handleProcessSubmit', record)
     const {pepProcInst: {procInstId, processTitle}, taskId, name} = record;
+    const {btoa, encodeURIComponent, JSON} = window;
     const param = btoa(encodeURIComponent(JSON.stringify({
       isLaunch: false,
       taskOrProcDefKey: taskId,
@@ -203,12 +204,7 @@ export default class ToDo extends React.PureComponent {
     }
   }
   renderListItem = (item, type)=>{
-    const {form: {formData}} = item;
-    // formData.formTodoDisplayFields = [
-    //   {label: '姓名', name: 'name'},
-    //   {label: '部门', name: 'organization'},
-    //   {label: '项目名称', name: 'projects'}
-    // ]
+    const {form: {formData}, globalData = {}} = item;
     const listItem = (
     <Fragment>
       <div>
@@ -226,8 +222,8 @@ export default class ToDo extends React.PureComponent {
       </div>
       <div style={{marginTop: 12}}><Icon type="user" className={styles.icon} /><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
     </Fragment>);
-    if (formData.formTodoDisplayFields && formData.formTodoDisplayFields.length) {
-      return formData.formTodoDisplayFields.map(it=>
+    if (globalData.formTodoDisplayFields && globalData.formTodoDisplayFields.length) {
+      return globalData.formTodoDisplayFields.map(it=>
         (<div key={it.name}><span>{it.label} : </span><span>{formData[`${it.name}_text`]}</span></div>)
       )
     }

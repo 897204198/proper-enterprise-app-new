@@ -79,7 +79,7 @@ export default class OopForm extends React.PureComponent {
       const {name, component: {name: cName, children, props}} = it;
       const value = formData[name];
       if ('Select,RadioGroup,CheckboxGroup'.includes(cName)) {
-        if (value || !formData[`${name}_text`]) {
+        if (value && !formData[`${name}_text`]) {
           // am的Picker组件为value为数组
           if (Array.isArray(value)) {
             formData[`${name}_text`] = children.find(c=>c.value === value[0]).label
@@ -88,11 +88,11 @@ export default class OopForm extends React.PureComponent {
           }
         }
       } else if ('OopSystemCurrent'.includes(cName)) {
-        if (value || !formData[`${name}_text`]) {
+        if (value && !formData[`${name}_text`]) {
           formData[`${name}_text`] = value.text
         }
       } else if ('DatePicker'.includes(cName)) {
-        if (value || !formData[`${name}_text`]) {
+        if (value && !formData[`${name}_text`]) {
           let dateStr = '';
           if (value.constructor.name === 'Moment') {
             dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD')

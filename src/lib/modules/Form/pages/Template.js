@@ -58,7 +58,7 @@ const ModalFormBasic = Form.create()((props) => {
   }
   const optionAble = (item) => {
     const selectOptions = props.selected
-    if (selectOptions.length >= 4) {
+    if (selectOptions && selectOptions.length >= 4) {
       for (let i = 0; i < selectOptions.length; i++) {
         if (selectOptions[i] === item.name) {
           return false

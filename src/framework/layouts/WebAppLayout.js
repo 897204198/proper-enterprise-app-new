@@ -12,7 +12,13 @@ import styles from './WebAppLayout.less';
 const { Content } = Layout;
 const webappRouters = Object.keys(routers).map(it=>routers[it].main && it).filter(i=>i !== undefined);
 const handleBack = (props)=>{
-  const {pathname} = props.location;
+  const {pathname, search} = props.location;
+  // 如果传递了这个参数 说明点击返回的时候调用 关闭当前页面
+  if (getParamObj(search).close) {
+    window.parent.postMessage('close', '*');
+    window.localStorage.setItem('If_Can_Close', 'close');
+    return;
+  }
   // 如果webappRouters中包含当前的页面说明是主页 点击返回等于点击 handleHome
   if (webappRouters.includes(pathname)) {
     handleHome();
@@ -75,7 +81,8 @@ export default class WebAppLayout extends React.PureComponent {
   }
   componentWillMount() {
     window.localStorage.setItem('If_Can_Back', '');
-    // window.localStorage.setItem('pea_dynamic_request_prefix', 'https://icmp2.propersoft.cn/icmp/server-dev');
+    window.localStorage.setItem('If_Can_Close', '');
+    window.localStorage.setItem('pea_dynamic_request_prefix', 'https://icmp2.propersoft.cn/icmp/server-dev');
     if (this.props.location.search) {
       const transParams = getParamObj(this.props.location.search);
       if (transParams && transParams.token) {
@@ -95,7 +102,7 @@ export default class WebAppLayout extends React.PureComponent {
             <Switch>
               { // 路径为‘/webapp/*’的页面会被 默认认为是H5的页面 自动加载到WebAppLayout下
                 Object.keys(routerData).map(it=>((it.includes('/webapp/')) ?
-                  (<Route key={it} exact path={it} component={routerData[it].component} a={123} />) : null)
+                  (<Route key={it} exact path={it} component={routerData[it].component} />) : null)
                 )
               }
               <Route render={NotFound} />

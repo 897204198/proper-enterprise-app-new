@@ -71,6 +71,7 @@ export default class OopTable extends PureComponent {
           key={btn.name}
           icon={btn.icon}
           type={btn.type}
+          style={(typeof btn.style === 'function') ? btn.style() : btn.style}
           onClick={()=>{
             btn.onClick && btn.onClick(this.state.selectedRowKeys, this.state.selectedRowItems)
           }}>
