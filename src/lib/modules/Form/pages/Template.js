@@ -193,6 +193,20 @@ const ModalFormBasic = Form.create()((props) => {
     </Modal>
   )
 });
+const isJson = (str) => {
+  if (typeof str === 'string') {
+    try {
+      const strObj = JSON.parse(str);
+      if (typeof strObj === 'object' && strObj) {
+        return true
+      } else {
+        return false
+      }
+    } catch (e) {
+      return false
+    }
+  }
+}
 
 @inject(['formTemplate', 'global'])
 @connect(({ formTemplate, global, loading }) => ({
@@ -403,29 +417,48 @@ export default class Template extends React.PureComponent {
     FileSaver.saveAs(blob, `${name}.json`)
   }
   handleUpload = () => {
-    const file = document.getElementById('file').files[0]
+    const fileBox = document.getElementById('file')
+    const file = fileBox.files[0]
+    const filename = file.name
+    const ext = filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
+    if (ext !== 'json') {
+      message.error('请上传json文件')
+      return false
+    }
     const reader = new FileReader()
     reader.readAsText(file)
     reader.onload = () => {
-      this.ImportJSON = JSON.parse(reader.result)
-      this.props.dispatch({
-        type: 'formTemplate/queryByFormkeydefinition',
-        payload: this.ImportJSON.formkeydefinition,
-        callback: (cb)=>{
-          if (cb.result.length === 0) {
-            this.props.dispatch({
-              type: 'formTemplate/saveOrUpdate',
-              payload: this.ImportJSON,
-              callback: (res) => {
-                this.onLoad();
-                oopToast(res, '文件导入成功')
-              }
-            })
-          } else {
-            message.error('表单编码已存在');
-          }
+      if (isJson(reader.result)) {
+        // this.ImportJSON = JSON.parse(reader.result)
+        const JSONObj = JSON.parse(reader.result)
+        if (!JSONObj.name || JSONObj.name === '' || !JSONObj.formkeydefinition || JSONObj.formkeydefinition === '') {
+          message.error('文件内容缺少关键信息')
+          fileBox.value = ''
+          return false
         }
-      });
+        this.props.dispatch({
+          type: 'formTemplate/queryByFormkeydefinition',
+          payload: JSONObj.formkeydefinition,
+          callback: (cb)=>{
+            if (cb.result.length === 0) {
+              this.props.dispatch({
+                type: 'formTemplate/saveOrUpdate',
+                payload: JSONObj,
+                callback: (res) => {
+                  this.onLoad();
+                  oopToast(res, '文件导入成功')
+                }
+              })
+            } else {
+              message.error('表单编码已存在');
+            }
+            fileBox.value = ''
+          }
+        });
+      } else {
+        message.error('文件内容不是JSON格式')
+        fileBox.value = ''
+      }
     }
     reader.onerror = () => {
       message.error('文件上传失败')
