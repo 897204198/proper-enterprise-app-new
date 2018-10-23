@@ -5,6 +5,7 @@ import zhCN2 from 'antd-mobile/lib/date-picker/locale/zh_CN';
 import OopSystemCurrent from '../OopSystemCurrent';
 import OopUpload from '../OopUpload';
 import OopText from '../OopText';
+import CheckBoxPop from './components/CheckBoxPop';
 import OopGroupUserPicker from '../OopGroupUserPicker';
 import { getUuid } from '../../../framework/common/oopUtils';
 import { isAndroid } from '../../../framework/utils/utils';
@@ -58,10 +59,15 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
     case 'DatePicker':
       component = <DatePickerM { ...props} locale={zhCN2} mode={props.showTime ? undefined : 'date'}><List.Item arrow="horizontal">{label}</List.Item></DatePickerM>;
       break;
-    // case 'OopSystemCurrent':
-    //   console.log(props)
-    //   component = <InputItem { ...props} clear>{label}</InputItem>;
-    //   break;
+    case 'RadioGroup':
+      component = <Picker { ...props} data={children} cols={1}><List.Item arrow="horizontal">{label}</List.Item></Picker>;
+      break;
+    case 'CheckboxGroup':
+      component = <CheckBoxPop { ...props} data={children}>{p => (<List.Item arrow="horizontal" {...p}>{label}</List.Item>)}</CheckBoxPop>;
+      break;
+    case 'OopText':
+      component = <List.Item extra={props.text}>{label}</List.Item>;
+      break;
     default: null
   }
   return component;
@@ -80,15 +86,15 @@ export default (name, label, props, children, rules, isApp)=> {
         }
       </Select>
     ) : getAntdMobileComponent(name, label, props, children, rules),
-    RadioGroup: (
-      <RadioGroup options={children} {...props} />),
-    CheckboxGroup: (
-      <CheckboxGroup options={children} {...props} />),
+    RadioGroup: isWeb ? (
+      <RadioGroup options={children} {...props} />) : getAntdMobileComponent(name, label, props, children, rules),
+    CheckboxGroup: isWeb ? (
+      <CheckboxGroup options={children} {...props} />) : getAntdMobileComponent(name, label, props, children, rules),
     InputNumber: isWeb ? <InputNumber {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     DatePicker: isWeb ? <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} /> : getAntdMobileComponent(name, label, props, children, rules),
     OopSystemCurrent: <OopSystemCurrent {...props} label={label} />,
     OopUpload: <OopUpload accept="image/*" listType="picture" type={['.jpg', '.jpeg', '.png', '.gif', '.bmp']} {...props} />,
-    OopText: <OopText {...props} />,
+    OopText: isWeb ? <OopText {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     OopGroupUserPicker: <OopGroupUserPicker {...props} />,
   }
   const component = Map[name];

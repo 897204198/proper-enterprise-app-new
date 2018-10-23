@@ -81,10 +81,9 @@ export default class OopForm extends React.PureComponent {
       if ('Select,RadioGroup,CheckboxGroup'.includes(cName)) {
         if (value && !formData[`${name}_text`]) {
           // am的Picker组件为value为数组
-          if (Array.isArray(value)) {
-            formData[`${name}_text`] = children.find(c=>c.value === value[0]).label
-          } else {
-            formData[`${name}_text`] = children.find(c=>c.value === value).label
+          const child = children.map(c=>(value.includes(c.value) ? c : null)).filter(i=>i !== null);
+          if (child) {
+            formData[`${name}_text`] = child.map(c=>c.label).join(',');
           }
         }
       } else if ('OopSystemCurrent'.includes(cName)) {
@@ -104,17 +103,19 @@ export default class OopForm extends React.PureComponent {
       }
     })
     if (isApp()) {
-      // app的am组件中 Select所 对应的组件是 Picker， 此组件的值类型为[]; 所以这里处理一下
+      // app的am组件中 Select、RadioGroup 所 对应的组件是 Picker， 此组件的值类型为[]; 所以这里处理一下
       const data = {
         ...formData
       }
-      const selectCom = formJson.find(it=>it.component.name === 'Select');
-      if (selectCom) {
-        const {name} = selectCom;
-        if (Array.isArray(data[name])) {
-          const [first] = data[name]
-          data[name] = first;
-        }
+      const selectComs = formJson.filter(it=>'Select,RadioGroup'.includes(it.component.name));
+      if (selectComs && selectComs.length) {
+        selectComs.forEach((selectCom)=>{
+          const {name} = selectCom;
+          if (Array.isArray(data[name])) {
+            const [first] = data[name]
+            data[name] = first;
+          }
+        })
       }
       return data;
     }

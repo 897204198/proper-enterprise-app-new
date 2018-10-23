@@ -102,12 +102,16 @@ export default class WorkflowMainPop extends PureComponent {
   submitWorkflow = ()=>{
     if (this.oopWorkflowMain) {
       this.setButtonLoading(true);
-      this.oopWorkflowMain.submitWorkflow(()=>{
-        message.success('流程提交成功');
-        // 如果从手机推送通知进来 点击办理之后 跟点击右上主页图标 逻辑一致
-        setTimeout(()=>{
-          this.afterSubmit();
-        }, 1000);
+      this.oopWorkflowMain.submitWorkflow((res)=>{
+        if (res.status === 'ok') {
+          message.success('流程提交成功');
+          // 如果从手机推送通知进来 点击办理之后 跟点击右上主页图标 逻辑一致
+          setTimeout(()=>{
+            this.afterSubmit();
+          }, 1000);
+        } else {
+          message.error(`流程提交失败,${res.result}`, 4);
+        }
       });
     }
   }

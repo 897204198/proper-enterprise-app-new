@@ -1,10 +1,10 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import { Form, Icon, Tooltip, Popover, Input, Spin } from 'antd';
 import {List, Toast} from 'antd-mobile';
 import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
-import styles from './index.less';
+// import styles from './index.less';
 
 
 export const formGenerator = (formConfig)=>{
@@ -142,8 +142,8 @@ export const appFormGenerator = (formConfig)=>{
           }
           const obj = {initialValue, rules: _rules};
           // antd-mobile Picker的默认值为数组
-          if (component.name === 'Select') {
-            if (typeof (obj.initialValue) === 'string') {
+          if (component.name === 'Select' || component.name === 'RadioGroup') {
+            if (typeof (obj.initialValue) === 'string' || typeof (obj.initialValue) === 'number') {
               obj.initialValue = [initialValue];
             }
           }
@@ -171,20 +171,21 @@ export const appFormGenerator = (formConfig)=>{
 }
 // 获取ListItem
 const getListItem = (formItemInner, formItemConfig)=>{
-  const {name, label, component, rules, wrapper, wrapperClass} = formItemConfig;
-  let listItem = (<div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>{formItemInner}</div>);
-  if ('RadioGroup,CheckboxGroup'.includes(component.name)) {
-    const rule = rules && rules.find(it=>it.required);
-    listItem = (
-  <div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>
-    <div className="am-list-item am-list-item-middle">
-      <div className="am-list-line">
-        <div className="am-list-content">{rule ? (<Fragment><span className={styles.required}>*</span>{label}</Fragment>) : label}</div>
-        <div className="am-list-extra">{formItemInner}</div>
-      </div>
-    </div>
-  </div>);
-  }
+  // const {name, label, component, rules, wrapper, wrapperClass} = formItemConfig;
+  const {name, component, wrapper, wrapperClass} = formItemConfig;
+  const listItem = (<div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>{formItemInner}</div>);
+  // if ('RadioGroup,CheckboxGroup'.includes(component.name)) {
+  //   const rule = rules && rules.find(it=>it.required);
+  //   listItem = (
+  // <div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>
+  //   <div className="am-list-item am-list-item-middle">
+  //     <div className="am-list-line">
+  //       <div className="am-list-content">{rule ? (<Fragment><span className={styles.required}>*</span>{label}</Fragment>) : label}</div>
+  //       <div className="am-list-extra">{formItemInner}</div>
+  //     </div>
+  //   </div>
+  // </div>);
+  // }
   return wrapper ? (
     <div className={wrapperClass} key={name}>
       {formItemInner}

@@ -55,21 +55,24 @@ const BusinessPanel = (props)=>{
   if (!isLaunch) {
     // 如果是历史节点 没有taskOrProcDefKey 没有审批意见 否则有审批意见
     if (taskOrProcDefKey) {
+      const children = [
+        {label: '同意', value: 1},
+        {label: '不同意', value: 0},
+      ];
       const ApprovalPanelJson = [{
         label: '审批意见',
         name: 'passOrNot',
         component: {
           name: 'RadioGroup',
-          children: [
-            {label: '同意', value: 1},
-            {label: '不同意', value: 0},
-          ],
+          children,
           props: {
             onChange: (e)=>{
+              // ad与am不同的组件 e代表不同的值 ad: e为ad的事件对象 am：e为picker data的索引 切为数组 如：[0]--代表第一项;
+              const value = !Array.isArray(e) ? e.target.value : children[e[0]].value
               self.setState({
-                approvalRemarksRequire: e.target.value === 0
+                approvalRemarksRequire: value
               }, ()=>{
-                if (e.target.value === 1) {
+                if (value === 1) {
                   const form = self.oopForm.wrappedInstance.getForm();
                   form.validateFields(['approvalRemarks'], { force: true });
                 }

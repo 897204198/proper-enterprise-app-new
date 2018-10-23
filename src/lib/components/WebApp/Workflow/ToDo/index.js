@@ -224,7 +224,7 @@ export default class ToDo extends React.PureComponent {
     </Fragment>);
     if (globalData.formTodoDisplayFields && globalData.formTodoDisplayFields.length) {
       return globalData.formTodoDisplayFields.map(it=>
-        (<div key={it.name}><span>{it.label} : </span><span>{formData[`${it.name}_text`]}</span></div>)
+        (<div key={it.name}><span>{it.label} : </span><span>{formData[`${it.name}_text`] ? formData[`${it.name}_text`] : formData[`${it.name}`]}</span></div>)
       )
     }
     return listItem;

@@ -16,7 +16,7 @@ const handleBack = (props)=>{
   // 如果传递了这个参数 说明点击返回的时候调用 关闭当前页面
   if (getParamObj(search).close) {
     window.parent.postMessage('close', '*');
-    window.localStorage.setItem('If_Can_Close', 'close');
+    window.localStorage.setItem('If_Can_Back', 'close');
     return;
   }
   // 如果webappRouters中包含当前的页面说明是主页 点击返回等于点击 handleHome
@@ -81,8 +81,7 @@ export default class WebAppLayout extends React.PureComponent {
   }
   componentWillMount() {
     window.localStorage.setItem('If_Can_Back', '');
-    window.localStorage.setItem('If_Can_Close', '');
-    window.localStorage.setItem('pea_dynamic_request_prefix', 'https://icmp2.propersoft.cn/icmp/server-dev');
+    // window.localStorage.setItem('pea_dynamic_request_prefix', 'https://icmp2.propersoft.cn/icmp/server-dev');
     if (this.props.location.search) {
       const transParams = getParamObj(this.props.location.search);
       if (transParams && transParams.token) {
