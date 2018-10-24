@@ -119,13 +119,38 @@ export default class Official extends React.PureComponent {
       addOrEditModalTitle: '编辑',
       viewModalVisible: true,
       isCreate: false,
-      push: false,
-      mail: false,
-      sms: false,
+      // push: false,
+      // mail: false,
+      // sms: false,
     });
     this.props.dispatch({
       type: 'messageOfficial/getInfo',
-      payload: record.id
+      payload: record.id,
+      callback: (res) => {
+        const { details = {}} = res
+        // console.log(editItem)
+        let push = false
+        let mail = false
+        let sms = false
+        if (details && details.length > 0) {
+          for (const item of details) {
+            if (item.type === 'PUSH') {
+              push = true
+            }
+            if (item.type === 'EMAIL') {
+              mail = true
+            }
+            if (item.type === 'SMS') {
+              sms = true
+            }
+            this.setState({
+              push,
+              mail,
+              sms
+            })
+          }
+        }
+      }
     });
   }
   onDelete = (record) => {
@@ -238,31 +263,31 @@ export default class Official extends React.PureComponent {
     }
     this.props.form.setFieldsValue(valueObj)
   }
-  componentWillReceiveProps(nextProps) {
-    const { editItem = {}} = nextProps.messageOfficial
-    // console.log(editItem)
-    let push = false
-    let mail = false
-    let sms = false
-    if (editItem.details && editItem.details.length > 0) {
-      for (const item of editItem.details) {
-        if (item.type === 'PUSH') {
-          push = true
-        }
-        if (item.type === 'EMAIL') {
-          mail = true
-        }
-        if (item.type === 'SMS') {
-          sms = true
-        }
-        this.setState({
-          push,
-          mail,
-          sms
-        })
-      }
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   const { editItem = {}} = nextProps.messageOfficial
+  //   // console.log(editItem)
+  //   let push = false
+  //   let mail = false
+  //   let sms = false
+  //   if (editItem.details && editItem.details.length > 0) {
+  //     for (const item of editItem.details) {
+  //       if (item.type === 'PUSH') {
+  //         push = true
+  //       }
+  //       if (item.type === 'EMAIL') {
+  //         mail = true
+  //       }
+  //       if (item.type === 'SMS') {
+  //         sms = true
+  //       }
+  //       this.setState({
+  //         push,
+  //         mail,
+  //         sms
+  //       })
+  //     }
+  //   }
+  // }
   checkChange = (types, title, con) => {
     if (!this.state[types]) {
       this.setState({
@@ -281,6 +306,7 @@ export default class Official extends React.PureComponent {
         [types]: !this.state[types]
       })
     }
+    // console.log(this.state)
     // e.stopPropagation();
   };
   render() {
@@ -359,7 +385,7 @@ export default class Official extends React.PureComponent {
           return (
             <div className={styles.seticon}>
               {/* <Popover placement="bottom" content="点击进行APP配置"> */}
-                <a onClick={() => {}}>
+                <a onClick={() => {}} style={{cursor: 'default'}}>
                   <Icon
                     type="shake"
                     className={pushState === false ? styles.grayicon : null}
@@ -367,7 +393,7 @@ export default class Official extends React.PureComponent {
                 </a>
               {/* </Popover> */}
               {/* <Popover placement="bottom" content="点击进行邮件配置"> */}
-                <a onClick={() => {}}>
+                <a onClick={() => {}} style={{cursor: 'default'}}>
                   <Icon
                     type="mail"
                     className={mailState === false ? styles.grayicon : null}
@@ -375,7 +401,7 @@ export default class Official extends React.PureComponent {
                 </a>
               {/* </Popover> */}
               {/* <Popover placement="bottom" content="点击进行短信配置"> */}
-                <a onClick={() => {}}>
+                <a onClick={() => {}} style={{cursor: 'default'}}>
                   <Icon
                     type="message"
                     className={smsState === false ? styles.grayicon : null}

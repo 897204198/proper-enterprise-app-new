@@ -29,7 +29,7 @@ const ListItem = (props)=> {
           <div className={styles.rightbox}>
           <Select
             mode="multiple"
-            style={{ width: '100%' }}
+            // style={{ width: '100%' }}
             placeholder="请选择通知方式"
             allowClear={true}
             defaultValue={item.noticeChannel}
