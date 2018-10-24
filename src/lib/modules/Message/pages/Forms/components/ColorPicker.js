@@ -1,13 +1,15 @@
 import React from 'react'
 import reactCSS from 'reactcss'
+import icon from '@/assets/color-icon@36x18.png'
 import { SketchPicker } from 'react-color'
 
-const primaryColor = require('@/config/theme.js')['primary-color']
+// const primaryColor = require('@/config/theme.js')['primary-color']
 
 export default class ColorPicker extends React.Component {
   state = {
     displayColorPicker: false,
-    defaultColor: primaryColor || '#1890ff',
+    // defaultColor: primaryColor || '#1890ff',
+    defaultColor: ''
   };
 
   handleClick = () => {
@@ -63,9 +65,19 @@ export default class ColorPicker extends React.Component {
 
     return (
       <div style={{display: 'inline-block'}}>
-        <div style={ styles.swatch } onClick={ this.handleClick }>
-          <div style={ styles.color } />
-        </div>
+        {
+          defaultColor ?
+          (
+            <div style={ styles.swatch } onClick={ this.handleClick }>
+              <div style={ styles.color } />
+            </div>
+          ) :
+          (
+            <div>
+              <img src={icon} alt="选择颜色" onClick={ this.handleClick } style={{cursor: 'pointer'}} />
+            </div>
+          )
+        }
         {
           this.state.displayColorPicker ? (
             <div style={ styles.popover }>

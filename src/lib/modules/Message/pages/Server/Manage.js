@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react';
 import {connect} from 'dva';
 import { Card, Modal, Switch, Popover } from 'antd';
+import icon from '@/assets/color-icon@16x8.png'
 import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
@@ -135,19 +136,6 @@ export default class Manage extends React.PureComponent {
       modalVisible: flag
     });
   }
-  // handleViewModalVisible = (flag) => {
-  //   this.setState({
-  //     viewModalVisible: flag
-  //   });
-  //   this.props.dispatch({
-  //     type: 'messageManage/clear'
-  //   });
-  // }
-  // handleCloseConfirmCancel = (warningWrapper) => {
-  //   this.setState({
-  //     warningWrapper
-  //   })
-  // }
 
   handleAddOrEditModalCancel = () => {
     this.handleModalVisible(false);
@@ -353,7 +341,14 @@ export default class Manage extends React.PureComponent {
         dataIndex: 'appName',
         render: (text, record) => {
           return (
-            <div><span style={{...colorIconStyle, backgroundColor: record.color}} /><span>{text}</span></div>
+            <div>
+              {
+                record.color ?
+                <span style={{...colorIconStyle, backgroundColor: record.color}} /> :
+                <img src={icon} alt="应用颜色" style={{...colorIconStyle}} />
+              }
+              <span>{text}</span>
+            </div>
           )
         }
       },
