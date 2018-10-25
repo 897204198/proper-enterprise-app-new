@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import { List, Icon, Tabs, Button, Spin} from 'antd';
+import { List, Tabs, Button, Spin} from 'antd';
 import { Modal, Toast } from 'antd-mobile';
 import {connect} from 'dva';
 import {routerRedux} from 'dva/router';
@@ -207,8 +207,7 @@ export default class ToDo extends React.PureComponent {
     const {form: {formData}, globalData = {}} = item;
     const listItem = (
     <Fragment>
-      <div>
-        <Icon type="clock-circle-o" className={styles.icon} />
+      <div style={{lineHeight: '44px', color: '#262626'}}>
         {
           type === 'todo' ? (
           <Fragment>
@@ -220,11 +219,11 @@ export default class ToDo extends React.PureComponent {
           </Fragment>)
         }
       </div>
-      <div style={{marginTop: 12}}><Icon type="user" className={styles.icon} /><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
+      <div style={{lineHeight: '44px', color: '#262626'}}><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
     </Fragment>);
     if (globalData.formTodoDisplayFields && globalData.formTodoDisplayFields.length) {
       return globalData.formTodoDisplayFields.map(it=>
-        (<div key={it.name}><span>{it.label} : </span><span>{formData[`${it.name}_text`] ? formData[`${it.name}_text`] : formData[`${it.name}`]}</span></div>)
+        (<div key={it.name} style={{lineHeight: '44px', color: '#262626'}}><span>{it.label} : </span><span>{formData[`${it.name}_text`] ? formData[`${it.name}_text`] : formData[`${it.name}`]}</span></div>)
       )
     }
     return listItem;
@@ -275,16 +274,13 @@ export default class ToDo extends React.PureComponent {
                         <div className={styles.listLine}>
                           <a onClick={ (event)=>{ this.handleProcessSubmit(item, event) }}>
                             <div className={styles.listTitle}>
-                              <span style={{color: '#333', fontWeight: 'bold'}}>{item.pepProcInst.processTitle}</span>
-                              <span><TimeAgo datetime={item.createTime} locale="zh_CN" /></span>
+                              <span style={{fontWeight: 'bold'}}>{item.pepProcInst.processTitle}</span>
+                              <span style={{color: '#6c6c6c', fontSize: 12}}><TimeAgo datetime={item.createTime} locale="zh_CN" live={false} /></span>
                             </div>
-                            <List.Item actions={[<Icon type="right" />]}>
+                            <List.Item>
                               <List.Item.Meta
                                 description={this.renderListItem(item, 'todo')}
                               />
-                              <div className={styles.listContent}>
-                                {item.pepProcInst.stateValue}
-                              </div>
                             </List.Item>
                           </a>
                           <div className={styles.toolbar}><Button type="primary" onClick={(event)=>{ this.handleProcessAgree(item, event) }}>同意</Button></div>
@@ -324,16 +320,13 @@ export default class ToDo extends React.PureComponent {
                         <div className={styles.listLine}>
                           <a onClick={ (event)=>{ this.handleDoneProcessView(item, event) }}>
                             <div className={styles.listTitle}>
-                              <span style={{color: '#333', fontWeight: 'bold'}}>{item.pepProcInst.processTitle || `${item.pepProcInst.startUserName}的${item.pepProcInst.processDefinitionName}`}</span>
-                              <span><TimeAgo datetime={item.endTime} locale="zh_CN" /></span>
+                              <span style={{color: '#262626', fontWeight: 'bold'}}>{item.pepProcInst.processTitle || `${item.pepProcInst.startUserName}的${item.pepProcInst.processDefinitionName}`}</span>
+                              <span style={{color: '#6c6c6c', fontSize: 12}}><TimeAgo datetime={item.endTime} locale="zh_CN" live={false} /></span>
                             </div>
-                            <List.Item actions={[<Icon type="right" />]}>
+                            <List.Item>
                               <List.Item.Meta
                                 description={this.renderListItem(item)}
                               />
-                              <div className={styles.listContent}>
-                                {item.pepProcInst.stateValue}
-                              </div>
                             </List.Item>
                           </a>
                         </div>

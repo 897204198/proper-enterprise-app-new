@@ -68,9 +68,9 @@ const BusinessPanel = (props)=>{
           props: {
             onChange: (e)=>{
               // ad与am不同的组件 e代表不同的值 ad: e为ad的事件对象 am：e为picker data的索引 切为数组 如：[0]--代表第一项;
-              const value = !Array.isArray(e) ? e.target.value : children[e[0]].value
+              const value = !Array.isArray(e) ? e.target.value : e[0];
               self.setState({
-                approvalRemarksRequire: value
+                approvalRemarksRequire: value === 0
               }, ()=>{
                 if (value === 1) {
                   const form = self.oopForm.wrappedInstance.getForm();

@@ -64,7 +64,7 @@ export default class OopUpload extends React.PureComponent {
       message.error(`文件上传数量已达上限${maxFiles}个`);
       return false;
     }
-    const fileName = file.name.split('.').pop();
+    const fileName = file.name.split('.').pop().toLowerCase();
     if (type.length && !type.includes('.'.concat(fileName))) {
       message.error(`文件只能是${type.join('、')}格式!`);
       return false;

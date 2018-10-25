@@ -175,7 +175,6 @@ export default class BasicLayout extends React.PureComponent {
       message.error('请配置webIM地址！');
       return
     }
-    let a = document.createElement('a');
     let url = null;
     if (webImUrl.includes('?')) {
       url = `${webImUrl}&`
@@ -184,10 +183,16 @@ export default class BasicLayout extends React.PureComponent {
     }
     const token = window.localStorage.getItem('proper-auth-login-token');
     url = url.concat(`token=${token}`);
-    a.href = url;
-    a.target = '_blank';
-    a.click();
-    a = null;
+    // 如果没有parent 直接打开页面 否则通知上层打开页面
+    if (window.parent === window) {
+      window.open(
+        url,
+        'webImBrowser',
+        ''
+      );
+    } else {
+      window.parent.postMessage(url, 'file://');
+    }
   }
   getRedirect = (menus) => {
     if (redirectData.length > 0) {
