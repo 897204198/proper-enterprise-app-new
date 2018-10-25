@@ -47,7 +47,7 @@ const MessageConfForm = Form.create()((props) => {
               required: true, message: '帐号不能为空',
             }],
           })(
-            <Input placeholder="请输入管理员帐号, 长度20个字, 不能包含中文" autocomplete="off" />
+            <Input placeholder="请输入管理员帐号, 长度20个字, 不能包含中文" autoComplete="off" />
           )}
         </FormItem>
         <FormItem
@@ -61,7 +61,7 @@ const MessageConfForm = Form.create()((props) => {
               required: true, message: '密码不能为空',
             }],
           })(
-            <Input placeholder="请输入密码, 长度20个字" type="password" autocomplete="off" />
+            <Input placeholder="请输入密码, 长度20个字" type="password" autoComplete="off" />
           )}
         </FormItem>
         <FormItem
