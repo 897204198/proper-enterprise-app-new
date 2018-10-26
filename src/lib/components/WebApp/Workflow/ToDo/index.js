@@ -221,7 +221,7 @@ export default class ToDo extends React.PureComponent {
       </div>
       <div style={{lineHeight: '44px', color: '#262626'}}><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
     </Fragment>);
-    if (globalData.formTodoDisplayFields && globalData.formTodoDisplayFields.length) {
+    if (type === 'todo' && globalData.formTodoDisplayFields && globalData.formTodoDisplayFields.length) {
       return globalData.formTodoDisplayFields.map(it=>
         (<div key={it.name} style={{lineHeight: '44px', color: '#262626'}}><span>{it.label} : </span><span>{formData[`${it.name}_text`] ? formData[`${it.name}_text`] : formData[`${it.name}`]}</span></div>)
       )

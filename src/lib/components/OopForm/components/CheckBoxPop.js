@@ -58,27 +58,45 @@ export default class CheckBoxPop extends PureComponent {
     })
   }
   renderHeader = ()=>{
+    const {disabled} = this.props;
     return (
     <div>
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
         <span><a onClick={()=>this.handleDrawerVisible(false)}>取消</a></span>
         <span style={{fontSize: 20, fontWeight: 'bold'}}>多选标题</span>
-        <span><a onClick={()=>this.handleOk()}>完成{`(${this.state.selected.length})`}</a></span>
+        <span>{disabled ? <a onClick={()=>this.handleDrawerVisible(false)}>确定</a> : <a onClick={()=>this.handleOk()}>完成{`(${this.state.selected.length})`}</a>}</span>
       </div>
       <div><SearchBar placeholder="输入搜索内容" onChange={this.handleSearchChange} onClear={this.handleClearSearch} /></div>
     </div>);
   }
   renderContent = (props)=>{
     console.log(props);
-    const { data } = props;
-    const { searchStr } = this.state;
-    console.log(searchStr)
+    const { disabled, data } = props;
+    const { selected, searchStr } = this.state;
+    if (disabled) {
+      return (
+        <List>
+          {selected.map(it => (
+            it.label.includes(searchStr) ?
+              (
+                <List.Item
+                  key={it.value}
+                >
+                  {it.label}
+                </List.Item>) : null
+          ))}
+        </List>);
+    }
     const checkboxList = (
     <List>
       {data.map(it => (
         it.label.includes(searchStr) ?
         (
-          <CheckboxItem key={it.value} onChange={e=> this.handleCheckboxChange(e, it)} defaultChecked={this.state.selected.map(i=>i.value).includes(it.value)}>
+          <CheckboxItem
+            key={it.value}
+            onChange={e=> this.handleCheckboxChange(e, it)}
+            defaultChecked={selected.map(i=>i.value).includes(it.value)}
+          >
           {it.label}
         </CheckboxItem>) : null
       ))}

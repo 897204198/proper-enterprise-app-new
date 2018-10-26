@@ -39,7 +39,7 @@
           .am-list-extra {
             flex: 1 1;
             font-family: sans-serif;
-            flex-grow: 2;
+            //flex-grow: 2;
           }
           .am-input-label-5 {
             width: auto;
@@ -47,6 +47,11 @@
           }
           .am-list-content {
             font-size: 16px;
+            max-width: 118px;
+            text-overflow: clip;
+          }
+          .am-list-arrow-horizontal {
+            display: none;
           }
         }
         .am-input-control input {
@@ -84,6 +89,9 @@
         .ant-upload-disabled {
           display: none;
         }
+      }
+      .wordBreak {
+        white-space: normal;
       }
     }
   }

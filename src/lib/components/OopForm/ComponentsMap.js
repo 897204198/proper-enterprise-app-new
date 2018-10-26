@@ -53,7 +53,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <TextareaItem { ...props} title={label} rows={3} count={100} />;
       break;
     case 'Select':
-      // pickerData = children.map(it=>({...it, value: [it.value]}));
+      // pickerData = children.map(it=>({...it, value: [it.value]})); arrow="horizontal"
       component = <Picker { ...props} data={children} cols={1}><List.Item arrow="horizontal">{label}</List.Item></Picker>;
       break;
     case 'DatePicker':
@@ -66,7 +66,12 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <CheckBoxPop { ...props} data={children}>{p => (<List.Item arrow="horizontal" {...p}>{label}</List.Item>)}</CheckBoxPop>;
       break;
     case 'OopText':
-      component = <List.Item extra={props.text}>{label}</List.Item>;
+      component = (
+      <List.Item
+        extra={
+        (<div
+        className={styles.wordBreak}
+        dangerouslySetInnerHTML={{ __html: props.text }} />)}>{label}</List.Item>);
       break;
     default: null
   }

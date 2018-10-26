@@ -5,11 +5,11 @@ import moment from 'moment';
 import {appFormGenerator, formGenerator, toastValidErr, toastLoading} from './utils';
 import styles from './index.less';
 import {inject} from '../../../framework/common/inject';
-// import {isApp} from '../../../framework/utils/utils';
+import {isApp} from '../../../framework/utils/utils';
 
-const isApp = ()=>{
-  return false;
-}
+// const isApp = ()=>{
+//   return false;
+// }
 
 // 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
 function isItemShow(itemValue, displayValue) {
@@ -92,14 +92,24 @@ export default class OopForm extends React.PureComponent {
         }
       } else if ('DatePicker'.includes(cName)) {
         if (value && !formData[`${name}_text`]) {
-          let dateLong = null;
+          let dateLong = value;
           let dateStr = '';
-          if (value.constructor.name === 'Moment') {
-            dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
-            dateLong = value.toDate().getTime();
-          } else if (value.constructor.name === 'Date') {
+          // if (value.constructor.name === 'Moment') {
+          //   dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
+          //   dateLong = value.toDate().getTime();
+          // } else if (value.constructor.name === 'Date') {
+          //   dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
+          //   dateLong = value.getTime();
+          // } else if (value.constructor.name === 'String') { // ????'2018-10-25T09:59:30.484Z'
+          //   dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
+          //   dateLong = new Date(value).getTime();
+          // }
+          if (value.constructor.name === 'Date') {
             dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
             dateLong = value.getTime();
+          } else {
+            dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
+            dateLong = value.toDate().getTime();
           }
           formData[`${name}`] = dateLong;
           formData[`${name}_text`] = dateStr;

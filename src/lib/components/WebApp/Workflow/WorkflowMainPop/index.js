@@ -118,14 +118,18 @@ export default class WorkflowMainPop extends PureComponent {
   launchWorkflow = ()=>{
     if (this.oopWorkflowMain) {
       this.setButtonLoading(true);
-      this.oopWorkflowMain.launchWorkflow(()=>{
+      this.oopWorkflowMain.launchWorkflow((res)=>{
         this.setButtonLoading(false);
-        message.success('流程发起成功');
-        // 移动端手机 发起流程之后跳转到历史页
-        setTimeout(()=>{
-          const {param} = this.state;
-          this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
-        }, 500);
+        if (res.status === 'ok') {
+          message.success('流程提交成功');
+          // 移动端手机 发起流程之后跳转到历史页
+          setTimeout(()=>{
+            const {param} = this.state;
+            this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
+          }, 500);
+        } else {
+          message.error(`流程提交失败,${res.result}`, 4);
+        }
       })
     }
   }
