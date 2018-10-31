@@ -96,9 +96,10 @@ export default class OopTable extends PureComponent {
     }
     return btns
   }
-  createRowButtons = (columns, rowButtons)=>{
+  createRowButtons = (actionColumn, columns, rowButtons)=>{
     const cols = [...columns]
     rowButtons.length && cols.push({
+      ...actionColumn,
       title: '操作',
       width: caculateRowButtonWidth(rowButtons.length),
       render: (text, record)=>{
@@ -254,10 +255,10 @@ export default class OopTable extends PureComponent {
   }
   render() {
     const { grid: {list, pagination },
-      columns, loading, topButtons = [], rowButtons = [], checkable = true, size,
+      actionColumn, columns, loading, topButtons = [], rowButtons = [], checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
       _onSelect, _onSelectAll, ...otherProps} = this.props
-    const cols = this.createRowButtons(columns, rowButtons)
+    const cols = this.createRowButtons(actionColumn, columns, rowButtons);
     const rowSelectionCfg = checkable ? {
       onChange: this.rowSelectionChange,
       selectedRowKeys: this.state.selectedRowKeys,

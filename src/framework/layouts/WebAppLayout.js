@@ -15,8 +15,7 @@ const handleBack = (props)=>{
   const {pathname, search} = props.location;
   // 如果传递了这个参数 说明点击返回的时候调用 关闭当前页面
   if (getParamObj(search).close) {
-    window.parent.postMessage('close', '*');
-    window.localStorage.setItem('If_Can_Back', 'close');
+    handleCloseBrowser();
     return;
   }
   // 如果webappRouters中包含当前的页面说明是主页 点击返回等于点击 handleHome
@@ -30,6 +29,11 @@ const handleHome = ()=>{
   // 通知上层window此页面为h5的主页 root会触发返回按钮为原生的back事件
   window.parent.postMessage('back', '*');
   window.localStorage.setItem('If_Can_Back', 'back');
+}
+const handleCloseBrowser = ()=>{
+  // 通知上层window关闭当前浏览器
+  window.parent.postMessage('close', '*');
+  window.localStorage.setItem('If_Can_Back', 'close');
 }
 const Header = (props)=>{
   const {leftButton, rightButton} = props;
@@ -50,6 +54,7 @@ export default class WebAppLayout extends React.PureComponent {
   static childContextTypes = {
     setState: PropTypes.func,
     goHome: PropTypes.func,
+    closeBrowser: PropTypes.func
   }
   getChildContext() {
     return {
@@ -62,6 +67,9 @@ export default class WebAppLayout extends React.PureComponent {
       goHome: ()=> {
         handleHome()
       },
+      closeBrowser: ()=>{
+        handleCloseBrowser();
+      }
     };
   }
   state = {

@@ -180,7 +180,7 @@ export default class OopWorkflowMain extends PureComponent {
     }
     const { formDetails } = formEntity;
     const formConfig = formDetails ? JSON.parse(formDetails) : {};
-    const title = (<h2>{name}</h2>);
+    const title = (<h2 style={{paddingLeft: 16}}>{name}</h2>);
     return (
       <div>
         {title}
@@ -200,7 +200,7 @@ export default class OopWorkflowMain extends PureComponent {
     const { baseWorkflow: {processProgress: {hisTasks = [], start = {}}}, progressLoading} = this.props;
     const title = (<h2>流程历史</h2>);
     return (
-      <div>
+      <div style={{paddingLeft: 16, paddingRight: 16}}>
         {title}
         <Spin spinning={progressLoading}>
           <Timeline style={{margin: '16px 0 0 36px'}}>
@@ -256,7 +256,7 @@ export default class OopWorkflowMain extends PureComponent {
     }
     img.src = `${context}${imgUrl}`;
     return (
-      <div>
+      <div style={{paddingLeft: 16, paddingRight: 16}}>
         {title}
         <Spin spinning={this.state.imageLoading}><div style={{textAlign: 'center', overflowX: 'auto'}}>
           {!this.state.imageLoading ? <img alt="流程图" src={`${context}${imgUrl}`} style={{width: '100%'}} onClick={this.handlePreviewImage} /> : null}

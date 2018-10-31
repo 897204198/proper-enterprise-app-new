@@ -9,6 +9,7 @@
 * name 流程办理页面
  */
 import React, { PureComponent, Fragment } from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'dva';
 import {routerRedux} from 'dva/router';
 import { Input, Button, Popover, Alert, message } from 'antd';
@@ -32,15 +33,20 @@ const PopPage = (props)=>{
   formLoading: loading.effects['workflowManager/findBusinessObjByTaskId']
 }))
 export default class WorkflowMainPop extends PureComponent {
+  static contextTypes = {
+    closeBrowser: PropTypes.func,
+    goHome: PropTypes.func,
+  }
   constructor(props) {
     super(props);
-    const { param, from = '' } = getParamObj(this.props.location.search);
+    const { param, from = '', close = '' } = getParamObj(this.props.location.search);
     const {isLaunch, taskOrProcDefKey, procInstId, name, businessObj, stateCode, processDefinitionId, tabActiveKey} = JSON.parse(decodeURIComponent(atob(param)));
     this.state = {
       param,
       buttonLoading: true,
       activeTabKey: 'handle',
       from,
+      close,
       isLaunch,
       taskOrProcDefKey,
       procInstId,
@@ -89,9 +95,7 @@ export default class WorkflowMainPop extends PureComponent {
   }
   // app推送通知后的操作
   afterSubmitByAppNotify = ()=>{
-    // 通知上层window此页面为h5的主页 root会触发返回按钮为原生的back事件
-    window.parent.postMessage('back', '*');
-    window.localStorage.setItem('If_Can_Back', 'back');
+    this.context.goHome();
   }
   // 邮件推送通知后的操作
   afterSubmitByEmailNotify = ()=>{
@@ -172,6 +176,11 @@ export default class WorkflowMainPop extends PureComponent {
     } else if (this.state.from === 'email') {
       this.afterSubmitByEmailNotify();
     } else {
+      const {close} = this.state;
+      if (close) {
+        this.context.closeBrowser();
+        return;
+      }
       history.back();
       this.setButtonLoading(false);
     }
