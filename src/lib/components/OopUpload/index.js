@@ -151,10 +151,14 @@ export default class OopUpload extends React.PureComponent {
     defaultProps.onChange = (info)=> {
       if (info.file.status === 'done') {
         message.success('上传成功!');
-        const {file: {response}, fileList} = info;
-        const lastFile = fileList[fileList.length - 1];
-        lastFile.id = response;
-        lastFile.url = getFileDownloadUrl(response);
+        const {file: {response, uid}, fileList} = info;
+        const lastFile = fileList.find(f=>f.uid === uid);
+        if (!lastFile.id) {
+          lastFile.id = response;
+        }
+        if (!lastFile.url) {
+          lastFile.url = getFileDownloadUrl(response);
+        }
         this.setState(() => ({
           fileList: [...fileList],
           uploading: false
@@ -232,6 +236,7 @@ export default class OopUpload extends React.PureComponent {
   render() {
     const props = this.getInitProps();
     const {previewVisible, previewUrl} = this.state;
+    console.log(this.state.fileList);
     return (
       <div>
         <Upload {...props}>

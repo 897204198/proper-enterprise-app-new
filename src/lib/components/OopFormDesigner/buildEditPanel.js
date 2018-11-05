@@ -115,7 +115,7 @@ export default (item, eventsCollection)=>{
     formJson: []
   }
   // 输入框 文本域 数字输入框
-  if ('Input,TextArea,InputNumber,DatePicker,OopGroupUserPicker'.includes(cName)) {
+  if ('Input,TextArea,InputNumber,DatePicker,OopGroupUserPicker,OopOrgEmpPicker'.includes(cName)) {
     formConfig.formJson = [{
       name: `${name}${prefix}_label`,
       label: '标题',

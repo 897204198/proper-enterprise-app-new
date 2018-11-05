@@ -7,6 +7,7 @@ import OopUpload from '../OopUpload';
 import OopText from '../OopText';
 import CheckBoxPop from './components/CheckBoxPop';
 import OopGroupUserPicker from '../OopGroupUserPicker';
+import OopOrgEmpPicker from '../OopOrgEmpPicker';
 import { getUuid } from '../../../framework/common/oopUtils';
 import { isAndroid } from '../../../framework/utils/utils';
 import styles from './index.less';
@@ -108,6 +109,7 @@ export default (name, label, props, children, rules, isApp)=> {
     OopUpload: isWeb ? <OopUpload {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     OopText: isWeb ? <OopText {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     OopGroupUserPicker: <OopGroupUserPicker {...props} />,
+    OopOrgEmpPicker: <OopOrgEmpPicker {...props} />,
   }
   const component = Map[name];
   if (!component) {

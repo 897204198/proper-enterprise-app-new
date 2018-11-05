@@ -161,10 +161,23 @@ export default class OopFormDesigner extends React.PureComponent {
         }
       },
       {
-        label: '选人组件',
+        label: '用户选择',
         key: 'OopGroupUserPicker',
         component: {
-          name: 'OopGroupUserPicker'
+          name: 'OopGroupUserPicker',
+          props: {
+            placeholder: '请选择'
+          }
+        }
+      },
+      {
+        label: '员工选择',
+        key: 'OopOrgEmpPicker',
+        component: {
+          name: 'OopOrgEmpPicker',
+          props: {
+            placeholder: '请选择'
+          }
         }
       }
     ],
