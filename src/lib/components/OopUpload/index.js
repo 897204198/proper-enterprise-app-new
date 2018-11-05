@@ -216,13 +216,26 @@ export default class OopUpload extends React.PureComponent {
       }, 300);
     })
   }
+  renderChildren = (props)=>{
+    const {children, extra} = props;
+    if (children) {
+      if (typeof children === 'function') {
+        return children(props);
+      } else {
+        return children;
+      }
+    }
+    if (extra) {
+      return extra
+    }
+  }
   render() {
     const props = this.getInitProps();
     const {previewVisible, previewUrl} = this.state;
     return (
       <div>
         <Upload {...props}>
-          {props.extra}
+          {this.renderChildren(props)}
         </Upload>
         {previewVisible ? (
         <OopPreview

@@ -4,6 +4,7 @@ import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Dropdown,
   Menu, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
 import cookie from 'react-cookies'
 import { inject } from '../../../../framework/common/inject';
+import { getApplicationContextUrl } from '../../../../framework/utils/utils';
 import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
 import styles from './Designer.less';
 import Ellipsis from '../../../../framework/components/Ellipsis';
@@ -358,7 +359,7 @@ export default class Designer extends PureComponent {
     ];
 
     const uploadParams = {
-      action: '/workflow/service/app/rest/import-process-model',
+      action: `${getApplicationContextUrl()}/workflow/service/app/rest/import-process-model`,
       accept: 'text/xml',
     }
 

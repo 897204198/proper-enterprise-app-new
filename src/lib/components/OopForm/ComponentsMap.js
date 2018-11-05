@@ -25,9 +25,9 @@ const hackDatePickerIOSFocus = (e)=>{
   }
 }
 // 移动应用下 Android系统 Input组件 focus弹出软键盘滚动问题
-const hackInputAndroidFocusKeyboardOcclusion = (e)=>{
+const hackInputAndroidFocusKeyboardOcclusion = (id)=>{
   if (isAndroid()) {
-    const inputEl = e.target;
+    const inputEl = document.getElementById(id)
     setTimeout(()=>{
       inputEl.scrollIntoViewIfNeeded && inputEl.scrollIntoViewIfNeeded(true);
       inputEl.scrollIntoView && inputEl.scrollIntoView(true);
@@ -44,7 +44,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <InputItem { ...props} clear>{label}</InputItem>;
       break;
     case 'InputNumber':
-      component = <InputItem { ...props} type="money" clear>{label}</InputItem>;
+      component = <InputItem { ...props} type="digit" clear>{label}</InputItem>;
       break;
     case 'Button':
       component = <ButtonM { ...props} />;
@@ -73,6 +73,13 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
         className={styles.wordBreak}
         dangerouslySetInnerHTML={{ __html: props.text }} />)}>{label}</List.Item>);
       break;
+    case 'OopUpload':
+      component =
+      (
+      <OopUpload
+        {...props}
+      >{ p => <List.Item arrow="horizontal" extra={p.extra}>{label}</List.Item>}</OopUpload>)
+      break;
     default: null
   }
   return component;
@@ -98,7 +105,7 @@ export default (name, label, props, children, rules, isApp)=> {
     InputNumber: isWeb ? <InputNumber {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     DatePicker: isWeb ? <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} /> : getAntdMobileComponent(name, label, props, children, rules),
     OopSystemCurrent: <OopSystemCurrent {...props} label={label} />,
-    OopUpload: <OopUpload accept="image/*" listType="picture" type={['.jpg', '.jpeg', '.png', '.gif', '.bmp']} {...props} />,
+    OopUpload: isWeb ? <OopUpload {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     OopText: isWeb ? <OopText {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
     OopGroupUserPicker: <OopGroupUserPicker {...props} />,
   }

@@ -48,14 +48,24 @@ export default class OopTabTableModal extends React.PureComponent {
     this.setState({
       modalVisible: false,
     });
+    const {onCancel} = this.props;
+    const {selectedRecord} = this.state;
+    if (onCancel) {
+      onCancel(selectedRecord);
+    }
   }
 
   handleModalOk = () => {
-    const {onChange} = this.props;
+    const {onChange, onOk} = this.props;
     const {selectedRecord} = this.state;
-    this.handleModalCancel();
+    this.setState({
+      modalVisible: false,
+    });
     if (onChange) {
       onChange(selectedRecord);
+    }
+    if (onOk) {
+      onOk(selectedRecord);
     }
   }
 

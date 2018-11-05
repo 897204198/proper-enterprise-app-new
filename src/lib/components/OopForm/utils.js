@@ -173,7 +173,11 @@ export const appFormGenerator = (formConfig)=>{
 const getListItem = (formItemInner, formItemConfig)=>{
   // const {name, label, component, rules, wrapper, wrapperClass} = formItemConfig;
   const {name, component, wrapper, wrapperClass} = formItemConfig;
-  const listItem = (<div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>{formItemInner}</div>);
+  let className = null;
+  if (component.props && component.props.disabled) {
+    className = 'oopform-list-item-disabled';
+  }
+  const listItem = (<div key={name} className={className}>{formItemInner}</div>);
   // if ('RadioGroup,CheckboxGroup'.includes(component.name)) {
   //   const rule = rules && rules.find(it=>it.required);
   //   listItem = (

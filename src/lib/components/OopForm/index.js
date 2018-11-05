@@ -5,11 +5,11 @@ import moment from 'moment';
 import {appFormGenerator, formGenerator, toastValidErr, toastLoading} from './utils';
 import styles from './index.less';
 import {inject} from '../../../framework/common/inject';
-// import {isApp} from '../../../framework/utils/utils';
+import {isApp} from '../../../framework/utils/utils';
 
-const isApp = ()=>{
-  return false;
-}
+// const isApp = ()=>{
+//   return false;
+// }
 
 // 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
 function isItemShow(itemValue, displayValue) {
@@ -113,6 +113,12 @@ export default class OopForm extends React.PureComponent {
           }
           formData[`${name}`] = dateLong;
           formData[`${name}_text`] = dateStr;
+        }
+      } else if (cName === 'InputNumber') {
+        // 数字型转换
+        const {Number} = window;
+        if (value !== +value) {
+          formData[`${name}`] = Number(value)
         }
       }
     })

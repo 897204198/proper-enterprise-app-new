@@ -138,13 +138,16 @@ export default class OopFormDesigner extends React.PureComponent {
           props: {url: '/auth/current/user', showPropName: 'name', code: 'currentLoginUser', label: '当前登录人'}}
       },
       {
-        label: '上传组件',
+        label: '上传图片',
         key: 'OopUpload',
         component: {
           name: 'OopUpload',
           props: {
-            buttonText: '上传文件'
-          },
+            buttonText: '上传图片',
+            accept: 'image/*',
+            listType: 'picture',
+            type: ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
+          }
         }
       },
       {
