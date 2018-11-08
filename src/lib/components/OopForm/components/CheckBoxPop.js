@@ -58,12 +58,12 @@ export default class CheckBoxPop extends PureComponent {
     })
   }
   renderHeader = ()=>{
-    const {disabled} = this.props;
+    const {disabled, componentLabel} = this.props;
     return (
     <div>
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
         <span><a onClick={()=>this.handleDrawerVisible(false)}>取消</a></span>
-        <span style={{fontSize: 20, fontWeight: 'bold'}}>多选标题</span>
+        <span style={{fontSize: 20, fontWeight: 'bold'}}>{componentLabel}</span>
         <span>{disabled ? <a onClick={()=>this.handleDrawerVisible(false)}>确定</a> : <a onClick={()=>this.handleOk()}>完成{`(${this.state.selected.length})`}</a>}</span>
       </div>
       <div><SearchBar placeholder="输入搜索内容" onChange={this.handleSearchChange} onClear={this.handleClearSearch} /></div>

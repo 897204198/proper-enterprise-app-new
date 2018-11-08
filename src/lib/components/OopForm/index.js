@@ -10,6 +10,7 @@ import {isApp} from '../../../framework/utils/utils';
 // const isApp = ()=>{
 //   return false;
 // }
+let ifRenderByAntdMobile = isApp();
 
 // 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
 function isItemShow(itemValue, displayValue) {
@@ -24,7 +25,14 @@ function isItemShow(itemValue, displayValue) {
   loading: loading.models.OopForm$model
 }), null, null, {withRef: true})
 export default class OopForm extends React.PureComponent {
-  state = {
+  constructor(props) {
+    super(props);
+    const {ifRenderByAntdMobile: irbam} = this.props;
+    if (irbam !== undefined) {
+      ifRenderByAntdMobile = irbam;
+    }
+    this.state = {
+    }
   }
   componentDidMount() {
     console.log('OopForm componentDidMount');
@@ -122,7 +130,7 @@ export default class OopForm extends React.PureComponent {
         }
       }
     })
-    if (isApp()) {
+    if (ifRenderByAntdMobile) {
       // app的am组件中 Select、RadioGroup 所 对应的组件是 Picker， 此组件的值类型为[]; 所以这里处理一下
       const data = {
         ...formData
@@ -143,13 +151,13 @@ export default class OopForm extends React.PureComponent {
   }
   // 移动端才提示
   showValidErr = (err)=>{
-    if (isApp()) {
+    if (ifRenderByAntdMobile) {
       const { formJson = [] } = this.props;
       toastValidErr(err, formJson);
     }
   }
   showPageLoading = (flag)=>{
-    if (isApp()) {
+    if (ifRenderByAntdMobile) {
       toastLoading(flag);
     }
   }
@@ -169,7 +177,7 @@ export default class OopForm extends React.PureComponent {
       // 处理DatePicker的值 如果是移动端不需要转化成moment对象
       if (component.name === 'DatePicker') {
         if (item.initialValue) {
-          if (isApp()) {
+          if (ifRenderByAntdMobile) {
             item.initialValue = new Date(item.initialValue);
           } else {
             const format = (component.props && component.props.format) || 'YYYY-MM-DD';
@@ -233,6 +241,6 @@ export default class OopForm extends React.PureComponent {
     //   }
     // });
     const formConfig = {...this.props, form, className: styles.container };
-    return isApp() ? appFormGenerator(formConfig) : formGenerator(formConfig);
+    return ifRenderByAntdMobile ? appFormGenerator(formConfig) : formGenerator(formConfig);
   }
 }

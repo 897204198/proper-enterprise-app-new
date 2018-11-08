@@ -21,11 +21,17 @@ export default class OopTabTableModal extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     const {tableCfg: tableCfgState} = this.state;
     const {tableCfg} = nextProps;
-    this.setState({
+    const state = {
       tableCfg: {
         ...tableCfgState,
         data: tableCfg.data,
       }
+    }
+    if (nextProps.defaultSelected.length) {
+      state.selectedRecord = [...nextProps.defaultSelected];
+    }
+    this.setState({
+      ...state
     });
   }
 

@@ -30,8 +30,10 @@ const hackInputAndroidFocusKeyboardOcclusion = (id)=>{
   if (isAndroid()) {
     const inputEl = document.getElementById(id)
     setTimeout(()=>{
-      inputEl.scrollIntoViewIfNeeded && inputEl.scrollIntoViewIfNeeded(true);
-      inputEl.scrollIntoView && inputEl.scrollIntoView(true);
+      if (inputEl) {
+        inputEl.scrollIntoViewIfNeeded && inputEl.scrollIntoViewIfNeeded(true);
+        inputEl.scrollIntoView && inputEl.scrollIntoView(true);
+      }
     }, 300)
   }
 }
@@ -64,14 +66,14 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <Picker { ...props} data={children} cols={1}><List.Item arrow="horizontal">{label}</List.Item></Picker>;
       break;
     case 'CheckboxGroup':
-      component = <CheckBoxPop { ...props} data={children}>{p => (<List.Item arrow="horizontal" {...p}>{label}</List.Item>)}</CheckBoxPop>;
+      component = <CheckBoxPop { ...props} data={children} componentLabel={componentLabel}>{p => (<List.Item arrow="horizontal" {...p}>{label}</List.Item>)}</CheckBoxPop>;
       break;
     case 'OopText':
       component = (
       <List.Item
         extra={
         (<div
-        className={styles.wordBreak}
+        style={{whiteSpace: 'normal'}}
         dangerouslySetInnerHTML={{ __html: props.text }} />)}>{label}</List.Item>);
       break;
     case 'OopUpload':

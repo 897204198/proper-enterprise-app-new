@@ -143,7 +143,7 @@ export const appFormGenerator = (formConfig)=>{
           const obj = {initialValue, rules: _rules};
           // antd-mobile Picker的默认值为数组
           if (component.name === 'Select' || component.name === 'RadioGroup') {
-            if (typeof (obj.initialValue) === 'string' || typeof (obj.initialValue) === 'number') {
+            if (obj.initialValue && (typeof (obj.initialValue) === 'string' || typeof (obj.initialValue) === 'number')) {
               obj.initialValue = [initialValue];
             }
           }

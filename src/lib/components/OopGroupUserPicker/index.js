@@ -19,6 +19,13 @@ export default class OopGroupUserPicker extends React.PureComponent {
       selectedRowItems: [...value],
     };
   }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.value && nextProps.value.length) {
+      this.setState({
+        selectedRowItems: [...nextProps.value]
+      })
+    }
+  }
   handleButtonClick = () => {
     const self = this;
     this.props.dispatch({
