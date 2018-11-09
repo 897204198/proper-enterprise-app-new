@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button, Icon} from 'antd';
+import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button} from 'antd';
 import {List, TextareaItem, Picker, DatePicker as DatePickerM, InputItem, Button as ButtonM} from 'antd-mobile';
 import zhCN2 from 'antd-mobile/lib/date-picker/locale/zh_CN';
 import OopSystemCurrent from '../OopSystemCurrent';
@@ -11,7 +11,6 @@ import OopOrgEmpPicker from '../OopOrgEmpPicker';
 import { getUuid } from '../../../framework/common/oopUtils';
 import { isAndroid } from '../../../framework/utils/utils';
 import styles from './index.less';
-
 
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
@@ -27,13 +26,12 @@ const hackDatePickerIOSFocus = (e)=>{
 }
 // 移动应用下 Android系统 Input组件 focus弹出软键盘滚动问题
 const hackInputAndroidFocusKeyboardOcclusion = (id)=>{
-  if (isAndroid()) {
-    const inputEl = document.getElementById(id)
+  const inputEl = document.getElementById(id)
+  if (inputEl && isAndroid()) {
     setTimeout(()=>{
-      if (inputEl) {
-        inputEl.scrollIntoViewIfNeeded && inputEl.scrollIntoViewIfNeeded(true);
-        inputEl.scrollIntoView && inputEl.scrollIntoView(true);
-      }
+      // inputEl.scrollIntoViewIfNeeded && inputEl.scrollIntoViewIfNeeded(true);
+      // inputEl.scrollIntoView && inputEl.scrollIntoView({block: 'center'});
+      inputEl.scrollIntoView({behavior: 'auto', block: 'center', inline: 'nearest'});
     }, 300)
   }
 }
@@ -44,16 +42,16 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
   // let pickerData = [];
   switch (componentName) {
     case 'Input':
-      component = <InputItem { ...props} clear>{label}</InputItem>;
+      component = <InputItem { ...props} clear onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }} >{label}</InputItem>;
       break;
     case 'InputNumber':
-      component = <InputItem { ...props} type="digit" clear>{label}</InputItem>;
+      component = <InputItem { ...props} type="digit" clear onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }}>{label}</InputItem>;
       break;
     case 'Button':
       component = <ButtonM { ...props} />;
       break;
     case 'TextArea':
-      component = <TextareaItem { ...props} title={label} rows={3} count={100} />;
+      component = <TextareaItem { ...props} title={label} rows={3} count={100} onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }} />;
       break;
     case 'Select':
       // pickerData = children.map(it=>({...it, value: [it.value]})); arrow="horizontal"
@@ -83,37 +81,75 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
         {...props}
       >{ p => <List.Item arrow="horizontal" extra={p.extra}>{label}</List.Item>}</OopUpload>)
       break;
+    case 'OopSystemCurrent':
+      component = <OopSystemCurrent {...props} label={componentLabel} />
+      break;
+    case 'OopGroupUserPicker':
+      component = <OopGroupUserPicker {...props} />
+      break;
+    case 'OopOrgEmpPicker':
+      component = <OopOrgEmpPicker {...props} />
+      break;
+    default: null
+  }
+  return component;
+}
+const getAntdComponent = (componentName, componentLabel, props, children)=>{
+  let component = null;
+  // let pickerData = [];
+  switch (componentName) {
+    case 'Input':
+      component = <Input {...props} autoComplete="on" onFocus={(e) => { hackInputAndroidFocusKeyboardOcclusion(e) }} />;
+      break;
+    case 'Button':
+      component = <Button { ...props} />;
+      break;
+    case 'TextArea':
+      component = <TextArea {...props} />;
+      break;
+    case 'Select':
+      component = (
+        <Select style={{ width: '100%' }} {...props} getPopupContainer={ triggerNode=>triggerNode.parentNode }>
+          {
+            children.map(item=>(<Option key={getUuid(5)} value={item.value}>{item.label}</Option>))
+          }
+        </Select>
+      );
+      break;
+    case 'RadioGroup':
+      component = <RadioGroup options={children} {...props} />;
+      break;
+    case 'CheckboxGroup':
+      component = <CheckboxGroup options={children} {...props} />;
+      break;
+    case 'InputNumber':
+      component = <InputNumber {...props} />;
+      break;
+    case 'DatePicker':
+      component = <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} />;
+      break;
+    case 'OopText':
+      component = <OopText {...props} />;
+      break;
+    case 'OopUpload':
+      component = <OopUpload {...props} />
+      break;
+    case 'OopSystemCurrent':
+      component = <OopSystemCurrent {...props} label={componentLabel} />
+      break;
+    case 'OopGroupUserPicker':
+      component = <OopGroupUserPicker {...props} />
+      break;
+    case 'OopOrgEmpPicker':
+      component = <OopOrgEmpPicker {...props} />
+      break;
     default: null
   }
   return component;
 }
 export default (name, label, props, children, rules, isApp)=> {
   const isWeb = !isApp;
-  const Map = {
-    Input: isWeb ? <Input {...props} autoComplete="on" onFocus={(e) => { hackInputAndroidFocusKeyboardOcclusion(e) }} /> : getAntdMobileComponent(name, label, props, children, rules),
-    Button: isWeb ? <Button {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
-    Icon: <Icon {...props} />,
-    TextArea: isWeb ? <TextArea {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
-    Select: isWeb ? (
-      <Select style={{ width: '100%' }} {...props} getPopupContainer={ triggerNode=>triggerNode.parentNode }>
-        {
-          children.map(item=>(<Option key={getUuid(5)} value={item.value}>{item.label}</Option>))
-        }
-      </Select>
-    ) : getAntdMobileComponent(name, label, props, children, rules),
-    RadioGroup: isWeb ? (
-      <RadioGroup options={children} {...props} />) : getAntdMobileComponent(name, label, props, children, rules),
-    CheckboxGroup: isWeb ? (
-      <CheckboxGroup options={children} {...props} />) : getAntdMobileComponent(name, label, props, children, rules),
-    InputNumber: isWeb ? <InputNumber {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
-    DatePicker: isWeb ? <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} /> : getAntdMobileComponent(name, label, props, children, rules),
-    OopSystemCurrent: <OopSystemCurrent {...props} label={label} />,
-    OopUpload: isWeb ? <OopUpload {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
-    OopText: isWeb ? <OopText {...props} /> : getAntdMobileComponent(name, label, props, children, rules),
-    OopGroupUserPicker: <OopGroupUserPicker {...props} />,
-    OopOrgEmpPicker: <OopOrgEmpPicker {...props} />,
-  }
-  const component = Map[name];
+  const component = isWeb ? getAntdComponent(name, label, props, children) : getAntdMobileComponent(name, label, props, children, rules);
   if (!component) {
     console.error(`warning: cannot find component named ${name}`)
     return

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Row, Col, Radio, Input, Tooltip } from 'antd';
+import { Button, Card, Row, Col, Radio, Input, Tooltip, message } from 'antd';
 import Debounce from 'lodash-decorators/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
@@ -391,6 +391,9 @@ export default class OopFormDesigner extends React.PureComponent {
   }
   getFormConfig = ()=>{
     const {rowItems, formLayout, formTitle} = this.state;
+    if (formTitle && formTitle.$$typeof && formTitle.$$typeof.toString() === 'Symbol(react.element)') {
+      return message.warning('请保存表单的标题');
+    }
     const form = this.oopForm.getForm();
     const fieldsValue = form.getFieldsValue();
     console.log(fieldsValue)

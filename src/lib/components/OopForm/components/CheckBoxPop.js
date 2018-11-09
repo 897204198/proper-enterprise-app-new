@@ -2,9 +2,12 @@ import React, { PureComponent } from 'react';
 import { Drawer} from 'antd';
 import { SearchBar, Checkbox, List } from 'antd-mobile';
 import Debounce from 'lodash-decorators/debounce';
+import cloneDeep from 'lodash/cloneDeep';
 import styles from './CheckBoxPop.less';
 
 const { CheckboxItem } = Checkbox;
+
+let _selected = null;
 
 export default class CheckBoxPop extends PureComponent {
   constructor(props) {
@@ -62,7 +65,7 @@ export default class CheckBoxPop extends PureComponent {
     return (
     <div>
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        <span><a onClick={()=>this.handleDrawerVisible(false)}>取消</a></span>
+        <span><a onClick={()=>this.cancelDrawer()}>取消</a></span>
         <span style={{fontSize: 20, fontWeight: 'bold'}}>{componentLabel}</span>
         <span>{disabled ? <a onClick={()=>this.handleDrawerVisible(false)}>确定</a> : <a onClick={()=>this.handleOk()}>完成{`(${this.state.selected.length})`}</a>}</span>
       </div>
@@ -73,6 +76,7 @@ export default class CheckBoxPop extends PureComponent {
     console.log(props);
     const { disabled, data } = props;
     const { selected, searchStr } = this.state;
+    const selectedKeys = selected.map(i=>i.value);
     if (disabled) {
       return (
         <List>
@@ -95,13 +99,27 @@ export default class CheckBoxPop extends PureComponent {
           <CheckboxItem
             key={it.value}
             onChange={e=> this.handleCheckboxChange(e, it)}
-            defaultChecked={selected.map(i=>i.value).includes(it.value)}
+            defaultChecked={selectedKeys.includes(it.value)}
+            checked={selectedKeys.includes(it.value)}
           >
           {it.label}
         </CheckboxItem>) : null
       ))}
     </List>);
     return checkboxList
+  }
+  openDrawer = ()=>{
+    const {selected} = this.state;
+    _selected = cloneDeep(selected);
+    this.handleDrawerVisible(true);
+  }
+  cancelDrawer = ()=>{
+    this.handleDrawerVisible(false);
+    this.setState({
+      selected: _selected
+    }, ()=>{
+      _selected = null;
+    })
   }
   render() {
     const { children, ...otherProps } = this.props;
@@ -117,7 +135,7 @@ export default class CheckBoxPop extends PureComponent {
         >
           {this.renderContent(otherProps)}
         </Drawer>
-        {children({onClick: ()=>this.handleDrawerVisible(true), extra: this.state.selected.map(it=>it.label).join(',')})}
+        {children({onClick: ()=>this.openDrawer(), extra: this.state.selected.map(it=>it.label).join(',')})}
       </div>);
   }
 }
