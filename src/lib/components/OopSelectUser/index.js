@@ -153,6 +153,7 @@ class OopSelectUser extends React.PureComponent {
     if (onChange) {
       onChange('')
     }
+    this.clearPropUser()
     this.clearSearch()
   }
   searchClick = () => {
@@ -171,6 +172,7 @@ class OopSelectUser extends React.PureComponent {
     if (onChange) {
       onChange(users)
     }
+    this.clearPropUser()
     this.clearSearch()
   }
   checkAll = (e) => {
@@ -324,6 +326,11 @@ class OopSelectUser extends React.PureComponent {
         pageNo: 1,
         pageSize: 9999
       }
+    })
+  }
+  clearPropUser = () => {
+    this.props.dispatch({
+      type: 'OopSelectUser$model/delUser'
     })
   }
   render() {

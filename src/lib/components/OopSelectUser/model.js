@@ -60,5 +60,11 @@ export default {
         searchUser: [],
       };
     },
+    delUser(state) {
+      return {
+        ...state,
+        user: [],
+      };
+    },
   }
 };
