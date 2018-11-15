@@ -12,17 +12,6 @@
       margin: 0;
     }
   }
-  :global {
-    .ant-list.ant-list-split {
-      .ant-spin-container {
-        background: #f5f5f5;
-        min-height: calc(~"100vh - 44px");
-      }
-      .ant-list-item-meta-description {
-        //margin-top: 12px;
-      }
-    }
-  }
 }
 .tabs {
   :global(.ant-tabs-nav) {
@@ -73,6 +62,7 @@
   }
   & > .tabsTabpaneActive {
     width: 100%;
+    background-color: #f5f5f5;
   }
 
   & > .tabsTabpaneInactive {
@@ -134,17 +124,5 @@
     font-size: 16px;
     padding-right: 8px;
     color: @primary-color;
-  }
-}
-
-@media screen and (max-width: @screen-xs) {
-  .container {
-    :global {
-      .ant-list.ant-list-split {
-        .ant-spin-container {
-          min-height: calc(~"100vh - 88px") !important;
-        }
-      }
-    }
   }
 }

@@ -72,20 +72,25 @@ export default class WebAppLayout extends React.PureComponent {
       }
     };
   }
-  state = {
-    title: decodeURIComponent(getParamObj(this.props.location.search).title),
-    headerLeftButton: {
-      text: '返回',
-      icon: 'left',
-      onClick: ()=>{
-        handleBack(this.props);
-      }
-    },
-    headerRightButton: {
-      text: '',
-      icon: 'home',
-      onClick: handleHome
-    },
+  constructor(props) {
+    super(props);
+    const searchObj = getParamObj(this.props.location.search);
+    this.state = {
+      title: decodeURIComponent(searchObj.title),
+      hideHeader: searchObj.hideHeader === 'true',
+      headerLeftButton: {
+        text: '返回',
+        icon: 'left',
+        onClick: ()=>{
+          handleBack(this.props);
+        }
+      },
+      headerRightButton: {
+        text: '',
+        icon: 'home',
+        onClick: handleHome
+      },
+    }
   }
   componentWillMount() {
     window.localStorage.setItem('If_Can_Back', '');
@@ -97,14 +102,20 @@ export default class WebAppLayout extends React.PureComponent {
       }
     }
   }
+  renderHeader = ()=>{
+    if (this.state.hideHeader) {
+      return null;
+    }
+    return isApp() ?
+      (<Header title={this.state.title} leftButton={this.state.headerLeftButton} rightButton={this.state.headerRightButton} />)
+      : null
+  }
   render() {
     const routerData = getRouterData();
     return (
       <div className={styles.webAppContainer}>
-        {isApp() ?
-          (<Header title={this.state.title} leftButton={this.state.headerLeftButton} rightButton={this.state.headerRightButton} />)
-        : null}
-        <Layout style={{paddingTop: isApp() ? 44 : 0}}>
+        {this.renderHeader()}
+        <Layout style={{paddingTop: this.state.hideHeader ? 0 : (isApp() ? 44 : 0)}}>
           <Content>
             <Switch>
               { // 路径为‘/webapp/*’的页面会被 默认认为是H5的页面 自动加载到WebAppLayout下

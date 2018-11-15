@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'dva';
-import { Input, Tooltip } from 'antd';
+import { Input, Tooltip, Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import Debounce from 'lodash-decorators/debounce';
 import styles from './index.less';
@@ -105,8 +105,9 @@ const filterTableList = (searchValue, tableList, columns)=>{
 
 const { Search } = Input;
 const { Group } = Input;
-@connect(({global})=>({
-  global
+@connect(({global, loading})=>({
+  global,
+  loadingSuggest: loading.effects['global/oopSearchSuggest']
 }), null, null, {withRef: true})
 export default class OopSearch extends React.Component {
   state={
@@ -438,6 +439,43 @@ export default class OopSearch extends React.Component {
       return search;
     }
   }
+  renderSuggestOption = (searchOptions)=>{
+    const {loadingSuggest = false} = this.props;
+    const {inputValue} = this.state;
+    if (loadingSuggest) {
+      return (
+        <li className="ant-select-dropdown-menu-item">
+          <a><Icon type="loading" /></a>
+        </li>);
+    }
+    if (inputValue && searchOptions.length === 0) {
+      return (
+        <li className="ant-select-dropdown-menu-item">
+          <a>没有符合的数据</a>
+        </li>)
+    }
+    return searchOptions.map((option) => {
+      const {label, matchStr = ''} = option;
+      const i = label.indexOf(matchStr);
+      const newLabel = (
+      <span className={styles.name}>
+        {label.substr(0, i)}
+        <span className={styles.match}>{matchStr}</span>
+        {label.substr(i + matchStr.length)}
+      </span>);
+      return (
+        <li
+          className={`ant-select-dropdown-menu-item ${(option.preActive ? styles.preActive : '')}`}
+          key={option.id}
+          onClick={event=>this.handleOptionSelect(event, option)}>
+          <a>
+            {newLabel}
+            <span className={styles.desc}>{ option.desc}</span>
+          </a>
+        </li>
+      );
+    });
+  }
   render() {
     const {global: {searchOptions}} = this.props;
     return (
@@ -463,22 +501,7 @@ export default class OopSearch extends React.Component {
           {this.state.showDropMenu && (
             <div className={styles.dropDown}>
               <ul className="ant-menu ant-menu-light ant-menu-root ant-menu-vertical">
-                {!searchOptions.length ? '' : searchOptions.map(option =>
-                  (
-                    <li
-                      className={`ant-select-dropdown-menu-item ${(option.preActive ? styles.preActive : '')}`}
-                      key={option.id}
-                      onClick={event=>this.handleOptionSelect(event, option)}>
-                      <a>
-                    <span className={styles.name}>
-                      <span className={styles.match}>{ option.matchLabel }</span>
-                      <span>{ option.unMatchLabel}</span>
-                    </span>
-                        <span className={styles.desc}>{ option.desc}</span>
-                      </a>
-                    </li>
-                  )
-                )}
+                {this.renderSuggestOption(searchOptions)}
               </ul>
             </div>)}
         </div>

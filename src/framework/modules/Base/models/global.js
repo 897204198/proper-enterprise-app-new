@@ -48,7 +48,7 @@ export default {
       const data = yield call(searchSuggest, payload);
       yield put({
         type: 'saveSearchOptions',
-        payload: {res: data.result, matchStr: payload},
+        payload: {res: data.result, ...payload},
       });
     },
     *showHistory(_, {put}) {
@@ -79,15 +79,15 @@ export default {
       }
     },
     saveSearchOptions(state, { payload }) {
-      const { res, matchStr } = payload;
+      const { res, data: matchStr } = payload;
       const preActiveIndex = payload.preActiveIndex || 0;
       const searchOptions = [];
       if (res) {
         res.forEach((item) => {
-          const text = item.con
+          const text = item.con;
           if (text) {
-            const i = text.indexOf(matchStr);
             const obj = {
+              matchStr,
               id: item.id,
               col: item.ali,
               label: text,
@@ -95,8 +95,6 @@ export default {
               table: item.tab,
               operate: item.operate || 'like',
               preActive: false,
-              matchLabel: i === 0 ? text.substring(0, i + matchStr.length) : '',
-              unMatchLabel: i === 0 ? text.substring(i + matchStr.length, text.length) : text,
             }
             searchOptions.push(obj)
           }
