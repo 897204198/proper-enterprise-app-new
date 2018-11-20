@@ -7,6 +7,7 @@ import { prefix, devMode } from '../../config/config';
 export default class MongoService {
   constructor(tableName, url, ctx) {
     const token = window.localStorage.getItem('proper-auth-login-token');
+    const serviceKey = window.localStorage.getItem('proper-auth-service-key');
     if (!token) {
       throw Error('the token cannot be empty when you instantiate an \'MongoService\' object ');
     }
@@ -18,6 +19,7 @@ export default class MongoService {
     const context = ctx || '/avdemo';
     AV.initialize(serverURL, context);
     AV.setToken(token);
+    AV.setServiceKey(serviceKey);
   }
   errorFn = (resolve, err)=>{
     if (err.status === 401) {

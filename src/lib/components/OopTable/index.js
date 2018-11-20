@@ -23,7 +23,7 @@ const caculateRowButtonWidth = (n)=>{
 
 const getFilterParams = (filters)=>{
   const filtersParam = {}
-  if (Object.values(filters).length && Object.values(filters)[0].length) {
+  if (Object.values(filters).length) {
     for (const k in filters) {
       filtersParam[k] = filters[k].toString()
     }

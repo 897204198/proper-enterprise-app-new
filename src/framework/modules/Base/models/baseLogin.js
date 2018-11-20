@@ -22,6 +22,8 @@ export default {
         const {origin, pathname} = location;
         let url = `${origin}${pathname}`;
         localStorage.setItem('proper-auth-login-token', response.result);
+        // TODO the way to get x-service-key is ???
+        // localStorage.setItem('proper-auth-service-key', response.headers.get('x-service-key'));
         const returnPage = sessionStorage.getItem('proper-route-noAuthPage');
         if (returnPage) {
           url += returnPage;

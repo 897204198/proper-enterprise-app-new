@@ -144,8 +144,10 @@ export default class OopUpload extends React.PureComponent {
       ...this.props
     };
     const token = window.localStorage.getItem('proper-auth-login-token');
+    const serviceKey = window.localStorage.getItem('proper-auth-service-key');
     defaultProps.headers = {
-      'X-PEP-TOKEN': token
+      'X-PEP-TOKEN': token,
+      'X-SERVICE-KEY': serviceKey
     }
     const {onChange} = defaultProps;
     defaultProps.onChange = (info)=> {

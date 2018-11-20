@@ -4,7 +4,7 @@ import {connect} from 'dva';
 import PropTypes from 'prop-types';
 import { Layout, Button, Icon } from 'antd';
 import { getRouterData } from '../common/frameHelper';
-import {getParamObj, isApp} from '../utils/utils';
+import {getParamObj, isApp, isAndroid} from '../utils/utils';
 import NotFound from '../components/Exception/404';
 import routers from '../../config/sysRouters';
 import styles from './WebAppLayout.less';
@@ -38,7 +38,7 @@ const handleCloseBrowser = ()=>{
 const Header = (props)=>{
   const {leftButton, rightButton} = props;
   return (
-    <div className={styles.header}>
+    <div className={`${styles.header} ${isAndroid() ? styles.android : ''}`}>
       <Button type="primary" ghost className={styles.backBtn} onClick={leftButton.onClick}>
         <Icon type={leftButton.icon} style={{fontWeight: 'bold'}} />{leftButton.text}
       </Button>
@@ -97,8 +97,13 @@ export default class WebAppLayout extends React.PureComponent {
     // window.localStorage.setItem('pea_dynamic_request_prefix', 'https://icmp2.propersoft.cn/icmp/server-dev');
     if (this.props.location.search) {
       const transParams = getParamObj(this.props.location.search);
-      if (transParams && transParams.token) {
-        window.localStorage.setItem('proper-auth-login-token', transParams.token);
+      if (transParams) {
+        if (transParams.token) {
+          window.localStorage.setItem('proper-auth-login-token', transParams.token);
+        }
+        if (transParams.serviceKey) {
+          window.localStorage.setItem('proper-auth-service-key', transParams.serviceKey);
+        }
       }
     }
   }

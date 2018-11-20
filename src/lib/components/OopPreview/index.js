@@ -1,8 +1,9 @@
-import React, { PureComponent, Fragment } from 'react';
-import { Modal, Tooltip, Icon } from 'antd';
+import React, { PureComponent } from 'react';
+import { Modal, Tooltip, Button, Icon } from 'antd';
+import pinchZoom from 'pinch-zoom-proper';
 import { isApp } from '../../../framework/utils/utils';
-
 import styles from './index.less';
+
 
 export default class OopPreview extends PureComponent {
   state = {
@@ -40,7 +41,7 @@ export default class OopPreview extends PureComponent {
       horWidth,
       verWidth
     }, () => {
-      const img = document.getElementById('image');
+      const img = this.image;
       const modalBody = img.offsetParent;
       const modalContent = modalBody.offsetParent;
       const modalWrap = modalContent.offsetParent;
@@ -48,14 +49,14 @@ export default class OopPreview extends PureComponent {
       wrap.style.display = 'flex';
       wrap.style.justifyContent = 'center';
       wrap.style.alignItems = 'center';
-      modalWrap.style.width = `${horWidth}px`;
-      modalWrap.style.minWidth = '330px';
-      modalWrap.style.maxWidth = `${innerWith}px`;
-      modalContent.style.width = `${horWidth}px`;
-      modalContent.style.minWidth = '330px';
-      modalBody.style.height = `${horHeight}px`;
-      modalBody.style.maxHeight = `${innerHeight - 100}px`;
-      modalBody.style.minHeight = '200px';
+      // modalWrap.style.width = `${horWidth}px`;
+      // modalWrap.style.minWidth = '330px';
+      // modalWrap.style.maxWidth = `${innerWith}px`;
+      // modalContent.style.width = `${horWidth}px`;
+      // modalContent.style.minWidth = '330px';
+      // modalBody.style.height = `${horHeight}px`;
+      // modalBody.style.maxHeight = `${innerHeight - 100}px`;
+      // modalBody.style.minHeight = '200px';
     });
   }
 
@@ -78,37 +79,20 @@ export default class OopPreview extends PureComponent {
     this.setState({
       horWidth,
       verWidth
-    }, () => {
-      const wrap = document.getElementsByClassName('ant-modal-wrap')[0];
-      const modalContent = document.getElementsByClassName('ant-modal-content')[0];
-      const modalWrap = modalContent.offsetParent;
-      const modalBody = document.getElementsByClassName('ant-modal-body')[0];
-      wrap.style.display = 'flex';
-      wrap.style.justifyContent = 'center';
-      wrap.style.alignItems = 'center';
-      wrap.style.zIndex = 2000;
-      modalWrap.style.width = `${horWidth}px`;
-      modalWrap.style.minWidth = '330px';
-      modalWrap.style.maxWidth = `${innerWith}px`;
-      // modalContent.style.width = `${horWidth}px`;
-      modalContent.style.minWidth = '330px';
-      modalBody.style.height = `${horHeight}px`;
-      modalBody.style.maxHeight = `${innerHeight - 100}px`;
-      modalBody.style.minHeight = '200px';
     });
   }
   // 图片缩放
   scale = (flag) => {
-    const { maxScale = 3, minScale = 0.1 } = this.props;
+    const { maxScale = 3, minScale = 0.2 } = this.props;
     const { scales } = this.state;
     const inScale = Number(scales.toFixed(1));
     if (flag) {
-      const scale = inScale < maxScale ? (scales + 0.1) : maxScale;
+      const scale = inScale < maxScale ? (scales + 0.2) : maxScale;
       this.setState({
         scales: scale
       });
     } else {
-      const scale = inScale > minScale ? (scales - 0.1) : minScale;
+      const scale = inScale > minScale ? (scales - 0.2) : minScale;
       this.setState({
         scales: scale
       });
@@ -117,7 +101,7 @@ export default class OopPreview extends PureComponent {
 
   // 图片旋转
   rotate = (flag) => {
-    const img = document.getElementById('image');
+    const img = this.image;
     const { degs } = this.state;
     if (flag) {
       this.setState({
@@ -168,105 +152,90 @@ export default class OopPreview extends PureComponent {
     return dataURL;
   }
 
+  // 双指放大
+  onImgLoaded = ()=>{
+    new pinchZoom(this.image.parentNode, {}); // eslint-disable-line
+  }
   // 拖拽图片
   mouseDown = (e) => {
     e.preventDefault();
     if (e.button === 0) {
-      const img = document.getElementById('image');
-      const modalBody = img.offsetParent;
+      const img = this.image;
+      const imgParent = img.parentNode;
       const disX = e.clientX - img.offsetLeft;
       const disY = e.clientY - img.offsetTop;
-      const { scales } = this.state;
-      if (scales > 1) {
-        document.body.style.cursor = 'move';
-        modalBody.onmousemove = (event) => {
-          const x = event.clientX - disX;
-          const y = event.clientY - disY;
-          img.style.left = `${x}px`;
-          img.style.top = `${y}px`;
-        }
-        document.onmouseup = () => {
-          modalBody.onmousemove = null;
-          document.onmouseup = null;
-          document.body.style.cursor = 'default';
-        }
+      imgParent.onmousemove = (event) => {
+        const x = event.clientX - disX;
+        const y = event.clientY - disY;
+        img.style.left = `${x}px`;
+        img.style.top = `${y}px`;
+      }
+      document.onmouseup = () => {
+        imgParent.onmousemove = null;
+        document.onmouseup = null;
+        document.body.style.cursor = 'default';
       }
     }
   }
-  onTouchMove = (e) => {
-    const img = document.getElementById('image');
-    const modalBody = document.getElementsByClassName('ant-modal-body')[0];
-    const disX = e.changedTouches[0].clientX - img.offsetLeft;
-    const disY = e.changedTouches[0].clientY - img.offsetTop;
-    modalBody.ontouchmove = (event) => {
-      const x = event.changedTouches[0].clientX - disX;
-      const y = event.changedTouches[0].clientY - disY;
-      img.style.left = `${x}px`;
-      img.style.top = `${y}px`;
-    }
-    document.ontouchend = () => {
-      modalBody.ontouchmove = null;
-      document.ontouchend = null;
-    }
-  }
-
   render() {
     const { img } = this.props;
     const { scales, degs, horWidth, verWidth } = this.state;
     const index = degs / 90;
     const Footer = (
-      <Fragment>
-        <a onClick={() => this.scale(true)}>
+      <div className={styles.footerButtons}>
+        <Button onClick={() => this.scale(true)}>
           <Tooltip title="放大">
             <Icon type="plus-circle-o" style={{ fontSize: 24, color: '#999' }} />
           </Tooltip>
-        </a>
-        <a onClick={() => this.scale(false)}>
+        </Button>
+        <Button onClick={() => this.scale(false)}>
           <Tooltip title="缩小">
             <Icon type="minus-circle-o" style={{ fontSize: 24, color: '#999' }} />
           </Tooltip>
-        </a>
-        <a
+        </Button>
+        <Button
           style={{transform: 'rotateY(180deg)'}}
           onClick={() => this.rotate(1)}>
           <Tooltip title="逆时针旋转">
             <Icon type="reload" style={{ fontSize: 24, color: '#999' }} />
           </Tooltip>
-        </a>
-        <a
+        </Button>
+        <Button
           style={{}}
           onClick={() => this.rotate(0)}>
           <Tooltip title="顺时针旋转">
             <Icon type="reload" style={{ fontSize: 24, color: '#999' }} />
           </Tooltip>
-        </a>
-        <a onClick={this.download}>
+        </Button>
+        <Button onClick={this.download}>
           <Tooltip title="另存为">
             <Icon type="download" style={{ fontSize: 24, color: '#999' }} />
           </Tooltip>
-        </a>
-      </Fragment>
+        </Button>
+      </div>
     );
     return (
       <Modal
         className={styles.OopPreview}
+        width={800}
         maskClosable={false}
         footer={Footer}
-        title="."
         {...this.props}
       >
-        <img
-          id="image"
-          onMouseDown={e => this.mouseDown(e)}
-          onTouchMove={e => this.onTouchMove(e)}
-          style={{
-            width: isApp ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`,
-            transform: `translate(-50%, -50%) scale(${scales}, ${scales}) rotate(${this.state.degs}deg)`,
-            cursor: `${scales > 1 ? 'move' : 'default'}`
-          }}
-          alt={img.alt}
-          src={img.src}
-        />
+        <div className={styles.imageParent}>
+          <img
+            ref={(el)=>{ this.image = el }}
+            onMouseDown={e => this.mouseDown(e)}
+            onLoad={e => this.onImgLoaded(e)}
+            style={{
+              width: isApp() ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`,
+              transform: `translate(-50%, -50%) scale(${scales}, ${scales}) rotate(${this.state.degs}deg)`,
+              cursor: `${scales !== 1 ? 'move' : 'default'}`
+            }}
+            alt={img.alt}
+            src={img.src}
+          />
+        </div>
       </Modal>
     )
   }

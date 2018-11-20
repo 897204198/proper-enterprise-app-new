@@ -24,7 +24,7 @@ const PopPage = (props)=>{
   return (
   <div className={styles.container}>
     {children}
-    <div className={styles.footer}>{footer}</div>
+    {footer ? <div className={styles.footer}>{footer}</div> : null}
   </div>)
 }
 
@@ -187,7 +187,7 @@ export default class WorkflowMainPop extends PureComponent {
   }
   render() {
     const {taskOrProcDefKey, isLaunch, businessObj: {formKey}} = this.state;
-    const footer = (
+    const footer = this.state.activeTabKey === 'handle' ? (
       <Fragment>
         <Popover
           placement="bottom"
@@ -197,9 +197,9 @@ export default class WorkflowMainPop extends PureComponent {
           {!isLaunch ? <Button size="large" type="danger" ghost loading={this.state.buttonLoading} style={{display: 'none', float: 'left'}}>退回</Button> : null}
         </Popover>
         <Button size="large" onClick={this.handleCancel} className={styles.cancelBtn}>取消</Button>
-        {taskOrProcDefKey ? (this.state.activeTabKey === 'handle' ? (isLaunch ? <Button size="large" type="primary" onClick={this.launchWorkflow} loading={this.state.buttonLoading} className={styles.submitBtn}>发起</Button>
-          : <Button size="large" type="primary" onClick={this.submitWorkflow} loading={this.state.buttonLoading} className={styles.submitBtn}>提交</Button>) : null) : null}
-      </Fragment>);
+        {taskOrProcDefKey ? (isLaunch ? <Button size="large" type="primary" onClick={this.launchWorkflow} loading={this.state.buttonLoading} className={styles.submitBtn}>发起</Button>
+          : <Button size="large" type="primary" onClick={this.submitWorkflow} loading={this.state.buttonLoading} className={styles.submitBtn}>提交</Button>) : null}
+      </Fragment>) : null;
     return (
       <PopPage
         footer={footer}

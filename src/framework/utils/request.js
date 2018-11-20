@@ -96,12 +96,17 @@ export default function request(url, options) {
   if (!newOptions.headers['X-PEP-TOKEN']) {
     newOptions.headers['X-PEP-TOKEN'] = window.localStorage.getItem('proper-auth-login-token');
   }
-  // 如果请求不属于指定的域 那么删除 X-PEP-TOKEN TODO
+  // 如果配置代理请求 并且 请求不属于代理请求指定的域 那么删除 X-PEP-TOKEN TODO
   if (peaDynamicRequestPrefix && !newUrl.includes(peaDynamicRequestPrefix)) {
     delete newOptions.headers['X-PEP-TOKEN'];
   }
+  // 如果没有配置代理请求 并且 请求的http开头的请求那么认为是 其他的域 那么删除 X-PEP-TOKEN
   if (!peaDynamicRequestPrefix && newUrl.includes('http')) {
     delete newOptions.headers['X-PEP-TOKEN'];
+  }
+  // 为请求添加 X-SERVICE-KEY
+  if (!newOptions.headers['X-SERVICE-KEY']) {
+    newOptions.headers['X-SERVICE-KEY'] = window.localStorage.getItem('proper-auth-service-key');
   }
   return fetch(newUrl, newOptions)
     .then((response)=>{

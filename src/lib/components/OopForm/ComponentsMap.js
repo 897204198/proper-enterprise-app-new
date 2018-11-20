@@ -68,11 +68,12 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       break;
     case 'OopText':
       component = (
-      <List.Item
-        extra={
-        (<div
+      <div className={styles.oopTextContainer}>
+        <div className={styles.title}>{label}</div>
+        {(<div
         style={{whiteSpace: 'normal'}}
-        dangerouslySetInnerHTML={{ __html: props.text }} />)}>{label}</List.Item>);
+        dangerouslySetInnerHTML={{ __html: props.text }} />)}
+        </div>);
       break;
     case 'OopUpload':
       component =
