@@ -43,7 +43,7 @@ function getActiveIndex(children, activeKey) {
 }))
 export default class History extends React.PureComponent {
   static contextTypes = {
-    setState: PropTypes.func,
+    setHeader: PropTypes.func,
     goHome: PropTypes.func,
   }
   constructor(props) {
@@ -60,12 +60,12 @@ export default class History extends React.PureComponent {
     }
   }
   componentWillMount() {
-    this.context.setState({
+    this.context.setHeader({
       headerLeftButton: {
         text: '返回',
         icon: 'left',
         onClick: ()=>{
-          this.context.setState({
+          this.context.setHeader({
             title: this.state.name
           });
           history.go(-2);
@@ -179,7 +179,7 @@ export default class History extends React.PureComponent {
           processDefinitionId,
           stateCode
         })));
-        this.context.setState({
+        this.context.setHeader({
           headerLeftButton: {
             text: '返回',
             icon: 'left',

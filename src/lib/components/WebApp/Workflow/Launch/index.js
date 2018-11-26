@@ -14,7 +14,7 @@ import styles from './index.less';
 }))
 export default class Launch extends React.PureComponent {
   static contextTypes = {
-    setState: PropTypes.func,
+    setHeader: PropTypes.func,
     goHome: PropTypes.func,
   }
   constructor(props) {
@@ -45,7 +45,7 @@ export default class Launch extends React.PureComponent {
             stateCode: 'DONE'
           })));
           // 设置右上角的图标
-          this.context.setState({
+          this.context.setHeader({
             headerLeftButton: {
               text: '返回',
               icon: 'left',
@@ -56,7 +56,7 @@ export default class Launch extends React.PureComponent {
             headerRightButton: {
               text: '历史',
               onClick: ()=>{
-                this.context.setState({
+                this.context.setHeader({
                   title: `${name}历史记录`
                 })
                 this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));

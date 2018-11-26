@@ -1,5 +1,8 @@
 @import "~antd/lib/style/themes/default.less";
 
+::-webkit-scrollbar {
+  display: none;
+}
 .webAppContainer {
 
   :global {
@@ -53,13 +56,15 @@
     align-items: center;
     height: 100%;
     padding: 0;
+    min-width: 50px;
   }
   .homeBtn {
     border: 0;
     align-items: center;
     height: 100%;
-    padding-left: 12px;
+    padding-left: 18px;
     padding-right: 0;
+    min-width: 50px;
   }
   .title {
     display: flex;

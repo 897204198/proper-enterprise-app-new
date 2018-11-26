@@ -52,16 +52,42 @@ const Header = (props)=>{
 @connect()
 export default class WebAppLayout extends React.PureComponent {
   static childContextTypes = {
-    setState: PropTypes.func,
+    setHeader: PropTypes.func,
+    resetHeader: PropTypes.func,
     goHome: PropTypes.func,
-    closeBrowser: PropTypes.func
+    closeBrowser: PropTypes.func,
+    goBack: PropTypes.func
+  }
+  header = {
+    title: decodeURIComponent(getParamObj(this.props.location.search).title),
+    headerLeftButton: {
+      text: '返回',
+      icon: 'left',
+      onClick: ()=>{
+        handleBack(this.props);
+      }
+    },
+    headerRightButton: {
+      text: '',
+      icon: 'home',
+      onClick: handleHome
+    },
   }
   getChildContext() {
     return {
-      setState: (state)=> {
+      setHeader: (header)=> {
         this.setState({
-          ...this.state,
-          ...state
+          header: {
+            ...this.state.header,
+            ...header
+          }
+        });
+      },
+      resetHeader: ()=>{
+        this.setState({
+          header: {
+            ...this.header
+          }
         });
       },
       goHome: ()=> {
@@ -69,27 +95,18 @@ export default class WebAppLayout extends React.PureComponent {
       },
       closeBrowser: ()=>{
         handleCloseBrowser();
+      },
+      goBack: ()=>{
+        handleBack(this.props);
       }
     };
   }
   constructor(props) {
     super(props);
-    const searchObj = getParamObj(this.props.location.search);
     this.state = {
-      title: decodeURIComponent(searchObj.title),
-      hideHeader: searchObj.hideHeader === 'true',
-      headerLeftButton: {
-        text: '返回',
-        icon: 'left',
-        onClick: ()=>{
-          handleBack(this.props);
-        }
-      },
-      headerRightButton: {
-        text: '',
-        icon: 'home',
-        onClick: handleHome
-      },
+      header: {
+        ...this.header
+      }
     }
   }
   componentWillMount() {
@@ -101,18 +118,32 @@ export default class WebAppLayout extends React.PureComponent {
         if (transParams.token) {
           window.localStorage.setItem('proper-auth-login-token', transParams.token);
         }
-        if (transParams.serviceKey) {
-          window.localStorage.setItem('proper-auth-service-key', transParams.serviceKey);
-        }
+        // if (transParams.serviceKey) {
+        //   window.localStorage.setItem('proper-auth-service-key', transParams.serviceKey);
+        // }
       }
     }
   }
   renderHeader = ()=>{
-    if (this.state.hideHeader) {
-      return null;
+    const hideHeader = getParamObj(this.props.location.search).hideHeader === 'true';
+    // 如果传递了hideHeader 那么把左侧和右侧的图标 隐藏掉
+    const {header: {title, headerLeftButton, headerRightButton}} = this.state;
+    let hfb = headerLeftButton;
+    let hrb = headerRightButton;
+    if (hideHeader) {
+      hfb = {
+        text: '',
+        icon: '',
+        onClick: ()=>{}
+      };
+      hrb = {
+        text: '',
+        icon: '',
+        onClick: ()=>{}
+      }
     }
     return isApp() ?
-      (<Header title={this.state.title} leftButton={this.state.headerLeftButton} rightButton={this.state.headerRightButton} />)
+      (<Header title={title} leftButton={hfb} rightButton={hrb} />)
       : null
   }
   render() {

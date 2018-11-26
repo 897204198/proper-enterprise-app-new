@@ -105,9 +105,9 @@ export default function request(url, options) {
     delete newOptions.headers['X-PEP-TOKEN'];
   }
   // 为请求添加 X-SERVICE-KEY
-  if (!newOptions.headers['X-SERVICE-KEY']) {
-    newOptions.headers['X-SERVICE-KEY'] = window.localStorage.getItem('proper-auth-service-key');
-  }
+  // if (!newOptions.headers['X-SERVICE-KEY']) {
+  //   newOptions.headers['X-SERVICE-KEY'] = window.localStorage.getItem('proper-auth-service-key');
+  // }
   return fetch(newUrl, newOptions)
     .then((response)=>{
       return checkStatus(response, newOptions);
@@ -135,6 +135,8 @@ export default function request(url, options) {
           thePromise = response.json();
         } else if (contentType.indexOf('application/x-msdownload') !== -1) {
           thePromise = response.blob();
+        } else {
+          thePromise = response;
         }
       } else {
         thePromise = response;
@@ -149,6 +151,7 @@ export default function request(url, options) {
       });
     })
     .catch((e) => {
+      console.log(e);
       const { defaultActionWhenNoAuthentication } = newOptions;
       if (e.name === 401 && defaultActionWhenNoAuthentication === true) {
         throw e
