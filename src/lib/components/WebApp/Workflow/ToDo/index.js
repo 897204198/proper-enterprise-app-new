@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import { List, Tabs, Button, Spin} from 'antd';
+import { List, Tabs, Spin} from 'antd';
 import { Modal, Toast } from 'antd-mobile';
 import {connect} from 'dva';
 import {routerRedux} from 'dva/router';
@@ -172,7 +172,11 @@ export default class ToDo extends React.PureComponent {
   afterProcessSubmit = ()=>{
     this.handleTabsChange(this.state.activeKey);
   }
-  handleProcessAgree = (record)=>{
+  handleProcessAgree = (record, event)=>{
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     console.log(record);
     Modal.alert('提示', '确定同意审批此流程吗？', [
       { text: '取消'},
@@ -204,29 +208,82 @@ export default class ToDo extends React.PureComponent {
     }
   }
   renderListItem = (item, type)=>{
-    const {form: {formData}, globalData = {}} = item;
+    const {form: {formData}, globalData = {}, pepProcInst: {stateCode, stateValue}} = item;
+    const stateColor = stateCode === 'DONE' ? '#00c27e' : '#0079fa';
+    const agree = (
+      <div className={styles.agree} onClick={(event)=>{ this.handleProcessAgree(item, event) }}>
+          <span style={{display: 'flex'}}>
+            <img src={require('./assets/agree.png')} alt="" height={14} />
+            <span style={{lineHeight: '14px', marginLeft: 4}}>同意</span>
+          </span>
+      </div>
+    );
     const listItem = (
     <Fragment>
-      <div style={{lineHeight: '44px', color: '#262626'}}>
+      <div style={{lineHeight: '20px', color: '#6c6c6c'}}>
         {
           type === 'todo' ? (
           <Fragment>
             <span>到达时间 : </span>
             <span>{moment(item.createTime).format('YYYY-MM-DD HH:mm')}</span>
           </Fragment>) : (
-          <Fragment><span>办理时间 : </span>
+          <Fragment>
+            <span>办理时间 : </span>
             <span style={{marginLeft: 8}}>{item.endTime}</span>
           </Fragment>)
         }
       </div>
-      <div style={{lineHeight: '44px', color: '#262626'}}><span>发起人 : </span><span>{item.pepProcInst.startUserName}</span></div>
+      <div style={{lineHeight: '20px', color: '#6c6c6c'}}>
+        <span>发起人 : </span><span>{item.pepProcInst.startUserName}</span>
+        {type === 'todo' ? agree : (<span className={styles.processStatus} style={{color: stateColor}}>{stateValue}</span>)}
+      </div>
     </Fragment>);
     if (type === 'todo' && globalData.formTodoDisplayFields && globalData.formTodoDisplayFields.length) {
-      return globalData.formTodoDisplayFields.map(it=>
-        (<div key={it.name} style={{lineHeight: '44px', color: '#262626'}}><span>{it.label} : </span><span>{formData[`${it.name}_text`] ? formData[`${it.name}_text`] : formData[`${it.name}`]}</span></div>)
-      )
+      return (
+        <div>
+        {
+          globalData.formTodoDisplayFields.map(it=> (
+            <div key={it.name} style={{lineHeight: '20px', color: '#6c6c6c'}}>
+              <span>{it.label} : </span>
+              <span>{formData[`${it.name}_text`] ? formData[`${it.name}_text`] : formData[`${it.name}`]}</span>
+            </div>))
+        }
+        {agree}
+      </div>);
     }
     return listItem;
+  }
+  renderImage = (item)=>{
+    const {globalData: {workflow_icon: workflowIcon}} = item;
+    let img = null;
+    switch (workflowIcon) {
+      case 'ccsq.png': img = require('./assets/ccsq.png');
+        break
+      case 'lz.png': img = require('./assets/lz.png');
+        break
+      case 'rz.png': img = require('./assets/rz.png');
+        break
+      case 'githubstore_icon.png': img = require('./assets/githubstore_icon.png');
+        break
+      case 'gitlabstor_icon.png': img = require('./assets/gitlabstor_icon.png');
+        break
+      case 'send_query.png': img = require('./assets/send_query.png');
+        break
+      case 'overtime_icon.png': img = require('./assets/overtime_icon.png');
+        break
+      case 'perload_icon.png': img = require('./assets/perload_icon.png');
+        break
+      case 'reimbursement_icon.png': img = require('./assets/reimbursement_icon.png');
+        break
+      case 'qj.png': img = require('./assets/qj.png');
+        break
+      case 'yfzx.png': img = require('./assets/yfzx.png');
+        break
+      case 'youtrack_icon.png': img = require('./assets/youtrack_icon.png');
+        break
+      default: img = require('./assets/default.png');
+    }
+    return img;
   }
   render() {
     const {
@@ -274,8 +331,11 @@ export default class ToDo extends React.PureComponent {
                         <div className={styles.listLine}>
                           <a onClick={ (event)=>{ this.handleProcessSubmit(item, event) }}>
                             <div className={styles.listTitle}>
-                              <span style={{fontWeight: 'bold'}}>{item.pepProcInst.processTitle}</span>
-                              <span style={{color: '#6c6c6c', fontSize: 12}}><TimeAgo datetime={item.createTime} locale="zh_CN" live={false} /></span>
+                              <span style={{display: 'flex'}}>
+                                <img src={this.renderImage(item)} alt="" height={22} width={22} />
+                                <span style={{fontWeight: 'bold', marginLeft: 8}}>{item.pepProcInst.processTitle}</span>
+                              </span>
+                              <span style={{color: '#262626', fontSize: 12}}><TimeAgo datetime={item.createTime} locale="zh_CN" live={false} /></span>
                             </div>
                             <List.Item>
                               <List.Item.Meta
@@ -283,7 +343,7 @@ export default class ToDo extends React.PureComponent {
                               />
                             </List.Item>
                           </a>
-                          <div className={styles.toolbar}><Button type="primary" onClick={(event)=>{ this.handleProcessAgree(item, event) }}>同意</Button></div>
+                          {/* <div className={styles.toolbar}><Button type="primary" onClick={(event)=>{ this.handleProcessAgree(item, event) }}>同意</Button></div> */}
                         </div>
                       </div>
                     )}
@@ -320,7 +380,10 @@ export default class ToDo extends React.PureComponent {
                         <div className={styles.listLine}>
                           <a onClick={ (event)=>{ this.handleDoneProcessView(item, event) }}>
                             <div className={styles.listTitle}>
-                              <span style={{color: '#262626', fontWeight: 'bold'}}>{item.pepProcInst.processTitle || `${item.pepProcInst.startUserName}的${item.pepProcInst.processDefinitionName}`}</span>
+                              <span style={{display: 'flex'}}>
+                                <img src={this.renderImage(item)} alt="" height={22} width={22} />
+                                <span style={{color: '#262626', fontWeight: 'bold', marginLeft: 8}}>{item.pepProcInst.processTitle || `${item.pepProcInst.startUserName}的${item.pepProcInst.processDefinitionName}`}</span>
+                              </span>
                               <span style={{color: '#6c6c6c', fontSize: 12}}><TimeAgo datetime={item.endTime} locale="zh_CN" live={false} /></span>
                             </div>
                             <List.Item>
