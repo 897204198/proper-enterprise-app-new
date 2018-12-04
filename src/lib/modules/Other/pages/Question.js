@@ -142,7 +142,7 @@ const QuestionDetailForm = Form.create({onValuesChange})((props) => {
 @connect(({ otherQuestion, global, loading }) => ({
   otherQuestion,
   global,
-  loading: loading.models.appconfigQuestion,
+  loading: loading.models.otherQuestion,
   typeSubmitLoading: loading.effects['otherQuestion/treeListAdd'],
   tableSubmitLoading: loading.effects['otherQuestion/postTable'],
   tableLoading: loading.effects['otherQuestion/tableData'],
@@ -444,7 +444,7 @@ export default class Question extends React.PureComponent {
        cancelText: '取消',
        onOk: () => {
          this.props.dispatch({
-           type: 'appconfigQuestion/removeAll',
+           type: 'otherQuestion/removeAll',
            payload: {
              ids: selectedRowKeys.toString()
            },
@@ -459,7 +459,7 @@ export default class Question extends React.PureComponent {
    }
   // 静态过滤表格数据
   filterTable = (inputValue, filter) => {
-    const { appconfigQuestion: { tableData } } = this.props;
+    const { otherQuestion: { tableData } } = this.props;
     const tableDataFinal = inputValue ? filter(tableData, ['name', 'answer', 'views', 'tread', 'awesome']) : tableData;
     this.setState({
       filterTableData: tableDataFinal,
@@ -493,7 +493,7 @@ export default class Question extends React.PureComponent {
     })
   }
   handleTreeListDelete = ()=>{
-    const { appconfigQuestion: { treeData } } = this.props;
+    const { otherQuestion: { treeData } } = this.props;
     if (treeData.length > 1) {
       Modal.confirm({
         title: '提示',

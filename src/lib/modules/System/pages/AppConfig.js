@@ -554,9 +554,6 @@ export default class AppConfig extends PureComponent {
         text: '增加',
         disabled: false,
         name: 'add',
-        onClick: (record) => {
-          this.treeListAdd(record)
-        },
         render: (
             <TreeForm
               onSubmit={(values)=>{ this.handlePopoverAddSub(values) }}
@@ -568,9 +565,6 @@ export default class AppConfig extends PureComponent {
         text: '编辑',
         disabled: editDisable,
         name: 'edit',
-        onClick: (record) => {
-          this.treeListEdit(record)
-        },
         render: (
               <TreeForm
               // catalogType={this.state.propoverValueType}

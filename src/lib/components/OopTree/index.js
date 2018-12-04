@@ -51,7 +51,11 @@ const renderMenu = (divDom, that)=>{
           const {name} = item;
           if (!item.confirm) {
             return (
-              <Menu.Item disabled={item.disabled} className={`popoverLine ${item.name}`} key={name} onClick={(nameParam)=>{ that.handelPopover(nameParam) }}>
+              <Menu.Item
+                disabled={item.disabled}
+                className={`popoverLine ${item.name}`}
+                key={name}
+                onClick={(nameParam)=>{ item.onClick ? item.onClick(nameParam) : that.handelPopover(nameParam) }}>
                 <div style={{paddingLeft: 0}}>
                   <Icon type={item.icon} style={{fontSize: 16}} />
                       <span >{item.text}</span>
@@ -162,7 +166,7 @@ export default class OopTree extends PureComponent {
     confirm({
       title: `'${txt}'-${item.confirm}`,
       onOk() {
-        onClick(props)
+        onClick(props);
       },
       onCancel() {
       },

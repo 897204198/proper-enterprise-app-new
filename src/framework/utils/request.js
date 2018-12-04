@@ -136,7 +136,13 @@ export default function request(url, options) {
         } else if (contentType.indexOf('application/x-msdownload') !== -1) {
           thePromise = response.blob();
         } else {
-          thePromise = response;
+          // TODO 默认传递的相应头？？？
+          return new Promise((resolve)=>{
+            resolve({
+              status: codeStyle,
+              result: []
+            });
+          });
         }
       } else {
         thePromise = response;

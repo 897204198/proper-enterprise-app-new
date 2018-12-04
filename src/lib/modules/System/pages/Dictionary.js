@@ -581,9 +581,6 @@ export default class Dictionary extends React.PureComponent {
         text: '增加',
         name: 'add',
         disabled: false,
-        onClick: (record) => {
-          this.treeListAdd(record)
-        },
         render: (
             <TreeForm
               onSubmit={(values)=>{ this.handlePopoverAddSub(values) }}
@@ -595,9 +592,6 @@ export default class Dictionary extends React.PureComponent {
         text: '编辑',
         name: 'edit',
         disabled: editDisable,
-        onClick: (record) => {
-          this.treeListEdit(record)
-        },
         render: (
               <TreeForm
               catalogType={this.state.catalogType}
