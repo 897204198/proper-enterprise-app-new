@@ -1,18 +1,18 @@
 import { message } from 'antd';
 
-export const oopToast = (response, succText, errText) => {
+export const oopToast = (response, succText, errText, duration = 3) => {
   if (response) {
     if (response.status === 'ok') {
       if (succText) {
-        return message.success(succText);
+        return message.success(succText, duration);
       } else if (!succText && (typeof response.result === 'string') && response.result !== '') {
-        return message.success(response.result);
+        return message.success(response.result, duration);
       }
     }
     if (errText) {
-      return message.error(errText);
+      return message.error(errText, duration);
     } else if (!errText && (typeof response.result === 'string') && response.result !== '') {
-      return message.error(response.result);
+      return message.error(response.result, duration);
     }
   }
 }

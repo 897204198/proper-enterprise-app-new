@@ -255,7 +255,7 @@ export default class OopTable extends PureComponent {
   }
   render() {
     const { grid: {list, pagination },
-      actionColumn, columns, loading, topButtons = [], rowButtons = [], checkable = true, size,
+      actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
       _onSelect, _onSelectAll, ...otherProps} = this.props
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
@@ -294,6 +294,15 @@ export default class OopTable extends PureComponent {
             this.createTopButtons(topButtons)
           }
         </div>
+        {
+          extra && (
+            <div className={styles.extra}>
+              {
+                extra
+              }
+            </div>
+          )
+        }
         <Table
           className={this.getTableClassName()}
           dataSource={list}
@@ -304,10 +313,10 @@ export default class OopTable extends PureComponent {
           pagination={
             pagination ? {...pagination,
               current: pagination.pageNo, pageSize: pagination.pageSize, total: pagination.count
-            } : {
+            } : (pagination !== false ? {
                 showSizeChanger: true,
                 showQuickJumper: true,
-              }
+              } : false)
           }
           onChange={this.onChange}
           size={size}
