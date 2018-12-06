@@ -9,7 +9,8 @@ export default {
     status: undefined,
     showError: false,
     modalVisible: false,
-    address: localStorage.getItem('pea_dynamic_request_prefix')
+    address: localStorage.getItem('pea_dynamic_request_prefix'),
+    addressCache: JSON.parse(localStorage.getItem('pea_dynamic_request_prefix_cache')),
   },
 
   effects: {
@@ -46,11 +47,31 @@ export default {
       window.localStorage.removeItem('proper-auth-login-token');
       yield put(routerRedux.push('/base/login'));
     },
-    *setAddress({ payload, callback }, { put }) {
-      window.localStorage.setItem('pea_dynamic_request_prefix', payload);
+    *setAddressCache({ payload, callback }, { put }) {
+      window.localStorage.setItem('pea_dynamic_request_prefix_cache', JSON.stringify(Object.values(payload)));
       yield put({
         type: 'saveAddressCache',
+        payload: Object.values(payload)
+      });
+      setTimeout(()=>{
+        callback && callback()
+      }, 200)
+    },
+    *addAddress({ payload, callback }, { put }) {
+      window.localStorage.setItem('pea_dynamic_request_prefix', payload);
+      yield put({
+        type: 'saveAddress',
         payload
+      });
+      setTimeout(()=>{
+        callback && callback()
+      }, 200)
+    },
+    *clearAddress({ callback }, { put }) {
+      window.localStorage.setItem('pea_dynamic_request_prefix', '');
+      yield put({
+        type: 'saveAddress',
+        payload: ''
       });
       setTimeout(()=>{
         callback && callback()
@@ -81,9 +102,15 @@ export default {
     saveAddressCache(state, { payload }) {
       return {
         ...state,
-        address: payload,
+        addressCache: payload
       };
-    }
+    },
+    saveAddress(state, { payload }) {
+      return {
+        ...state,
+        address: payload
+      };
+    },
   },
   subscriptions: {
     setup({dispatch}) {

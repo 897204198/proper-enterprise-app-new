@@ -2,7 +2,9 @@
  * MongoService 链接MongoDB的前端工具 基于av-core
  */
 import AV from 'av-core';
+import {getCurrentUser} from './utils';
 import { prefix, devMode } from '../../config/config';
+
 
 export default class MongoService {
   constructor(tableName, url, ctx) {
@@ -11,7 +13,7 @@ export default class MongoService {
     if (!token) {
       throw Error('the token cannot be empty when you instantiate an \'MongoService\' object ');
     }
-    this.currentUser = JSON.parse(window.atob(token.split('.')[0]));
+    this.currentUser = getCurrentUser(token);
     this.tableName = tableName;
     this.tableObj = AV.Object.extend(this.tableName);
     // const {protocol, host, pathname} = window.location;

@@ -353,9 +353,8 @@ export default class Notice extends PureComponent {
           <span
             onClick={() =>
             this.handleView(record)}
-            style={record.infoStatus === true ? { color: '#1DA57A', textDecoration: 'underline',
-             cursor: 'pointer' } : { textDecoration: 'underline', cursor: 'pointer' }}>
-                {text}
+            style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+            {record.infoStatus === true ? (<a>{text}</a>) : text}
               </span>
         )
       },

@@ -3,26 +3,34 @@ import { Switch, Route } from 'dva/router';
 import {connect} from 'dva';
 import PropTypes from 'prop-types';
 import { Layout, Button, Icon } from 'antd';
+import { getUuid } from '@/framework/common/oopUtils';
+// import VConsole from 'vconsole/dist/vconsole.min.js'
 import { getRouterData } from '../common/frameHelper';
 import {getParamObj, isApp, isAndroid} from '../utils/utils';
 import NotFound from '../components/Exception/404';
 import routers from '../../config/sysRouters';
 import styles from './WebAppLayout.less';
 
+// eslint-disable-next-line
+// const vConsole = new VConsole();
 const { Content } = Layout;
 const webappRouters = Object.keys(routers).map(it=>routers[it].main && it).filter(i=>i !== undefined);
 const handleBack = (props)=>{
+  // console.log(JSON.stringify(props));
   const {pathname, search} = props.location;
   // 如果传递了这个参数 说明点击返回的时候调用 关闭当前页面
   if (getParamObj(search).close) {
+    console.log('关闭当前页面');
     handleCloseBrowser();
     return;
   }
   // 如果webappRouters中包含当前的页面说明是主页 点击返回等于点击 handleHome
   if (webappRouters.includes(pathname)) {
+    console.log('主页');
     handleHome();
     return;
   }
+  console.log('history.go(-1);')
   history.go(-1);
 }
 const handleHome = ()=>{
@@ -35,6 +43,37 @@ const handleCloseBrowser = ()=>{
   window.parent.postMessage('close', '*');
   window.localStorage.setItem('If_Can_Back', 'close');
 }
+const handleChooseImage = (opt, callback)=>{
+  // 通知上层window打开手机原生相机或者相册 目前只有安卓下
+  const type = 'chooseImage';
+  const eventId = `${type}_${getUuid(5)}`;
+  opt.type = type;
+  opt.id = eventId;
+  registerEventQueue(eventId, callback);
+  window.parent.postMessage(opt, '*');
+}
+
+const queue = {};
+const registerEventQueue = (eventId, fn)=>{
+  queue[eventId] = fn;
+}
+const getCallback = (eventId)=>{
+  return queue[eventId];
+}
+const clearCallback = (eventId)=>{
+  delete queue[eventId];
+}
+const messageHandle = (event)=>{
+  const {data: {data, id}} = event;
+  const fn = getCallback(id);
+  if (fn) {
+    fn(data);
+    setTimeout(()=>{
+      clearCallback(id);
+    });
+  }
+}
+
 const Header = (props)=>{
   const {leftButton, rightButton} = props;
   return (
@@ -56,7 +95,8 @@ export default class WebAppLayout extends React.PureComponent {
     resetHeader: PropTypes.func,
     goHome: PropTypes.func,
     closeBrowser: PropTypes.func,
-    goBack: PropTypes.func
+    goBack: PropTypes.func,
+    chooseImage: PropTypes.func,
   }
   header = {
     title: decodeURIComponent(getParamObj(this.props.location.search).title),
@@ -75,6 +115,9 @@ export default class WebAppLayout extends React.PureComponent {
   }
   getChildContext() {
     return {
+      chooseImage: (opt, callback)=>{
+        handleChooseImage(opt, callback);
+      },
       setHeader: (header)=> {
         this.setState({
           header: {
@@ -123,6 +166,10 @@ export default class WebAppLayout extends React.PureComponent {
         // }
       }
     }
+    window.addEventListener('message', messageHandle, false);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('message', messageHandle);
   }
   renderHeader = ()=>{
     const hideHeader = getParamObj(this.props.location.search).hideHeader === 'true';

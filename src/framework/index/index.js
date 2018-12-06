@@ -16,7 +16,7 @@ const app = dva({
   history: createHistory(),
   onError(err, dispatch) {
     // 401状态处理
-    if (err.name === 401) {
+    if (err.name === 401 || err.status === 401) {
       const hash = window.location.hash.split('#')[1]
       if (hash && hash !== '/base/login') {
         window.sessionStorage.setItem('proper-route-noAuthPage', window.location.hash);

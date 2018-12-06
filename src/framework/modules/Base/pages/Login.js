@@ -9,22 +9,41 @@ import {inject} from '../../../common/inject';
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
 const FormItem = Form.Item;
 const AddressForm = Form.create()((props)=>{
-  const { form, address } = props;
+  const { form, address, addressCache = [], self } = props;
   const {getFieldDecorator} = form;
+  const selectAddress = (event)=>{
+    const {value} = event.currentTarget.parentNode.parentNode.firstElementChild
+    self.addAddress(value);
+  }
+  const clearAddress = ()=>{
+    self.clearAddress();
+  }
+  const arr = ['address', 'address1', 'address2'];
   return (
     <Form>
-      <FormItem
-        label="请求地址"
-      >
-        {getFieldDecorator('address', {
-          initialValue: address,
-          rules: [{
-            pattern: /^http:\/\/|https:\/\/[A-Za-z0-9]+.[A-Za-z0-9]+[=?%\-&_~`@[\]':+!]*([^<>""])*$/, message: 'url地址格式不正确',
-          }]
-        })(
-          <Input placeholder="请输入请求地址" />
-        )}
-      </FormItem>
+      {
+        arr.map((it, index)=>{
+          const value = addressCache ? addressCache[index] : '';
+          return (
+            <FormItem key={it} label={`请求地址${++index}`} >
+              {getFieldDecorator(it, {
+                initialValue: value,
+                rules: [{
+                  pattern: /^http:\/\/|https:\/\/[A-Za-z0-9]+.[A-Za-z0-9]+[=?%\-&_~`@[\]':+!]*([^<>""])*$/, message: 'url地址格式不正确',
+                }]
+              })(
+                <Input
+                  className={value === address ? styles.active : ''}
+                  placeholder="请输入请求地址"
+                  addonAfter={
+                    value === address ? <a style={{color: 'red'}} onClick={clearAddress}><Icon type="close" /></a> : <a onClick={selectAddress}><Icon type="check" /></a>
+                  }
+                />
+              )}
+            </FormItem>
+          )
+        })
+      }
     </Form>
   )
 })
@@ -73,22 +92,47 @@ export default class LoginPage extends Component {
     })
   }
   handleOnOk = ()=>{
-    const me = this
-    const {validateFields} = me.addressForm;
+    const {validateFields} = this.addressForm;
     validateFields((err, fieldsValue) => {
       if (err) return;
-      me.props.dispatch({
-        type: 'baseLogin/setAddress',
-        payload: fieldsValue.address,
+      this.props.dispatch({
+        type: 'baseLogin/setAddressCache',
+        payload: fieldsValue,
         callback() {
-          message.success('后台地址切换成功!')
+          message.success('后台地址保存成功!');
         }
       })
     });
   }
+  addAddress = (address)=>{
+    const {validateFields} = this.addressForm;
+    validateFields((err, fieldsValue) => {
+      if (err) return;
+      this.props.dispatch({
+        type: 'baseLogin/setAddressCache',
+        payload: fieldsValue,
+        callback: ()=>{
+          this.props.dispatch({
+            type: 'baseLogin/addAddress',
+            payload: address,
+            callback() {
+              message.success(`后台地址切换成功! ${address}`)
+            }
+          })
+        }
+      })
+    });
+  }
+  clearAddress = ()=>{
+    this.props.dispatch({
+      type: 'baseLogin/clearAddress',
+      callback() {
+        message.success('后台暂无设置地址')
+      }
+    })
+  }
   render() {
     const { baseLogin, submitting } = this.props;
-    console.log(baseLogin.address)
     const { type } = this.state;
     return (
       <div className={styles.main}>
@@ -132,7 +176,7 @@ export default class LoginPage extends Component {
            onCancel={()=>{ this.toggleModalShow(false) }}
            onOk={this.handleOnOk}
            destroyOnClose={true}>
-          <AddressForm address={baseLogin.address } ref={(el)=>{ this.addressForm = el }} />
+          <AddressForm address={baseLogin.address } addressCache={baseLogin.addressCache} ref={(el)=>{ this.addressForm = el }} self={this} />
         </Modal>
       </div>
     );

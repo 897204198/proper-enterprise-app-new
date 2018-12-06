@@ -386,3 +386,20 @@ export const isIOS = ()=>{
 export const isApp = ()=>{
   return isIOS() || isAndroid()
 }
+const replaceSafetyCharactor = (str)=>{
+  return str.replace(/_/g, '/').replace(/-/g, '+');
+}
+export const getCurrentUser = (token)=>{
+  const {JSON, decodeURIComponent, escape, atob} = window;
+  if (!token) {
+    return null;
+  }
+  const u = JSON.parse(atob(replaceSafetyCharactor(token.split('.')[0])));
+  const u2 = JSON.parse(decodeURIComponent(escape(atob(replaceSafetyCharactor(token.split('.')[1])))));
+  const user = {
+    ...u,
+    ...u2,
+    username: u.name
+  };
+  return user;
+}
