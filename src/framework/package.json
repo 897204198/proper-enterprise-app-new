@@ -1,11 +1,14 @@
 {
   "name": "@pea/framework",
-  "version": "0.5.0-rc07",
+  "version": "0.5.0-rc08",
   "description": "pea/framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "@pea/framework"
+  ],
   "author": "denggy",
   "license": "MIT"
 }
