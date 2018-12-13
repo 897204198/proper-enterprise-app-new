@@ -51,7 +51,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <ButtonM { ...props} />;
       break;
     case 'TextArea':
-      component = <TextareaItem { ...props} title={label} rows={3} count={100} onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }} />;
+      component = <TextareaItem { ...props} title={label} rows={3} onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }} />;
       break;
     case 'Select':
       // pickerData = children.map(it=>({...it, value: [it.value]})); arrow="horizontal"
