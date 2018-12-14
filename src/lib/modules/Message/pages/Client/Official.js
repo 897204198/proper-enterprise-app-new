@@ -310,7 +310,7 @@ export default class Official extends React.PureComponent {
     // e.stopPropagation();
   };
   render() {
-    const officialGrid = this.props.global.oopSearchGrid;
+    const { global: { oopSearchGrid, size }} = this.props;
     // const gridLoading = this.props.gridLoading;
     const { editItem = {}, filterList = [] } = this.props.messageOfficial
     const { gridLoading } = this.props;
@@ -539,11 +539,11 @@ export default class Official extends React.PureComponent {
       >
         <Card bordered={false}>
           <OopTable
-            grid={officialGrid}
+            grid={oopSearchGrid}
             columns={columns}
             loading={gridLoading}
             onLoad={this.onLoad}
-            size="small"
+            size={size}
             topButtons={topButtons}
             rowButtons={rowButtons}
             ref={(el) => {
