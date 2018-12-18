@@ -63,22 +63,26 @@ export default class OopTable extends PureComponent {
     })
   }
   createTopButtons = (topButtons)=>{
-    const btns = topButtons.map(btn =>(
-      // 1.btn属性配置了displayReg并且displayReg执行返回结果为true 或者 2.没有配置displayReg 渲染按钮
-      ((btn.display && btn.display(this.state.selectedRowKeys)) || !btn.display) &&
-      (
-        <Button
-          key={btn.name}
-          icon={btn.icon}
-          type={btn.type}
-          style={(typeof btn.style === 'function') ? btn.style() : btn.style}
-          onClick={()=>{
-            btn.onClick && btn.onClick(this.state.selectedRowKeys, this.state.selectedRowItems)
-          }}>
-          {btn.text}
-        </Button>
-      )
-    ));
+    const btns = topButtons.map((btn) =>{
+      if (btn.render) {
+        return btn.render()
+      } else {
+        // 1.btn属性配置了displayReg并且displayReg执行返回结果为true 或者 2.没有配置displayReg 渲染按钮
+        return ((btn.display && btn.display(this.state.selectedRowKeys)) || !btn.display) &&
+        (
+          <Button
+            key={btn.name}
+            icon={btn.icon}
+            type={btn.type}
+            style={(typeof btn.style === 'function') ? btn.style() : btn.style}
+            onClick={()=>{
+              btn.onClick && btn.onClick(this.state.selectedRowKeys, this.state.selectedRowItems)
+            }}>
+            {btn.text}
+          </Button>
+        )
+      }
+    });
     if (this.props.showExport === true) {
       const menu = (
         <Menu onClick={this.handleExport}>
