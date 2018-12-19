@@ -221,7 +221,8 @@ export default class Notice extends PureComponent {
       type: 'otherNotice/noticeList',
       payload: { infoType: nowInfoType, title: ''},
       callback: (res) => {
-        const list = res.result;
+        console.log(res)
+        const list = res.result.data;
         this.translateData(res, list);
         this.setState({ list })
       }

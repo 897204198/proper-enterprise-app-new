@@ -27,8 +27,8 @@ export default {
     },
     *fetchMenus({ callback }, { call, put }) {
       const response = yield call(queryCurrentMenus);
-      const menus = formatter(controlMenu(response.result));
-      addMenuData(response.result);
+      const menus = formatter(controlMenu(response.result.data));
+      addMenuData(response.result.data);
       yield put({
         type: 'saveMenus',
         payload: menus

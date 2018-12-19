@@ -235,7 +235,7 @@ export default class Dictionary extends React.PureComponent {
       payload: param,
       callback: (res)=>{
         this.setState({
-          deBugTableData: res.result.data
+          deBugTableData: res
         })
       }
     });
@@ -491,7 +491,7 @@ export default class Dictionary extends React.PureComponent {
         payload: treeNode.catalogCode,
         callback: (res)=>{
           this.setState({
-            deBugTableData: res.result,
+            deBugTableData: res,
             searchState: false
           })
         }
