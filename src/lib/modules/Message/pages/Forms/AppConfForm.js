@@ -1,11 +1,12 @@
 import React from 'react';
-import { Col, Collapse, Form, Input, Spin, Checkbox } from 'antd';
+import { Col, Collapse, Form, Input, Spin, Checkbox, Radio } from 'antd';
 import classNames from 'classnames';
 import styles from '../Server/Manage.less';
 import OopUpload from '../../../../components/OopUpload/index'
 /* eslint no-loop-func: [0] */
 const FormItem = Form.Item;
 const { Panel } = Collapse;
+const RadioGroup = Radio.Group;
 const formItemLayout = {
   labelCol: {
     xs: {span: 24},
@@ -197,6 +198,19 @@ const IosConfForm = Form.create()((props) => {
                   )
                 }
               </FormItem>
+              <FormItem
+                {...formItemLayout}
+                label="推送环境"
+              >
+                {getFieldDecorator('pushProfile', {
+                  initialValue: iosConf.pushProfile || 'PRODUCTION'
+                })(
+                  <RadioGroup>
+                    <Radio value="DEV">开发版</Radio>
+                    <Radio value="PRODUCTION">正式版</Radio>
+                  </RadioGroup>
+                )}
+              </FormItem>
             </Panel>
           </Collapse>
         </Col>
@@ -247,12 +261,12 @@ export default class AppConfForm extends React.PureComponent {
       this.handleCheckChange(name, e.target.checked)
     }
     return (
-          <Checkbox
-            checked={checked}
-            onChange={onChange}
-          >
-            {headerName}
-          </Checkbox>
+      <Checkbox
+        checked={checked}
+        onChange={onChange}
+      >
+        {headerName}
+      </Checkbox>
     )
   }
   getFormDatas = () => {
