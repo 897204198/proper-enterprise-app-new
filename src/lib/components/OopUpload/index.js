@@ -93,7 +93,7 @@ export default class OopUpload extends React.PureComponent {
   };
   getInitProps = ()=>{
     const extra = this.defaultExtra();
-    const { showMessage } = this.props
+    const { hideMessage } = this.props
     const defaultProps = {
       name: 'file',
       action: `${getApplicationContextUrl()}/file`,
@@ -164,7 +164,7 @@ export default class OopUpload extends React.PureComponent {
         return
       }
       if (info.file.status === 'done') {
-        showMessage && message.success('上传成功!');
+        !hideMessage && message.success('上传成功!');
         const {file: {response, uid}, fileList} = info;
         const lastFile = fileList.find(f=>f.uid === uid);
         if (!lastFile.id) {
@@ -189,7 +189,7 @@ export default class OopUpload extends React.PureComponent {
           // TODO 处理401
           throw info.file.error
         }
-        showMessage && message.error('上传失败!');
+        !hideMessage && message.error('上传失败!');
         this.setState({
           uploading: false
         })
