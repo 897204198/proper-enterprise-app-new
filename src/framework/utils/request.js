@@ -19,7 +19,7 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护',
   504: '网关超时',
 };
-
+let state = true
 function checkStatus(response, options) {
   if ((response.status >= 200 && response.status < 300) || response.headers.get('X-PEP-ERR-TYPE') === 'PEP_BIZ_ERR') {
     return response;
@@ -53,6 +53,10 @@ function checkStatus(response, options) {
  * @desc2 如果是开发模式下，并且在localStorage缓存中存在系统请求前缀，那么请求前缀都换成缓存的
  */
 export default function request(url, options) {
+  if (!state && options && options.method.toString().toLowerCase() !== 'get' && !options.multiple) {
+    return false
+  }
+  state = false
   let newUrl = '';
   if (url.indexOf('$') === 0) {
     newUrl = url.replace('$', '')
@@ -114,6 +118,7 @@ export default function request(url, options) {
     }).then((response) => {
       let codeStyle = null;
       let thePromise = null;
+      state = true
       if (response.status >= 200 && response.status < 300) {
         codeStyle = 'ok';
       } else {
@@ -158,6 +163,7 @@ export default function request(url, options) {
     })
     .catch((e) => {
       console.log(e);
+      state = true
       const { defaultActionWhenNoAuthentication } = newOptions;
       if (e.name === 401 && defaultActionWhenNoAuthentication === true) {
         throw e
