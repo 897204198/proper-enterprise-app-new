@@ -176,8 +176,8 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
             {form.getFieldDecorator('deft', {
               initialValue: formEntity.deft != null ? formEntity.deft : true,
             })(<RadioGroup>
-                <Radio value={false}>是</Radio>
-                <Radio value={true}>否</Radio>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
             </RadioGroup>)}
           </FormItem>
     </Form>

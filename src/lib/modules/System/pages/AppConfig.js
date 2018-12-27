@@ -340,6 +340,7 @@ export default class AppConfig extends PureComponent {
           payload: {ids},
           callback: (res) => {
             oopToast(res, '删除成功', '删除失败');
+            this.oopTreeTable.oopTable.clearSelection();
             this.onLoad();
           }
         });
@@ -448,7 +449,7 @@ export default class AppConfig extends PureComponent {
       type: 'systemAppConfig/treeListAdd',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '添加成功', '添加失败');
+        oopToast(res, '添加成功', res.errortext | '添加失败');
         this.getTreeData()
         // this.onLoad();
         this.handleTableTreeNodeSelect()
