@@ -450,6 +450,8 @@ export default class Question extends React.PureComponent {
            },
            callback: (res) => {
              oopToast(res, '删除成功', '删除失败');
+             // 清空选中项状态
+             this.oopTreeTable.oopTable.clearSelection();
              // 刷新表格
              this.getTableData();
            }

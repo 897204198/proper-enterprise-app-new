@@ -27,9 +27,10 @@ export default {
     // 所有的角色信息
     *fetch({ payload, callback }, { call, put }) {
       const response = yield call(queryRoles, payload);
+      const { data } = response.result;
       yield put({
         type: 'saveRoleList',
-        payload: Array.isArray(response.result) ? response.result : [],
+        payload: Array.isArray(data) ? data : [],
       });
       if (callback) callback(response.result);
     },
