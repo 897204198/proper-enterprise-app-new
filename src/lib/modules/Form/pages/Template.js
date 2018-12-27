@@ -335,6 +335,7 @@ export default class Template extends React.PureComponent {
         const {pagination} = this.props.formTemplate.grid
         this.onLoad({ pagination });
         this.setFormBasicModalVisible(false);
+        this.handleModalCancel(this.form);
       }
     });
   }
