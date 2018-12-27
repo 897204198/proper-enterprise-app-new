@@ -142,7 +142,7 @@ export default {
       const response = yield call(queryGroups, payload);
       yield put({
         type: 'saveAllGroups',
-        payload: response.result,
+        payload: response.result.data,
       });
       if (callback) callback(response);
     },

@@ -766,6 +766,7 @@ export default class Role extends PureComponent {
     }
   }
   operationsData = (res, type) => {
+    console.log(this.props.authRole)
     const { status } = res;
     const { allUsers, allGroups } = this.props.authRole;
     if (status === 'ok') {
