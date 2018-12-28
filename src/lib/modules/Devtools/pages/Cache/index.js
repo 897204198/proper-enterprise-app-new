@@ -163,9 +163,11 @@ export default class Cache extends React.Component {
     const self = this;
     this.props.dispatch({
       type: 'devtoolsCache/deleteCacheListItem',
-      payload: {name: this.state.cacheName, key: record.name},
+      payload: {name: self.state.cacheName, key: record.name},
       callback: (res) => {
+        self.oopTable.clearSelection();
         oopToast(res, '清除成功');
+        self.handleView({name: self.state.cacheName});
         self.refresh();
       }
     })
