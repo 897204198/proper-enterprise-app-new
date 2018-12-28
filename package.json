@@ -9,7 +9,7 @@
     "code": "node  producer/main.js",
     "init": "node .init-project.js",
     "setup": "npm install && npm run init",
-    "build": "cross-env ESLINT=none roadhog build",
+    "build": "cross-env ESLINT=none roadhog build && npm run copyWf",
     "site": "roadhog-api-doc static && gh-pages -d dist",
     "analyze": "cross-env ESLINT=none ANALYZE=true roadhog build",
     "lint:style": "stylelint \"src/**/*.less\" --syntax less",
@@ -19,7 +19,8 @@
     "lint-staged:js": "eslint --ext .js",
     "test": "roadhog test",
     "test:component": "roadhog test ./src/components",
-    "test:all": "node ./tests/run-tests.js"
+    "test:all": "node ./tests/run-tests.js",
+    "copyWf": "node .copyWf.js"
   },
   "dependencies": {
     "@antv/data-set": "^0.8.0",
@@ -37,6 +38,7 @@
     "enquire-js": "^0.2.1",
     "fastclick": "^1.0.6",
     "file-saver": "^2.0.0-rc.3",
+    "flowable-ui-app-static-resources": "^1.0.0",
     "immutability-helper": "^2.6.6",
     "lodash": "^4.17.4",
     "lodash-decorators": "^4.4.1",
