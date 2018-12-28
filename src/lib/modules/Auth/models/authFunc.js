@@ -1,6 +1,6 @@
+import { controlMenu } from '@framework/utils/utils';
 import { queryParentTreeData, saveOrUpdateFunc, deleteFunc, queryFuncById,
   queryResourceList, saveResource, updateResource, deleteResource } from '../services/authFuncS';
-import { controlMenu } from '../../../../framework/utils/utils';
 
 export function formatTreeNode(data) {
   data.forEach((d)=>{

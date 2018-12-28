@@ -1,6 +1,6 @@
+import { getRouterDataFromMenuData, formatter, controlMenu } from '@framework/utils/utils';
+import { dynamicWrapper, addRoutersData, addMenuData } from '@framework/common/frameHelper';
 import { query as queryUsers, queryCurrent, queryCurrentMenus } from '../services/baseS';
-import { getRouterDataFromMenuData, formatter, controlMenu } from '../../../../framework/utils/utils';
-import { dynamicWrapper, addRoutersData, addMenuData } from '../../../../framework/common/frameHelper';
 
 export default {
   namespace: 'baseUser',

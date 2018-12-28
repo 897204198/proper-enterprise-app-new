@@ -1,4 +1,4 @@
-import MongoService from '../../../../framework/utils/MongoService';
+import MongoService from '@framework/utils/MongoService';
 
 const formTemplateService = new MongoService('PEP_FORM_TEMPLATE');
 const {fetchById, update, save, deleteById, fetchByEqual} = formTemplateService;

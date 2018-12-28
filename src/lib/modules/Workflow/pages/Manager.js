@@ -2,12 +2,12 @@ import React, {Fragment} from 'react';
 import {connect} from 'dva';
 import { Tabs, Card, Badge, message } from 'antd';
 import classNames from 'classnames';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import OopWorkflowMainModal from '../../../components/OopWorkflowMainModal';
-import { inject } from './../../../../framework/common/inject';
-import { oopToast } from './../../../../framework/common/oopUtils';
 import styles from './Manager.less';
 
 const { TabPane } = Tabs;

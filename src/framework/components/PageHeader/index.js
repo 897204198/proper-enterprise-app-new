@@ -2,9 +2,9 @@ import React, { PureComponent, createElement } from 'react';
 import PropTypes from 'prop-types';
 import pathToRegexp from 'path-to-regexp';
 import { Breadcrumb, Tabs } from 'antd';
+import { getMenuData } from '@framework/common/frameHelper';
 import classNames from 'classnames';
 import styles from './index.less';
-import { getMenuData } from '../../../framework/common/frameHelper';
 
 
 const { TabPane } = Tabs;

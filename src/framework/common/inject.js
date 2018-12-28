@@ -16,7 +16,7 @@ export const inject = (url)=> {
         if (modelName) {
           try {
             // 正常的业务代码的model注入
-            const model = require(`../../lib/modules/${modelName}/models/${modelUrl}`).default;
+            const model = require(`@pea/modules/${modelName}/models/${modelUrl}`).default;
             app.model(model);
           } catch (e) {
             // 系统内置的代码的model注入
@@ -26,7 +26,7 @@ export const inject = (url)=> {
         }
         // 带有model组件的model注入 包括lib的Oop系列和WebApp系列
         if (modelUrl.includes('$')) {
-          const model = require(`../../lib/components/${modelUrl.split('$').join('/')}`).default;
+          const model = require(`@pea/components/${modelUrl.split('$').join('/')}`).default;
           app.model(model);
         }
       }

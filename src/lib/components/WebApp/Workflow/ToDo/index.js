@@ -7,7 +7,7 @@ import moment from 'moment';
 import InfiniteScroll from 'react-infinite-scroller';
 import TimeAgo from 'timeago-react';
 import classNames from 'classnames';
-import {inject} from '../../../../../framework/common/inject';
+import {inject} from '@framework/common/inject';
 import styles from './index.less';
 
 const { TabPane } = Tabs;

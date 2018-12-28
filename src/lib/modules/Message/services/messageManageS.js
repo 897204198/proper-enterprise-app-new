@@ -1,5 +1,5 @@
 
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 // 添加注册应用
 export async function addApp(params) {

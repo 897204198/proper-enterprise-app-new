@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Card, Modal, Button, Input, Popconfirm, List, Icon, Checkbox } from 'antd';
-import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
-import { inject } from '../../../../../framework/common/inject';
-import { oopToast } from '../../../../../framework/common/oopUtils';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import CacheTable from './CacheTable';
 import styles from './index.less';
 

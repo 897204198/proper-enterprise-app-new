@@ -1,5 +1,5 @@
 import { stringify } from 'querystring';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function fetchById(param) {
   return request(`/sys/datadic/${param}`);

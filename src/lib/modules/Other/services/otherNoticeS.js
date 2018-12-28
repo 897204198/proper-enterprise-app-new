@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 // 左菜单数据
 export async function noticeType() {

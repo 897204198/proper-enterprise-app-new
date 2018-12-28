@@ -1,5 +1,5 @@
 import {stringify} from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function findTask(params) {
   return request(`/workflow/task?${stringify(params)}`);

@@ -13,6 +13,8 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
+import {inject} from '@framework/common/inject';
+import { getTimeDistance } from '@framework/utils/utils';
 import numeral from 'numeral';
 import {
   ChartCard,
@@ -27,10 +29,8 @@ import {
 } from '../../../components/Charts';
 import Trend from '../../../components/Trend';
 import NumberInfo from '../../../components/NumberInfo';
-import { getTimeDistance } from '../../../../framework/utils/utils';
 
 import styles from './Main.less';
-import {inject} from '../../../../framework/common/inject';
 
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;

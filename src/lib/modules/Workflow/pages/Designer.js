@@ -3,11 +3,11 @@ import { connect } from 'dva';
 import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Dropdown,
   Menu, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
 import cookie from 'react-cookies'
-import { inject } from '../../../../framework/common/inject';
-import { getApplicationContextUrl } from '../../../../framework/utils/utils';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import { getApplicationContextUrl } from '@framework/utils/utils';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import Ellipsis from '@framework/components/Ellipsis';
 import styles from './Designer.less';
-import Ellipsis from '../../../../framework/components/Ellipsis';
 import {prefix} from '../../../../config/config';
 
 const FormItem = Form.Item;

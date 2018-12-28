@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 // 将时间转换成mongo的objectId
 const tranObjectId = (date) => {

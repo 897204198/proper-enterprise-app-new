@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'dva';
+import {inject} from '@framework/common/inject';
 import OopTabTableModal from '../OopTabTableModal';
-import {inject} from '../../../framework/common/inject';
 
 
 @inject(['OopOrgEmpPicker$model', 'global'])

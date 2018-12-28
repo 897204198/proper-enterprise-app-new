@@ -4,7 +4,7 @@
   "description": "propersoft enterprise application",
   "scripts": {
     "precommit": "npm run lint-staged",
-    "start": "cross-env ESLINT=none roadhog dev",
+    "start": "cross-env ESLINT=none roadhog dev && node ./generateAlias.js",
     "mock": "node proxy/proxy-server.js",
     "code": "node  producer/main.js",
     "init": "node .init-project.js",

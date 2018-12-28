@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import {Form, Input, Button, Icon} from 'antd';
-import {inject} from '../../../../../framework/common/inject';
-import {getParamObj} from '../../../../../framework/utils/utils';
+import {inject} from '@framework/common/inject';
+import {getParamObj} from '@framework/utils/utils';
+import {oopToast} from '@framework/common/oopUtils';
 import * as properties from '../../../../../config/properties';
 import logo from '../../../../../assets/logo.svg';
-import {oopToast} from '../../../../../framework/common/oopUtils';
 import styles from './index.less';
 
 const FormItem = Form.Item;

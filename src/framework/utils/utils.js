@@ -242,12 +242,12 @@ export function getRouterDataFromMenuData(res, dynamicWrapper) {
             const originRouter = getRouterData();
             if (originRouter[`${k}`] === undefined) {
               routerConfig[`${k}`] = {
-                component: dynamicWrapper(()=> import(`../../lib/modules/${moduleName}/pages/${pathName}`))
+                component: dynamicWrapper(()=> import(`@pea/modules/${moduleName}/pages/${pathName}`))
               };
             }
           } else {
             routerConfig[`${k}`] = {
-              component: dynamicWrapper(()=> import(`../../lib/modules/${moduleName}/pages`))
+              component: dynamicWrapper(()=> import(`@pea/modules/${moduleName}/pages`))
             };
           }
         }

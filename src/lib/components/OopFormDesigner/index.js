@@ -3,7 +3,7 @@ import { Button, Card, Row, Col, Radio, Input, Tooltip, message } from 'antd';
 import Debounce from 'lodash-decorators/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
-import { getUuid } from '../../../framework/common/oopUtils';
+import { getUuid } from '@framework/common/oopUtils';
 import OopForm from '../../components/OopForm';
 import buildEditPanel from './buildEditPanel';
 import styles from './index.less';

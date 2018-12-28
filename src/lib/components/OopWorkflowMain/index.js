@@ -6,10 +6,10 @@
 import React, { PureComponent } from 'react';
 import {connect} from 'dva/index';
 import { Tabs, Spin, Timeline, message } from 'antd';
-import {inject} from '../../../framework/common/inject';
+import {inject} from '@framework/common/inject';
+import {isApp, getApplicationContextUrl} from '@framework/utils/utils';
 import OopForm from '../OopForm';
 import OopPreview from '../OopPreview';
-import {isApp, getApplicationContextUrl} from '../../../framework/utils/utils';
 import styles from './index.less';
 
 // 根据表单的权限设置 过滤掉不显示的字段 或者 设置某些字段为只读

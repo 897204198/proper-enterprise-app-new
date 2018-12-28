@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Input, Select, Card, DatePicker, Icon, Tooltip, Spin } from 'antd';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import styles from './TomcatLog.less';
 
 const { Option } = Select;

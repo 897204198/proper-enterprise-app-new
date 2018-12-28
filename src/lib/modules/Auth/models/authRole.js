@@ -1,10 +1,10 @@
+import { formatter, controlMenu } from '@framework/utils/utils';
 import { queryGroups } from '../services/authGroupsS';
 import { queryUsers } from '../services/authUserS';
 import { queryRoles, queryRole, removeRoles, queryRoleUsers, queryRoleGroups, fetchUpdateStatus,
   createOrUpdate, queryParents, queryCheckedMenus, menusAdd, menusDelete,
   userAddRole, userDelRole, GroupAddRole, GroupDelRole, menuResource,
   resourcesAdd, resourcesDelete, queryCheckedResources } from '../services/authRoleS';
-import { formatter, controlMenu } from '../../../../framework/utils/utils';
 
 export default {
   namespace: 'authRole',

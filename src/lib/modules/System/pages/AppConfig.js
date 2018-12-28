@@ -2,12 +2,12 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import {connect} from 'dva';
 import { Form, Modal, Input, Button, Select, Spin, Popover } from 'antd';
-import {inject} from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import {inject} from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
 import OopTreeTable from '../../../components/OopTreeTable';
 import OopModal from '../../../components/OopModal';
-import DescriptionList from '../../../../framework/components/DescriptionList';
-import { oopToast } from '../../../../framework/common/oopUtils';
 import styles from './AppConfig.less';
 
 const { Description } = DescriptionList;

@@ -2,12 +2,12 @@ import React, {Fragment} from 'react';
 import classNames from 'classnames';
 import {Modal, Form, Spin, Input, Button, Radio, InputNumber, Select, Popover } from 'antd';
 import {connect} from 'dva';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
+import DescriptionList from '@framework/components/DescriptionList';
 import OopTreeTable from '../../../components/OopTreeTable';
 import OopModal from '../../../components/OopModal';
-import DescriptionList from '../../../../framework/components/DescriptionList';
 import styles from './Dictionary.less';
 
 const { Description } = DescriptionList;

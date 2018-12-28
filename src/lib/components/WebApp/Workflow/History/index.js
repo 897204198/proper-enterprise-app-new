@@ -6,10 +6,9 @@ import moment from 'moment';
 import InfiniteScroll from 'react-infinite-scroller';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {inject} from '../../../../../framework/common/inject';
-
+import {inject} from '@framework/common/inject';
+import {getParamObj} from '@framework/utils/utils';
 import styles from './index.less';
-import {getParamObj} from '../../../../../framework/utils/utils';
 
 const { TabPane } = Tabs;
 

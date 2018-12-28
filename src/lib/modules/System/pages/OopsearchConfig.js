@@ -1,12 +1,12 @@
 import React, {Fragment} from 'react';
 import { Modal, Card, Form, Input, Button } from 'antd';
 import {connect} from 'dva';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
-import DescriptionList from '../../../../framework/components/DescriptionList';
 
 const { Description } = DescriptionList;
 const FormItem = Form.Item;

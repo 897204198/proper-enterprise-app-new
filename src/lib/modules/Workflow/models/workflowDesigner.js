@@ -1,5 +1,5 @@
+import { formatDate, getApplicationContextUrl } from '@framework/utils/utils';
 import { queryWorkflowList, removeWorkflowList, createWorkflow, repositoryWorkflow, queryByProcDefKey } from '../services/workflowDesignerS';
-import { formatDate, getApplicationContextUrl } from '../../../../framework/utils/utils';
 
 const token = window.localStorage.getItem('proper-auth-login-token');
 

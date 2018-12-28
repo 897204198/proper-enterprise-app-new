@@ -1,5 +1,5 @@
 // import { stringify } from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export const serverUrl = 'http://119.23.31.109:8081/pep'
 

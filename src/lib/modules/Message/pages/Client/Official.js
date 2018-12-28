@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Card, Button, Switch, Modal, Spin, Input, Form, Radio, Icon, Collapse, Checkbox, Popconfirm, Select } from 'antd'
-import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
-import { inject } from '../../../../../framework/common/inject';
-import { oopToast } from '../../../../../framework/common/oopUtils';
 import styles from './Official.less';
 // import ReactMarkdown from'react-markdown'
 

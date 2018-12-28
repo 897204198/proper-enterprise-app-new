@@ -7,10 +7,10 @@ import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import { routerRedux } from 'dva/router';
 import {version} from 'antd';
+import plpk from '@pea/package.json';
 import './index.less';
 import syspk from '../../../package.json';
 import pfpk from '../package.json';
-import plpk from '../../lib/package.json';
 // 1. Initialize
 const app = dva({
   history: createHistory(),

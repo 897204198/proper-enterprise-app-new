@@ -2,13 +2,13 @@ import React, {Fragment} from 'react';
 import {connect} from 'dva';
 import { Card, Divider, Form, Modal, Button, Input, Radio, Badge, Spin, Select} from 'antd';
 import classNames from 'classnames';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import DescriptionList from '../../../../framework/components/DescriptionList';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import {inject} from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import OopModal from '../../../components/OopModal';
-import {inject} from '../../../../framework/common/inject';
-import { oopToast } from '../../../../framework/common/oopUtils';
 import styles from './User.less';
 
 const FormItem = Form.Item;

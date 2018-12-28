@@ -1,0 +1,3 @@
+@: /Users/mac/Desktop/pea/proper-enterprise-app/src
+@framework: /Users/mac/Desktop/pea/proper-enterprise-app/src/framework
+@pea: /Users/mac/Desktop/pea/proper-enterprise-app/src/lib
