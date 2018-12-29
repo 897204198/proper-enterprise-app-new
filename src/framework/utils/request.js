@@ -1,6 +1,6 @@
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
-import { prefix, devMode } from '../../config/config';
+import { prefix, devMode } from '@/config/config';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据',

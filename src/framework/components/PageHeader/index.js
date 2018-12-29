@@ -2,8 +2,8 @@ import React, { PureComponent, createElement } from 'react';
 import PropTypes from 'prop-types';
 import pathToRegexp from 'path-to-regexp';
 import { Breadcrumb, Tabs } from 'antd';
-import { getMenuData } from '@framework/common/frameHelper';
 import classNames from 'classnames';
+import { getMenuData } from '@framework/common/frameHelper';
 import styles from './index.less';
 
 

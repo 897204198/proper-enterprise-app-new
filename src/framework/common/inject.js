@@ -1,4 +1,5 @@
-import app from '../index';
+import app from '@framework/index';
+import {dependencies} from '@/config/config';
 
 // 在加载Router页面 connect属性之前 注入当前Router页面需要的model
 export const inject = (url)=> {
@@ -12,21 +13,8 @@ export const inject = (url)=> {
   const loadModel = (dependArr)=> {
     dependArr.forEach((modelUrl)=> {
       if (!registeredModels.some(model => model.namespace === modelUrl)) {
-        const modelName = parseModuleNameByModelUrl(modelUrl);
-        if (modelName) {
-          try {
-            // 正常的业务代码的model注入
-            const model = require(`@pea/modules/${modelName}/models/${modelUrl}`).default;
-            app.model(model);
-          } catch (e) {
-            // 系统内置的代码的model注入
-            const model = require(`../modules/${modelName}/models/${modelUrl}`).default;
-            app.model(model);
-          }
-        }
-        // 带有model组件的model注入 包括lib的Oop系列和WebApp系列
-        if (modelUrl.includes('$')) {
-          const model = require(`@pea/components/${modelUrl.split('$').join('/')}`).default;
+        const model = getDvaModelByModelUrlAndDepdecs(modelUrl, dependencies);
+        if (model) {
           app.model(model);
         }
       }
@@ -56,4 +44,44 @@ const parseModuleNameByModelUrl = (modelUrl) => {
     result = arr.join('');
   }
   return result;
+}
+
+// 获取model通过modelUrl和依赖
+const getDvaModelByModelUrlAndDepdecs = (modelUrl, depdecs = []) =>{
+  // 带有model组件的model注入 带 $ 属于webapp下的组件中的model注入  其他的是正常的业务模块注入
+  let model = null;
+  if (modelUrl.includes('$')) {
+    try {
+      model = require(`@/lib/components/${modelUrl.split('$').join('/')}`).default;
+    } catch (e) {
+      for (let i = 0; i < depdecs.length; i++) {
+        const root = depdecs[i];
+        try {
+          model = require(`@proper/${root}-lib/components/${modelUrl.split('$').join('/')}`).default;
+          break;
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+  } else {
+    const modelName = parseModuleNameByModelUrl(modelUrl);
+    if (modelName) {
+      try {
+        // 正常的业务代码的model注入
+        model = require(`@/lib/modules/${modelName}/models/${modelUrl}`).default;
+      } catch (e) {
+        for (let i = 0; i < depdecs.length; i++) {
+          try {
+            const root = depdecs[i];
+            model = require(`@proper/${root}-lib/modules/${modelName}/models/${modelUrl}`).default;
+            break;
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    }
+  }
+  return model;
 }

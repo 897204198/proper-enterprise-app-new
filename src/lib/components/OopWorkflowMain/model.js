@@ -1,7 +1,8 @@
-import { fetchByFormCode, launchWorkflow, submitWorkflow, fetchProcessProgress} from '../services/baseWorkflowS';
+import { fetchByFormCode, launchWorkflow, submitWorkflow, fetchProcessProgress} from './service';
+
 
 export default {
-  namespace: 'baseWorkflow',
+  namespace: 'OopWorkflowMain$model',
   state: {
     formEntity: {},
     processProgress: []

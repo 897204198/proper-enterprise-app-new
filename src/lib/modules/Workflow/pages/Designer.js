@@ -7,8 +7,8 @@ import { inject } from '@framework/common/inject';
 import { getApplicationContextUrl } from '@framework/utils/utils';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import Ellipsis from '@framework/components/Ellipsis';
+import {prefix} from '@/config/config';
 import styles from './Designer.less';
-import {prefix} from '../../../../config/config';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;

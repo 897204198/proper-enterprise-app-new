@@ -32,7 +32,7 @@ function getActiveIndex(children, activeKey) {
   return -1;
 }
 
-@inject(['baseWorkflow', 'workflowManager', 'workflowDesigner', 'global'])
+@inject(['OopWorkflowMain$model', 'workflowManager', 'workflowDesigner', 'global'])
 @connect(({workflowManager, workflowDesigner, global, loading}) => ({
   workflowManager,
   workflowDesigner,
@@ -192,7 +192,7 @@ export default class ToDo extends React.PureComponent {
         }
         Toast.loading('Loading...', 600);
         this.props.dispatch({
-          type: 'baseWorkflow/submitWorkflow',
+          type: 'OopWorkflowMain$model/submitWorkflow',
           payload: {taskOrProcDefKey: taskId, formData: data},
           callback: (res)=>{
             Toast.hide();

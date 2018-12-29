@@ -6,11 +6,15 @@ import createHistory from 'history/createHashHistory';
 // import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
 import { routerRedux } from 'dva/router';
+import models from '@framework/modules/Base/models';
 import {version} from 'antd';
-import plpk from '@pea/package.json';
+import {dependencies} from '@/config/config';
+import pkg from '@/../package.json';
+import framework from '@framework/package.json';
+// import plpk from '@pea/lib/package.json';
 import './index.less';
-import syspk from '../../../package.json';
-import pfpk from '../package.json';
+
+
 // 1. Initialize
 const app = dva({
   history: createHistory(),
@@ -30,17 +34,33 @@ const app = dva({
 // 2. Plugins
 app.use(createLoading());
 // 3. Register global model
-app.model(require('../modules/Base/models/global').default);
-
+models.forEach(model=>app.model(model.default));
 // 4. Router
 app.router(require('./router').default);
 
 // 5. Start
 app.start('#root');
 
-console.info(`当前系统名称： ${syspk.name}, version: ${syspk.version}`);
-console.info(`当前pf版本： ${pfpk.version}`);
-console.info(`当前pl版本： ${plpk.version}`);
-console.info(`当前ad版本： ${version}`);
+// log dependencies version
+// eslint-disable-next-line
+setTimeout((function (des = []) {
+  const last = des[des.length - 1];
+  console.info(`当前系统名称： ${pkg.name}, version: ${pkg.version}`);
+  console.info(`当前ant-design版本： ${version}`);
+  console.info(`当前framework版本： ${framework.version}`);
+  if (des.length === 0) {
+    import('@pea/package.json').then((pk)=>{
+      console.info(`当前pea版本： ${pk.version}`);
+    })
+  } else {
+    try {
+      import(`@/../node_modules/@proper/${last}-lib/package.json`).then((pk)=>{
+        console.info(`当前${last}版本： ${pk.version}`);
+      });
+    } catch (err) {
+      console.log(err)
+    }
+  }
+})(dependencies), 0);
 
 export default app;

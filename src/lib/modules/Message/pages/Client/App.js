@@ -4,11 +4,11 @@ import {connect} from 'dva';
 import {inject} from '@framework/common/inject';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { oopToast } from '@framework/common/oopUtils';
+import icon from '@/assets/icon@30x30.png'
 import AppConfForm from '../Forms/AppConfForm';
 import MailConfForm from '../Forms/MailConfForm';
 import MessageConfForm from '../Forms/MessageConfForm';
 import FormModal from '../Forms/components/FormModal';
-import icon from '../../../../../assets/icon@30x30.png'
 // import iconBig from '../../../../../assets/icon@174x174.png'
 import styles from './App.less'
 

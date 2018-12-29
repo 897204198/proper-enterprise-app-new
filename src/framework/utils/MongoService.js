@@ -2,8 +2,8 @@
  * MongoService 链接MongoDB的前端工具 基于av-core
  */
 import AV from 'av-core';
+import { prefix, devMode } from '@/config/config';
 import {getCurrentUser} from './utils';
-import { prefix, devMode } from '../../config/config';
 
 
 export default class MongoService {

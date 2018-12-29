@@ -2,9 +2,9 @@ import React from 'react';
 import { Prompt } from 'dva/router';
 import { Breadcrumb, Tabs, Form, Input, Button, Spin, Icon } from 'antd';
 import {connect} from 'dva';
+import {inject} from '@framework/common/inject';
 import OopUpload from '@pea/components/OopUpload/index';
-import {inject} from '../../../common/inject';
-import { oopToast } from '../../../common/oopUtils';
+import { oopToast } from '@framework/common/oopUtils';
 import styles from './PersonalCenter.less';
 
 const { TabPane } = Tabs;

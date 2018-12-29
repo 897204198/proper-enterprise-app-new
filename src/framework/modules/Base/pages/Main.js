@@ -13,8 +13,6 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
-import {inject} from '@framework/common/inject';
-import { getTimeDistance } from '@framework/utils/utils';
 import numeral from 'numeral';
 import {
   ChartCard,
@@ -26,9 +24,11 @@ import {
   Bar,
   Pie,
   TimelineChart,
-} from '../../../components/Charts';
-import Trend from '../../../components/Trend';
-import NumberInfo from '../../../components/NumberInfo';
+} from '@framework/components/Charts';
+import Trend from '@framework/components/Trend';
+import NumberInfo from '@framework/components/NumberInfo';
+import { getTimeDistance } from '@framework/utils/utils';
+import {inject} from '@framework/common/inject';
 
 import styles from './Main.less';
 

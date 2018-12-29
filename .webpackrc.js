@@ -1,7 +1,7 @@
 import {dependencies} from './src/config/config';
 const config = {
   'entry': {
-    'app': dependencies ? './node_modules/@proper/framework/index/index.js' : './src/framework/index/index.js',
+    'app': dependencies.length ? './node_modules/@proper/framework/index/index.js' : './src/framework/index/index.js',
     'common': ['./src/config/vendor.js']
   },
   'commons': [
@@ -17,14 +17,14 @@ const config = {
       ]
     }
   },
-  "extraBabelPlugins": dependencies ? [] : [
+  "extraBabelPlugins": dependencies.length  ? [] : [
     ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": true }],
     ["import", { "libraryName": "antd-mobile", "libraryDirectory": "es", "style": true }, "antd-mobile"]
   ],
   'ignoreMomentLocale': true,
   'theme': './src/config/theme.js',
   'html': {
-    'template': dependencies ? './node_modules/@proper/framework/index/index.ejs' : './src/framework/index/index.ejs'
+    'template': dependencies.length  ? './node_modules/@proper/framework/index/index.ejs' : './src/framework/index/index.ejs'
   },
   'publicPath': '/',
   'disableDynamicImport': false,

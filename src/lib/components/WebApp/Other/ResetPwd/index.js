@@ -5,8 +5,8 @@ import {Form, Input, Button, Icon} from 'antd';
 import {inject} from '@framework/common/inject';
 import {getParamObj} from '@framework/utils/utils';
 import {oopToast} from '@framework/common/oopUtils';
-import * as properties from '../../../../../config/properties';
-import logo from '../../../../../assets/logo.svg';
+import * as properties from '@/config/properties';
+import logo from '@/assets/logo.svg';
 import styles from './index.less';
 
 const FormItem = Form.Item;

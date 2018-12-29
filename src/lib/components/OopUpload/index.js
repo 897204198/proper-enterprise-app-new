@@ -1,7 +1,7 @@
 import React from 'react';
 import { Upload, Button, Icon, message} from 'antd';
+import { getApplicationContextUrl } from '@framework/utils/utils';
 import OopPreview from '../OopPreview';
-import { getApplicationContextUrl } from '../../../framework/utils/utils';
 
 const imgSuffix = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
 export default class OopUpload extends React.PureComponent {

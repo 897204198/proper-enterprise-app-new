@@ -2,12 +2,13 @@ import React from 'react';
 import { Link, Redirect, Switch, Route } from 'dva/router';
 import DocumentTitle from 'react-document-title';
 import { Icon } from 'antd';
+import logo from '@/assets/logo.svg';
+import * as properties from '@/config/properties';
 import GlobalFooter from '../components/GlobalFooter';
-import styles from './UserLayout.less';
-import logo from '../../assets/logo.svg';
 import { getRoutes } from '../utils/utils';
 import {inject} from '../common/inject';
-import * as properties from '../../config/properties';
+import styles from './UserLayout.less';
+
 
 // TODO
 // const links = [{
