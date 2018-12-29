@@ -1,3 +1,0 @@
-@: D:\Documents\GitHub\new\proper-enterprise-app/src
-@framework: D:\Documents\GitHub\new\proper-enterprise-app/src/framework
-@pea: D:\Documents\GitHub\new\proper-enterprise-app/src/lib
