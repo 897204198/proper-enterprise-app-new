@@ -449,7 +449,7 @@ export default class AppConfig extends PureComponent {
       type: 'systemAppConfig/treeListAdd',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '添加成功', res.errortext | '添加失败');
+        oopToast(res, '添加成功');
         this.getTreeData()
         // this.onLoad();
         this.handleTableTreeNodeSelect()

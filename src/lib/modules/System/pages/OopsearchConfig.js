@@ -200,7 +200,7 @@ export default class Config extends React.PureComponent {
       type: 'systemOopsearchConfig/saveOrUpdate',
       payload: values,
       callback: (res)=>{
-        oopToast(res, '保存成功', '保存失败');
+        oopToast(res, '保存成功');
         this.handleModalCancel(form);
         this.onLoad();
       }
