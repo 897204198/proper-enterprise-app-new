@@ -97,13 +97,13 @@ const creatDiv = (renderDom, y)=>{
 export default class OopTree extends PureComponent {
   constructor(props) {
     super(props);
-    const {defaultSelectedKeys = [], defaultExpandedKeys = []} = this.props;
+    const { defaultExpandedKeys = []} = this.props;
     this.state = {
       currentSelectTreeNode: null,
       expandedKeys: [...defaultExpandedKeys],
       searchValue: '',
       autoExpandParent: true,
-      selectedKeys: [...defaultSelectedKeys],
+      // selectedKeys: [...defaultSelectedKeys],
       popoverConfig: {
         treeMenuState: 'button',
         popoverInfo: null,
@@ -116,10 +116,10 @@ export default class OopTree extends PureComponent {
   handleOnSelect = (treeNode, event)=>{
     if (event.selected) {
       const {dataRef} = event.node.props
-      const id = dataRef.id || dataRef.key;
-      this.setState({
-        selectedKeys: [id]
-      });
+      // const id = dataRef.id || dataRef.key;
+      // this.setState({
+      //   selectedKeys: [id]
+      // });
       const currentSelectTreeNode = treeNode.length ? {...event.node.props.dataRef} : null;
       this.setState({
         currentSelectTreeNode
@@ -245,13 +245,17 @@ export default class OopTree extends PureComponent {
           </TreeNode>
         );
       }
-      return (
-        <TreeNode
-          isLeaf={true}
-          title={item.title}
-          key={item.key}
-          dataRef={item}
-          icon={ item.icon ? <Icon type={item.icon} /> : null } />);
+      if (index > -1) {
+        return (
+          <TreeNode
+            isLeaf={true}
+            title={item.title}
+            key={item.key}
+            dataRef={item}
+            icon={ item.icon ? <Icon type={item.icon} /> : null } />);
+      } else {
+        return false
+      }
     })
     return treeRoot ?
       (
@@ -324,7 +328,7 @@ export default class OopTree extends PureComponent {
     })
   }
   render() {
-    const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
+    const { searchValue, expandedKeys, autoExpandParent } = this.state;
     const { treeData, treeTitle, treeKey, treeRoot, treeLoading, defaultSelectedKeys, defaultExpandedKeys, ...treeConfig} = this.props;
     this.setTitle();
     return (
@@ -339,7 +343,7 @@ export default class OopTree extends PureComponent {
             expandedKeys={expandedKeys}
             autoExpandParent={autoExpandParent}
             onSelect={this.handleOnSelect}
-            selectedKeys={selectedKeys}
+            // selectedKeys={selectedKeys}
             onRightClick={this.handleOnRightClick}
             ref={(el)=>{ this.tree = el }}
             {...treeConfig}
