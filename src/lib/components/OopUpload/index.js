@@ -47,7 +47,7 @@ export default class OopUpload extends React.PureComponent {
   getFileDownloadUrl = (id)=>{
     const sUrl = this.props.downloadUrl
     if (id) {
-      const token = window.localStorage.getItem('proper-auth-login-token');
+      const token = this.props.downloadToken || window.localStorage.getItem('proper-auth-login-token');
       return `${sUrl || getApplicationContextUrl()}/file/${id}?access_token=${token}`;
     }
   }

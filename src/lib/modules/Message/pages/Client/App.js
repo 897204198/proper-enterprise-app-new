@@ -464,6 +464,7 @@ export default class App extends React.PureComponent {
     const upObj = {
       action: `${sUrl}/notice/server/config/file?access_token=${isSuccess}`,
       downloadUrl: sUrl,
+      downloadToken: isSuccess
     }
     const forms = {
       appConfForm: {
@@ -479,6 +480,7 @@ export default class App extends React.PureComponent {
           warningField={warningField}
           loading={!!loading}
           uploadOption={upObj}
+          downloadToken={isSuccess}
           conductValuesChange={this.handleUserInfoFormChange} />
       },
       mailConfForm: {
