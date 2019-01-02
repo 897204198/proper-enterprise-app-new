@@ -154,6 +154,7 @@ export default class Cache extends React.Component {
       callback: (res) => {
         self.oopTable.clearSelection();
         oopToast(res, '清除成功');
+        self.handleView({name: this.state.cacheName});
         self.refresh();
       }
     })
