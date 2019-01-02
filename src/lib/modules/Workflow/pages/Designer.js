@@ -293,7 +293,7 @@ export default class Designer extends PureComponent {
 
   // 导出
   exportActivity = (id) => {
-    window.location = `workflow/service/app/rest/models/${id}/bpmn20?version=${Date.now()}`;
+    window.location = `workflow/app/rest/models/${id}/bpmn20?version=${Date.now()}`;
   }
 
   // 刷新
