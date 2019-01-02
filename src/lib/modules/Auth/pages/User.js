@@ -762,7 +762,7 @@ export default class User extends React.PureComponent {
                 loading = {!!loading}
                 roleUsers= {userRoles}
                 columns= {userRolesColumns}
-                handleUserChange= {this.handleUserChange}
+                handleUserChange= {this.userAddRoles}
                 roleUsersList= {userRolesList}
                 rolesSearchType={rolesSearchType}
                 userRolesAll={userRolesAll}
@@ -777,14 +777,6 @@ export default class User extends React.PureComponent {
           }, {
             key: 'userGroups',
             title: '用户组信息',
-            // content: <UserGroupRelevance
-            //   userGroups={userGroups}
-            //   userAddGroups={this.userAddGroups}
-            //   loading={!!loading}
-            //   columns={userGroupsColumns}
-            //   userGroupsList={userGroupsList}
-            //   filterGroupsAll={this.filterGroupsAll}
-            // />
             content: <GroupInfoForm
             loading = {!!loading}
             userGroups={userGroups}
