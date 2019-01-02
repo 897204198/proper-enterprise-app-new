@@ -20,7 +20,8 @@
     "test": "roadhog test",
     "test:component": "roadhog test ./src/components",
     "test:all": "node ./tests/run-tests.js",
-    "copyWf": "node .copyWf.js"
+    "copyWf": "node .copyWf.js",
+    "WfServer": "node .copyWf.js && node devServer.js"
   },
   "dependencies": {
     "@antv/data-set": "^0.8.0",

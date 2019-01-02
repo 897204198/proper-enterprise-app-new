@@ -17,7 +17,7 @@ module.exports = {
       res.status(500).send('失败');
     }
   },
-  "GET:/auth/menus":[
+  "GET:/auth/menus":{data: [
     {"id":"pep-workflow","name":"流程设置","route":"/workflow","sequenceNumber":0,"icon":"database","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
     {"id":"pep-auth","name":"权限管理","route":"/auth","sequenceNumber":1,"icon":"lock","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
     {"id":"pep-auth-users","name":"用户管理","route":"/auth/user","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
@@ -42,7 +42,7 @@ module.exports = {
     {"id":"pep-message","name":"消息配置管理","route":"/message","sequenceNumber":9,"icon":"appstore","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
     {"id":"pep-message-app","name":"应用配置","route":"/message/client/app","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
     {"id":"pep-message-official","name":"文案配置","route":"/message/client/official","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
-  ],
+  ]},
   "GET:/auth/users": {
     "count":100,
     "data":[
