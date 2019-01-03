@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import pathToRegexp from 'path-to-regexp';
 import { Breadcrumb, Tabs } from 'antd';
 import classNames from 'classnames';
+import { getMenuData } from '@framework/common/frameHelper';
 import styles from './index.less';
-import { getMenuData } from '../../../framework/common/frameHelper';
 
 
 const { TabPane } = Tabs;

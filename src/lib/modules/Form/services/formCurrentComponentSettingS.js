@@ -1,6 +1,6 @@
 // import {stringify} from 'qs';
-// import request from '../../../../framework/utils/request';
-import MongoService from '../../../../framework/utils/MongoService';
+// import request from '@framework/utils/request';
+import MongoService from '@framework/utils/MongoService';
 
 const formCurrentComponentSettingService = new MongoService('PEP_FORM_CURRENTCOMPONENTSETTING');
 const {update, save, deleteById, batchDelete} = formCurrentComponentSettingService;

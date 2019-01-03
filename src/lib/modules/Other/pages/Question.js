@@ -2,9 +2,9 @@ import React from 'react';
 import { Form, Spin, Input, Popover, Modal } from 'antd';
 import {connect} from 'dva';
 import classNames from 'classnames';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
 import OopTreeTable from '../../../components/OopTreeTable';
 import OopModal from '../../../components/OopModal';
 import styles from '../../System/pages/Dictionary.less';
@@ -450,6 +450,8 @@ export default class Question extends React.PureComponent {
            },
            callback: (res) => {
              oopToast(res, '删除成功', '删除失败');
+             // 清空选中项状态
+             this.oopTreeTable.oopTable.clearSelection();
              // 刷新表格
              this.getTableData();
            }

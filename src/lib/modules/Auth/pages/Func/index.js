@@ -6,13 +6,13 @@ import React, { PureComponent, Fragment } from 'react';
 import {connect} from 'dva';
 import { Tree, Form, Modal, Input, Radio, Spin, InputNumber, Select, TreeSelect, Badge } from 'antd';
 import classNames from 'classnames';
-import {inject} from '../../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
+import {inject} from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
 import OopTreeTable from '../../../../components/OopTreeTable';
+import OopModal from '../../../../components/OopModal';
 import TableForm from './TableForm';
 import styles from './index.less';
-import { oopToast } from '../../../../../framework/common/oopUtils';
-import OopModal from '../../../../components/OopModal';
 
 const { TreeNode } = Tree;
 const { Option } = Select;
@@ -251,7 +251,8 @@ export default class Func extends PureComponent {
       visible: false
     },
     warningWrapper: false, // from 是否记录修改状态
-    warningField: {} // from 字段变化
+    warningField: {}, // from 字段变化
+    curEditMenuId: ''
   }
   componentDidMount() {
     this.props.dispatch({
@@ -328,7 +329,7 @@ export default class Func extends PureComponent {
           warningWrapper: false,
           warningField: {},
         });
-        oopToast(res, '保存成功', '保存失败');
+        oopToast(res, '保存成功');
         me.onLoad();
         me.refreshMenusAndLeftTree();
       }
@@ -396,7 +397,10 @@ export default class Func extends PureComponent {
     } else {
       dispatch({
         type: 'authFunc/deleteResource',
-        payload: item.id,
+        payload: {
+          resourceId: item.id,
+          menuId: this.state.curEditMenuId
+        },
         callback(res) {
           oopToast(res, '删除成功', '删除失败');
           dispatch({
@@ -429,7 +433,7 @@ export default class Func extends PureComponent {
           type: 'authFunc/deleteFunc',
           payload: {ids: items.toString()},
           callback(res) {
-            me.oopTreeTable.table.clearSelection()
+            me.oopTreeTable.oopTable.clearSelection();
             oopToast(res, '删除成功', '删除失败');
             me.onLoad();
             me.refreshMenusAndLeftTree();
@@ -492,7 +496,8 @@ export default class Func extends PureComponent {
     me.setState({
       addOrEditModalTitle: '编辑',
       modalVisible: true,
-      isCreate: false
+      isCreate: false,
+      curEditMenuId: record.id
     });
     me.props.dispatch({
       type: 'authFunc/fetchParentTreeData',

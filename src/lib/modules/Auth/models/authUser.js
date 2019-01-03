@@ -41,7 +41,7 @@ export default {
         type: 'saveUserRoles',
         payload: {
           userRoles: resp.result,
-          userRolesAll: resp2.result
+          userRolesAll: resp2.result.data
         }
       })
       if (callback) callback(res)
@@ -55,7 +55,7 @@ export default {
         type: 'saveUserGroups',
         payload: {
           userGroups: resp.result,
-          userGroupsAll: resp2.result
+          userGroupsAll: resp2.result.data
         }
       })
       if (callback) callback(res)

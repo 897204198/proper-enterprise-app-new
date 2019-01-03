@@ -1,16 +1,16 @@
 import React, { Fragment } from 'react';
 import { Card, Row, Col, Divider, Icon, Popconfirm, Badge, Input, Button, Popover, message } from 'antd'
 import {connect} from 'dva';
-import {inject} from '../../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
+import {inject} from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
+import icon from '@/assets/icon@30x30.png'
 import AppConfForm from '../Forms/AppConfForm';
 import MailConfForm from '../Forms/MailConfForm';
 import MessageConfForm from '../Forms/MessageConfForm';
 import FormModal from '../Forms/components/FormModal';
-import icon from '../../../../../assets/icon@30x30.png'
 // import iconBig from '../../../../../assets/icon@174x174.png'
 import styles from './App.less'
-import { oopToast } from '../../../../../framework/common/oopUtils';
 
 const formItemLayout = {
   labelCol: {
@@ -463,6 +463,8 @@ export default class App extends React.PureComponent {
     const { pushInfo = {}, mailInfo = {}, smsInfo = {}, loading, isSuccess, sUrl } = this.props.messageApp
     const upObj = {
       action: `${sUrl}/notice/server/config/file?access_token=${isSuccess}`,
+      downloadUrl: sUrl,
+      downloadToken: isSuccess
     }
     const forms = {
       appConfForm: {
@@ -478,6 +480,7 @@ export default class App extends React.PureComponent {
           warningField={warningField}
           loading={!!loading}
           uploadOption={upObj}
+          downloadToken={isSuccess}
           conductValuesChange={this.handleUserInfoFormChange} />
       },
       mailConfForm: {

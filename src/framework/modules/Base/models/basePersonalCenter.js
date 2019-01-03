@@ -1,6 +1,6 @@
+import { queryUsersById, saveOrUpdateUser } from '@pea/modules/Auth/services/authUserS';
 import { changePassword } from '../services/basePersonalCenterS';
 import { queryCurrent } from '../services/baseS';
-import { queryUsersById, saveOrUpdateUser } from '../../../../lib/modules/Auth/services/authUserS';
 
 export default {
   namespace: 'basePersonalCenter',

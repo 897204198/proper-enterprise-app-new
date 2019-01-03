@@ -3,8 +3,8 @@ import {routerRedux} from 'dva/router';
 import {connect} from 'dva';
 import PropTypes from 'prop-types';
 import { Spin, message } from 'antd';
-import {getParamObj} from '../../../../../framework/utils/utils';
-import {inject} from '../../../../../framework/common/inject';
+import {getParamObj} from '@framework/utils/utils';
+import {inject} from '@framework/common/inject';
 import styles from './index.less';
 
 @inject(['workflowDesigner'])

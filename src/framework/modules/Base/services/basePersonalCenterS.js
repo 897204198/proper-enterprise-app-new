@@ -1,4 +1,4 @@
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function changePassword(param) {
   const url = '/auth/users/password';

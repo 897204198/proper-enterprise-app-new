@@ -4,9 +4,9 @@ import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
+import { getApplicationContextUrl } from '@framework/utils/utils';
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
-import { getApplicationContextUrl } from '../../../framework/utils/utils';
 import styles from './index.less';
 
 const { Header } = Layout;

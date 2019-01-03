@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Checkbox, Alert, Icon, Modal, Form, Input, message } from 'antd';
-import Login from '../../../components/Login';
+import Login from '@framework/components/Login';
+import {inject} from '@framework/common/inject';
 import styles from './Login.less';
-import {inject} from '../../../common/inject';
+
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
 const FormItem = Form.Item;

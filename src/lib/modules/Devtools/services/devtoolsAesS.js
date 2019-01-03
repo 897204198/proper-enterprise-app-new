@@ -1,4 +1,4 @@
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 // AES 解密
 export async function decrypt(params) {

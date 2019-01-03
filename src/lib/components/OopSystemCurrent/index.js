@@ -2,8 +2,8 @@ import React, {Fragment, PureComponent} from 'react';
 import {Spin, Input, Button } from 'antd';
 import {connect} from 'dva/index';
 import moment from 'moment';
-import DescriptionList from '../../../framework/components/DescriptionList';
-import {inject} from '../../../framework/common/inject';
+import DescriptionList from '@framework/components/DescriptionList';
+import {inject} from '@framework/common/inject';
 import styles from './index.less';
 
 const {Description} = DescriptionList;

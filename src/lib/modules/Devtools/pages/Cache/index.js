@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Card, Modal, Button, Input, Popconfirm, List, Icon, Checkbox } from 'antd';
-import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
-import { inject } from '../../../../../framework/common/inject';
-import { oopToast } from '../../../../../framework/common/oopUtils';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import CacheTable from './CacheTable';
 import styles from './index.less';
 
@@ -154,6 +154,7 @@ export default class Cache extends React.Component {
       callback: (res) => {
         self.oopTable.clearSelection();
         oopToast(res, '清除成功');
+        self.handleView({name: this.state.cacheName});
         self.refresh();
       }
     })
@@ -163,9 +164,11 @@ export default class Cache extends React.Component {
     const self = this;
     this.props.dispatch({
       type: 'devtoolsCache/deleteCacheListItem',
-      payload: {name: this.state.cacheName, key: record.name},
+      payload: {name: self.state.cacheName, key: record.name},
       callback: (res) => {
+        self.oopTable.clearSelection();
         oopToast(res, '清除成功');
+        self.handleView({name: self.state.cacheName});
         self.refresh();
       }
     })

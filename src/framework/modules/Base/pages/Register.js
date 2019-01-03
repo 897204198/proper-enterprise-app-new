@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { routerRedux, Link } from 'dva/router';
 import { Form, Input, Button, Select, Row, Col, Popover, Progress } from 'antd';
+import {inject} from '@framework/common/inject';
 import styles from './Register.less';
-import {inject} from '../../../common/inject';
 
 const FormItem = Form.Item;
 const { Option } = Select;

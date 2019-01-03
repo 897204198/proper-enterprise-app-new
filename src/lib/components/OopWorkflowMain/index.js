@@ -6,10 +6,10 @@
 import React, { PureComponent } from 'react';
 import {connect} from 'dva/index';
 import { Tabs, Spin, Timeline, message } from 'antd';
-import {inject} from '../../../framework/common/inject';
+import {inject} from '@framework/common/inject';
+import {isApp, getApplicationContextUrl} from '@framework/utils/utils';
 import OopForm from '../OopForm';
 import OopPreview from '../OopPreview';
-import {isApp, getApplicationContextUrl} from '../../../framework/utils/utils';
 import styles from './index.less';
 
 // 根据表单的权限设置 过滤掉不显示的字段 或者 设置某些字段为只读
@@ -105,11 +105,11 @@ const BusinessPanel = (props)=>{
     </Spin>);
 }
 
-@inject('baseWorkflow')
-@connect(({baseWorkflow, loading})=>({
-  baseWorkflow,
-  formLoading: loading.effects['baseWorkflow/fetchByFormCode'],
-  progressLoading: loading.effects['baseWorkflow/fetchProcessProgress']
+@inject('OopWorkflowMain$model')
+@connect(({OopWorkflowMain$model, loading})=>({
+  OopWorkflowMain$model,
+  formLoading: loading.effects['OopWorkflowMain$model/fetchByFormCode'],
+  progressLoading: loading.effects['OopWorkflowMain$model/fetchProcessProgress']
 }), null, null, {withRef: true})
 export default class OopWorkflowMain extends PureComponent {
   state = {
@@ -130,7 +130,7 @@ export default class OopWorkflowMain extends PureComponent {
         return
       }
       this.props.dispatch({
-        type: 'baseWorkflow/fetchByFormCode',
+        type: 'OopWorkflowMain$model/fetchByFormCode',
         payload: formKey,
         callback: (resp)=>{
           this.isComplete = true;
@@ -148,12 +148,12 @@ export default class OopWorkflowMain extends PureComponent {
   // 清空表单对象
   componentWillUnmount() {
     this.props.dispatch({
-      type: 'baseWorkflow/clear'
+      type: 'OopWorkflowMain$model/clear'
     })
   }
   // 获取当前节点
   getCurrentNode = ()=>{
-    const { baseWorkflow: {processProgress: {currentTasks = [], ended = false}} } = this.props;
+    const { OopWorkflowMain$model: {processProgress: {currentTasks = [], ended = false}} } = this.props;
     if (ended) {
       return (
         <Timeline.Item>
@@ -174,7 +174,7 @@ export default class OopWorkflowMain extends PureComponent {
   }
   // 获取流程处理tab
   getHandleTabComponent = ()=>{
-    const { name = null, baseWorkflow: {formEntity}, businessObj: {formData, formTitle, formProperties}, formLoading, isLaunch, taskOrProcDefKey} = this.props;
+    const { name = null, OopWorkflowMain$model: {formEntity}, businessObj: {formData, formTitle, formProperties}, formLoading, isLaunch, taskOrProcDefKey} = this.props;
     if (formEntity === undefined || formEntity.formDetails === undefined) {
       return null;
     }
@@ -197,7 +197,7 @@ export default class OopWorkflowMain extends PureComponent {
   }
   // 获取流程进度tab
   getProcessProgressTab = ()=>{
-    const { baseWorkflow: {processProgress: {hisTasks = [], start = {}}}, progressLoading} = this.props;
+    const { OopWorkflowMain$model: {processProgress: {hisTasks = [], start = {}}}, progressLoading} = this.props;
     const title = (<h2>流程历史</h2>);
     return (
       <div style={{paddingLeft: 16, paddingRight: 16}}>
@@ -242,7 +242,7 @@ export default class OopWorkflowMain extends PureComponent {
       if (!procInstId) {
         return null
       }
-      imgUrl = `/workflow/service/api/runtime/process-instances/${procInstId}/diagram?access_token=${token}`;
+      imgUrl = `/workflow/service/process/runtime/process-instances/${procInstId}/diagram?access_token=${token}`;
     }
     if (!imgUrl) {
       return null
@@ -275,10 +275,10 @@ export default class OopWorkflowMain extends PureComponent {
   }
   // 点击tab变化
   handleTabsChange = (key)=>{
-    const { procInstId, baseWorkflow: {processProgress}, onTabsChange } = this.props;
+    const { procInstId, OopWorkflowMain$model: {processProgress}, onTabsChange } = this.props;
     if (key === 'progress' && processProgress.length === 0 && procInstId) {
       this.props.dispatch({
-        type: 'baseWorkflow/fetchProcessProgress',
+        type: 'OopWorkflowMain$model/fetchProcessProgress',
         payload: procInstId
       })
     }
@@ -326,7 +326,7 @@ export default class OopWorkflowMain extends PureComponent {
       console.log(formData);
       oopForm.showPageLoading(true);
       this.props.dispatch({
-        type: 'baseWorkflow/submitWorkflow',
+        type: 'OopWorkflowMain$model/submitWorkflow',
         payload: {taskOrProcDefKey, formData},
         callback: (res)=>{
           oopForm.showPageLoading(false);
@@ -338,7 +338,7 @@ export default class OopWorkflowMain extends PureComponent {
   // 发起工作流的方法
   launchWorkflow = (callback)=>{
     console.log('launchWorkflow...');
-    const {taskOrProcDefKey, setButtonLoading, baseWorkflow: {formEntity: {formTodoDisplayFields = []}}} = this.props;
+    const {taskOrProcDefKey, setButtonLoading, OopWorkflowMain$model: {formEntity: {formTodoDisplayFields = []}}} = this.props;
     if (!this.isComplete) {
       message.warning('有点卡哦，数据还没返回', ()=>{
         setButtonLoading(false);
@@ -361,7 +361,7 @@ export default class OopWorkflowMain extends PureComponent {
       console.log(formData);
       oopForm.showPageLoading(true);
       this.props.dispatch({
-        type: 'baseWorkflow/launchWorkflow',
+        type: 'OopWorkflowMain$model/launchWorkflow',
         payload: {taskOrProcDefKey, formData: {...formData, formTodoDisplayFields}},
         callback: (res)=>{
           oopForm.showPageLoading(false);

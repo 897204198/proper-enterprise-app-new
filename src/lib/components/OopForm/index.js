@@ -2,10 +2,10 @@ import React from 'react';
 import {connect} from 'dva';
 import { Form } from 'antd';
 import moment from 'moment';
+import {inject} from '@framework/common/inject';
+import {isApp} from '@framework/utils/utils';
 import {appFormGenerator, formGenerator, toastValidErr, toastLoading} from './utils';
 import styles from './index.less';
-import {inject} from '../../../framework/common/inject';
-import {isApp} from '../../../framework/utils/utils';
 
 // const isApp = ()=>{
 //   return false;

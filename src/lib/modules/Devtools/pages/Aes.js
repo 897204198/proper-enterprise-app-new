@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Card, Input, Button, Row, Col, Divider, Form, Spin } from 'antd';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;

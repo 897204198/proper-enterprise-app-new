@@ -1,4 +1,4 @@
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 //  JWT token decode
 export async function decode(params) {

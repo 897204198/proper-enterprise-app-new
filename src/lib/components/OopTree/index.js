@@ -97,13 +97,14 @@ const creatDiv = (renderDom, y)=>{
 export default class OopTree extends PureComponent {
   constructor(props) {
     super(props);
-    const {defaultSelectedKeys = [], defaultExpandedKeys = []} = this.props;
+    const { defaultExpandedKeys = [], defaultSelectedKeys = []} = this.props;
     this.state = {
       currentSelectTreeNode: null,
       expandedKeys: [...defaultExpandedKeys],
       searchValue: '',
       autoExpandParent: true,
       selectedKeys: [...defaultSelectedKeys],
+      defaultKeys: [...defaultSelectedKeys],
       popoverConfig: {
         treeMenuState: 'button',
         popoverInfo: null,
@@ -118,7 +119,8 @@ export default class OopTree extends PureComponent {
       const {dataRef} = event.node.props
       const id = dataRef.id || dataRef.key;
       this.setState({
-        selectedKeys: [id]
+        selectedKeys: [id],
+        defaultKeys: [id]
       });
       const currentSelectTreeNode = treeNode.length ? {...event.node.props.dataRef} : null;
       this.setState({
@@ -215,7 +217,7 @@ export default class OopTree extends PureComponent {
       }
     })
   }
-  renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue)=> {
+  renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue, selectedKeys)=> {
     const treeNodes = data.map((node) => {
       const item = {
         ...node,
@@ -228,7 +230,7 @@ export default class OopTree extends PureComponent {
       const title = index > -1 ? (
         <span>
           {beforeStr}
-          <span className={styles.primaryColor}>{searchValue}</span>
+          <span className={selectedKeys[0] === item.id ? '' : styles.primaryColor}>{searchValue}</span>
           {afterStr}
         </span>
       ) : item.title;
@@ -245,13 +247,17 @@ export default class OopTree extends PureComponent {
           </TreeNode>
         );
       }
-      return (
-        <TreeNode
-          isLeaf={true}
-          title={item.title}
-          key={item.key}
-          dataRef={item}
-          icon={ item.icon ? <Icon type={item.icon} /> : null } />);
+      if (index > -1) {
+        return (
+          <TreeNode
+            isLeaf={true}
+            title={item.title}
+            key={item.key}
+            dataRef={item}
+            icon={ item.icon ? <Icon type={item.icon} /> : null } />);
+      } else {
+        return false
+      }
     })
     return treeRoot ?
       (
@@ -268,6 +274,15 @@ export default class OopTree extends PureComponent {
     const { value } = e.target;
     const { props } = this;
     const { treeData } = props;
+    if (value === '') {
+      this.setState({
+        selectedKeys: this.state.defaultKeys
+      })
+    } else {
+      this.setState({
+        selectedKeys: ['']
+      })
+    }
     if (this.treeNodeDataListCache.length === 0) {
       this.generateList(treeData, props);
     }
@@ -344,7 +359,7 @@ export default class OopTree extends PureComponent {
             ref={(el)=>{ this.tree = el }}
             {...treeConfig}
           >
-            {this.renderTreeNodes(treeData, treeTitle, treeKey, treeRoot, searchValue)}
+            {this.renderTreeNodes(treeData, treeTitle, treeKey, treeRoot, searchValue, selectedKeys)}
           </DirectoryTree>
         </div>
       </Spin>

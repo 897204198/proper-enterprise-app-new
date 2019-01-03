@@ -7,16 +7,16 @@ import { Route, Redirect, Switch, routerRedux } from 'dva/router';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import { enquireScreen } from 'enquire-js';
+import logo from '@/assets/logo.svg';
+import {webImUrl} from '@/config/config';
+import * as properties from '@/config/properties';
 import GlobalHeader from '../components/GlobalHeader';
 import GlobalFooter from '../components/GlobalFooter';
 import SiderMenu from '../components/SiderMenu';
 import NotFound from '../components/Exception/404';
 import { getRoutes } from '../utils/utils';
-import logo from '../../assets/logo.svg';
 import {inject} from '../common/inject';
 import styles from './BasicLayout.less';
-import {webImUrl} from '../../config/config';
-import * as properties from '../../config/properties';
 
 
 const { Content } = Layout;

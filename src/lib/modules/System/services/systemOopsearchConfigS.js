@@ -1,4 +1,4 @@
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function saveOrUpdate(param) {
   return param.id ? request(`/oopsearch/config/${param.id}`, {

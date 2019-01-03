@@ -1,5 +1,5 @@
+import { controlMenu } from '@framework/utils/utils';
 import * as service from './service';
-import { controlMenu } from '../../../framework/utils/utils';
 
 export default {
   namespace: 'OopOrgEmpPicker$model',

@@ -3,13 +3,13 @@ import { Card, Button, Divider, Spin, Select,
   Form, Modal, Input, Radio, Badge, InputNumber } from 'antd';
 import { connect } from 'dva';
 import classNames from 'classnames';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import OopModal from '../../../components/OopModal';
-import DescriptionList from '../../../../framework/components/DescriptionList';
-import { oopToast } from '../../../../framework/common/oopUtils';
 import { dataFilter, commonSearch } from './utils';
 import styles from './Group.less';
 

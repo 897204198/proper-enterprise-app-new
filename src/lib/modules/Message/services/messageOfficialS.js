@@ -1,5 +1,5 @@
 
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function getOfficial(params) {
   return request(`/templates/${params}`);

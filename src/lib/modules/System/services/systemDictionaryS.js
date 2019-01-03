@@ -1,5 +1,5 @@
 import { stringify } from 'querystring';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function fetchById(param) {
   return request(`/sys/datadic/${param}`);
@@ -40,5 +40,8 @@ export async function treeListDelete(param) {
   });
 }
 export async function getTableData(param) {
-  return typeof param === 'string' ? request(`/sys/datadic/catalog/${param}`) : request(`/sys/datadic?${stringify(param)}`);
+  return request(`/sys/datadic?${stringify(param)}`);
+}
+export async function getTableValue(param) {
+  return request(`/sys/datadic/catalog/${param}`);
 }

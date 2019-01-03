@@ -1,12 +1,12 @@
 import React, {Fragment} from 'react';
 import { Modal, Card, Form, Spin, Button } from 'antd';
 import {connect} from 'dva';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import {inject} from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopForm from '../../../components/OopForm';
 import OopTable from '../../../components/OopTable';
-import {inject} from '../../../../framework/common/inject';
-import { oopToast } from '../../../../framework/common/oopUtils';
 
 const ModalForm = Form.create()((props) => {
   const { loading, visible, title, onModalCancel, onModalSubmit, formEntity, self } = props;

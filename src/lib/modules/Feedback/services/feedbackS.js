@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function queryOpinions(params) {
   return request(`/admin/feedback?${stringify(params)}`);

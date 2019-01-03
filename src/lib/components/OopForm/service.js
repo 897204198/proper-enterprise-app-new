@@ -1,6 +1,6 @@
 import {stringify} from 'qs';
-import request from '../../../framework/utils/request';
-import MongoService from '../../../framework/utils/MongoService';
+import request from '@framework/utils/request';
+import MongoService from '@framework/utils/MongoService';
 
 // 查询数据字典
 export async function fetchDictionary(param) {

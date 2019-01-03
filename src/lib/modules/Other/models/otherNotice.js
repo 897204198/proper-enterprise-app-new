@@ -19,7 +19,7 @@ export default {
       const response = yield call(noticeList, payload);
       yield put({
         type: 'getNoticeList',
-        payload: response.result,
+        payload: response.result.data,
       });
       if (callback) callback(response);
     },

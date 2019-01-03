@@ -1,4 +1,4 @@
-import { formatDate } from '../../../../framework/utils/utils';
+import { formatDate } from '@framework/utils/utils';
 import * as managerService from '../services/workflowManagerS';
 
 function pave(dataObject, prefix) {

@@ -3,13 +3,13 @@ import { Card, Button, Divider, Modal, Spin, Badge,
   Form, Input, Radio, Select, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
-import DescriptionList from '../../../../framework/components/DescriptionList';
 import OopTable from '../../../components/OopTable';
 import OopModal from '../../../components/OopModal';
-import { oopToast } from '../../../../framework/common/oopUtils';
 import OopAuthMenu from '../../../components/OopAuthMenu'
 import { dataFilter, commonSearch } from './utils';
 import styles from './Role.less';
@@ -766,6 +766,7 @@ export default class Role extends PureComponent {
     }
   }
   operationsData = (res, type) => {
+    console.log(this.props.authRole)
     const { status } = res;
     const { allUsers, allGroups } = this.props.authRole;
     if (status === 'ok') {

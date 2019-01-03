@@ -27,3 +27,5 @@ jsconfig.json
 /.vscode
 # extends code from platform or product
 
+# webpackAlias
+webpackAlias.txt

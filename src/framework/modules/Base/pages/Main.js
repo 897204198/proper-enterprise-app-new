@@ -24,13 +24,13 @@ import {
   Bar,
   Pie,
   TimelineChart,
-} from '../../../components/Charts';
-import Trend from '../../../components/Trend';
-import NumberInfo from '../../../components/NumberInfo';
-import { getTimeDistance } from '../../../../framework/utils/utils';
+} from '@framework/components/Charts';
+import Trend from '@framework/components/Trend';
+import NumberInfo from '@framework/components/NumberInfo';
+import { getTimeDistance } from '@framework/utils/utils';
+import {inject} from '@framework/common/inject';
 
 import styles from './Main.less';
-import {inject} from '../../../../framework/common/inject';
 
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;

@@ -2,12 +2,12 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import {connect} from 'dva';
 import { Form, Modal, Input, Button, Select, Spin, Popover } from 'antd';
-import {inject} from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import {inject} from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
 import OopTreeTable from '../../../components/OopTreeTable';
 import OopModal from '../../../components/OopModal';
-import DescriptionList from '../../../../framework/components/DescriptionList';
-import { oopToast } from '../../../../framework/common/oopUtils';
 import styles from './AppConfig.less';
 
 const { Description } = DescriptionList;
@@ -340,6 +340,7 @@ export default class AppConfig extends PureComponent {
           payload: {ids},
           callback: (res) => {
             oopToast(res, '删除成功', '删除失败');
+            this.oopTreeTable.oopTable.clearSelection();
             this.onLoad();
           }
         });
@@ -448,7 +449,7 @@ export default class AppConfig extends PureComponent {
       type: 'systemAppConfig/treeListAdd',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '添加成功', '添加失败');
+        oopToast(res, '添加成功');
         this.getTreeData()
         // this.onLoad();
         this.handleTableTreeNodeSelect()
