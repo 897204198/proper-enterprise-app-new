@@ -6,6 +6,8 @@ import { generateAlias } from './generateAlias';
  * des.length === 0 代表 当前是 平台代码
  * @param webpackConfig
  */
+const path = require('path');
+
 export default (webpackConfig) => {
   return getWebpackConfig(webpackConfig, dependencies);
 }
@@ -14,19 +16,28 @@ function getWebpackConfig(webpackConfig, des = []) {
   const {length} = des;
   // 动态设置别名
   const alias = {
-    '@': `${__dirname}/src`,
-    '@framework': length === 0 ? `${__dirname}/src/framework` : `${__dirname}/node_modules/@proper/framework`,
+    '@': path.resolve(__dirname, 'src'),
+    '@framework': length === 0 ? path.resolve(__dirname, 'src/framework') : path.resolve(__dirname, 'node_modules/@proper/framework'),
     ...(
       getBizModuleAliasByDes(dependencies)
     )
   }
   webpackConfig.resolve.alias = alias;
   // 有依赖 需要对依赖包在开发时做编译 所以需要修改webpack配置
+  // const pathReg = /(node_modules\\@proper|src\\lib|node_modules\/@proper|src\/lib)/; // window or mac
+  const pathReg = [
+    path.resolve(__dirname, 'node_modules/@proper'),
+    path.resolve(__dirname, 'src/lib')
+  ];
+  // const antdPathReg = /(node_modules\\antd|node_modules\/antd)/;
+  const antdPathReg = [
+    path.resolve(__dirname, 'node_modules/antd')
+  ]
   if (length) {
     // 处理.js
     const rule = {
       test: /\.js$/,
-      include: /(node_modules\/@proper|src\/lib)/,
+      include: pathReg,
       use: [
         {loader: require.resolve('af-webpack/lib/debugLoader')},
         {
@@ -53,8 +64,8 @@ function getWebpackConfig(webpackConfig, des = []) {
     // 第二个.less的配置 默认关闭cssModule 更改include为/(node_modules\\antd)/;
     const notCssModulesRule = lessRule.find(it=>it.include !== undefined);
     delete cssModulesRule.exclude;
-    cssModulesRule.include = /(node_modules\/@proper|src\/lib)/;
-    notCssModulesRule.include = /(node_modules\/antd)/;
+    cssModulesRule.include = pathReg;
+    notCssModulesRule.include = antdPathReg;
   }
   // 输出alias配置到webpackAlias.txt
   generateAlias(webpackConfig)
@@ -65,12 +76,12 @@ function getWebpackConfig(webpackConfig, des = []) {
 function getBizModuleAliasByDes(des = []) {
   if (des.length === 0) {
     return {
-      '@pea': `${__dirname}/src/lib`
+      '@pea': path.resolve(__dirname, 'src/lib')
     }
   } else {
     const result = {};
     des.forEach((it)=>{
-      result[`@${it}`] = `${__dirname}/node_modules/@proper/${it}-lib`
+      result[`@${it}`] = path.resolve(__dirname, `node_modules/@proper/${it}-lib`)
     });
     return result
   }
