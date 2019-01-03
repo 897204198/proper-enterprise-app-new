@@ -1,0 +1,53 @@
+.oopTableWrapper {
+  .toolbar {
+    margin-bottom: 16px;
+  }
+  .toolbar button:first-child {
+    margin-left: 0;
+  }
+  .toolbar button {
+    margin-left: 10px;
+  }
+  .rowHover {
+    :global {
+      .ant-table-selection-column {
+        .ant-table-selection {
+          display: none;
+        }
+      }
+      .ant-table-tbody {
+        cursor: pointer;
+      }
+    }
+  }
+  :global(table tr td:last-child i.anticon) {
+    font-size: 18px;
+  }
+  :global {
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+      padding: 12px 16px;
+    }
+    .ant-table-middle > .ant-table-content > .ant-table-body > table > .ant-table-thead > tr > th,
+    .ant-table-middle > .ant-table-content > .ant-table-body > table > .ant-table-tbody > tr > td {
+      padding: 8px 8px;
+    }
+    .ant-table-fixed {
+      table-layout: fixed;
+    }
+    .ant-table-fixed tr th, .ant-table-fixed tr td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ant-table-fixed-left .ant-table-fixed {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
+    .ant-table-scroll {
+      .ant-table-header {
+        overflow-y: hidden;
+      }
+    }
+  }
+}

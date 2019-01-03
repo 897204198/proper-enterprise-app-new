@@ -1,6 +1,6 @@
 import {stringify} from 'qs';
-import request from '../../../utils/request';
-import MongoService from '../../../utils/MongoService';
+import request from '../../../../framework/utils/request';
+import MongoService from '../../../../framework/utils/MongoService';
 
 const ${modelName}Service = new MongoService('${tableName}');
 const {fetchPagable, update, save, deleteById, batchDelete} = ${modelName}Service;

@@ -1,0 +1,150 @@
+.topbox {
+  font-weight: 500;
+  &::after {
+    display: block;
+    content: " ";
+    clear: both;
+    overflow: hidden;
+  }
+  .leftbox {
+    float: left;
+    .title {
+      span {
+        margin-left: 8px;
+        font-size: 16px;
+        font-weight: 700;
+      }
+    }
+    .officeinfo {
+      margin-top: 15px;
+      margin-left: 40px;
+      > div {
+        display: inline-block;
+        &:not(:first-child) {
+          margin-left: 80px;
+        }
+        .con {
+          margin-left: 8px;
+        }
+      }
+    }
+    .officeDes {
+      margin-top: 15px;
+      margin-left: 40px;
+      .con {
+        margin-left: 8px;
+      }
+    }
+  }
+  .rightbox {
+    float: right;
+    img {
+      width: 128px;
+      height: 128px;
+    }
+  }
+}
+.cardbox {
+  :global {
+    .ant-card {
+      .ant-card-body {
+        padding: 0;
+      }
+    }
+  }
+  .card {
+    display: inline-block;
+    width: 100%;
+    .typeItem {
+      > div {
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+      .itemtop {
+        height: 48px;
+        line-height: 48px;
+        span {
+          margin-left: 8px;
+          font-weight: 700;
+          font-size: 14px;
+        }
+      }
+      .des {
+        margin-top: 10px;
+        .marginLeft {
+          margin-left: 8px;
+        }
+      }
+      .setType {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        .marginDark {
+          margin-left: 8px;
+          color: #aaa;
+        }
+        .marginLight {
+          margin-left: 8px;
+          // color: #1890ff;
+        }
+        .leftbox {
+          // float: left;
+          .marginLeft {
+            margin-left: 4px;
+          }
+        }
+        .rightbox {
+          // float: right;
+          .marginLeft {
+            margin-left: 4px;
+          }
+        }
+        &::after {
+          display: table;
+          content: "";
+          clear: both;
+        }
+      }
+      .footerSet {
+        position: relative;
+        display: flex;
+        background: rgb(247, 247, 247);
+        height: 48px;
+        margin-left: 0;
+        margin-right: 0;
+        line-height: 48px;
+        .footItem {
+          flex: 1;
+          text-align: center;
+          &:hover {
+            cursor: pointer;
+          }
+          span {
+            margin-left: 8px;
+          }
+        }
+        .divider {
+          margin-top: 17.5px;
+        }
+      }
+    }
+  }
+}
+.tokenCard {
+  width: 380px;
+  margin: 0 auto;
+  text-align: center;
+  :global {
+    .ant-input {
+      margin-top: 20px;
+    }
+    .ant-btn {
+      margin-top: 20px;
+      margin-bottom: 60px;
+    }
+  }
+  .tokenTitle {
+    font-weight: 700;
+    text-align: center;
+    margin-top: 30px;
+  }
+}

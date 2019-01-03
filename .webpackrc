@@ -1,7 +1,8 @@
 {
-  "entry": "src/index.js",
+  "entry": "src/framework/index/index.js",
   "extraBabelPlugins": [
-    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": true }]
+    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": true }],
+    ["import", { "libraryName": "antd-mobile", "libraryDirectory": "es", "style": true }, "antd-mobile"]
   ],
   "env": {
     "development": {
@@ -11,9 +12,9 @@
     }
   },
   "ignoreMomentLocale": true,
-  "theme": "./src/theme.js",
+  "theme": "./src/config/theme.js",
   "html": {
-    "template": "./src/index.ejs"
+    "template": "./src/framework/index/index.ejs"
   },
   "publicPath": "/",
   "disableDynamicImport": false,

@@ -1,0 +1,72 @@
+@import "~antd/lib/style/themes/default.less";
+.oopAuthMenu {
+  width: 100%;
+  margin: 0 0 16px;
+  transition: all .2s;
+  & > li:first-child {
+    padding-top: 12px;
+  }
+  & > li:last-child {
+    padding-bottom: 18px;
+  }
+  .oopAuthMenuFieldset {
+    display: flex;
+    margin: 24px 0;
+    border: 1px solid #ebedf0;
+    border-radius: 2px;
+    position: relative;
+    padding: 12px 32px;
+    transition: background-color .4s;
+    width: 100%;
+    font-size: 14px;
+    & > span {
+      position: absolute;
+      top: -12px;
+      background: #fff;
+      transition: background-color .4s;
+    }
+
+    & > :global(.ant-tree-switcher) {
+      left: -14px;
+      top: -25px;
+    }
+    & > :global(.ant-tree-checkbox) {
+      left: 40px;
+    }
+    & > :global(.ant-tree-node-content-wrapper) {
+      left: 60px;
+    }
+    & > :global(.ant-tree-child-tree) {
+      padding: 0;
+      width: 100%;
+    }
+  }
+  .oopAuthMenuResourceWrapper {
+    & > :global(.ant-tree-child-tree) {
+      white-space: normal;
+      display: flex;
+      flex-flow: row wrap;
+      :global {
+        .inline-block {
+          float: left;
+          flex: 0 0 auto;
+
+          display: block;
+          box-sizing: border-box;
+          width: 33.33333333%;
+
+          & > :global(.ant-tree-node-content-wrapper) {
+            max-width: calc(~"100% - 40px");
+            overflow-x: hidden;
+            overflow-y: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+  }
+  .oopAuthMenuMark {
+    color: @primary-color;
+  }
+}

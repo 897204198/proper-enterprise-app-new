@@ -1,0 +1,72 @@
+@import "~antd/lib/style/themes/default.less";
+
+.feedbackInfiniteContainer {
+
+  :global {
+    .ant-card-body {
+      height: 120px;
+    }
+
+    .ant-card {
+      position: relative;
+      .ant-badge-status {
+        vertical-align: top;
+        line-height: 21px;
+      }
+    }
+    .feedbackModal {
+      .ant-modal-footer {
+        border: none;
+      }
+    }
+    .ant-card-extra {
+      display: flex;
+    }
+  }
+  .mobileModel {
+    margin-left: 12px;
+    max-width: ~"calc(100vw/3 - 300px)";
+    width: auto;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .defaultColor {
+    border-top: 3px solid @primary-color;
+  }
+  .redColor {
+    border-top: 3px solid #f5222d;
+  }
+}
+
+.preViewModal {
+  display: flex;
+  justify-content: center;
+  width: 0 !important;
+  transform-origin: 50% 50% 0 !important;
+  padding-bottom: 0;
+  :global {
+    .ant-modal-content {
+      display: inline-block;
+      box-shadow: none;
+      .ant-modal-footer,
+      .ant-modal-body {
+        padding: 0;
+      }
+    }
+  }
+}
+.redBg {
+  background-color: #f5222d;
+}
+.primaryBg {
+  background-color: @primary-color;
+}
+.redBorderLeftColor {
+  border-left-color: #f5222d;
+}
+.primaryBorderLeftColor {
+  border-left-color: @primary-color;
+}

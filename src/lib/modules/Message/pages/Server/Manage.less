@@ -1,0 +1,32 @@
+//固定列宽，文字超出宽度隐藏
+.wordDetail {
+  max-width: 100px;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+// 折叠板样式
+.appConfForm {
+  :global {
+    .ant-collapse {
+      border: 0;
+      > .ant-collapse-item {
+        border-bottom: 0;
+        > .ant-collapse-header {
+          .arrow {
+            left: auto;
+            right: 20px;
+          }
+        }
+        .ant-collapse-content {
+          background-color: #fff;
+          border-top: 0;
+          .ant-form-item {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}

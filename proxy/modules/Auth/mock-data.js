@@ -1,43 +1,53 @@
 module.exports = {
-  "GET:/auth/login/user": {
-    "name": "Serati Ma",
-    "avatar": "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png",
-    "userId": "00000001",
-    "notifyCount": 12
+  "GET:/auth/current/user": {
+    "id": "b672f5ba-f91b-f10e-08b3-ce77b9885d8e",
+    "data": {
+      "avatar": "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png",
+      "userId": "00000001",
+      "name": "超级管理员",
+      "username": "admin"
+    }
   },
   "POST:/auth/login": (req, res)=>{
     const { pwd, username } = req.body;
     if(pwd === '123456' && username === 'admin'){
-      res.status(200).send('husrhtluihetioyhoihl');
+      res.status(200).send('eyJpZCI6ImRjNjU3NjZjLTAxNzYtNGExZS1hZDBlLWRkMDZiYTY0NWM3bCIsIm5hbWUiOiJhZG1pbiJ9.eyJlbXBOYW1lIjpudWxsLCJyb2xlcyI6bnVsbCwiaGFzUm9sZSI6dHJ1ZX0.qFivNCKNAmX8IediHVR5q_GvG7dPmw4BmVzwlR3CPmw');
     }else {
       res.setHeader('X-PEP-ERR-TYPE', 'PEP_BIZ_ERR');
       res.status(500).send('失败');
     }
   },
   "GET:/auth/menus":[
-    {"id":"pep-workflow","name":"流程设置","route":"workflow","sequenceNumber":0,"icon":"database","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
-    {"id":"pep-auth","name":"权限管理","route":"auth","sequenceNumber":1,"icon":"lock","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
-    {"id":"pep-auth-users","name":"用户管理","route":"auth/user","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
-    {"id":"pep-auth-functions","name":"功能管理","route":"auth/func","sequenceNumber":1,"icon":"bars","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
-    {"id":"pep-auth-roles","name":"角色管理","route":"auth/role","sequenceNumber":2,"icon":"skin","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
-    {"id":"pep-auth-user-groups","name":"用户组管理","route":"auth/group","sequenceNumber":3,"icon":"team","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
-    {"id":"pep-workflow-designer","name":"流程设计","route":"workflow/designer","sequenceNumber":0,"icon":"share-alt","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-workflow","root":false,"leaf":true},
-    {"id":"pep-devtools","name":"开发者工具","route":"devtools","sequenceNumber":2,"icon":"tool","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
-    {"id":"pep-devtools-tomcat","name":"tomcat日志","route":"devtools/tomcatLog","sequenceNumber":0,"icon":"code-o","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
-    {"id":"pep-devtools-appver","name":"APP版本管理","route":"devtools/appver","sequenceNumber":0,"icon":"tag-o","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
-    {"id":"pep-devtools-cache","name":"缓存管理","route":"devtools/cache","sequenceNumber":0,"icon":"hdd","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
-    {"id":"pep-devtools-mongoshell","name":"MongoShell GUI","route":"devtools/mongoshell","sequenceNumber":0,"icon":"table","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
+    {"id":"pep-workflow","name":"流程设置","route":"/workflow","sequenceNumber":0,"icon":"database","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
+    {"id":"pep-auth","name":"权限管理","route":"/auth","sequenceNumber":1,"icon":"lock","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
+    {"id":"pep-auth-users","name":"用户管理","route":"/auth/user","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
+    {"id":"pep-auth-functions","name":"功能管理","route":"/auth/func","sequenceNumber":1,"icon":"bars","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
+    {"id":"pep-auth-roles","name":"角色管理","route":"/auth/role","sequenceNumber":2,"icon":"skin","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
+    {"id":"pep-auth-user-groups","name":"用户组管理","route":"/auth/group","sequenceNumber":3,"icon":"team","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-auth","root":false,"leaf":true},
+    {"id":"pep-workflow-designer","name":"流程设计","route":"/workflow/designer","sequenceNumber":0,"icon":"share-alt","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-workflow","root":false,"leaf":true},
+    {"id":"pep-devtools","name":"开发者工具","route":"/devtools","sequenceNumber":2,"icon":"tool","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
+    {"id":"pep-devtools-tomcat","name":"tomcat日志","route":"/devtools/tomcatLog","sequenceNumber":0,"icon":"code-o","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
+    {"id":"pep-devtools-page-designer","name":"页面设计器","route":"/devtools/page-designer","sequenceNumber":0,"icon":"code-o","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
+    {"id":"pep-devtools-appver","name":"APP版本管理","route":"/devtools/appver","sequenceNumber":0,"icon":"tag-o","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
+    {"id":"pep-devtools-cache","name":"缓存管理","route":"/devtools/cache","sequenceNumber":0,"icon":"hdd","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
+    {"id":"pep-devtools-mongoshell","name":"MongoShell GUI","route":"/devtools/mongoshell","sequenceNumber":0,"icon":"table","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-devtools","menuCode":null,"root":false},
     {"id":"pep-devtools-conversion", "name": "JWT 辅助工具", "route": "devtools/conversion", "sequenceNumber": 0, "icon": "question-circle-o", "description": null, "menuType": {"catalog": "MENU_TYPE", "code": "1" }, "enable": true, "identifier": null, "parentId": "pep-devtools", "menuCode": null, "root": false },
     {"id":"pep-devtools-aes", "name": "加密解密辅助工具", "route": "devtools/aes", "sequenceNumber": 0, "icon":"safety", "description":null,"menuType":{"catalog":"MENU_TYPE","code":"1" },"enable":true,"identifier":null,"parentId": "pep-devtools","menuCode":null,"root":false},
-    {"id":"pep-system","name":"PEP配置管理","route":"system","sequenceNumber":2,"icon":"profile","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
-    {"id":"pep-system-config","name":"oopsearch配置","route":"system/config","sequenceNumber":0,"icon":"setting","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-system","menuCode":null,"root":false},
-    {"id":"pep-system-dictionary","name":"数据字典配置","route":"system/dictionary","sequenceNumber":0,"icon":"table","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-system","menuCode":null,"root":false},
+    {"id":"pep-system","name":"PEP配置管理","route":"/system","sequenceNumber":2,"icon":"profile","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
+    {"id":"pep-system-config","name":"oopsearch配置","route":"/system/oopsearchConfig","sequenceNumber":0,"icon":"setting","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-system","menuCode":null,"root":false},
+    {"id":"pep-system-dictionary","name":"数据字典配置","route":"/system/dictionary","sequenceNumber":0,"icon":"table","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-system","menuCode":null,"root":false},
+    {"id":"pep-system-pagePush","name":"APP推送信息配置","route":"/system/pagePush","sequenceNumber":0,"icon":"message","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-system","menuCode":null,"root":false},
+    {"id":"pep-feedback","name":"意见反馈","route":"feedback","sequenceNumber":1,"icon":"form","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
+    {"id":"pep-workflow-manager","name":"流程管理","route":"/workflow/manager","sequenceNumber":0,"icon":"table","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-workflow","root":false,"leaf":true},
+    {"id":"pep-message","name":"消息配置管理","route":"/message","sequenceNumber":9,"icon":"appstore","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
+    {"id":"pep-message-app","name":"应用配置","route":"/message/client/app","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
+    {"id":"pep-message-official","name":"文案配置","route":"/message/client/official","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
   ],
   "GET:/auth/users": {
     "count":100,
     "data":[
-      {"id":"1","username":"denggy","password":"123456","name":"邓广义","email":"1015182620@qq.com","phone":"15904015593","enable":true,"superuser":false,"roleName":"yonghujuese"},
-      {"id":"2","username":"zhangjianlin","password":"123456","name":"张建林","email":"276595311@qq.com","phone":"15912345678","enable":true,"superuser":false},
+      {"id":"1","username":"denggy","password":"123456","name": "邓某某","email": "dengha@qq.com","phone": "15912345678","enable":true,"superuser":false},
+      {"id":"2","username":"zhangjianlin","password":"123456","name":"张林","email":"zhanglian@qq.com","phone":"15912345678","enable":true,"superuser":false},
       {"id":"3","username":"wanghe","password":"123456","name":"王贺","email":"wanghe@qq.com","phone":"15912345678","enable":true,"superuser":false},
       {"id":"4","username":"wanghaopeng","password":"123456","name":"王浩鹏","email":"wanghaopeng@qq.com","phone":"15912345678","enable":true,"superuser":false},
       {"id":"5","username":"liyiming","password":"123456","name":"李一鸣","email":"liyiming@qq.com","phone":"15912345678","enable":true,"superuser":false},
@@ -50,11 +60,12 @@ module.exports = {
   },
   'GET:/auth/users/:id':{
     "id": "2",
-    "username": "zhangjianlin",
+    "username": "admin",
     "password": "123456",
     "name": "66666",
     "email": "276595311@qq.com",
     "phone": "15912345678",
+    "avatar": "12345678",
     "enable": true,
     "superuser": false
   },
@@ -65,9 +76,20 @@ module.exports = {
     res.send('删除成功')
   },
   'GET:/auth/users/:id/roles':[
-    {"id":"1","name":"普通管理员"},
-    {"id":"2","name":"住院部功能"},
-    {"id":"3","name":"研发部功能"},
+    {"id":"1",
+    "name":"普通管理员",
+    "description": "普通权限管理员",
+    "enable": true,
+    "parentId": "1",
+    "parentName": "父节点1"},
+    {"id":"2","name":"住院部功能",
+    "enable": true,
+    "parentId": "1",
+    "parentName": "父节点1"},
+    {"id":"3","name":"研发部功能",
+    "enable": true,
+    "parentId": "1",
+    "parentName": "父节点1"},
   ],
   'GET:/auth/roles':[
     {"id":"ggjs","name":"高管角色"},
@@ -77,18 +99,19 @@ module.exports = {
     {"id":"oer1","name":"其他角色2"},
   ],
   'GET:/auth/users/:id/user-groups':[
-    {"id":"ggjs","name":"高管用户"},
+    {"id":"ggjs","name":"高管用户","description": "测试管理用户组","seq": 1,"enable": true},
   ],
   'PUT:/auth/users/:id': (req , res)=>{
     res.send({
       "id": "2",
-      "username": "limiao",
+      "username": "admin",
       "password": "123456",
       "name": "7777",
       "email": "276595311@qq.com",
       "phone": "15912345678",
       "enable": true,
-      "superuser": false
+      "superuser": false,
+      "avatar": "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png",
     });
   },
   'POST:/auth/users':(req , res)=>{
@@ -151,61 +174,10 @@ module.exports = {
     "enable": true
   },
   'GET:/auth/user-groups/:id/users':[
-    {
-      "id": "1",
-      "username": "denggy",
-      "pwd": "123456",
-      "name": "邓广义",
-      "email": "denggy@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    },
-    {
-      "id": "2",
-      "username": "cbj",
-      "pwd": "123456",
-      "name": "陈冰洁",
-      "email": "cbj@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    },
-    {
-      "id": "3",
-      "username": "lym",
-      "pwd": "123456",
-      "name": "李一鸣",
-      "email": "lym@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    },
-    {
-      "id": "4",
-      "username": "whp",
-      "pwd": "123456",
-      "name": "王浩鹏",
-      "email": "whp@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    },
-    {
-      "id": "5",
-      "username": "wh",
-      "pwd": "123456",
-      "name": "王贺",
-      "email": "wh@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    }
+    {"id":"1","username":"denggy","password":"123456","name":"邓广义","email":"degguangyi@qq.com","phone":"15912345678","enable":true,"superuser":false,"roleName":"yonghujuese"},
+    {"id":"2","username":"zhangjianlin","password":"123456","name":"张建林","email":"zhangjianli@qq.com","phone":"15912345678","enable":true,"superuser":false},
+    {"id":"3","username":"wanghe","password":"123456","name":"王贺","email":"wanghe@qq.com","phone":"15912345678","enable":true,"superuser":false},
+    {"id":"4","username":"wanghaopeng","password":"123456","name":"王浩鹏","email":"wanghaopeng@qq.com","phone":"15912345678","enable":true,"superuser":false},
   ],
   'PUT:/auth/user-groups':(req , res)=>{
     res.send({
@@ -343,50 +315,10 @@ module.exports = {
     res.send({})
   },
   'GET:/auth/roles/:id/users':[
-    {
-      "id": "1",
-      "username": "denggy",
-      "pwd": "123456",
-      "name": "邓广义",
-      "email": "denggy@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    },
-    {
-      "id": "2",
-      "username": "zhangjianlin",
-      "pwd": "123456",
-      "name": "张建林",
-      "email": "zjl@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    },
-    {
-      "id": "3",
-      "username": "wanghe",
-      "pwd": "123456",
-      "name": "王贺",
-      "email": "wh@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    },
-    {
-      "id": "4",
-      "username": "whp",
-      "pwd": "123456",
-      "name": "王浩鹏",
-      "email": "whp@test.com",
-      "phone": "13012345678",
-      "enable": true,
-      "superuser": false,
-      "pepDtype": "pepDtype"
-    }
+    {"id":"1","username":"denggy","password":"123456","name": "邓某某","email": "dengha@qq.com","phone": "15912345678","enable":true,"superuser":false},
+    {"id":"2","username":"zhangjianlin","password":"123456","name":"张林","email":"zhanglian@qq.com","phone":"15912345678","enable":true,"superuser":false},
+    {"id":"3","username":"wanghe","password":"123456","name":"王贺","email":"wanghe@qq.com","phone":"15912345678","enable":true,"superuser":false},
+    {"id":"4","username":"wanghaopeng","password":"123456","name":"王浩鹏","email":"wanghaopeng@qq.com","phone":"15912345678","enable":true,"superuser":false},
   ],
   'GET:/auth/roles/:id/user-groups':[
     {"id":"ggjs","name":"高管用户组"},
@@ -414,8 +346,8 @@ module.exports = {
     "menuType": {"code": "1"}
   },
   'GET:/auth/menus/parents':[
-    {"id":"pep-workflow","name":"流程设置","route":"workflow","sequenceNumber":0,"icon":"database","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
-    {"id":"pep-auth","name":"权限管理","route":"auth","sequenceNumber":1,"icon":"lock","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true}
+    {"id":"pep-workflow","name":"流程设置","route":"/workflow","sequenceNumber":0,"icon":"database","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
+    {"id":"pep-auth","name":"权限管理","route":"/auth","sequenceNumber":1,"icon":"lock","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true}
   ],
   'DELETE:/auth/menus':{
     type:"ok"
@@ -452,5 +384,11 @@ module.exports = {
       identifier:'add',
       enable:true,
   },
-  'DELETE:/auth/resources/:id':{type:'ok'}
+  'DELETE:/auth/resources/:id':{type:'ok'},
+  'POST:/file': (req , res)=>{
+    res.send('https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png')
+  },
+  'PUT:/auth/users/password': (req , res)=>{
+    res.send({})
+  }
 }

@@ -1,0 +1,71 @@
+@import "~antd/lib/style/themes/default.less";
+
+.anthGroupStyles {
+  :global {
+    .ant-input-number {
+      width: 50%;
+    }
+  }
+}
+
+.warningWrapper {
+  .hasWarning {
+    :global {
+      .has-error {
+        .ant-input, .ant-input-number, .ant-select-selection {
+          border-color: #f5222d;
+          &:hover {
+            border-color: #f5222d;
+          }
+          &:focus {
+            border-color: #ff4d4f;
+            box-shadow: 0 0 0 2px rgba(245, 34, 45, 0.2);
+          }
+        }
+
+        .ant-select-focused {
+          .ant-select-selection {
+            border-color: #ff4d4f;
+            box-shadow: 0 0 0 2px rgba(245, 34, 45, 0.2);
+          }
+        }
+      }
+
+      .ant-input, .ant-input-number {
+        border-color: #faad14;
+        &:hover {
+          border-color: #faad14;
+        }
+        &:focus {
+          border-color: #ffc53d;
+          box-shadow: 0 0 0 2px rgba(250, 173, 20, .2);
+        }
+      }
+
+      .ant-input-number {
+        border-color: #faad14;
+      }
+
+      .ant-input-number-focused {
+        border-color: #ffc53d;
+        box-shadow: 0 0 0 2px rgba(250, 173, 20, .2);
+      }
+
+      .ant-select-selection {
+        border-color: #faad14;
+      }
+      .ant-select-focused {
+        .ant-select-selection {
+          border-color: #ffc53d;
+          box-shadow: 0 0 0 2px rgba(250, 173, 20, .2);
+        }
+      }
+
+      .ant-radio {
+        & > .ant-radio-inner {
+          border-color: #faad14;
+        }
+      }
+    }
+  }
+}

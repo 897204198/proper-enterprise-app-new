@@ -11,7 +11,7 @@ const {moduleName, modelName, pageName, tableName} = parse(routePath);
 
 console.log(`当前路由为${routePath},代码生成开始...`);
 // 当前工程中业务模块的路径
-const modulePath = './src/modules';
+const modulePath = './src/lib/modules';
 // dva中的model模板的路径
 const modelTplPath = './producer/tpl/model.tpl';
 // 页面的page入口文件模板的路径
@@ -47,7 +47,10 @@ const replaceFileTemplateStr = (str, variableName, name)=>{
 const getReplaceFunction = (str, ...variableName)=>{
   return Function.call(null, variableName, 'return'.concat('`').concat(str).concat('`'))
 }
-
+// 把JSON.stringify()返回的json串 格式化成 eslint设置的格式
+const formatJsonStr = (str)=>{
+  return str.replace(/"/g,"'").replace(/{'/g,"{").replace(/,'/g,", ").replace(/':/g,": ");
+}
 
 // 写入一个model文件
 const generateFile = (content, fileName, type, callback)=>{
@@ -77,7 +80,7 @@ readFile(modelTplPath, (str)=>{
     // 生成page
     readFile(pageTplPath, (str)=>{
       //const content = replaceFileTemplateStr(str, 'modelName', modelName);
-      const content = getReplaceFunction(str, 'modelName', 'formConfig', 'gridConfig')(modelName, JSON.stringify(formConfig), JSON.stringify(gridConfig));
+      const content = getReplaceFunction(str, 'modelName', 'formConfig', 'gridConfig')(modelName, formatJsonStr(JSON.stringify(formConfig)), formatJsonStr(JSON.stringify(gridConfig)));
       generateFile(content, pageName, 'pages', f=>{
         // 生成service
         readFile(serviceTplPath, (str)=>{

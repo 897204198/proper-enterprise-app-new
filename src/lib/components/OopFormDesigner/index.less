@@ -1,0 +1,101 @@
+@import "~antd/lib/style/themes/default.less";
+
+.container {
+  position: relative;
+  .addPanel ul {
+    list-style: none;
+    display: flex;
+    flex-flow: row wrap;
+    padding: 0;
+  }
+  .addPanel ul li {
+    width: 100px;
+    text-align: center;
+    margin: 8px;
+  }
+  .addPanel ul li button {
+    width: 100%;
+  }
+  .centerPanel {
+    margin: 0 auto;
+    background-color: #fff;
+    max-width: 700px;
+    :global {
+      .ant-form-item:hover {
+        background: @item-hover-bg;
+      }
+      .ant-form-item-action {
+        position: absolute;
+        top: 8px;
+        right: 16px;
+      }
+      .ant-form-item-action i.anticon {
+        font-size: 24px;
+        color: @primary-color;
+      }
+      .ant-form-item-action i.anticon:hover {
+        cursor: pointer;
+      }
+      i.anticon + i.anticon {
+        margin-left: 8px;
+      }
+      .rowItemWrapper {
+        cursor: pointer;
+        position: relative;
+      }
+      .active {
+        background: @item-hover-bg;
+      }
+      .active:hover {
+        cursor: move;
+      }
+      .ant-card-body {
+        padding: 24px 0 0;
+        height: calc(~"100vh - 250px");
+        overflow-y: auto;
+      }
+      .ant-card-extra {
+        //padding-bottom: 0;
+      }
+      .ant-card-head-title button {
+        margin-left: 8px;
+      }
+      .form-title {
+        font-size: 14px;
+        margin-left: 8px;
+        display: inline-block;
+        color: @primary-color;
+      }
+    }
+  }
+  .editPanel {
+    :global {
+      .rowItemWrapper {
+        position: relative;
+      }
+      .ant-form-item {
+        margin-bottom: 0;
+      }
+      .ant-form-item-action {
+        position: absolute;
+        top: 4px;
+        right: -32px;
+      }
+      .ant-form-item-action i.anticon {
+        font-size: 16px;
+        color: @primary-color;
+      }
+      .ant-form-item-action i.anticon:hover {
+        cursor: pointer;
+      }
+      i.anticon + i.anticon {
+        margin-left: 4px;
+      }
+    }
+  }
+  .customRulesContent {
+    height: auto;
+    min-height: 50px;
+    border: 1px solid #ddd;
+  }
+}

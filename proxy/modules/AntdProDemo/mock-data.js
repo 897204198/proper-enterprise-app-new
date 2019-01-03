@@ -78,16 +78,16 @@ const authRole = {
 const authMenu = {
   "count":7,
   "data":[
-    {"id":"pep-workflow","name":"流程设置","route":"workflow","sequenceNumber":0,"icon":"database","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
-    {"id":"pep-auth","name":"权限管理","route":"auth","sequenceNumber":1,"icon":"lock","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
-    {"id":"pep-auth-users","name":"用户管理","route":"auth/user","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
-    {"id":"pep-auth-functions","name":"功能管理","route":"auth/func","sequenceNumber":1,"icon":"bars","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
-    {"id":"pep-auth-roles","name":"角色管理","route":"auth/role","sequenceNumber":2,"icon":"skin","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
-    {"id":"pep-auth-user-groups","name":"用户组管理","route":"auth/group","sequenceNumber":3,"icon":"team","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
-    {"id":"pep-workflow-designer","name":"流程设计","route":"workflow/designer","sequenceNumber":0,"icon":"share-alt","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-workflow","menuCode":null,"root":false},
-    {"id":"pep-hrm", "name": "组织机构","leaf": false,"root": true,"icon": "team","parentId": null,"enable": true,"route": "hrm","sequenceNumber": 1},
-    {"id":"pep-hrm-employee","name": "人员管理","parentId": "pep-hrm","leaf": true,"root": false,"enable": true,"icon": "contacts","route": "hrm/employee","sequenceNumber": 2},
-    {"id":"pep-hrm-organization","name": "机构管理","parentId": "pep-hrm","leaf": true,"root": false,"enable": true,"icon": "share-alt","route": "hrm/organization","sequenceNumber": 3},
+    {"id":"pep-workflow","name":"流程设置","route":"/workflow","sequenceNumber":0,"icon":"database","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
+    {"id":"pep-auth","name":"权限管理","route":"/auth","sequenceNumber":1,"icon":"lock","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"parentId":null,"menuCode":null,"root":true},
+    {"id":"pep-auth-users","name":"用户管理","route":"/auth/user","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
+    {"id":"pep-auth-functions","name":"功能管理","route":"/auth/func","sequenceNumber":1,"icon":"bars","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
+    {"id":"pep-auth-roles","name":"角色管理","route":"/auth/role","sequenceNumber":2,"icon":"skin","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
+    {"id":"pep-auth-user-groups","name":"用户组管理","route":"/auth/group","sequenceNumber":3,"icon":"team","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-auth","menuCode":null,"root":false},
+    {"id":"pep-workflow-designer","name":"流程设计","route":"/workflow/designer","sequenceNumber":0,"icon":"share-alt","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"parentId":"pep-workflow","menuCode":null,"root":false},
+    {"id":"pep-hrm", "name": "组织机构","leaf": false,"root": true,"icon": "team","parentId": null,"enable": true,"route": "/hrm","sequenceNumber": 1},
+    {"id":"pep-hrm-employee","name": "人员管理","parentId": "pep-hrm","leaf": true,"root": false,"enable": true,"icon": "contacts","route": "/hrm/employee","sequenceNumber": 2},
+    {"id":"pep-hrm-organization","name": "机构管理","parentId": "pep-hrm","leaf": true,"root": false,"enable": true,"icon": "share-alt","route": "/hrm/organization","sequenceNumber": 3},
   ]
 };
 
@@ -223,6 +223,135 @@ const systemDic = {
   ]
 }
 
+const systePage = {
+  "count": 11,
+  "data": [{
+    "id": "1",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },{
+    "id": "2",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": null,
+    "ios": { "envProduct": true, "keystorePassword": "1234", "keystoreFilename": "aa_bb_sss.cc", "topic": "sss.sss.sss.sss" },
+    "diplomaId": "12w3e33"
+  },{
+    "id": "3",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX", "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": { "envProduct": true, "keystorePassword": "1234", "keystoreFilename": "aa_bb_sss.cc", "topic": "sss.sss.sss.sss" },
+    "diplomaId": "12w3e33"
+  },
+  {
+    "id": "4",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },
+  {
+    "id": "5",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },
+  {
+    "id": "6",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },
+  {
+    "id": "7",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },
+  {
+    "id": "8",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },
+  {
+    "id": "9",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },
+  {
+    "id": "10",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  },
+  {
+    "id": "11",
+    "name": "MobileOA",
+    "desc": "xx医院",
+    "msgSaveDays": 3,
+    "maxSendCount": 5,
+    "secretKey": "b2024e00064bc5d8db70fdee087eae4f",
+    "android": { "huawei": { "theAppId": "X", "theAppSecret": "XX",  "theAppPackage": "sss.sss.sss.sss"  }, "xiaomi": { "theAppSecret": "XXX", "theAppPackage": "sss.sss.sss.sss" } },
+    "ios": null,
+    "diplomaId": null
+  }]
+}
+const messageOfficial = {
+  "count" : 1,
+  "data":[
+    {"id":1,"name":"aa","type":"推送","keyboards":"哈哈","set":{"app":true,"email":false,"mes":true},"des":"666","switch":false},
+    {"id":2,"name":"bb","type":"推送","keyboards":"哈哈","set":{"app":false,"email":false,"mes":true},"des":"666","switch":true}
+  ]
+}
 function queryList(type) {
   let list = {};
   if (type === 'authusers') {
@@ -237,6 +366,10 @@ function queryList(type) {
     list = systemConfig;
   }  else if (type === 'systemdictionary') {
     list = systemDic;
+  } else if (type === 'systempagepush') {
+    list = systePage;
+  } else if (type === 'officialSearch') {
+    list = messageOfficial;
   }
   return list;
 }

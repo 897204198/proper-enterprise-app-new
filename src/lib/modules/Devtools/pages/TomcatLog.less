@@ -1,0 +1,46 @@
+.tomcatCard {
+  :global {
+    .ant-card-body {
+      padding: 0;
+
+      .tomcatCardContent {
+        .logLeft {
+          margin-right: 5px;
+          width: 86px;
+          text-align: right;
+
+          .logEcho {
+            white-space: nowrap;
+            width: 19px;
+            min-width: 19px;
+            text-align: left;
+
+            .logEchoTimes {
+              display: inline-block;
+              width: 15px;
+              height: 15px;
+              line-height: 15px;
+              margin-top: 2px;
+              color: #fff;
+              border-radius: 50%;
+              background-color: #dd4b39;
+              text-align: center;
+            }
+          }
+        }
+        .logRight {
+          white-space: normal;
+          word-wrap: break-word;
+          word-break: break-all;
+          flex: 1;
+        }
+      }
+    }
+  }
+  .emptyPlaceHolder {
+    text-align: center;
+    color: #999;
+    padding-top: 24px;
+  }
+}
+

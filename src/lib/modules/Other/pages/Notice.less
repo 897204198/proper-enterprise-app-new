@@ -1,0 +1,37 @@
+@import "~antd/lib/style/themes/default.less";
+
+.listItemHoverColor {
+  :global {
+    .ant-list-item {
+      padding-left: 10px;
+      padding-right: 10px;
+      cursor: pointer;
+      display: block;
+      .ant-list-item-meta-avatar {
+        display: block;
+        margin-right: 10px;
+      }
+      .ant-list-item-meta-content {
+        display: block;
+        overflow: hidden;
+        .ant-list-item-meta-title {
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+    .ant-list-item:hover {
+      background: @item-hover-bg;
+    }
+  }
+}
+.listItemClickColor {
+  :global {
+    background: #fafafa;
+    .ant-avatar.ant-avatar-icon {
+      background: @link-color;
+    }
+  }
+}

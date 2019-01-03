@@ -1,0 +1,75 @@
+.wrapper {
+  :global {
+    .ant-breadcrumb {
+      margin: -24px -24px 0;
+      padding: 27px 32px 8px;
+      background-color: #fff;
+    }
+    .ant-card {
+      margin-top: 24px;
+      .ant-card-body {
+        padding: 0;
+        padding-top: 18px;
+        .ant-tabs {
+          .ant-tabs-bar {
+            width: 200px;
+            .ant-tabs-nav-container {
+              > .ant-tabs-nav-wrap {
+                > .ant-tabs-nav-scroll {
+                  .ant-tabs-nav {
+                    .ant-tabs-tab {
+                      text-align: left;
+                    }
+                    .ant-tabs-tab-active {
+                      background: #cfe7fe;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          .ant-tabs-content {
+            .ant-tabs-tabpane {
+              .ant-list {
+                .ant-list-header {
+                  padding-top: 8px;
+                  border: none;
+                  font-weight: 500;
+                }
+                .ant-spin-nested-loading {
+                  .ant-spin-container {
+                    .ant-list-item {
+                      .ant-select-selection {
+                        // margin-top: 20px;
+                        width: 280px;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .itemBox {
+    padding-right: 24px;
+    padding-bottom: 10px;
+    width: 100%;
+    .leftbox {
+      float: left;
+      .type {
+        line-height: 30px;
+      }
+      .des {
+        line-height: 30px;
+        color: #aaa;
+      }
+    }
+    .rightbox {
+      float: right;
+      margin-top: 20px;
+    }
+  }
+}

@@ -81,5 +81,311 @@ module.exports = {
     "id": "0",
     "processVersion": "2",
     "deploymentTime": "2020-06-17 15:15:15"
-  }
+  },
+  "GET:/workflow/managers/:type": {
+    "count": 4,
+    "data": [
+      {
+        "taskId": "1",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "id": "2",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "3",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "4",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "5",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "suspending",
+        "status": "审核"
+      },
+      {
+        "id": "6",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "7",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "8",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "9",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "suspending",
+        "status": "审核"
+      },
+      {
+        "id": "10",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "11",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      },
+      {
+        "id": "12",
+        "name": "报销流程",
+        "created": "2018-05-06 10:23",
+        "createdBy": "王某某",
+        "updated": "2018-05-06 10:23",
+        "type": "solved",
+        "status": "批准"
+      }
+    ]
+  },
+  "GET:/task": {
+    "count": 12,
+    "data": [
+      {
+        "taskId": "1",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "2",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "3",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "4",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "5",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "6",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "7",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "8",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "9",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "10",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "11",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      },
+      {
+        "taskId": "12",
+        "pepProcInstVO": {
+          "procInstId": "1",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+        },
+      }
+    ]
+  },
+  "GET:/process": {
+    "count": 4,
+    "data": [
+      {
+        "procInstId": "1",
+        "createTime": "2018-05-06 10:23",
+        "endTime": "2018-05-06 10:23",
+        "processDefinitionName": "报销流程",
+        "startUserName": "王某某",
+        "stateCode": "sh",
+        "stateValue": "审核"
+      },
+      {
+        "procInstId": "2",
+        "createTime": "2018-05-06 10:23",
+        "endTime": "2018-05-06 10:23",
+        "processDefinitionName": "报销流程",
+        "startUserName": "王某某",
+        "stateCode": "sh",
+        "stateValue": "审核"
+      },
+      {
+        "procInstId": "3",
+        "createTime": "2018-05-06 10:23",
+        "endTime": "2018-05-06 10:23",
+        "processDefinitionName": "报销流程",
+        "startUserName": "王某某",
+        "stateCode": "sh",
+        "stateValue": "审核"
+      },
+      {
+        "procInstId": "4",
+          "createTime": "2018-05-06 10:23",
+          "endTime": "2018-05-06 10:23",
+          "processDefinitionName": "报销流程",
+          "startUserName": "王某某",
+          "stateCode": "sh",
+          "stateValue": "审核"
+      }
+    ]
+  },
 }

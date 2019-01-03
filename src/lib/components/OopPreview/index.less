@@ -1,0 +1,72 @@
+.OopPreview {
+  top: 0;
+  padding-bottom: 0;
+  z-index: 9999;
+  :global {
+    .ant-modal-content {
+      border-radius: 0;
+      width: 100%;
+    }
+    .ant-modal-close-x {
+      width: 46px;
+      height: 46px;
+      line-height: 48px;
+    }
+    .ant-modal-header {
+      padding: 12px 24px;
+      .ant-modal-title {
+        color: transparent;
+      }
+    }
+    .ant-modal-body {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      height: calc(~"100vh - 47px");
+      img {
+        background: #fff;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+      }
+    }
+  }
+  .imageParent {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+  .footerButtons {
+    background: rgba(255, 255, 255, 0);
+    display: flex;
+    justify-content: space-around;
+  }
+  .footerButtons button {
+    border: 0;
+    margin: 0;
+  }
+  .footerButtons button[ant-click-animating-without-extra-node]:after {
+    border: 0;
+  }
+}
+@media (max-width: 768px) {
+  .OopPreview {
+    :global {
+      .ant-modal-footer {
+        background: #2a2a2a;
+        padding: 7px 16px;
+        border-radius: 0;
+        border-top: 0;
+      }
+    }
+    .footerButtons button {
+      background: #2a2a2a;
+    }
+  }
+  :global {
+    .ant-modal {
+      width: 100% !important;
+      margin: 0;
+    }
+  }
+}

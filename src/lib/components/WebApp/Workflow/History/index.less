@@ -1,0 +1,127 @@
+@import "~antd/lib/style/themes/default.less";
+
+.container {
+  display: block;
+  width: 100%;
+  & > :global(.ant-tabs) {
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    & > :global(.ant-tabs-bar) {
+      margin: 0;
+    }
+  }
+  :global {
+    .ant-list.ant-list-split {
+      .ant-spin-container {
+        background: #f5f5f5;
+        min-height: calc(~"100vh - 44px");
+      }
+      .ant-list-item-meta-description {
+        margin-top: 12px;
+      }
+    }
+  }
+}
+.tabs {
+  :global(.ant-tabs-nav) {
+    display: flex;
+    width: 100%;
+    & > :global(.ant-tabs-tab) {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+    }
+  }
+}
+
+.tabsContent {
+  width: 100%;
+  margin: 0 5px;
+  //padding-top: 44px;
+  height: 100%;
+  // overflow: hidden;
+  &.tabsContentAnimated {
+    display: flex;
+    flex-direction: row;
+    will-change: margin-left;
+    transition: margin-left .3s cubic-bezier(.645, .045, .355, 1);
+  }
+  & > .tabsTabpane {
+    flex-shrink: 0;
+    width: 100%;
+    transition: opacity .45s;
+    opacity: 1;
+    height: 100%;
+    overflow-y: auto;
+    .loadingContainer {
+      position: absolute;
+      bottom: 40px;
+      width: 100%;
+      text-align: center;
+    }
+    .buttonMoreContent {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0;
+    }
+  }
+  & > .tabsTabpaneActive {
+    width: 100%;
+  }
+
+  & > .tabsTabpaneInactive {
+    opacity: 0;
+    height: 0;
+    padding: 0!important;
+    pointer-events: none;
+  }
+
+  .status {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    display: block;
+  }
+  .listItemWrapper {
+    padding: 0 12px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 4px;
+    background: #fff;
+    & > .listLine {
+      padding: 0;
+    }
+    .listContent {
+      color: rgba(0, 0, 0, 0.65);
+    }
+    :global {
+      .ant-list-item-content {
+        flex: none;
+      }
+    }
+  }
+  .listItemWrapper:last-child {
+    margin-bottom: 0;
+  }
+  .listItemWrapper:first-child {
+    margin-top: 4px;
+  }
+  .icon {
+    font-size: 16px;
+    padding-right: 8px;
+    color: @primary-color;
+  }
+}
+
+@media screen and (max-width: @screen-xs) {
+  .container {
+    :global {
+      .ant-list.ant-list-split {
+        .ant-spin-container {
+          min-height: calc(~"100vh - 44px") !important;
+        }
+      }
+    }
+  }
+}

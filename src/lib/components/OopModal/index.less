@@ -1,0 +1,33 @@
+.oopModalContainer {
+  //position: absolute;
+  //top: 20px;
+  //width: 100%;
+  //left: -16px;
+  :global {
+    .ant-modal-body {
+      height: ~"calc(100vh - 144px)";
+      overflow-x: hidden;
+      padding-bottom: 0;
+    }
+    .ant-popover-arrow {
+      display: none;
+    }
+    .ant-popover-inner-content {
+      padding: 12px 0;
+    }
+    .ant-tabs-vertical > .ant-tabs-bar .ant-tabs-tab {
+      margin-bottom: 8px;
+    }
+    .ant-popover-placement-left, .ant-popover-placement-leftTop, .ant-popover-placement-leftBottom {
+      left: ~"calc((100vw - 1000px)/2 - 140px - 20px)" !important;
+      top: 20px !important;
+      position: fixed;
+    }
+  }
+  .oopTabContainer {
+    min-height: ~"calc(100vh - 168px)";
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+  }
+}

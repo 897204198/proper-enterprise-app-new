@@ -1,0 +1,95 @@
+@import "~antd/lib/style/themes/default.less";
+
+::-webkit-scrollbar {
+  display: none;
+}
+.webAppContainer {
+
+  :global {
+    height: 100%;
+
+    .ant-layout {
+      height: 100%;
+      background: #fff;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .ant-layout-content {
+      height: 100%;
+      display: flex;
+      flex: 1;
+    }
+  }
+  .header {
+    min-height: 44px;
+    display: flex;
+    box-shadow: 0 1px 6px #ccc;
+    width: 100%;
+    top: 0;
+    position: fixed;
+    z-index: 10;
+    right: 0;
+    left: 0;
+    height: 44px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-bottom: 0;
+    background-color: #f7f7f7;
+    justify-content: space-between;
+    :global {
+      .ant-btn-clicked {
+        &:after {
+          border: 0;
+        }
+      }
+      [ant-click-animating-without-extra-node]:after {
+        border: 0;
+      }
+    }
+  }
+  .header.android {
+    background: linear-gradient(#fff, #f7f7f7);
+  }
+  .backBtn {
+    border: 0;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+    min-width: 50px;
+  }
+  .homeBtn {
+    border: 0;
+    align-items: center;
+    height: 100%;
+    padding-left: 18px;
+    padding-right: 0;
+    min-width: 50px;
+  }
+  .title {
+    display: flex;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+}
+
+@media screen and (min-width: 760px) {
+  body {
+    background: #d9d9d9;
+  }
+  .webAppContainer {
+    width: 660px;
+    margin: 0 auto;
+    position: relative;
+  }
+}
+// 移动端日期时间选择组件滚动的问题
+@media screen and (max-width: @screen-xs) {
+  :global {
+    .ant-calendar-time-picker-select {
+      overflow-y: auto !important;
+    }
+  }
+}
