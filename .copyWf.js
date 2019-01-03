@@ -5,7 +5,10 @@ const fs = require('fs');
 const { stat } = fs;
 const sourcePath = './node_modules/flowable-ui-app-static-resources';
 const targetPath = './dist/workflow';
-
+if (!fs.existsSync(sourcePath)){
+  console.log(`warning:${sourcePath} not find !`);
+  return
+}
 fs.exists(targetPath, (isExist)=>{
   if (!isExist) {
     fs.mkdirSync(targetPath);

@@ -329,7 +329,7 @@ export default class Func extends PureComponent {
           warningWrapper: false,
           warningField: {},
         });
-        oopToast(res, '保存成功', '保存失败');
+        oopToast(res, '保存成功');
         me.onLoad();
         me.refreshMenusAndLeftTree();
       }
