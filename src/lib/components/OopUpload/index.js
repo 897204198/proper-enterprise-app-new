@@ -36,7 +36,7 @@ export default class OopUpload extends React.PureComponent {
         item.uid = -(++index);
       }
       // hack 图片上传后带有token url看不到的bug
-      if (url.includes('access_token')) {
+      if (url && url.includes('access_token')) {
         item.url = '';
       }
       if (!item.url && id) {
