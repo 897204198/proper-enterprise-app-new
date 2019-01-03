@@ -35,7 +35,11 @@ export default class OopUpload extends React.PureComponent {
       if (!uid) {
         item.uid = -(++index);
       }
-      if (!url && id) {
+      // hack 图片上传后带有token url看不到的bug
+      if (url.includes('access_token')) {
+        item.url = '';
+      }
+      if (!item.url && id) {
         // 兼容http模式 base64模式 proper自己的服务器模式（即一个ID）
         item.url = (id.includes('http') || id.includes('data:image/')) ?
           id : me.getFileDownloadUrl(id);

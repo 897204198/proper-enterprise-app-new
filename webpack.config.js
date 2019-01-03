@@ -26,7 +26,7 @@ function getWebpackConfig(webpackConfig, des = []) {
     // 处理.js
     const rule = {
       test: /\.js$/,
-      include: /(node_modules\\@proper|src\\lib)/,
+      include: /(node_modules\/@proper|src\/lib)/,
       use: [
         {loader: require.resolve('af-webpack/lib/debugLoader')},
         {
@@ -53,8 +53,8 @@ function getWebpackConfig(webpackConfig, des = []) {
     // 第二个.less的配置 默认关闭cssModule 更改include为/(node_modules\\antd)/;
     const notCssModulesRule = lessRule.find(it=>it.include !== undefined);
     delete cssModulesRule.exclude;
-    cssModulesRule.include = /(node_modules\\@proper|src\\lib)/;
-    notCssModulesRule.include = /(node_modules\\antd)/;
+    cssModulesRule.include = /(node_modules\/@proper|src\/lib)/;
+    notCssModulesRule.include = /(node_modules\/antd)/;
   }
   // 输出alias配置到webpackAlias.txt
   generateAlias(webpackConfig)

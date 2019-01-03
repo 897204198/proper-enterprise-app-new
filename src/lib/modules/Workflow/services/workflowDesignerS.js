@@ -14,6 +14,7 @@ export async function queryWorkflowList(params) {
 
 export async function createWorkflow(params) {
   return request('/workflow/service/app/rest/models', {
+    defaultErrTipsWhenSystemException: false,
     method: 'POST',
     body: params,
   });

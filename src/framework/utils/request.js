@@ -72,7 +72,8 @@ export default function request(url, options) {
   // defaultActionWhenNoAuthentication 没有访问权限时的默认行为值 默认为true 即跳转到登陆页
   const defaultOptions = {
     // credentials: 'same-origin',
-    defaultActionWhenNoAuthentication: true
+    defaultActionWhenNoAuthentication: true, // 当请求返回401是否需要 框架统一返回到登陆页的默认处理
+    defaultErrTipsWhenSystemException: true // 是否需要调用checkStatus方法 即当系统出现异常时是否需要框架统一处理显示该异常
   };
   const newOptions = { ...defaultOptions, ...options };
   if (newOptions.method && ['post', 'put', 'delete'].includes(newOptions.method.toString().toLowerCase())) {
@@ -110,7 +111,7 @@ export default function request(url, options) {
   // }
   return fetch(newUrl, newOptions)
     .then((response)=>{
-      return checkStatus(response, newOptions);
+      return newOptions.defaultErrTipsWhenSystemException ? checkStatus(response, newOptions) : response;
     }).then((response) => {
       let codeStyle = null;
       let thePromise = null;
