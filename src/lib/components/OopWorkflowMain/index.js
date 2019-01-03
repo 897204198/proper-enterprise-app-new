@@ -242,7 +242,7 @@ export default class OopWorkflowMain extends PureComponent {
       if (!procInstId) {
         return null
       }
-      imgUrl = `/workflow/service/api/runtime/process-instances/${procInstId}/diagram?access_token=${token}`;
+      imgUrl = `/workflow/service/process/runtime/process-instances/${procInstId}/diagram?access_token=${token}`;
     }
     if (!imgUrl) {
       return null
