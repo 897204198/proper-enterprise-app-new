@@ -217,7 +217,7 @@ export default class OopTree extends PureComponent {
       }
     })
   }
-  renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue, selectedKeys)=> {
+  renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue, selectedKeys = [])=> {
     const treeNodes = data.map((node) => {
       const item = {
         ...node,
