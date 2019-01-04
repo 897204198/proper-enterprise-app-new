@@ -26,7 +26,7 @@
   "dependencies": {
     "@antv/data-set": "^0.8.0",
     "@babel/polyfill": "^7.0.0-beta.36",
-    "antd": "3.9.2",
+    "antd": "3.11.6",
     "antd-mobile": "^2.2.5",
     "av-core": "^1.1.1",
     "babel-preset-umi": "^0.2.8",

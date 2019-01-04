@@ -3,7 +3,7 @@ import { noticeType, noticeList, submitOrUpdate, removeNoticeInfo } from '../ser
 export default {
   namespace: 'notice',
   state: {
-    menusType: {},
+    menusType: [],
     noticeList: []
   },
   effects: {
