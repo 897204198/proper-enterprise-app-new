@@ -1,14 +1,49 @@
 import React from 'react';
 import { Upload, Button, Icon, message} from 'antd';
-import { getApplicationContextUrl } from '@framework/utils/utils';
 import OopPreview from '../OopPreview';
+import { getApplicationContextUrl } from '../../../framework/utils/utils';
 
+const { Dragger } = Upload
+
+const assemblingFileList = (arr)=>{
+  if (!arr || !arr.length) {
+    return [];
+  }
+  return arr.map((item, index)=>{
+    if (!item) {
+      return undefined;
+    }
+    if (typeof item === 'string') {
+      item = {
+        key: item,
+        id: item
+      }
+    }
+    const {id, url, uid} = item;
+    if (!uid) {
+      item.uid = -(++index);
+    }
+    if (!url && id) {
+      // 兼容http模式 base64模式 proper自己的服务器模式（即一个ID）
+      item.url = (id.includes('http') || id.includes('data:image/')) ?
+        id : getFileDownloadUrl(id);
+      item.thumbUrl = item.url;
+    }
+    return item;
+  }).filter(it=>it !== undefined);
+}
+const getFileDownloadUrl = (id)=>{
+  if (id) {
+    const token = window.localStorage.getItem('proper-auth-login-token');
+    return `${getApplicationContextUrl()}/file/${id}?access_token=${token}`;
+  }
+}
 const imgSuffix = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
 export default class OopUpload extends React.PureComponent {
   constructor(props) {
     super(props);
     const { defaultFileList = [], value = [] } = this.props;
-    const fileList = this.assemblingFileList([...defaultFileList.concat(value)]);
+    const fileList = assemblingFileList([...defaultFileList.concat(value)]);
     this.state = {
       fileList,
       uploading: false,
@@ -16,49 +51,10 @@ export default class OopUpload extends React.PureComponent {
       previewUrl: ''
     }
   }
-  assemblingFileList = (arr)=>{
-    const me = this
-    if (!arr || !arr.length) {
-      return [];
-    }
-    return arr.map((item, index)=>{
-      if (!item) {
-        return undefined;
-      }
-      if (typeof item === 'string') {
-        item = {
-          key: item,
-          id: item
-        }
-      }
-      const {id, url, uid} = item;
-      if (!uid) {
-        item.uid = -(++index);
-      }
-      // hack 图片上传后带有token url看不到的bug
-      if (url && url.includes('access_token')) {
-        item.url = '';
-      }
-      if (!item.url && id) {
-        // 兼容http模式 base64模式 proper自己的服务器模式（即一个ID）
-        item.url = (id.includes('http') || id.includes('data:image/')) ?
-          id : me.getFileDownloadUrl(id);
-        item.thumbUrl = item.url;
-      }
-      return item;
-    }).filter(it=>it !== undefined);
-  }
-  getFileDownloadUrl = (id)=>{
-    const sUrl = this.props.downloadUrl
-    if (id) {
-      const token = this.props.downloadToken || window.localStorage.getItem('proper-auth-login-token');
-      return `${sUrl || getApplicationContextUrl()}/file/${id}?access_token=${token}`;
-    }
-  }
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
       const { defaultFileList = [], value = [] } = nextProps;
-      const fileList = this.assemblingFileList([...defaultFileList.concat(value)]);
+      const fileList = assemblingFileList([...defaultFileList.concat(value)]);
       this.setState({
         fileList
       })
@@ -97,6 +93,7 @@ export default class OopUpload extends React.PureComponent {
   };
   getInitProps = ()=>{
     const extra = this.defaultExtra();
+    const { hideMessage } = this.props
     const defaultProps = {
       name: 'file',
       action: `${getApplicationContextUrl()}/file`,
@@ -138,7 +135,7 @@ export default class OopUpload extends React.PureComponent {
             });
           });
         } else {
-          const downloadUrl = this.getFileDownloadUrl(file.id);
+          const downloadUrl = getFileDownloadUrl(file.id);
           let a = document.createElement('a');
           a.href = downloadUrl;
           a.target = '_blank';
@@ -157,15 +154,24 @@ export default class OopUpload extends React.PureComponent {
     }
     const {onChange} = defaultProps;
     defaultProps.onChange = (info)=> {
+      if (info.event) {
+        onChange && onChange(this.state.fileList.map(it=>({
+          id: it.id,
+          name: it.name,
+          url: it.url,
+          uid: it.uid,
+        })), info);
+        return
+      }
       if (info.file.status === 'done') {
-        message.success('上传成功!');
+        !hideMessage && message.success('上传成功!');
         const {file: {response, uid}, fileList} = info;
         const lastFile = fileList.find(f=>f.uid === uid);
         if (!lastFile.id) {
           lastFile.id = response;
         }
         if (!lastFile.url) {
-          lastFile.url = this.getFileDownloadUrl(response);
+          lastFile.url = getFileDownloadUrl(response);
         }
         this.setState(() => ({
           fileList: [...fileList],
@@ -176,17 +182,23 @@ export default class OopUpload extends React.PureComponent {
             name: it.name,
             url: it.url,
             uid: it.uid,
-          })));
-        });
+          })), info);
+        })
       } else if (info.file.status === 'error') {
         if (info.file.error && info.file.error.status === 401) {
           // TODO 处理401
           throw info.file.error
         }
-        message.error('上传失败!');
+        !hideMessage && message.error('上传失败!');
         this.setState({
           uploading: false
         })
+        onChange && onChange(this.state.fileList.map(it=>({
+          id: it.id,
+          name: it.name,
+          url: it.url,
+          uid: it.uid,
+        })), info);
       } else if (info.file.status === 'removed') {
         // TODO ??? 不解  *再添加了componentWillReceiveProps 生命周期之后 删除不了上传的文件 这块特意处理了一下*
         this.setState(({ fileList }) => {
@@ -195,14 +207,14 @@ export default class OopUpload extends React.PureComponent {
           newFileList.splice(index, 1);
           return {
             fileList: newFileList,
-          };
+          }
         }, ()=>{
           onChange && onChange(this.state.fileList.map(it=>({
             id: it.id,
             name: it.name,
             url: it.url,
             uid: it.uid,
-          })));
+          })), info);
         });
       }
     }
@@ -243,22 +255,34 @@ export default class OopUpload extends React.PureComponent {
   }
   render() {
     const props = this.getInitProps();
+    const { dragable, wrapperStyles } = this.props
     const {previewVisible, previewUrl} = this.state;
     // console.log(this.state.fileList);
     return (
-      <div>
-        <Upload {...props}>
-          {this.renderChildren(props)}
-        </Upload>
-        {previewVisible ? (
-        <OopPreview
-          visible={previewVisible}
-          onCancel={() => this.preViewPic()}
-          img={{
-            src: previewUrl,
-            alt: '预览'
-          }}
-        />) : null}
+      <div style={{...wrapperStyles}}>
+        {
+          dragable ? (
+            <Dragger {...props}>
+              {this.renderChildren(props)}
+            </Dragger>
+          ) : (
+            <Upload {...props}>
+              {this.renderChildren(props)}
+            </Upload>
+          )
+        }
+        {
+          previewVisible ? (
+            <OopPreview
+              visible={previewVisible}
+              onCancel={() => this.preViewPic()}
+              img={{
+                src: previewUrl,
+                alt: '预览'
+              }}
+            />
+          ) : null
+        }
       </div>
     );
   }
