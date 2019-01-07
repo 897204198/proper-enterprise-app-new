@@ -357,9 +357,10 @@ export default class Designer extends PureComponent {
     //   {key: 'item_2', type: 'right-circle-o', content: '发起'},
     //   {key: 'item_3', type: 'swap', content: '移动'}
     // ];
+    const token = window.localStorage.getItem('proper-auth-login-token');
 
     const uploadParams = {
-      action: `${getApplicationContextUrl()}/workflow/service/app/rest/import-process-model`,
+      action: `${getApplicationContextUrl()}/workflow/service/app/rest/import-process-model?access_token=${token}`,
       accept: 'text/xml',
     }
 
