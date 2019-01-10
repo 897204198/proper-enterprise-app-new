@@ -3,36 +3,47 @@
 
 普日软件PC管理端一体化平台 （基于[ANT DESIGN PRO](https://pro.ant.design/index-cn)）
 
-![](https://gw.alipayobjects.com/zos/rmsportal/xEdBqwSzvoSapmnSnYjU.png)
+![](other/main.png)
 
 - 预览：https://cloud.propersoft.cn/pea/master/
 
 
-## 特性
-
-- :gem: **优雅美观**：基于 Ant Design 体系精心设计
-- :triangular_ruler: **常见设计模式**：提炼自中后台应用的典型页面和场景
-- :rocket: **最新技术栈**：使用 React/dva/antd 等前端前沿技术开发
-- :iphone: **响应式**：针对不同屏幕大小设计
-- :art: **主题**：可配置的主题满足多样化的品牌诉求
-- :globe_with_meridians: **国际化**：内建业界通用的国际化方案
-- :gear: **最佳实践**：良好的工程实践助您持续产出高质量代码
-- :1234: **Mock 数据**：实用的本地数据调试方案
-- :white_check_mark: **UI 测试**：自动化测试保障前端产品质量
-
 ## 模块
 
-```
 - 流程设置
   - 流程设计
+  - 流程管理
 - 权限管理
   - 用户管理
   - 功能管理
   - 角色管理
   - 用户组管理
-- 组织机构
-  - 人员管理
-```
+- 应用配置管理
+  - 应用配置
+- 公告通知
+  - 公告通知
+- 表单管理
+  - 表单自定义
+  - 表单当前组件设置
+- 消息配置管理
+  - 应用配置
+  - 文案配置
+- 开发者工具
+  - App版本管理
+  - MongoShell GUI
+  - JWT 辅助工具
+  - 缓存管理
+  - 加密解密辅助工具
+  - tomcat日志
+- PEP 配置管理
+  - 数据字典配置
+  - App应用配置
+  - oopsearch配置
+- 其他
+  - 常见问题
+- 意见反馈
+  - 意见反馈
+
 ## 准备工作
 
 1.确保您的电脑已经成功安装了[nodejs](https://nodejs.org/en/download/)和[git](https://git-scm.com/downloads) ,保证版本号 node 9.0.0 +    
@@ -68,15 +79,12 @@ $ npm start                       # 访问项目服务
 
 ```
 
-更多信息请参考 [使用文档](http://pro.ant.design/docs/getting-started)。
-
 ## 兼容性
 
 现代浏览器及 IE11。
 
 ## 编码规范
-
-- 代码结构
+```代码结构```
 ```
 - proxy   
   - modules       (--对应模块使用的mock数据)
@@ -86,22 +94,66 @@ $ npm start                       # 访问项目服务
     - HrM 
     - Workflow
 
-- src
-  - assets        (--静态资源相关)
-  - common        (--基于pro框架改造的相关代码)
-  - components    (--基于pro的一些公共组件)
-  - e2e           (--自动化测试相关)
-  - layouts       (--页面布局相关)
-  - modules       (--业务模块)
-    - Anth        (--用户权限模块)
-      - models    (--dva中的module)
-      - pages     (--页面入口文件)
-      - services  (--mock数据的DAO层)
-    - Base        (--基础模块)
-    - Hrm         (--人力资源模块)
-    - Workflow    (--工作空间模块)
-  - utils         (--纯工具函数库相关)
-
+- other
+  - main.png      README.md中的图片存储
+- producer
+  - tpl
+  - config.js     
+  - main.js      
+  - util.js
+- publish
+  - config.tpl
+  - favicon.png
+- src                   (-- 源代码)
+  - assets              (--静态资源相关)
+  - config                (--项目配置)
+    - config.js         (--项目参数基本配置)
+    - properties.js     (--提示信息或标题的通用配置)
+    - sysRouters.js     (--系统默认的路由配置)
+    - theme.js          (--项目主体颜色配置)
+    - vendor.js         (--？？？)
+  - framework           (--？？？)
+    - common                (--业务模块)
+        - framHelper.js           (--业务模块)
+        - inject.js               (--定义解析规则)
+        - oopUtils.js             (--抽出的工具)
+    - components            (-- antd提供的基础组件示例)
+        - ActiveChart            
+        - Authorized          
+        - AvatarList  
+    - index                 (-- ？？？)
+        - index.ejs            
+        - index.js           
+        - index.less 
+        - router.js
+    - layouts                 (-- 布局相关设置)
+        - BasicLayout.js            
+        - BasicLayout.less        
+        - UserLayout.js            
+        - UserLayout.less 
+        - UserLayout.js            
+        - UserLayout.less 
+        - WebAppLayout.js            
+        - WebAppLayout.less
+      - modules               (--基础业务模块) 
+          - Base        
+            - models              (--dva中的module)
+            - pages               (--模块对应的业务页面)
+            - services            (--服务配置)             
+      - utils                 (--纯工具函数库相关)   
+          - MongoService.js   (--链接MongoDB的前端工具 基于av-core)
+          - request.js           (--统一规定的请求标准)
+          - utils.js            (--抽象出来的通用方法)
+          - utils.less    
+  - lib                     (--业务源码)
+      - components            (--封装的组件)
+      - modules               (--业务模块)
+          - Anth                (--用户权限模块)
+            - models              (--dva中的module)
+            - pages               (--模块对应的业务页面)
+            - services            (--服务配置)
+            - package.json        (--Anth模块版本信息)
+      - package.json          (--lib模块版本信息)
 ```
 
 - 书写规范
@@ -124,6 +176,16 @@ $ npm start                       # 访问项目服务
                
        `Anth/services` 文件夹中的 services 名称 必须以 model名称后+大写的'S'命名 以注明这是一个service文   件 例如：如model名称 authUser.js 那么service名称 authUserS.js
  
+  *   引用规范
+       项目启动后回生成`webpackAlias.txt`这个文件，里面配置绝对路径
+        ```
+
+        @: D:\gitspace\pep-develop\proper-enterprise-app\src
+        @framework: D:\gitspace\pep-develop\proper-enterprise-app\src\framework
+        @pea: D:\gitspace\pep-develop\proper-enterprise-app\src\lib
+
+        ```
+       在实际应用中，一般采用 `绝对路径` ,如果是当前文件模块下的文件可以使用`相对路径`
   *   编码规范
   
         `.js`文件中一律使用`ES5`、`ES6`形式声明类、变量、方法、箭头函数等。
