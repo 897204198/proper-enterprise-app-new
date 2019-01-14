@@ -408,6 +408,7 @@ export default class Role extends PureComponent {
   // 删除功能
   handleRemove = (ids) => {
     let idsArray = [];
+    const self = this
     if (ids instanceof Array) {
       idsArray = ids;
     } else {
@@ -417,6 +418,7 @@ export default class Role extends PureComponent {
       type: 'authRole/removeRoles',
       payload: { ids: idsArray.toString() },
       callback: (res) => {
+        self.oopTable.clearSelection();
         oopToast(res, '删除成功');
         this.onLoad();
       }
@@ -431,6 +433,7 @@ export default class Role extends PureComponent {
       type: 'authRole/removeRoles',
       payload: { ids: ([id]).toString() },
       callback: (res) => {
+        self.oopTable.clearSelection();
         oopToast(res, '删除成功');
         this.onLoad();
         self.setState({
@@ -1028,8 +1031,16 @@ export default class Role extends PureComponent {
           userInfoView={roleInfo}
           roleUsers={roleUsers}
           roleGroups={roleGroups}
-          footer={<Button type="primary" onClick={()=>this.handleViewModalVisible(false)}>确定</Button>}
-          onCancel={()=>this.handleViewModalVisible(false)}
+          footer={<Button
+            type="primary"
+            onClick={()=>{
+            this.handleAddOrEditModalCancel()
+            this.handleViewModalVisible(false)
+          }}>确定</Button>}
+          onCancel={()=>{
+            this.handleAddOrEditModalCancel()
+            this.handleViewModalVisible(false)
+          }}
         >
           <DescriptionList size={size} col="1">
             <Description term="名称">

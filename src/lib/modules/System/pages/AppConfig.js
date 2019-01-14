@@ -353,6 +353,7 @@ export default class AppConfig extends PureComponent {
       type: 'systemAppConfig/deleteApp',
       payload: {ids},
       callback: (res) => {
+        this.oopTreeTable.oopTable.clearSelection();
         oopToast(res, '删除成功', '删除失败');
         this.onLoad();
       }

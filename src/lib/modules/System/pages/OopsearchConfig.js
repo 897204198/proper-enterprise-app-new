@@ -164,6 +164,7 @@ export default class Config extends React.PureComponent {
       type: 'systemOopsearchConfig/remove',
       payload: record.id,
       callback: (res)=>{
+        this.oopTable.clearSelection()
         oopToast(res, '删除成功', '删除失败');
         this.onLoad();
       }

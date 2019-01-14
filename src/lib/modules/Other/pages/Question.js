@@ -250,10 +250,12 @@ export default class Question extends React.PureComponent {
     })
   }
   deleteById = (record) => {
+    const me = this
     this.props.dispatch({
       type: 'otherQuestion/remove',
       payload: record.id,
       callback: (res)=>{
+        me.oopTreeTable.oopTable.clearSelection();
         oopToast(res, '删除成功', '删除失败');
         this.getTableData();
       }

@@ -467,6 +467,7 @@ export default class Func extends PureComponent {
       type: 'authFunc/deleteFunc',
       payload: {ids: record.id},
       callback(res) {
+        me.oopTreeTable.oopTable.clearSelection();
         oopToast(res, '删除成功', '删除失败');
         me.onLoad();
         me.refreshMenusAndLeftTree();
