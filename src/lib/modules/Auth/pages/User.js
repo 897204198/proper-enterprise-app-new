@@ -365,6 +365,7 @@ export default class User extends React.PureComponent {
       type: 'authUser/deleteUsers',
       payload: {ids: record.id},
       callback(res) {
+        me.oopTable.clearSelection()
         oopToast(res, '删除成功', '删除失败');
         me.onLoad()
       }

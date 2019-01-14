@@ -109,6 +109,7 @@ export default class Official extends React.PureComponent {
       type: 'messageOfficial/delInfo',
       payload: item,
       callback: (res) => {
+        this.oopTable.clearSelection();
         oopToast(res, '删除成功');
         this.onLoad();
       }

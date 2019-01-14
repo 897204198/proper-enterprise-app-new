@@ -110,10 +110,12 @@ export default class CurrentComponentSetting extends React.PureComponent {
     this.setModalFormVisible(true);
   }
   handleRemove = (record)=>{
+    const me = this;
     this.props.dispatch({
       type: 'formCurrentComponentSetting/remove',
       payload: record.id,
       callback: (res)=>{
+        me.oopTable.clearSelection()
         oopToast(res, '删除成功', '删除失败');
         this.onLoad();
       }
