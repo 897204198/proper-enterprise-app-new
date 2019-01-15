@@ -21,7 +21,7 @@ export async function queryLog(sql) {
     query += `_id: {$gte: ObjectId("${tranObjectId(tmStart)}"), $lte: ObjectId("${tranObjectId(tmEnd)}")}`;
   }
   if (sql.text && sql.text.length > 0) {
-    query += `, $or: [{clz: /'${sql.text}'/}, {msg: /'${sql.text}'/}]`;
+    query += `, $or: [{clz: /${sql.text}/}, {msg: /${sql.text}/}]`;
   }
   query += '}';
   const params = {
