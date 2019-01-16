@@ -159,17 +159,21 @@ export default class OopWorkflowMain extends PureComponent {
         <Timeline.Item>
           <h3>已结束</h3>
         </Timeline.Item>)
-    } else {
+    }
+    if (currentTasks.length) {
+      const current = currentTasks[0];
       return (
-        currentTasks.length && (
-          <Timeline.Item>
-          <h3>{currentTasks[0].name}</h3>
-            {currentTasks[0].assigneeName ? <div style={{marginTop: 16}}><span>当前经办人: </span>{currentTasks[0].assigneeName}</div> : null}
-            {currentTasks[0].candidateGroupNames ? <div style={{marginTop: 16}}><span>候选用户组: </span>{currentTasks[0].candidateGroupNames.join(',')}</div> : null}
-            {currentTasks[0].candidateRoleNames ? <div style={{marginTop: 16}}><span>候选角色: </span>{currentTasks[0].candidateRoleNames.join(',')}</div> : null}
-            {currentTasks[0].candidateUserNames ? <div style={{marginTop: 16}}><span>候选用户: </span>{currentTasks[0].candidateUserNames.join(',')}</div> : null}
-          {/* <div style={{position: 'absolute', top: 0, left: -88, fontSize: 16, fontWeight: 'bold'}}>当前节点</div> */}
-        </Timeline.Item>))
+        <Timeline.Item>
+          <h3>{current.name}</h3>
+          {current.assigneeName ? <div style={{marginTop: 16}}><span>当前经办人: </span>{current.assigneeName}</div> : null}
+          {
+            current.candidates ? (
+              current.candidates.map(it=>(
+                <div style={{marginTop: 16}}><span>{it.name}: </span>{it.data.map(d=>d.name).join(',')}</div>
+              ))
+            ) : null
+          }
+        </Timeline.Item>);
     }
   }
   // 获取流程处理tab
