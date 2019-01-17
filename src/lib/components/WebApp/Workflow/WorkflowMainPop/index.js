@@ -13,10 +13,10 @@ import PropTypes from 'prop-types';
 import {connect} from 'dva';
 import {routerRedux} from 'dva/router';
 import { Input, Button, Popover, Alert, message } from 'antd';
+import {inject} from '@framework/common/inject';
+import {getParamObj} from '@framework/utils/utils';
 import OopWorkflowMain from '../../../OopWorkflowMain';
-import {getParamObj} from '../../../../../framework/utils/utils';
 import styles from './index.less';
-import {inject} from '../../../../../framework/common/inject';
 
 const { TextArea } = Input;
 const PopPage = (props)=>{

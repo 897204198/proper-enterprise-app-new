@@ -2,14 +2,14 @@ import React, {Fragment} from 'react';
 import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button} from 'antd';
 import {List, TextareaItem, Picker, DatePicker as DatePickerM, InputItem, Button as ButtonM} from 'antd-mobile';
 import zhCN2 from 'antd-mobile/lib/date-picker/locale/zh_CN';
+import { getUuid } from '@framework/common/oopUtils';
+import { isAndroid } from '@framework/utils/utils';
 import OopSystemCurrent from '../OopSystemCurrent';
 import OopUpload from '../OopUpload';
 import OopText from '../OopText';
 import CheckBoxPop from './components/CheckBoxPop';
 import OopGroupUserPicker from '../OopGroupUserPicker';
 import OopOrgEmpPicker from '../OopOrgEmpPicker';
-import { getUuid } from '../../../framework/common/oopUtils';
-import { isAndroid } from '../../../framework/utils/utils';
 import styles from './index.less';
 
 const CheckboxGroup = Checkbox.Group;

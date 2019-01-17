@@ -1,5 +1,5 @@
-import MongoService from '../../../../framework/utils/MongoService';
-import request from '../../../../framework/utils/request';
+import MongoService from '@framework/utils/MongoService';
+import request from '@framework/utils/request';
 
 
 const formTemplateService = new MongoService('PEP_FORM_TEMPLATE');

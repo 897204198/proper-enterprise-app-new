@@ -1,14 +1,15 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Dropdown,
-  Menu, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
+// import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Dropdown,
+//   Menu, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
+import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
 import cookie from 'react-cookies'
-import { inject } from '../../../../framework/common/inject';
-import { getApplicationContextUrl } from '../../../../framework/utils/utils';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import { getApplicationContextUrl } from '@framework/utils/utils';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import Ellipsis from '@framework/components/Ellipsis';
+import {prefix} from '@/config/config';
 import styles from './Designer.less';
-import Ellipsis from '../../../../framework/components/Ellipsis';
-import {prefix} from '../../../../config/config';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -103,7 +104,7 @@ export default class Designer extends PureComponent {
   };
 
   componentDidMount() {
-    console.log(cookie)
+    // console.log(cookie)
     cookie.remove('X-PEP-TOKEN', { path: '/' });
     // 在flowable的前端页面里获取表单的属性 需要的请求前缀
     cookie.save('X-PEP-TOKEN', window.localStorage.getItem('proper-auth-login-token'), { path: '/' });
@@ -293,9 +294,8 @@ export default class Designer extends PureComponent {
 
   // 导出
   exportActivity = (id) => {
-    window.location = `workflow/service/app/rest/models/${id}/bpmn20?version=${Date.now()}`;
+    window.location = `workflow/app/rest/models/${id}/bpmn20?version=${Date.now()}`;
   }
-
   // 刷新
   refresh = () => {
     this.props.dispatch({
@@ -351,15 +351,16 @@ export default class Designer extends PureComponent {
     const { workflowDesigner: { data }, loading, global: {size} } = this.props;
     const { deleteLists, buttonSize, showUploadList, viewVisible } = this.state;
     this.state.lists = data.data;
-    const itemMenu = [
-      {key: 'item_0', type: 'lock', content: '权限'},
-      {key: 'item_1', type: 'file-text', content: '复制'},
-      {key: 'item_2', type: 'right-circle-o', content: '发起'},
-      {key: 'item_3', type: 'swap', content: '移动'}
-    ];
+    // const itemMenu = [
+    //   {key: 'item_0', type: 'lock', content: '权限'},
+    //   {key: 'item_1', type: 'file-text', content: '复制'},
+    //   {key: 'item_2', type: 'right-circle-o', content: '发起'},
+    //   {key: 'item_3', type: 'swap', content: '移动'}
+    // ];
+    const token = window.localStorage.getItem('proper-auth-login-token');
 
     const uploadParams = {
-      action: `${getApplicationContextUrl()}/workflow/service/app/rest/import-process-model`,
+      action: `${getApplicationContextUrl()}/workflow/service/app/rest/import-process-model?access_token=${token}`,
       accept: 'text/xml',
     }
 
@@ -418,27 +419,27 @@ export default class Designer extends PureComponent {
                             <Icon type="delete" />
                           </Popconfirm>
                         </Tooltip>,
-                        <Dropdown
-                          overlay={
-                            <Menu onClick={value => this.menuClick(value, item)}>
-                              {
-                                itemMenu.map(it => (
-                                  <Menu.Item key={it.key}>
-                                    <a><Icon type={it.type} /> {it.content}</a>
-                                  </Menu.Item>
-                                ))
-                              }
-                              {/* <Menu.Item key="item_4">
-                                <Popconfirm title="确定删除选中的数据吗"
-                                  onConfirm={() => this.deleteItem(item.id)}>
-                                  <a><Icon type="delete" /> 删除</a>
-                                </Popconfirm>
-                              </Menu.Item> */}
-                            </Menu>
-                          }
-                          placement="topCenter">
-                          <Icon type="ellipsis" />
-                        </Dropdown>
+                        // <Dropdown
+                        //   overlay={
+                        //     <Menu onClick={value => this.menuClick(value, item)}>
+                        //       {
+                        //         itemMenu.map(it => (
+                        //           <Menu.Item key={it.key}>
+                        //             <a><Icon type={it.type} /> {it.content}</a>
+                        //           </Menu.Item>
+                        //         ))
+                        //       }
+                        //       <Menu.Item key="item_4">
+                        //         <Popconfirm title="确定删除选中的数据吗"
+                        //           onConfirm={() => this.deleteItem(item.id)}>
+                        //           <a><Icon type="delete" /> 删除</a>
+                        //         </Popconfirm>
+                        //       </Menu.Item>
+                        //     </Menu>
+                        //   }
+                        //   placement="topCenter">
+                        //   <Icon type="ellipsis" />
+                        // </Dropdown>
                       ]
                     }
                   >

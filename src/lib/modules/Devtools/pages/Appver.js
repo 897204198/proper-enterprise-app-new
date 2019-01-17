@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'dva';
 import { Card, Form, Modal, Spin, Input, Button, List, Icon, Popconfirm, Tooltip, Badge, Popover, Tabs } from 'antd';
 import QRCode from 'qrcode.react';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
 import styles from './Appver.less';
 
 const FormItem = Form.Item;

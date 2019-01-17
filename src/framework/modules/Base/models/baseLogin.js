@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
+import { devMode } from '@/config/config';
 import { login } from '../services/baseS';
-import { devMode } from '../../../../config/config';
 
 export default {
   namespace: 'baseLogin',

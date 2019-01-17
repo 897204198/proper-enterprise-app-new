@@ -3,12 +3,12 @@ import { Switch, Route } from 'dva/router';
 import {connect} from 'dva';
 import PropTypes from 'prop-types';
 import { Layout, Button, Icon } from 'antd';
-import { getUuid } from '@/framework/common/oopUtils';
+import { getUuid } from '@framework/common/oopUtils';
 // import VConsole from 'vconsole/dist/vconsole.min.js'
+import routers from '@/config/sysRouters';
 import { getRouterData } from '../common/frameHelper';
 import {getParamObj, isApp, isAndroid} from '../utils/utils';
 import NotFound from '../components/Exception/404';
-import routers from '../../config/sysRouters';
 import styles from './WebAppLayout.less';
 
 // eslint-disable-next-line

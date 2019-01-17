@@ -2,12 +2,12 @@ import React, {Fragment} from 'react';
 import classNames from 'classnames';
 import {Modal, Form, Spin, Input, Button, Radio, InputNumber, Select, Popover } from 'antd';
 import {connect} from 'dva';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
+import DescriptionList from '@framework/components/DescriptionList';
 import OopTreeTable from '../../../components/OopTreeTable';
 import OopModal from '../../../components/OopModal';
-import DescriptionList from '../../../../framework/components/DescriptionList';
 import styles from './Dictionary.less';
 
 const { Description } = DescriptionList;
@@ -176,8 +176,8 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
             {form.getFieldDecorator('deft', {
               initialValue: formEntity.deft != null ? formEntity.deft : true,
             })(<RadioGroup>
-                <Radio value={false}>是</Radio>
-                <Radio value={true}>否</Radio>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
             </RadioGroup>)}
           </FormItem>
     </Form>
@@ -235,7 +235,7 @@ export default class Dictionary extends React.PureComponent {
       payload: param,
       callback: (res)=>{
         this.setState({
-          deBugTableData: res.result.data
+          deBugTableData: res
         })
       }
     });
@@ -491,7 +491,7 @@ export default class Dictionary extends React.PureComponent {
         payload: treeNode.catalogCode,
         callback: (res)=>{
           this.setState({
-            deBugTableData: res.result,
+            deBugTableData: res,
             searchState: false
           })
         }

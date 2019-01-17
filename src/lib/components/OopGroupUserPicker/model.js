@@ -11,7 +11,7 @@ export default {
       const response = yield call(service.findGroup, payload);
       yield put({
         type: 'saveGroup',
-        payload: response.result,
+        payload: response.result.data,
       });
       if (callback) callback();
     },
@@ -19,7 +19,7 @@ export default {
       const response = yield call(service.findUser, payload);
       yield put({
         type: 'saveUser',
-        payload: response.result,
+        payload: response.result.data,
       });
       if (callback) callback();
     },

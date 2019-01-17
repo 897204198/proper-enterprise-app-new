@@ -2,13 +2,14 @@ import React, {Fragment} from 'react';
 import {connect} from 'dva';
 import { Card, Divider, Form, Modal, Button, Input, Radio, Badge, Spin, Select} from 'antd';
 import classNames from 'classnames';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import DescriptionList from '../../../../framework/components/DescriptionList';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import {inject} from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import OopModal from '../../../components/OopModal';
-import {inject} from '../../../../framework/common/inject';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { dataFilter, commonSearch } from './utils';
 import styles from './User.less';
 
 const FormItem = Form.Item;
@@ -182,14 +183,32 @@ const UserBasicInfoForm = Form.create({onValuesChange})((props) => {
       </Form>
     </Spin>);
 });
-const RoleInfoRelevance = (props) => {
-  const { userRoles, userAddRoles, loading, columns, userRolesList, filterRolesAll } = props;
+const UserInfoForm = (props) => {
+  const { loading, columns, roleUsers,
+    handleUserChange, roleUsersList,
+    rolesSearchType, userRolesAll, setRolesSearchType, setRolesList,
+    filterColumns, rolesCheckedData, setRoleCheckedTypeData, groupSelf } = props;
   const handleChange = (record, selectedRowKeys) => {
-    userAddRoles(selectedRowKeys, record.id)
+    handleUserChange(selectedRowKeys, record.id)
   }
-
-  // 默认选中keys
-  const deafultSelectedRowKeys = userRoles.map(item => item.id)
+  const filterRolesAll = (inputValue, filter) => {
+    groupSelf.searchRoleInputValue = inputValue;
+    groupSelf.searchFilter = filter;
+    setRolesList(
+      commonSearch(inputValue, filter, rolesSearchType, filterColumns,
+        rolesCheckedData, userRolesAll)
+    )
+  }
+  const changeSearchTypeUser = (value)=>{
+    const checkedTypeData = dataFilter(value, userRolesAll, deafultSelectedRowKeys);
+    setRoleCheckedTypeData(checkedTypeData)
+    setRolesSearchType(value)
+    setRolesList(
+      commonSearch(groupSelf.searchRoleInputValue, groupSelf.searchFilter,
+        value, filterColumns, checkedTypeData, userRolesAll)
+    )
+  }
+  const deafultSelectedRowKeys = roleUsers.map(item => item.id)
   return (
     <Card bordered={false}>
         <OopSearch
@@ -198,9 +217,10 @@ const RoleInfoRelevance = (props) => {
           onInputChange={filterRolesAll}
           extra={
             <Select
-              defaultValue="ALL"
-              style={{ width: '10%' }} >
-              <Option value="ALL">全部</Option>
+              defaultValue="all"
+              style={{ width: '10%' }}
+              onSelect={value => changeSearchTypeUser(value)} >
+              <Option value="all">全部</Option>
               <Option value="checked">已绑定</Option>
               <Option value="unchecked">未绑定</Option>
             </Select>
@@ -211,7 +231,64 @@ const RoleInfoRelevance = (props) => {
           onLoad={this.onLoad}
           loading={loading}
           size="small"
-          grid={{ list: userRolesList }}
+          grid={{ list: roleUsersList }}
+          columns={columns}
+          onRowSelect={handleChange}
+          selectTriggerOnRowClick={true}
+          dataDefaultSelectedRowKeys={deafultSelectedRowKeys}
+          />
+      </Card>
+  )
+}
+const GroupInfoForm = (props) => {
+  const { loading, userGroups, handleGroupChange,
+    columns, groupUsersList, groupsSearchType,
+    userGroupsAll, setGroupsSearchType, setGroupsList, filterColumns,
+    groupsCheckedData, setGroupCheckedTypeData, groupSelf } = props;
+  const handleChange = (record, selectedRowKeys) => {
+    handleGroupChange(selectedRowKeys, record.id)
+  }
+  const preciseFiltrationGroups = (inputValue, filter) => {
+    groupSelf.searchGroupInputValue = inputValue;
+    groupSelf.searchFilter = filter;
+    setGroupsList(
+      commonSearch(inputValue, filter, groupsSearchType,
+        filterColumns, groupsCheckedData, userGroupsAll)
+    )
+  }
+  const changeSearchTypeGroup = (value)=>{
+    const checkedTypeData = dataFilter(value, userGroupsAll, deafultSelectedRowKeys);
+    setGroupCheckedTypeData(checkedTypeData)
+    setGroupsSearchType(value)
+    setGroupsList(
+      commonSearch(groupSelf.searchGroupInputValue, groupSelf.searchFilter,
+        value, filterColumns, checkedTypeData, userGroupsAll)
+    )
+  }
+  const deafultSelectedRowKeys = userGroups.map(item => item.id)
+  return (
+    <Card bordered={false}>
+        <OopSearch
+          placeholder="请输入"
+          enterButtonText="搜索"
+          onInputChange={preciseFiltrationGroups}
+          extra={
+            <Select
+              defaultValue="all"
+              style={{ width: '10%' }}
+              onSelect={value => changeSearchTypeGroup(value)} >
+              <Option value="all">全部</Option>
+              <Option value="checked">已绑定</Option>
+              <Option value="unchecked">未绑定</Option>
+            </Select>
+          }
+          ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
+        />
+        <OopTable
+          onLoad={this.onLoad}
+          loading={loading}
+          size="small"
+          grid={{ list: groupUsersList }}
           columns={columns}
           onRowSelect={handleChange}
           selectTriggerOnRowClick={true}
@@ -219,37 +296,8 @@ const RoleInfoRelevance = (props) => {
           // onSelectAll={onSelectAll}
           />
       </Card>
-  );
+  )
 }
-const UserGroupRelevance = (props) => {
-  const { userGroups, userAddGroups, loading,
-    columns, userGroupsList, filterGroupsAll } = props;
-  const handleChange = (record, selectedRowKeys) => {
-    userAddGroups(selectedRowKeys, record.id)
-  }
-  // 默认选中keys
-  const deafultSelectedRowKeysGroups = userGroups.map(item => item.id);
-
-  return (
-      <Card bordered={false}>
-        <OopSearch
-          placeholder="请输入"
-          enterButtonText="搜索"
-          onInputChange={filterGroupsAll}
-          ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
-        />
-        <OopTable
-          onLoad={this.onLoad}
-          loading={loading}
-          grid={{ list: userGroupsList }}
-          columns={columns}
-          size="small"
-          onRowSelect={handleChange}
-          selectTriggerOnRowClick={true}
-          dataDefaultSelectedRowKeys={deafultSelectedRowKeysGroups}
-          />
-      </Card>);
-};
 
 @inject(['authUser', 'global'])
 @connect(({authUser, global, loading}) => ({
@@ -271,7 +319,13 @@ export default class User extends React.PureComponent {
       visible: false
     },
     warningWrapper: false, // from 是否记录修改状态
-    warningField: {} // from 字段变化
+    warningField: {}, // from 字段变化
+    // 当前角色用户的搜索类型
+    rolesSearchType: 'all',
+    // 当前角色用户组的搜索类型
+    groupsSearchType: 'all',
+    rolesCheckedData: [],
+    groupsCheckedData: []
   }
 
   componentDidMount() {
@@ -311,6 +365,7 @@ export default class User extends React.PureComponent {
       type: 'authUser/deleteUsers',
       payload: {ids: record.id},
       callback(res) {
+        me.oopTable.clearSelection()
         oopToast(res, '删除成功', '删除失败');
         me.onLoad()
       }
@@ -406,6 +461,10 @@ export default class User extends React.PureComponent {
         },
         warningWrapper: false,
         warningField: {},
+        rolesSearchType: 'all',
+        groupsSearchType: 'all',
+        rolesCheckedData: [],
+        groupsCheckedData: []
       });
 
       this.props.dispatch({
@@ -516,15 +575,25 @@ export default class User extends React.PureComponent {
       userGroupsList: list
     })
   }
-  filterRolesAll = (inputValue, filter) => {
-    const { authUser: { userRolesAll } } = this.props;
-    const rolesList = inputValue ? filter(userRolesAll, ['name', 'description', 'parentName', 'enableStatus']) : userRolesAll;
-    this.setRolesList(rolesList)
+  setRoleCheckedTypeData = (rolesCheckedData)=>{
+    this.setState({
+      rolesCheckedData
+    })
   }
-  filterGroupsAll = (inputValue, filter) => {
-    const { authUser: { userGroupsAll } } = this.props;
-    const groupsList = inputValue ? filter(userGroupsAll, ['name', 'description', 'seq', 'enableStatus']) : userGroupsAll;
-    this.setGroupsList(groupsList)
+  setGroupCheckedTypeData = (groupsCheckedData)=>{
+    this.setState({
+      groupsCheckedData
+    })
+  }
+  setRolesSearchType = (value)=>{
+    this.setState({
+      rolesSearchType: value
+    })
+  }
+  setGroupsSearchType = (value)=>{
+    this.setState({
+      groupsSearchType: value
+    })
   }
   // 添加字段支持静态搜索（对布尔值会报错）
   formatAllList = (data) => {
@@ -556,14 +625,12 @@ export default class User extends React.PureComponent {
 
   render() {
     const {
-      authUser: { userBasicInfo, userRoles, userGroups, },
-      loading,
-      gridLoading,
-      global: { size, oopSearchGrid }
+      authUser: { userBasicInfo, userRoles, userGroups, userRolesAll, userGroupsAll },
+      loading, gridLoading, global: { size, oopSearchGrid }
     } = this.props;
     const { isCreate, modalVisible, viewModalVisible, userRolesList,
-      userGroupsList, addOrEditModalTitle, closeConfirmConfig,
-      warningField, warningWrapper } = this.state;
+      userGroupsList, addOrEditModalTitle, closeConfirmConfig, rolesSearchType,
+      groupsCheckedData, groupsSearchType, rolesCheckedData, warningField, warningWrapper } = this.state;
     const column = [
       {
         title: '用户名', dataIndex: 'username', render: (text, record) => {
@@ -692,25 +759,41 @@ export default class User extends React.PureComponent {
             key: 'roleUser',
             title: '角色信息',
             tips: (<div>新建时，需要<a>填写完基本信息的必填项并保存</a>后，滚动页面或点击左上角的导航来完善其他信息</div>),
-            content: <RoleInfoRelevance
-              userRoles={userRoles}
-              userAddRoles={this.userAddRoles}
-              loading={!!loading}
-              columns={userRolesColumns}
-              userRolesList={userRolesList}
-              filterRolesAll={this.filterRolesAll}
-            />
+              content: <UserInfoForm
+                loading = {!!loading}
+                roleUsers= {userRoles}
+                columns= {userRolesColumns}
+                handleUserChange= {this.userAddRoles}
+                roleUsersList= {userRolesList}
+                rolesSearchType={rolesSearchType}
+                userRolesAll={userRolesAll}
+                dataFilter={dataFilter}
+                setRolesList={this.setRolesList}
+                setRolesSearchType={this.setRolesSearchType}
+                filterColumns={['name', 'description', 'parentName', 'enableStatus']}
+                rolesCheckedData={rolesCheckedData}
+                setRoleCheckedTypeData={this.setRoleCheckedTypeData}
+                groupSelf={this}
+              />
           }, {
             key: 'userGroups',
             title: '用户组信息',
-            content: <UserGroupRelevance
-              userGroups={userGroups}
-              userAddGroups={this.userAddGroups}
-              loading={!!loading}
-              columns={userGroupsColumns}
-              userGroupsList={userGroupsList}
-              filterGroupsAll={this.filterGroupsAll}
-            />
+            content: <GroupInfoForm
+            loading = {!!loading}
+            userGroups={userGroups}
+            columns={userGroupsColumns}
+            handleGroupChange={this.userAddGroups}
+            groupUsersList={userGroupsList}
+            groupsSearchType={groupsSearchType}
+            userGroupsAll={userGroupsAll}
+            dataFilter={dataFilter}
+            setGroupsList={this.setGroupsList}
+            setGroupsSearchType={this.setGroupsSearchType}
+            filterColumns={['name', 'description', 'seq', 'enableStatus']}
+            groupsCheckedData={groupsCheckedData}
+            setGroupCheckedTypeData={this.setGroupCheckedTypeData}
+            groupSelf={this}
+          />
           }]}
         />
         <Modal

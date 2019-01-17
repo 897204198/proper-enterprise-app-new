@@ -3,12 +3,12 @@ import FileSaver from 'file-saver'
 import { Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message } from 'antd';
 import {connect} from 'dva';
 import Debounce from 'lodash-decorators/debounce';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
 import OopFormDesigner from '../../../components/OopFormDesigner';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -335,6 +335,7 @@ export default class Template extends React.PureComponent {
         const {pagination} = this.props.formTemplate.grid
         this.onLoad({ pagination });
         this.setFormBasicModalVisible(false);
+        this.handleModalCancel(this.form);
       }
     });
   }

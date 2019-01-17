@@ -1,8 +1,8 @@
 import React from 'react';
 import { Breadcrumb, Tabs, Card, List, Select } from 'antd'
 import {connect} from 'dva';
-import {inject} from '../../../../framework/common/inject';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import {inject} from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import styles from './Mes.less'
 
 const {TabPane} = Tabs;

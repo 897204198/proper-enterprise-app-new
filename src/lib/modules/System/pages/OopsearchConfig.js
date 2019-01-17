@@ -1,12 +1,12 @@
 import React, {Fragment} from 'react';
 import { Modal, Card, Form, Input, Button } from 'antd';
 import {connect} from 'dva';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
-import DescriptionList from '../../../../framework/components/DescriptionList';
 
 const { Description } = DescriptionList;
 const FormItem = Form.Item;
@@ -164,6 +164,7 @@ export default class Config extends React.PureComponent {
       type: 'systemOopsearchConfig/remove',
       payload: record.id,
       callback: (res)=>{
+        this.oopTable.clearSelection()
         oopToast(res, '删除成功', '删除失败');
         this.onLoad();
       }
@@ -200,7 +201,7 @@ export default class Config extends React.PureComponent {
       type: 'systemOopsearchConfig/saveOrUpdate',
       payload: values,
       callback: (res)=>{
-        oopToast(res, '保存成功', '保存失败');
+        oopToast(res, '保存成功');
         this.handleModalCancel(form);
         this.onLoad();
       }

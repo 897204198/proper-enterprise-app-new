@@ -2,12 +2,12 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Card, Button, Input, Modal, Form, Spin, Col, Row, List, Avatar, Radio, DatePicker, Badge } from 'antd';
 import moment from 'moment';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
+import DescriptionList from '@framework/components/DescriptionList';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
-import { oopToast } from '../../../../framework/common/oopUtils';
-import DescriptionList from '../../../../framework/components/DescriptionList';
 import styles from './Notice.less';
 
 const FormItem = Form.Item;
@@ -221,7 +221,8 @@ export default class Notice extends PureComponent {
       type: 'otherNotice/noticeList',
       payload: { infoType: nowInfoType, title: ''},
       callback: (res) => {
-        const list = res.result;
+        console.log(res)
+        const list = res.result.data;
         this.translateData(res, list);
         this.setState({ list })
       }

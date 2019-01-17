@@ -3,13 +3,13 @@ import { Card, Button, Divider, Modal, Spin, Badge,
   Form, Input, Radio, Select, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
-import DescriptionList from '../../../../framework/components/DescriptionList';
 import OopTable from '../../../components/OopTable';
 import OopModal from '../../../components/OopModal';
-import { oopToast } from '../../../../framework/common/oopUtils';
 import OopAuthMenu from '../../../components/OopAuthMenu'
 import { dataFilter, commonSearch } from './utils';
 import styles from './Role.less';
@@ -408,6 +408,7 @@ export default class Role extends PureComponent {
   // 删除功能
   handleRemove = (ids) => {
     let idsArray = [];
+    const self = this
     if (ids instanceof Array) {
       idsArray = ids;
     } else {
@@ -417,6 +418,7 @@ export default class Role extends PureComponent {
       type: 'authRole/removeRoles',
       payload: { ids: idsArray.toString() },
       callback: (res) => {
+        self.oopTable.clearSelection();
         oopToast(res, '删除成功');
         this.onLoad();
       }
@@ -431,6 +433,7 @@ export default class Role extends PureComponent {
       type: 'authRole/removeRoles',
       payload: { ids: ([id]).toString() },
       callback: (res) => {
+        self.oopTable.clearSelection();
         oopToast(res, '删除成功');
         this.onLoad();
         self.setState({
@@ -766,6 +769,7 @@ export default class Role extends PureComponent {
     }
   }
   operationsData = (res, type) => {
+    console.log(this.props.authRole)
     const { status } = res;
     const { allUsers, allGroups } = this.props.authRole;
     if (status === 'ok') {
@@ -1027,8 +1031,16 @@ export default class Role extends PureComponent {
           userInfoView={roleInfo}
           roleUsers={roleUsers}
           roleGroups={roleGroups}
-          footer={<Button type="primary" onClick={()=>this.handleViewModalVisible(false)}>确定</Button>}
-          onCancel={()=>this.handleViewModalVisible(false)}
+          footer={<Button
+            type="primary"
+            onClick={()=>{
+            this.handleAddOrEditModalCancel()
+            this.handleViewModalVisible(false)
+          }}>确定</Button>}
+          onCancel={()=>{
+            this.handleAddOrEditModalCancel()
+            this.handleViewModalVisible(false)
+          }}
         >
           <DescriptionList size={size} col="1">
             <Description term="名称">

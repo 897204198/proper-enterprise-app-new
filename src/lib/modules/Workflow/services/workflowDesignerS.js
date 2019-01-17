@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 export async function queryWorkflowList(params) {
   // 拼装模糊查询
@@ -14,6 +14,7 @@ export async function queryWorkflowList(params) {
 
 export async function createWorkflow(params) {
   return request('/workflow/service/app/rest/models', {
+    defaultErrTipsWhenSystemException: false,
     method: 'POST',
     body: params,
   });

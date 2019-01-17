@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Modal, Tooltip, Button, Icon } from 'antd';
 import pinchZoom from 'pinch-zoom-proper';
-import { isApp } from '../../../framework/utils/utils';
+import { isApp } from '@framework/utils/utils';
 import styles from './index.less';
 
 

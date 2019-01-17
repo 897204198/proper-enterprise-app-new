@@ -2,12 +2,12 @@ import React, { Fragment } from 'react';
 import { Input, Select, List, Card, Spin, Modal, Button, Popover, message } from 'antd';
 import { connect } from 'dva';
 import InfiniteScroll from 'react-infinite-scroller';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import { oopToast } from '../../../../framework/common/oopUtils';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { oopToast } from '@framework/common/oopUtils';
+import Ellipsis from '@framework/components/Ellipsis/index';
+import { getApplicationContextUrl } from '@framework/utils/utils';
 import styles from './index.less';
-import Ellipsis from '../../../../framework/components/Ellipsis/index';
-import { getApplicationContextUrl } from '../../../../framework/utils/utils';
 import OopPreview from '../../../components/OopPreview';
 
 const { Option } = Select;

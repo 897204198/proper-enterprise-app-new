@@ -1,7 +1,5 @@
 import moment from 'moment';
-import pathToRegexp from 'path-to-regexp';
-import { getRouterData } from '../common/frameHelper';
-import { prefix, devMode } from '../../config/config';
+import { prefix, devMode } from '@/config/config';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -162,55 +160,6 @@ export function isUrl(path) {
   return reg.test(path);
 }
 
-function getFlatMenuData(menus) {
-  let keys = {};
-  menus.forEach((item) => {
-    // hack 后台路径不是以斜线开头
-    if (item.route.charAt(0) !== '/') {
-      item.route = '/'.concat(item.route);
-      item.path = item.route;
-    }
-    keys[item.route] = { ...item };
-    if (item.children) {
-      keys = { ...keys, ...getFlatMenuData(item.children) }
-    }
-  });
-  return keys;
-}
-
-function exchangePath2Router(path) {
-  const result = [];
-  const paths = path.split('/');
-  const emptyStr = paths[0];
-  if (emptyStr === '') {
-    // 去掉第一个空格
-    paths.shift();
-  }
-  paths.forEach((item) => {
-    if (item.indexOf('-') > 0) {
-      let arr = '';
-      item.split('-').forEach((sItem) => {
-        arr += firstUpperCase(sItem);
-      });
-      if (arr) {
-        result.push(arr);
-      }
-    } else {
-      result.push(firstUpperCase(item));
-    }
-  });
-  // const routePath = result.join('/');
-  const [moduleName, ...pathName] = result;
-  return {
-    moduleName,
-    pathName: pathName.join('/')
-  };
-}
-
-function firstUpperCase(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
 export function formatter(data) {
   return data.map((item) => {
     const { path } = item;
@@ -228,56 +177,6 @@ export function formatter(data) {
   });
 }
 
-export function getRouterDataFromMenuData(res, dynamicWrapper) {
-  let routerConfig = null;
-  const menuData = getFlatMenuData(res);
-  if (!routerConfig) {
-    routerConfig = {};
-    for (const k of Object.keys(menuData)) {
-      const menu = menuData[k];
-      if (!menu.hideInMenu && (!menu.children || menu.subRoute)) {
-        const { moduleName, pathName } = exchangePath2Router(k);
-        if (moduleName) {
-          if (pathName) {
-            const originRouter = getRouterData();
-            if (originRouter[`${k}`] === undefined) {
-              routerConfig[`${k}`] = {
-                component: dynamicWrapper(()=> import(`../../lib/modules/${moduleName}/pages/${pathName}`))
-              };
-            }
-          } else {
-            routerConfig[`${k}`] = {
-              component: dynamicWrapper(()=> import(`../../lib/modules/${moduleName}/pages`))
-            };
-          }
-        }
-      }
-    }
-  }
-  const routerData = {};
-  // The route matches the menu
-  Object.keys(routerConfig).forEach((path) => {
-    // Regular match item name
-    // eg.  router /user/:id === /user/chen
-    const pathRegexp = pathToRegexp(path);
-    const menuKey = Object.keys(menuData).find(key => pathRegexp.test(`${key}`));
-    let menuItem = {};
-    // If menuKey is not empty
-    if (menuKey) {
-      menuItem = menuData[menuKey];
-    }
-    let router = routerConfig[path];
-    // If you need to configure complex parameter routing,
-    // https://github.com/ant-design/ant-design-pro-site/blob/master/docs/router-and-nav.md#%E5%B8%A6%E5%8F%82%E6%95%B0%E7%9A%84%E8%B7%AF%E7%94%B1%E8%8F%9C%E5%8D%95
-    // eg . /list/:type/user/info/:id
-    router = {
-      ...router,
-      name: router.name || menuItem.name
-    };
-    routerData[path] = router;
-  });
-  return routerData;
-}
 // 处理菜单函数
 export function controlMenu(oldMenu, newMenu = []) {
   if (oldMenu != null) {

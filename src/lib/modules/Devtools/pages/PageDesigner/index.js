@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import fetch from 'dva/fetch';
 import {Card, Form, Input, Button, Alert, Modal, message} from 'antd';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import OopFormDesigner from '../../../../components/OopFormDesigner';
-import PageHeaderLayout from '../../../../../framework/components/PageHeaderLayout';
 
 
 const FormItem = Form.Item;

@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 // 取得roles列表
 export async function queryRoles() {

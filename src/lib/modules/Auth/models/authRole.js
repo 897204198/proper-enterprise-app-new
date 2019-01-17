@@ -1,10 +1,10 @@
+import { formatter, controlMenu } from '@framework/utils/utils';
 import { queryGroups } from '../services/authGroupsS';
 import { queryUsers } from '../services/authUserS';
 import { queryRoles, queryRole, removeRoles, queryRoleUsers, queryRoleGroups, fetchUpdateStatus,
   createOrUpdate, queryParents, queryCheckedMenus, menusAdd, menusDelete,
   userAddRole, userDelRole, GroupAddRole, GroupDelRole, menuResource,
   resourcesAdd, resourcesDelete, queryCheckedResources } from '../services/authRoleS';
-import { formatter, controlMenu } from '../../../../framework/utils/utils';
 
 export default {
   namespace: 'authRole',
@@ -27,9 +27,10 @@ export default {
     // 所有的角色信息
     *fetch({ payload, callback }, { call, put }) {
       const response = yield call(queryRoles, payload);
+      const { data } = response.result;
       yield put({
         type: 'saveRoleList',
-        payload: Array.isArray(response.result) ? response.result : [],
+        payload: Array.isArray(data) ? data : [],
       });
       if (callback) callback(response.result);
     },
@@ -141,7 +142,7 @@ export default {
       const response = yield call(queryGroups, payload);
       yield put({
         type: 'saveAllGroups',
-        payload: response.result,
+        payload: response.result.data,
       });
       if (callback) callback(response);
     },

@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request from '../../../../framework/utils/request';
+import request from '@framework/utils/request';
 
 // 取得菜单列表
 export async function queryTreeData(params) {
@@ -50,7 +50,8 @@ export async function updateResource(params) {
 }
 // 删除资源
 export async function deleteResource(params) {
-  return request(`/auth/resources/${params}`, {
+  const { menuId, resourceId } = params
+  return request(`/auth/menus/${menuId}/resources/${resourceId}`, {
     method: 'DELETE'
   });
 }

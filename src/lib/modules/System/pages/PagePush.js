@@ -1,14 +1,14 @@
 import React from 'react';
 import { Modal, Card, Form, Input, Button, InputNumber, Spin, Checkbox } from 'antd';
 import {connect} from 'dva';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
-import DescriptionList from '../../../../framework/components/DescriptionList';
-import {inject} from '../../../../framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
+import { oopToast } from '@framework/common/oopUtils';
+import {inject} from '@framework/common/inject';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import OopModal from '../../../components/OopModal';
 import OopUpload from '../../../components/OopUpload';
-import { oopToast } from './../../../../framework/common/oopUtils';
 
 
 const { Description } = DescriptionList;

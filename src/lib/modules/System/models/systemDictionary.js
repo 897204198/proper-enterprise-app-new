@@ -1,4 +1,4 @@
-import { fetchById, remove, saveOrUpdate, getTreeData, treeListDelete, treeListEdit, treeListAdd, getTableData } from '../services/systemDictionaryS';
+import { fetchById, remove, saveOrUpdate, getTreeData, treeListDelete, treeListEdit, treeListAdd, getTableData, getTableValue } from '../services/systemDictionaryS';
 
 export default {
   namespace: 'systemDictionary',
@@ -19,7 +19,7 @@ export default {
     },
     *getTreeData({ payload, callback }, { call, put }) {
       const resp = yield call(getTreeData, payload);
-      resp.result.forEach((item)=>{
+      resp.result.data.forEach((item)=>{
         item.parentId = null;
       })
       yield put({
@@ -42,7 +42,7 @@ export default {
     },
     *treeListAdd({payload, callback}, {call}) {
       const resp = yield call(treeListAdd, payload);
-      if (callback) callback(resp)
+      if (callback) callback(resp.data)
     },
     *treeListEdit({payload, callback}, {call}) {
       const resp = yield call(treeListEdit, payload);
@@ -53,8 +53,13 @@ export default {
       if (callback) callback(resp)
     },
     *getTableData({payload, callback}, {call}) {
-      const resp = yield call(getTableData, payload);
-      if (callback) callback(resp)
+      if (typeof payload === 'string') {
+        const resp = yield call(getTableValue, payload);
+        if (callback) callback(resp.result)
+      } else {
+        const resp = yield call(getTableData, payload);
+        if (callback) callback(resp.result.data)
+      }
     }
   },
   reducers: {
@@ -79,7 +84,7 @@ export default {
     treeList(state, action) {
       return {
         ...state,
-        treeData: action.payload.result
+        treeData: action.payload.result.data
       }
     },
     clearEntity(state) {

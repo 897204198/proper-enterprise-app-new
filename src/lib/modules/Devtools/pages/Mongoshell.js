@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Input, Select, Form, Button, Col, Row, Card, Modal, List, Popover } from 'antd';
-import { inject } from '../../../../framework/common/inject';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import OopTable from '../../../components/OopTable';
 import styles from './Mongoshell.less';
 

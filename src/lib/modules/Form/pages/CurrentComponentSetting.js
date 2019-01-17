@@ -1,12 +1,12 @@
 import React, {Fragment} from 'react';
 import { Modal, Card, Form, Spin, Button } from 'antd';
 import {connect} from 'dva';
-import PageHeaderLayout from '../../../../framework/components/PageHeaderLayout';
+import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import {inject} from '@framework/common/inject';
+import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopForm from '../../../components/OopForm';
 import OopTable from '../../../components/OopTable';
-import {inject} from '../../../../framework/common/inject';
-import { oopToast } from '../../../../framework/common/oopUtils';
 
 const ModalForm = Form.create()((props) => {
   const { loading, visible, title, onModalCancel, onModalSubmit, formEntity, self } = props;
@@ -110,10 +110,12 @@ export default class CurrentComponentSetting extends React.PureComponent {
     this.setModalFormVisible(true);
   }
   handleRemove = (record)=>{
+    const me = this;
     this.props.dispatch({
       type: 'formCurrentComponentSetting/remove',
       payload: record.id,
       callback: (res)=>{
+        me.oopTable.clearSelection()
         oopToast(res, '删除成功', '删除失败');
         this.onLoad();
       }
