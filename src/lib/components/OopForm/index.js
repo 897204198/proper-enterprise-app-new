@@ -86,47 +86,39 @@ export default class OopForm extends React.PureComponent {
     formJson.forEach((it)=>{
       const {name, component: {name: cName, children, props}} = it;
       const value = formData[name];
-      if ('Select,RadioGroup,CheckboxGroup'.includes(cName)) {
-        if (value && !formData[`${name}_text`]) {
-          // am的Picker组件为value为数组
-          const child = children.map(c=>(value.toString().includes(c.value) ? c : null)).filter(i=>i !== null);
-          if (child) {
-            formData[`${name}_text`] = child.map(c=>c.label).join(',');
+      if (value !== null && value !== undefined && value !== '') {
+        if ('Select,RadioGroup,CheckboxGroup'.includes(cName)) {
+          if (!formData[`${name}_text`]) {
+            // am的Picker组件为value为数组
+            const child = children.map(c=>(value.toString().includes(c.value) ? c : null)).filter(i=>i !== null);
+            if (child) {
+              formData[`${name}_text`] = child.map(c=>c.label).join(',');
+            }
           }
-        }
-      } else if ('OopSystemCurrent'.includes(cName)) {
-        if (value && !formData[`${name}_text`]) {
-          formData[`${name}_text`] = value.text
-        }
-      } else if ('DatePicker'.includes(cName)) {
-        if (value && !formData[`${name}_text`]) {
-          let dateLong = value;
-          let dateStr = '';
-          // if (value.constructor.name === 'Moment') {
-          //   dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
-          //   dateLong = value.toDate().getTime();
-          // } else if (value.constructor.name === 'Date') {
-          //   dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
-          //   dateLong = value.getTime();
-          // } else if (value.constructor.name === 'String') { // ????'2018-10-25T09:59:30.484Z'
-          //   dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
-          //   dateLong = new Date(value).getTime();
-          // }
-          if (value.constructor.name === 'Date') {
-            dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
-            dateLong = value.getTime();
-          } else {
-            dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
-            dateLong = value.toDate().getTime();
+        } else if ('OopSystemCurrent'.includes(cName)) {
+          if (!formData[`${name}_text`]) {
+            formData[`${name}_text`] = value.text
           }
-          formData[`${name}`] = dateLong;
-          formData[`${name}_text`] = dateStr;
-        }
-      } else if (cName === 'InputNumber') {
-        // 数字型转换
-        const {Number} = window;
-        if (value !== +value) {
-          formData[`${name}`] = Number(value)
+        } else if ('DatePicker'.includes(cName)) {
+          if (!formData[`${name}_text`]) {
+            let dateLong = value;
+            let dateStr = '';
+            if (value.constructor.name === 'Date') {
+              dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
+              dateLong = value.getTime();
+            } else {
+              dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
+              dateLong = value.toDate().getTime();
+            }
+            formData[`${name}`] = dateLong;
+            formData[`${name}_text`] = dateStr;
+          }
+        } else if (cName === 'InputNumber') {
+          // 数字型转换
+          const {Number} = window;
+          if (value !== +value) {
+            formData[`${name}`] = Number(value)
+          }
         }
       }
     })
