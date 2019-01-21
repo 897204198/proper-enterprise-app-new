@@ -262,7 +262,8 @@ export default class OopTabTableModal extends React.PureComponent {
                 _onSelect: this.handleTableSelect,
                 _onSelectAll: this.handleTableSelectAll,
                 size: 'small',
-                title: tableTitle
+                title: tableTitle,
+                multiple
               }}
               tree={{
                 className: styles.tree,
@@ -274,7 +275,6 @@ export default class OopTabTableModal extends React.PureComponent {
                 treeKey: 'id',
               }}
               onTreeNodeSelect={this.handleTreeNodeSelect}
-              multiple={multiple}
               // size={size}
             />
           </div>)}]}
