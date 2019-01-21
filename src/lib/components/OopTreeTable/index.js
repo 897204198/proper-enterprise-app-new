@@ -39,9 +39,8 @@ export default class OopTreeTable extends PureComponent {
     // const {test} = this.state;
     const treeConfig = this.props.tree;
     const tableConfig = this.props.table;
-    const { multiple = true } = tableConfig;
     const { treeLoading } = treeConfig;
-    const { title, gridLoading, grid, columns, topButtons = [], rowButtons = [], oopSearch, onRightClickConfig, ...otherTableProps } = tableConfig;
+    const { title, gridLoading, grid, columns, topButtons = [], rowButtons = [], oopSearch, onRightClickConfig, multiple = true, ...otherTableProps } = tableConfig;
     const {size} = this.props;
     return (
       <Row gutter={16} className={styles.OopTreeTable}>
