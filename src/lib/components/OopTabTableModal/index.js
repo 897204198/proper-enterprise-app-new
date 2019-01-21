@@ -87,12 +87,18 @@ export default class OopTabTableModal extends React.PureComponent {
     });
   }
 
-  handleTableSelect = (record, selected) => {
+  handleTableSelect = (record, selected, selectedRows, nativeEvent, multiple) => {
     const { selectedRecord } = this.state;
     if (selected) {
-      this.setState({
-        selectedRecord: [...selectedRecord, record]
-      });
+      if (multiple) {
+        this.setState({
+          selectedRecord: [...selectedRecord, record]
+        });
+      } else {
+        this.setState({
+          selectedRecord: [record]
+        });
+      }
     } else {
       this.setState({
         selectedRecord: selectedRecord.filter((item) => {
@@ -185,9 +191,10 @@ export default class OopTabTableModal extends React.PureComponent {
       tableCfg = {
         data: [],
         title: '',
-        total: 0,
+        total: 0
       },
       modalTitle = '',
+      multiple = true
     } = this.props;
     const {
       modalVisible,
@@ -267,6 +274,7 @@ export default class OopTabTableModal extends React.PureComponent {
                 treeKey: 'id',
               }}
               onTreeNodeSelect={this.handleTreeNodeSelect}
+              multiple={multiple}
               // size={size}
             />
           </div>)}]}
