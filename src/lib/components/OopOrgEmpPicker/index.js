@@ -69,7 +69,8 @@ export default class OopOrgEmpPicker extends React.PureComponent {
       tableLoading,
       disabled,
       onOk,
-      onCancel
+      onCancel,
+      multiple = true
     } = this.props
 
     const columns = [
@@ -118,6 +119,7 @@ export default class OopOrgEmpPicker extends React.PureComponent {
         treeCfg={treeCfg}
         onOk={onOk}
         onCancel={onCancel}
+        multiple={multiple}
       />
     );
   }

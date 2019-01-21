@@ -261,36 +261,54 @@ export default class OopTable extends PureComponent {
     const { grid: {list, pagination },
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
-      _onSelect, _onSelectAll, ...otherProps} = this.props
+      _onSelect, _onSelectAll, multiple = true, ...otherProps } = this.props
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
-    const rowSelectionCfg = checkable ? {
-      onChange: this.rowSelectionChange,
-      selectedRowKeys: this.state.selectedRowKeys,
-      getCheckboxProps: record => ({
-        disabled: record.disabled,
-      }),
-      onSelect: (record, selected, selectedRows, nativeEvent) => {
-        if (selectTriggerOnRowClick) {
-          this.selectRow(record);
+    let rowSelectionCfg
+    if (checkable) {
+      rowSelectionCfg = multiple ? {
+        onChange: this.rowSelectionChange,
+        selectedRowKeys: this.state.selectedRowKeys,
+        getCheckboxProps: record => ({
+          disabled: record.disabled,
+        }),
+        onSelect: (record, selected, selectedRows, nativeEvent) => {
+          if (selectTriggerOnRowClick) {
+            this.selectRow(record);
+          }
+          if (_onSelect) {
+            _onSelect(record, selected, selectedRows, nativeEvent);
+          }
+        },
+        onSelectAll: (selected, selectedRows, changeRows) => {
+          // TODO
+          this.setState({
+            changeRows,
+            selectedRows
+          })
+          if (onSelectAll) {
+            onSelectAll(changeRows)
+          }
+          if (_onSelectAll) {
+            _onSelectAll(selected, selectedRows, changeRows);
+          }
+        },
+      } : {
+        type: 'radio',
+        onChange: this.rowSelectionChange,
+        selectedRowKeys: this.state.selectedRowKeys,
+        getCheckboxProps: record => ({
+          disabled: record.disabled,
+        }),
+        onSelect: (record, selected, selectedRows, nativeEvent) => {
+          if (selectTriggerOnRowClick) {
+            this.selectRow(record);
+          }
+          if (_onSelect) {
+            _onSelect(record, selected, selectedRows, nativeEvent, multiple);
+          }
         }
-        if (_onSelect) {
-          _onSelect(record, selected, selectedRows, nativeEvent);
-        }
-      },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-        // TODO
-        this.setState({
-          changeRows,
-          selectedRows
-        })
-        if (onSelectAll) {
-          onSelectAll(changeRows)
-        }
-        if (_onSelectAll) {
-          _onSelectAll(selected, selectedRows, changeRows);
-        }
-      },
-    } : undefined
+      }
+    }
     return (
       <div className={styles.oopTableWrapper}>
         <div className={styles.toolbar}>
