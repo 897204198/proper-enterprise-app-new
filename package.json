@@ -4,10 +4,9 @@
   "description": "propersoft enterprise application",
   "scripts": {
     "precommit": "npm run lint-staged",
-    "start": "cross-env ESLINT=none roadhog dev && node ./generateAlias.js",
+    "start": "cross-env ESLINT=none roadhog dev && node .generateAlias.js",
     "mock": "node proxy/proxy-server.js",
     "code": "node  producer/main.js",
-    "init": "node .init-project.js",
     "setup": "npm install && npm run init",
     "build": "cross-env ESLINT=none roadhog build && npm run copyWf",
     "site": "roadhog-api-doc static && gh-pages -d dist",
@@ -21,7 +20,7 @@
     "test:component": "roadhog test ./src/components",
     "test:all": "node ./tests/run-tests.js",
     "copyWf": "node .copyWf.js",
-    "WfServer": "node .copyWf.js && node devServer.js"
+    "WfServer": "node .copyWf.js && node .devServer.js"
   },
   "dependencies": {
     "@antv/data-set": "^0.8.0",
