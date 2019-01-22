@@ -1,7 +1,7 @@
 import React from 'react'
 import reactCSS from 'reactcss'
-import icon from '@/assets/color-icon@36x18.png'
 import { SketchPicker } from 'react-color'
+import icon from '../../../assets/color-icon@36x18.png'
 
 // const primaryColor = require('@/config/theme.js')['primary-color']
 
