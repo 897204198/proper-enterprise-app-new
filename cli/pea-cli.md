@@ -1,8 +1,3 @@
- #### cli: 0.5.5
- #### @proper/framework: 0.6.2-rc.01
- ***
-
-
 
 PEA 在项目关系管理上依赖于 `npm` 
 在公司内部[私服](http://nexus.propersoft.cn:8081/)上提供以下几个包：
@@ -28,5 +23,11 @@ PEA 在项目关系管理上依赖于 `npm`
 - 修改`package.json`  配置要更新的`@proper/framework` 依赖版本 或 要更新的`@proper/pea-lib`
 - 运行命令 `npm install` 安装项目依赖
 - 运行命令 `npm start` 启动项目
+
+
+
+ ##### cli: 0.5.5
+ ##### @proper/framework: 0.6.2-rc.01
+ ***
 
 
