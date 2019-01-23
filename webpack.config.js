@@ -1,5 +1,5 @@
 import { dependencies } from './src/config/config';
-import { generateAlias } from './generateAlias';
+import { generateAlias } from './.generateAlias';
 
 /**
  * 获取webpackConfig

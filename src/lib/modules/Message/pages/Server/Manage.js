@@ -1,13 +1,13 @@
 import React, {Fragment} from 'react';
 import {connect} from 'dva';
 import { Card, Modal, Switch, Popover } from 'antd';
-import icon from '@/assets/color-icon@16x8.png'
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { inject } from '@framework/common/inject';
 import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../../components/OopSearch';
 import OopTable from '../../../../components/OopTable';
 import FormModal from '../Forms/components/FormModal';
+import icon from '../../assets/color-icon@16x8.png'
 import styles from './Manage.less';
 
 const primaryColor = require('@/config/theme.js')['primary-color']
