@@ -1,4 +1,10 @@
-新版本的PEA 在项目关系管理上依赖于 `npm` 
+ #### cli: 0.5.5
+ #### @proper/framework: 0.6.2-rc.01
+ ***
+
+
+
+PEA 在项目关系管理上依赖于 `npm` 
 在公司内部[私服](http://nexus.propersoft.cn:8081/)上提供以下几个包：
 
 -  [@pea-cli](http://nexus.propersoft.cn:8081/repository/npm-internal/pea-cli/-/pea-cli-0.5.0.tgz) 初始化项目的脚手架 可以快速生成一个项目目录
@@ -11,7 +17,7 @@
 ##### 以依赖`@proper/pea-lib`为例
 - 运行命令 `npm i pea-cli -g` 全局安装pea-cli脚手架 
 - 运行命令 `pea-cli` 初始化项目目录结构
-- 修改`package.json`  配置最新的 `@proper/framework`依赖版本
+- 修改`package.json`  配置最新的 `@proper/framework`依赖版本   ***#若脚手架自带了请忽略#***
 - 修改`package.json` 配置最新的  `@proper/pea-lib` 的依赖
 - 运行命令 `npm install` 安装项目依赖
 - 运行命令 `npm start` 启动项目
