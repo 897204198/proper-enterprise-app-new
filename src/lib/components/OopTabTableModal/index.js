@@ -87,7 +87,7 @@ export default class OopTabTableModal extends React.PureComponent {
     });
   }
 
-  handleTableSelect = (record, selected, selectedRows, nativeEvent, multiple) => {
+  handleTableSelect = (record, selected, selectedRows, nativeEvent, multiple = true) => {
     const { selectedRecord } = this.state;
     if (selected) {
       if (multiple) {
