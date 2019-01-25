@@ -27,7 +27,7 @@ export default class OopWorkflowMainModal extends PureComponent {
         message.success('流程提交成功');
         this.props.afterProcessSubmit();
       } else {
-        message.error(`流程提交失败,${res.result}`);
+        message.error(res.result);
       }
     })
   }
@@ -40,7 +40,7 @@ export default class OopWorkflowMainModal extends PureComponent {
         message.success('流程提交成功');
         this.props.afterProcessSubmit();
       } else {
-        message.error(`流程提交失败,${res.result}`);
+        message.error(res.result);
       }
     })
   }

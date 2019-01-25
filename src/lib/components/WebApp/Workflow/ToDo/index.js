@@ -200,7 +200,7 @@ export default class ToDo extends React.PureComponent {
               Toast.success('流程提交成功', 2);
               this.fetchData();
             } else {
-              Toast.fail(`流程提交失败,${res.result}`, 4);
+              Toast.fail(res.result);
             }
           }
         })
