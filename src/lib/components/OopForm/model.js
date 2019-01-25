@@ -26,7 +26,7 @@ export default {
     saveDictData(state, action) {
       return {
         ...state,
-        [action.payload.catalog]: action.payload.response.result.map(it=>({
+        [action.payload.catalog]: action.payload.response.result.data.map(it=>({
           label: it.name,
           value: JSON.stringify({catalog: it.catalog, code: it.code}),
           disabled: !it.enable
@@ -38,7 +38,7 @@ export default {
       const {value, labelPropName, valuePropName, disabledPropName} = dataUrl;
       return {
         ...state,
-        [value]: action.payload.response.result.map(it=>({
+        [value]: action.payload.response.result.data.map(it=>({
           ...it,
           label: it[labelPropName],
           value: it[valuePropName],
