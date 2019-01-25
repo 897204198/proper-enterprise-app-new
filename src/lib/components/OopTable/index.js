@@ -276,7 +276,7 @@ export default class OopTable extends PureComponent {
             this.selectRow(record);
           }
           if (_onSelect) {
-            _onSelect(record, selected, selectedRows, nativeEvent);
+            _onSelect(record, selected, selectedRows, nativeEvent, multiple);
           }
         },
         onSelectAll: (selected, selectedRows, changeRows) => {
