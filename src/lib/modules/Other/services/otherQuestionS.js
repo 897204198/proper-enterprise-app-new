@@ -2,8 +2,7 @@ import { stringify } from 'querystring';
 import request from '@framework/utils/request';
 
 export async function getTreeData() {
-  return request('/admin/category', {
-  });
+  return request('/admin/category');
 }
 export async function getTableData(param) {
   return request(`/admin/problem?${stringify(param)}`);
