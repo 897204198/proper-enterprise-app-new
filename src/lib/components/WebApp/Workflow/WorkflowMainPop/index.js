@@ -114,7 +114,7 @@ export default class WorkflowMainPop extends PureComponent {
             this.afterSubmit();
           }, 1000);
         } else {
-          message.error(`流程提交失败,${res.result}`, 4);
+          message.error(res.result);
         }
       });
     }
@@ -132,7 +132,7 @@ export default class WorkflowMainPop extends PureComponent {
             this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
           }, 500);
         } else {
-          message.error(`流程提交失败,${res.result}`, 4);
+          message.error(res.result);
         }
       })
     }
