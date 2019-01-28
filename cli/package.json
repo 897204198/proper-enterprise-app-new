@@ -1,9 +1,11 @@
 {
   "name": "pea-cli",
-  "version": "0.5.5",
+  "version": "0.5.8",
   "description": "init a 'pea' project quickly !",
   "main": "index.js",
-  "bin": "./index.js",
+  "bin": {
+    "pea-cli": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
