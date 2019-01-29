@@ -62,7 +62,8 @@ export default class Manager extends React.PureComponent {
       type: 'workflowManager/findDesign',
       payload: {
         modelType: '0',
-        sort: 'modifiedDesc'
+        sort: 'modifiedDesc',
+        modelStatus: 'DEPLOYED'
       },
       callback: () => {
         const { workflowManager } = self.props;
