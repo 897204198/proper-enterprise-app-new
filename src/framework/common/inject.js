@@ -45,43 +45,50 @@ const parseModuleNameByModelUrl = (modelUrl) => {
   }
   return result;
 }
-
+function is404Exception(errMsg) {
+  return errMsg.includes('Cannot find module');
+}
+function getModel(modelUrl, root) {
+  if (modelUrl.includes('$')) {
+    if (root) {
+      return require(`@proper/${root}-lib/components/${modelUrl.split('$').join('/')}`);
+    }
+    return require(`@/lib/components/${modelUrl.split('$').join('/')}`);
+  } else {
+    const modelName = parseModuleNameByModelUrl(modelUrl);
+    if (modelName) {
+      if (root) {
+        return require(`@proper/${root}-lib/modules/${modelName}/models/${modelUrl}`);
+      }
+      return require(`@/lib/modules/${modelName}/models/${modelUrl}`);
+    }
+  }
+}
 // 获取model通过modelUrl和依赖
 const getDvaModelByModelUrlAndDepdecs = (modelUrl, depdecs = []) =>{
   // 带有model组件的model注入 带 $ 属于webapp下的组件中的model注入  其他的是正常的业务模块注入
   let model = null;
-  if (modelUrl.includes('$')) {
-    try {
-      model = require(`@/lib/components/${modelUrl.split('$').join('/')}`).default;
-    } catch (e) {
-      for (let i = 0; i < depdecs.length; i++) {
+  try {
+    model = getModel(modelUrl);
+  } catch (e) {
+    if (is404Exception(e.message)) {
+      for (let i = depdecs.length - 1; i >= 0; i--) {
         const root = depdecs[i];
         try {
-          model = require(`@proper/${root}-lib/components/${modelUrl.split('$').join('/')}`).default;
+          model = getModel(modelUrl, root);
           break;
         } catch (err) {
-          console.log(err);
-        }
-      }
-    }
-  } else {
-    const modelName = parseModuleNameByModelUrl(modelUrl);
-    if (modelName) {
-      try {
-        // 正常的业务代码的model注入
-        model = require(`@/lib/modules/${modelName}/models/${modelUrl}`).default;
-      } catch (e) {
-        for (let i = 0; i < depdecs.length; i++) {
-          try {
-            const root = depdecs[i];
-            model = require(`@proper/${root}-lib/modules/${modelName}/models/${modelUrl}`).default;
+          if (!is404Exception(err.message)) {
+            console.error(err);
+            model = { default: {}}
             break;
-          } catch (err) {
-            console.log(err);
           }
         }
       }
+    } else {
+      console.error(e);
+      model = { default: {}}
     }
   }
-  return model;
+  return model.default;
 }

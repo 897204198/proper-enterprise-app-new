@@ -172,11 +172,18 @@ export const getRouterDataFromMenuData = (res)=>{
   return routerData;
 }
 
-function handleError(moduleName, pathName, err) {
-  console.error(`No matching page found named '/${moduleName}/${pathName}'`);
-  console.error(err);
-  window.location.hash = '#/404';
+function is404Exception(errMsg) {
+  return errMsg.includes('Cannot find module');
 }
+function handleError(moduleName, pathName, err) {
+  if (is404Exception(err.message)) {
+    console.error(`No matching page found named '/${moduleName}/${pathName}'`);
+    window.location.hash = '#/404';
+  } else {
+    console.error(err);
+  }
+}
+
 // 通过依赖获取页面的入口
 function getPageEntryByDependencies(des = [], moduleName, pathName) {
   if (!Array.isArray(des)) {
@@ -188,20 +195,25 @@ function getPageEntryByDependencies(des = [], moduleName, pathName) {
     try {
       route = require(`@/lib/modules/${moduleName}/pages/${pathName}`);
     } catch (e) {
-      if (length === 0) {
-        handleError(moduleName, pathName, e);
-      } else {
-        for (let i = 0; i < length; i++) {
-          try {
-            const root = des[i];
-            route = require(`@proper/${root}-lib/modules/${moduleName}/pages/${pathName}`);
-            break;
-          } catch (err) {
-            if (length === (i + 1)) {
-              handleError(moduleName, pathName, e);
+      if (is404Exception(e.message)) {
+        if (length === 0) {
+          handleError(moduleName, pathName, e);
+        } else {
+          for (let i = length - 1; i >= 0; i--) {
+            try {
+              const root = des[i];
+              route = require(`@proper/${root}-lib/modules/${moduleName}/pages/${pathName}`);
+              break;
+            } catch (err) {
+              if (!is404Exception(err.message)) {
+                handleError(moduleName, pathName, err);
+                break;
+              }
             }
           }
         }
+      } else {
+        handleError(moduleName, pathName, e)
       }
     }
     return route;
