@@ -17,6 +17,7 @@ PEA 在项目关系管理上依赖于 `npm`
 - 修改`package.json` 配置最新的  `@proper/pea-lib` 的依赖
 - 运行命令 `npm install` 安装项目依赖
 - 运行命令 `npm start` 启动项目
+- 运行命令 `npm run mock`启动mock服务
 
 ### 更新一个项目
 ##### 以依赖`@proper/pea-lib`为例
