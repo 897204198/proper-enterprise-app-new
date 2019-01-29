@@ -34,11 +34,17 @@ export default {
       }
     },
     saveUrlData(state, action) {
-      const {dataUrl} = action.payload;
+      const {dataUrl, response: {result = []}} = action.payload;
       const {value, labelPropName, valuePropName, disabledPropName} = dataUrl;
+      let list = [];
+      if (result.length) {
+        list = result;
+      } else {
+        list = (result.data && result.data.length) ? result.data : [];
+      }
       return {
         ...state,
-        [value]: action.payload.response.result.data.map(it=>({
+        [value]: list.map(it=>({
           ...it,
           label: it[labelPropName],
           value: it[valuePropName],
