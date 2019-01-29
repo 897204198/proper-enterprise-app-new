@@ -19,6 +19,8 @@ PEA 在项目关系管理上依赖于 `npm`
 - 运行命令 `npm start` 启动项目
 - 运行命令 `npm run mock`启动mock服务
 
+*********** 浏览器输入 http://localhost:8000 ******* 账号: admin,密码: 123456 ************
+
 ### 更新一个项目
 ##### 以依赖`@proper/pea-lib`为例
 - 修改`package.json`  配置要更新的`@proper/framework` 依赖版本 或 要更新的`@proper/pea-lib`
