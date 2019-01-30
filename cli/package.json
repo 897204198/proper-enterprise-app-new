@@ -1,6 +1,6 @@
 {
   "name": "pea-cli",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "init a 'pea' project quickly !",
   "main": "index.js",
   "bin": {
