@@ -51,14 +51,22 @@ function is404Exception(errMsg) {
 function getModel(modelUrl, root) {
   if (modelUrl.includes('$')) {
     if (root) {
-      return require(`@proper/${root}-lib/components/${modelUrl.split('$').join('/')}`);
+      try { // 这块不try catch 构建会报错 下同
+        return require(`@proper/${root}-lib/components/${modelUrl.split('$').join('/')}`);
+      } catch (e) {
+        throw e;
+      }
     }
     return require(`@/lib/components/${modelUrl.split('$').join('/')}`);
   } else {
     const modelName = parseModuleNameByModelUrl(modelUrl);
     if (modelName) {
       if (root) {
-        return require(`@proper/${root}-lib/modules/${modelName}/models/${modelUrl}`);
+        try {
+          return require(`@proper/${root}-lib/modules/${modelName}/models/${modelUrl}`);
+        } catch (e) {
+          throw e;
+        }
       }
       return require(`@/lib/modules/${modelName}/models/${modelUrl}`);
     }
