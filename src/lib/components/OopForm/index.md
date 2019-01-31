@@ -3,7 +3,7 @@ category | type | title | subtitle
 | :--------: | :-----: | :----:|  :----: |
 Components | Data Entry | OopForm  | 表单设计 |
 
-我们为 OopFormDesigner 提供了以下两种排列方式：
+我们为 OopForm 提供了以下两种排列方式：
 
 -  横向排列：标签和表单控件水平排列；
 -  纵向排列：标签和表单控件上下垂直排列；

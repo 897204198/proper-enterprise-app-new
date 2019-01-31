@@ -23,6 +23,8 @@ PEA 在项目关系管理上依赖于 `npm`
 
 *********** 浏览器输入 http://localhost:8000 ******* 账号: admin,密码: 123456 ************
 
-[更多详情请查看](./CONTRIBUTING.md)
+[如何开发一个页面](./CONTRIBUTING.md)
+
+[有哪些组件？](./src/lib/components/COMPONENTS.md)
 
 
