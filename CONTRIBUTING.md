@@ -86,17 +86,12 @@ $ npm start                       # 访问项目服务
 ## 编码规范
 ```代码结构```
 ```
-- proxy   
+- proxy   (--mock数据)
   - modules       (--对应模块使用的mock数据)
     - AntdProDemo 
     - Anth
-    - EXam
-    - HrM 
-    - Workflow
-
-- other
-  - main.png      README.md中的图片存储
-- producer
+    ...
+- producer  (--代码生成器相关)
   - tpl
   - config.js     
   - main.js      
@@ -104,56 +99,53 @@ $ npm start                       # 访问项目服务
 - publish
   - config.tpl
   - favicon.png
-- src                   (-- 源代码)
+- src                 (-- 源代码)
   - assets              (--静态资源相关)
-  - config                (--项目配置)
-    - config.js         (--项目参数基本配置)
-    - properties.js     (--提示信息或标题的通用配置)
-    - sysRouters.js     (--系统默认的路由配置)
-    - theme.js          (--项目主体颜色配置)
-    - vendor.js         (--？？？)
-  - framework           (--？？？)
-    - common                (--业务模块)
-        - framHelper.js           (--业务模块)
-        - inject.js               (--定义解析规则)
+  - config              (--项目配置)
+    - config.js           (--项目参数基本配置)
+    - properties.js       (--提示信息或标题的通用配置)
+    - sysRouters.js       (--系统默认的路由配置)
+    - theme.js            (--项目主体颜色配置)
+    - vendor.js           (--公共的、体积大的依赖提出来)
+  - framework           (-- 框架)
+    - common                (--框架相关)
+        - framHelper.js           (--route获取)
+        - inject.js               (--model注入)
         - oopUtils.js             (--抽出的工具)
-    - components            (-- antd提供的基础组件示例)
+    - components            (-- antdPro提供的基础组件示例)
         - ActiveChart            
         - Authorized          
-        - AvatarList  
-    - index                 (-- ？？？)
+        - AvatarList
+        ... 
+    - index                 (-- 项目入口相关)
         - index.ejs            
         - index.js           
         - index.less 
         - router.js
-    - layouts                 (-- 布局相关设置)
-        - BasicLayout.js            
+    - layouts               (-- 布局相关设置)
+        - BasicLayout.js      (--基本布局)
         - BasicLayout.less        
-        - UserLayout.js            
+        - UserLayout.js       (--登录、注册布局)    
         - UserLayout.less 
-        - UserLayout.js            
-        - UserLayout.less 
-        - WebAppLayout.js            
+        - WebAppLayout.js     (--移动端布局)       
         - WebAppLayout.less
-      - modules               (--基础业务模块) 
-          - Base        
-            - models              (--dva中的module)
-            - pages               (--模块对应的业务页面)
-            - services            (--服务配置)             
-      - utils                 (--纯工具函数库相关)   
-          - MongoService.js   (--链接MongoDB的前端工具 基于av-core)
-          - request.js           (--统一规定的请求标准)
-          - utils.js            (--抽象出来的通用方法)
+      - modules             (--基础业务模块) 
+          - Base              (内置模块)
+            - models            (--内置的model)
+            - pages             (--内置的业务页面)
+            - services          (--内置的请求服务接口)             
+      - utils               (--纯工具函数库相关)   
+          - MongoService.js   (--调用MongoDB的工具类)
+          - request.js        (--统一规定的请求标准)
+          - utils.js          (--抽象出来的通用方法)
           - utils.less    
   - lib                     (--业务源码)
       - components            (--封装的组件)
       - modules               (--业务模块)
           - Anth                (--用户权限模块)
-            - models              (--dva中的module)
-            - pages               (--模块对应的业务页面)
-            - services            (--服务配置)
-            - package.json        (--Anth模块版本信息)
-      - package.json          (--lib模块版本信息)
+            - models              (--dva中的model)
+            - pages               (--模块对应的业务页面入口)
+            - services            (--后台服务接口)
 ```
 
 - 书写规范
