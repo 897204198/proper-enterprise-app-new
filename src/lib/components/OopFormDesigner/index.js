@@ -1,12 +1,18 @@
 import React from 'react';
 import { Button, Card, Row, Col, Radio, Input, Tooltip, message } from 'antd';
+import {Controlled as CodeMirror} from 'react-codemirror2';
 import Debounce from 'lodash-decorators/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
 import { getUuid } from '@framework/common/oopUtils';
 import OopForm from '../../components/OopForm';
-import buildEditPanel from './buildEditPanel';
+import buildEditPanel from './utils/buildEditPanel';
+import jsbeautify from './utils/jsbeautify';
 import styles from './index.less';
+
+require('codemirror/lib/codemirror.css');
+require('codemirror/theme/material.css');
+require('codemirror/mode/javascript/javascript.js');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -80,9 +86,14 @@ const AddPanel = (props) => {
     }</ul></Card></div>);
 };
 const EditPanel = (props) => {
-  const { currentRowItem,
+  const { currentRowItem, currentRowItemJson, self,
     updateCenterPanel, onRowItemIconCopy, onRowItemIconDelete, onPlusClick, onRowItemDrag,
-    customRules = false, setCustomRules} = props;
+    customRules = false, setCustomRules, formPattern, onFormPatternChange} = props;
+  const toggleFormPatternButtons = (
+    <RadioGroup defaultValue={formPattern} onChange={onFormPatternChange}>
+      <RadioButton value="simple">简单模式</RadioButton>
+      <RadioButton value="advanced">高级模式</RadioButton>
+    </RadioGroup>)
   const rowItemIconCopy = (event, name)=>{
     onRowItemIconCopy(name)
   }
@@ -99,7 +110,7 @@ const EditPanel = (props) => {
   }
   return (
     <div className={styles.editPanel}>
-      <Card title="编辑组件详情" bordered={false}>
+      <Card title="编辑组件详情" bordered={false} extra={toggleFormPatternButtons}>
         {buildEditPanel(currentRowItem, {
           rowItemIconCopy,
           rowItemIconDelete,
@@ -110,8 +121,40 @@ const EditPanel = (props) => {
           customRules,
           setCustomRules
         })}
+        {formPattern === 'advanced' ?
+          (
+            <CodeMirror
+              ref={ (el)=>{ self.codeMirror = el }}
+              value={currentRowItemJson}
+              options={{
+                mode: {name: 'javascript', json: true},
+                matchBrackets: true,
+                lineWrapping: true,
+                theme: 'material',
+                lineNumbers: true
+              }}
+              onBeforeChange={(editor, data, value) => {
+                self.setState({currentRowItemJson: value});
+              }}
+              onChange={(editor, value) => {
+                if ('+input,+delete,undo,*compose'.includes(value.origin)) {
+                  const values = editor.getValue();
+                  let item = null;
+                  try {
+                    item = JSON.parse(values);
+                  } catch (e) {
+                    message.error(`句法错误, ${e}`);
+                  }
+                  if (item) {
+                    const index = self.state.rowItems.findIndex(it=>it.name === item.name);
+                    self.state.rowItems[index] = item;
+                    self.forceUpdate();
+                  }
+                }
+              }}
+            />) : null}
       </Card></div>);
-};
+}
 const componentData = [
   {label: 'A', value: 'A'},
   {label: 'B', value: 'B'},
@@ -184,7 +227,9 @@ export default class OopFormDesigner extends React.PureComponent {
     rowItems: this.props.formDetails.formJson,
     formLayout: this.props.formDetails.formLayout,
     formTitle: this.props.formDetails.formTitle,
-    customRules: false
+    customRules: false,
+    formPattern: 'simple',
+    currentRowItemJson: ''
   }
   componentWillUnmount() {
     this.renderCenterPanel.cancel();
@@ -194,12 +239,19 @@ export default class OopFormDesigner extends React.PureComponent {
   }
   onRowItemClick = (name)=>{
     this.setCustomRules(false);
-    this.state.rowItems.forEach((item)=>{
+    const {rowItems, formPattern} = this.state;
+    rowItems.forEach((item)=>{
       const aItem = item;
       if (aItem.name === name) {
         aItem.active = true;
+        const isAdvanced = formPattern === 'advanced';
+        const jsonItem = {
+          ...aItem
+        }
+        delete jsonItem.active;
         this.setState({
-          currentRowItem: aItem
+          currentRowItem: isAdvanced ? null : aItem,
+          currentRowItemJson: isAdvanced ? jsbeautify(JSON.stringify(jsonItem)) : ''
         })
       } else {
         aItem.active = false;
@@ -454,11 +506,42 @@ export default class OopFormDesigner extends React.PureComponent {
       customRules: flag
     })
   }
+  handleFormPatternChange = (event)=>{
+    console.log(event);
+    const { value: formPattern } = event.target;
+    this.setState({
+      formPattern
+    }, ()=>{
+      if (formPattern === 'advanced') {
+        const {currentRowItem} = this.state;
+        const jsonItem = {
+          ...currentRowItem
+        }
+        delete jsonItem.active;
+        const currentRowItemJson = jsbeautify(JSON.stringify(jsonItem))
+        this.setState({
+          currentRowItem: null,
+          currentRowItemJson
+        });
+        this.renderCodeMirror(this.state.rowItems);
+      } else {
+        const item = JSON.parse(this.state.currentRowItemJson);
+        if (item.name) {
+          this.onRowItemClick(item.name);
+        }
+      }
+    })
+  }
+  renderCodeMirror = (formJson)=>{
+    console.log(formJson)
+  }
   render() {
+    const { formPattern } = this.state;
+    const isAdvanced = formPattern === 'advanced';
     return (
       <div className={styles.container} id="OopFormDesigner">
         <Row gutter={16}>
-          <Col span={6} >
+          <Col span={6} style={ isAdvanced ? {display: 'none'} : null }>
             <AddPanel
               selections={this.state.selections}
               onAddItem={this.onAddItem} />
@@ -476,9 +559,10 @@ export default class OopFormDesigner extends React.PureComponent {
               onFormTitleClick={this.onFormTitleClick}
               self={this} />
           </Col>
-          <Col span={6} >
+          <Col span={isAdvanced ? 12 : 6} >
             <EditPanel
               currentRowItem={this.state.currentRowItem}
+              currentRowItemJson={this.state.currentRowItemJson}
               updateCenterPanel={this.onUpdateCenterPanel}
               onRowItemIconCopy={this.onRowItemIconCopy}
               onRowItemIconDelete={this.onRowItemIconDelete}
@@ -486,6 +570,9 @@ export default class OopFormDesigner extends React.PureComponent {
               onRowItemDrag={this.onEditPanelRowItemDrag}
               customRules={this.state.customRules}
               setCustomRules={this.setCustomRules}
+              onFormPatternChange={this.handleFormPatternChange}
+              formPattern={this.state.formPattern}
+              self={this}
             />
           </Col>
         </Row>

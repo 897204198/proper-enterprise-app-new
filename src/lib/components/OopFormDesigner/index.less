@@ -1,4 +1,6 @@
 @import "~antd/lib/style/themes/default.less";
+@import "~codemirror/lib/codemirror.css";
+@import "~codemirror/theme/material.css";
 
 .container {
   position: relative;
@@ -97,5 +99,10 @@
     height: auto;
     min-height: 50px;
     border: 1px solid #ddd;
+  }
+  :global {
+    .CodeMirror {
+      height: calc(~"100vh - 250px");
+    }
   }
 }
