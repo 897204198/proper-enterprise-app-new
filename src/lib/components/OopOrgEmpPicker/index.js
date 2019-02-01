@@ -72,7 +72,17 @@ export default class OopOrgEmpPicker extends React.PureComponent {
       onCancel,
       multiple = true
     } = this.props
-
+    // const { selectedRowItems } = this.state
+    // const users = user
+    // if (users.length && selectedRowItems.length) {
+    //   users.forEach((item, i) => {
+    //     selectedRowItems.forEach((key, index) => {
+    //       if (item.id === key.id && key.hasOwnProperty('disabled')) {
+    //         users[i].disabled = key.disabled
+    //       }
+    //     })
+    //   });
+    // }
     const columns = [
       {title: '工号', dataIndex: 'account'},
       {title: '姓名', dataIndex: 'name'},
@@ -112,7 +122,7 @@ export default class OopOrgEmpPicker extends React.PureComponent {
           text: placeholder,
           disabled
         }}
-        defaultSelected={ this.state.selectedRowItems}
+        defaultSelected={ this.state.selectedRowItems }
         modalTitle={placeholder}
         onChange={this.handleChange}
         tableCfg={tableCfg}

@@ -261,13 +261,26 @@ export default class OopTable extends PureComponent {
     const { grid: {list, pagination },
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
-      _onSelect, _onSelectAll, multiple = true, ...otherProps } = this.props
+      _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], ...otherProps } = this.props
+    const { selectedRowKeys } = this.state
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
+    const tableData = [...list]
+    if (multiple !== false) {
+      if (tableData.length && selectedDisabled.length) {
+        tableData.forEach((item, i) => {
+          selectedDisabled.forEach((key) => {
+            if (item.id === key.id && ('disabled' in key)) {
+              tableData[i].disabled = key.disabled
+            }
+          })
+        })
+      }
+    }
     let rowSelectionCfg
     if (checkable) {
       rowSelectionCfg = multiple ? {
         onChange: this.rowSelectionChange,
-        selectedRowKeys: this.state.selectedRowKeys,
+        selectedRowKeys,
         getCheckboxProps: record => ({
           disabled: record.disabled,
         }),
@@ -276,7 +289,7 @@ export default class OopTable extends PureComponent {
             this.selectRow(record);
           }
           if (_onSelect) {
-            _onSelect(record, selected, selectedRows, nativeEvent, multiple);
+            _onSelect(record, selected, selectedRows, nativeEvent);
           }
         },
         onSelectAll: (selected, selectedRows, changeRows) => {
@@ -295,7 +308,7 @@ export default class OopTable extends PureComponent {
       } : {
         type: 'radio',
         onChange: this.rowSelectionChange,
-        selectedRowKeys: this.state.selectedRowKeys,
+        selectedRowKeys,
         getCheckboxProps: record => ({
           disabled: record.disabled,
         }),
@@ -327,7 +340,7 @@ export default class OopTable extends PureComponent {
         }
         <Table
           className={this.getTableClassName()}
-          dataSource={list}
+          dataSource={tableData}
           rowKey={record => this.getTableRowKey(record)}
           rowSelection={rowSelectionCfg}
           columns={cols}
