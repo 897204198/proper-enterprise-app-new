@@ -12,7 +12,7 @@ PEA 在项目关系管理上依赖于 `npm`
 ##### 以依赖`@proper/pea-lib`为例
 - 以下所有操作默认你已登录公司npm私服 [如何登录](https://github.com/propersoft-cn/proper-enterprise-app#%E4%BD%BF%E7%94%A8)
 - 运行命令 `npm i pea-cli -g` 全局安装pea-cli脚手架 
-- 运行命令 `pea-cli` 初始化项目目录结构
+- 运行命令 `pea-cli your_project_name` 初始化项目目录结构
 - 修改`package.json`  配置最新的 `@proper/framework`依赖版本   ***#若脚手架自带了请忽略#***
 - 修改`package.json` 配置最新的  `@proper/pea-lib` 的依赖
 
