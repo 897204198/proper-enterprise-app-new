@@ -16,7 +16,7 @@ PEA 在项目关系管理上依赖于 `npm`
 - 修改`package.json`  配置最新的 `@proper/framework`依赖版本   ***#若脚手架自带了请忽略#***
 - 修改`package.json` 配置最新的  `@proper/pea-lib` 的依赖
 
-    -----------------[查看相应依赖的版本](http://nexus.propersoft.cn:8081)-----------------
+    -----------------[查看相应依赖的版本](./LOOKUPVERSION.md)-----------------
 - 运行命令 `npm install` 安装项目依赖
 - 运行命令 `npm start` 启动项目
 - 运行命令 `npm run mock`启动mock服务
