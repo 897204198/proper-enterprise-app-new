@@ -15,6 +15,7 @@ export default class OopTabTableModal extends React.PureComponent {
         data: [],
         title: '',
       },
+      firstTime: true,
       selectedRecord: [...defaultSelected],
     };
   }
@@ -28,8 +29,12 @@ export default class OopTabTableModal extends React.PureComponent {
         data: tableCfg.data,
       }
     }
-    if (nextProps.defaultSelected.length) {
+    // 避免重复赋值
+    if (nextProps.defaultSelected.length && this.state.firstTime) {
       state.selectedRecord = [...nextProps.defaultSelected];
+      this.setState({
+        firstTime: false
+      })
     }
     this.setState({
       ...state
@@ -205,7 +210,7 @@ export default class OopTabTableModal extends React.PureComponent {
       multiple
     } = this.state;
     const selectedRowKeys = selectedRecord.map((item) => { return item.id });
-    const selectedDisabled = selectedRecord.map((item) => { return {id: item.id, disabled: ('disabled' in item) ? item.disabled : false} })
+    const selectedDisabled = selectedRecord.map((item) => { return {id: item.id, disabled: 'disabled' in item ? item.disabled : false} })
     const selectedRowNames = selectedRecord.map((item) => { return item.name }).join(',');
     const tableTitle = tableCfgState.title ? tableCfgState.title : tableCfg.title;
     return (
@@ -236,7 +241,7 @@ export default class OopTabTableModal extends React.PureComponent {
               <div style={{minWidth: 80}}>已选择(<span className={styles.primaryColor}>{this.state.selectedRecord.length}</span>):</div>
               <div style={{lineHeight: 2, minHeight: 28}}>
                 {selectedRecord.map((item) => {
-                  return (('disabled' in item) && item.disabled) || !multiple ? (
+                  return ('disabled' in item && item.disabled) || !multiple ? (
                     <Tag
                       key={item.id}
                       closable={false}
