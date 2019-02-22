@@ -45,12 +45,15 @@ export const formGenerator = (formConfig)=>{
           if (rules.length) {
             _rules = transformRules(rules);
           }
-          const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules})(
-            createComponent(component)
-          );
-          formItem = getFormItem(formItemInner,
-            {...formItemConfig, formItemLayout, rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemSetValue, showSetValueIcon});
-          formItemList.push(formItem);
+          const com = createComponent(component);
+          if (com) {
+            const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules})(
+              com
+            );
+            formItem = getFormItem(formItemInner,
+              {...formItemConfig, formItemLayout, rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemSetValue, showSetValueIcon});
+            formItemList.push(formItem);
+          }
         }
       }
     }

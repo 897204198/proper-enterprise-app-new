@@ -278,7 +278,7 @@ export default (js_source_text, indent_size, indent_character, indent_level)=> {
     //----------------------------------
 
     indent_character = indent_character || ' ';
-    indent_size = indent_size || 4;
+    indent_size = indent_size || 2;
 
     indent_string = '';
     while (indent_size--) {

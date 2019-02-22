@@ -110,7 +110,7 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       break;
     case 'Select':
       component = (
-        <Select style={{ width: '100%' }} {...props} getPopupContainer={ triggerNode=>triggerNode.parentNode }>
+        <Select allowClear={true} style={{ width: '100%' }} {...props} getPopupContainer={ triggerNode=>triggerNode.parentNode }>
           {
             children.map(item=>(<Option key={getUuid(5)} value={item.value}>{item.label}</Option>))
           }
@@ -127,7 +127,7 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       component = <InputNumber {...props} />;
       break;
     case 'DatePicker':
-      component = <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} />;
+      component = <DatePicker placeholder="" format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} />;
       break;
     case 'OopText':
       component = <OopText {...props} />;
@@ -152,8 +152,8 @@ export default (name, label, props, children, rules, isApp)=> {
   const isWeb = !isApp;
   const component = isWeb ? getAntdComponent(name, label, props, children) : getAntdMobileComponent(name, label, props, children, rules);
   if (!component) {
-    console.error(`warning: cannot find component named ${name}`)
-    return
+    console.error(`Error: cannot find component named ${name}`)
+    return null;
   }
   return component;
 }
