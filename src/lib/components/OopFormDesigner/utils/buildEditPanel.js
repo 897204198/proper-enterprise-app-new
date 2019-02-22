@@ -1,6 +1,6 @@
 import React from 'react';
 import { Radio, Popover, Button, message} from 'antd';
-import OopForm from '../../OopForm';
+import OopForm from '@pea/components/OopForm';
 import styles from '../index.less';
 
 const RadioButton = Radio.Button;

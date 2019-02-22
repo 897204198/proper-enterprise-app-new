@@ -6,7 +6,7 @@ import Debounce from 'lodash-decorators/debounce';
 import { inject } from '@framework/common/inject';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { oopToast } from '@framework/common/oopUtils';
-import OopFormDesigner from '../../../components/OopFormDesigner';
+import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 
@@ -341,7 +341,11 @@ export default class Template extends React.PureComponent {
   }
   handleFormDesignerModalSubmit = ()=>{
     const formDetails = this.oopFormDesigner.getFormConfig();
-    if (formDetails.formJson.length) {
+    if (formDetails === undefined) {
+      console.log('有语法错误');
+    } else if (formDetails.formJson && formDetails.formJson.length === 0) {
+      message.warning('请设计表单');
+    } else {
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item)=>{
         if (item.initialValue && typeof item.initialValue === 'object') {
@@ -365,8 +369,6 @@ export default class Template extends React.PureComponent {
           this.onLoad();
         }
       });
-    } else {
-      message.warning('请设计表单')
     }
   }
   handleFormDesignerModalCancel = ()=>{

@@ -72,16 +72,28 @@
   }
   .editPanel {
     :global {
+      .ant-card-body {
+        padding: 24px 0 0;
+        height: calc(~"100vh - 250px");
+        overflow-y: auto;
+      }
       .rowItemWrapper {
         position: relative;
       }
+      .rowItemWrapper.active {
+        display: flex;
+        align-items: center;
+      }
       .ant-form-item {
         margin-bottom: 0;
+        width: 75%;
+        max-width: 330px;
+        padding-right: 16px !important;
       }
       .ant-form-item-action {
-        position: absolute;
-        top: 4px;
-        right: -32px;
+        //position: absolute;
+        //top: 4px;
+        //right: -32px;
       }
       .ant-form-item-action i.anticon {
         font-size: 16px;
@@ -102,7 +114,8 @@
   }
   :global {
     .CodeMirror {
-      height: calc(~"100vh - 250px");
+      height: calc(~"100vh - 250px - 24px");
+      overflow-y: auto;
     }
   }
 }

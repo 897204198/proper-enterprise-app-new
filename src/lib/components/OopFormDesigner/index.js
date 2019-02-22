@@ -5,9 +5,9 @@ import Debounce from 'lodash-decorators/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
 import { getUuid } from '@framework/common/oopUtils';
-import OopForm from '../../components/OopForm';
+import OopForm from '@pea/components/OopForm';
 import buildEditPanel from './utils/buildEditPanel';
-import jsbeautify from './utils/jsbeautify';
+import jsBeautify from './utils/jsbeautify';
 import styles from './index.less';
 
 require('codemirror/lib/codemirror.css');
@@ -111,48 +111,18 @@ const EditPanel = (props) => {
   return (
     <div className={styles.editPanel}>
       <Card title="编辑组件详情" bordered={false} extra={toggleFormPatternButtons}>
-        {buildEditPanel(currentRowItem, {
-          rowItemIconCopy,
-          rowItemIconDelete,
-          rowItemDrag,
-          rowItemSetValue,
-          onPlusClick,
-          updateCenterPanel,
-          customRules,
-          setCustomRules
-        })}
-        {formPattern === 'advanced' ?
-          (
-            <CodeMirror
-              ref={ (el)=>{ self.codeMirror = el }}
-              value={currentRowItemJson}
-              options={{
-                mode: {name: 'javascript', json: true},
-                matchBrackets: true,
-                lineWrapping: true,
-                theme: 'material',
-                lineNumbers: true
-              }}
-              onBeforeChange={(editor, data, value) => {
-                self.setState({currentRowItemJson: value});
-              }}
-              onChange={(editor, value) => {
-                if ('+input,+delete,undo,*compose'.includes(value.origin)) {
-                  const values = editor.getValue();
-                  let item = null;
-                  try {
-                    item = JSON.parse(values);
-                  } catch (e) {
-                    message.error(`句法错误, ${e}`);
-                  }
-                  if (item) {
-                    const index = self.state.rowItems.findIndex(it=>it.name === item.name);
-                    self.state.rowItems[index] = item;
-                    self.forceUpdate();
-                  }
-                }
-              }}
-            />) : null}
+        {
+          self.renderEditPanel(formPattern, currentRowItem, currentRowItemJson, {
+            rowItemIconCopy,
+            rowItemIconDelete,
+            rowItemDrag,
+            rowItemSetValue,
+            onPlusClick,
+            updateCenterPanel,
+            customRules,
+            setCustomRules
+          })
+        }
       </Card></div>);
 }
 const componentData = [
@@ -249,9 +219,11 @@ export default class OopFormDesigner extends React.PureComponent {
           ...aItem
         }
         delete jsonItem.active;
+        delete jsonItem.initialValue;
+
         this.setState({
-          currentRowItem: isAdvanced ? null : aItem,
-          currentRowItemJson: isAdvanced ? jsbeautify(JSON.stringify(jsonItem)) : ''
+          currentRowItem: aItem,
+          currentRowItemJson: isAdvanced ? jsBeautify(JSON.stringify(jsonItem)) : ''
         })
       } else {
         aItem.active = false;
@@ -298,7 +270,7 @@ export default class OopFormDesigner extends React.PureComponent {
       const index = arr.pop();
       children.splice(index, 1);
       console.log(children)
-      this.forceUpdate()
+      this.forceUpdate();
     } else {
       const item = this.state.currentRowItem;
       let index = 0;
@@ -310,7 +282,9 @@ export default class OopFormDesigner extends React.PureComponent {
       this.state.rowItems.splice(index, 1);
       if (item.active) {
         this.state.currentRowItem = null;
+        this.state.currentRowItemJson = null;
       }
+      this.forceUpdate();
     }
   }
   onAddItem = (item)=>{
@@ -442,7 +416,15 @@ export default class OopFormDesigner extends React.PureComponent {
     }
   }
   getFormConfig = ()=>{
-    const {rowItems, formLayout, formTitle} = this.state;
+    const {rowItems, formLayout, formTitle, formPattern} = this.state;
+    const isAdvanced = formPattern === 'advanced';
+    if (isAdvanced) {
+      const value = this.codeMirror.editor.getValue();
+      const result = this.validateItemJson(value);
+      if (result === false) {
+        return;
+      }
+    }
     if (formTitle && formTitle.$$typeof && formTitle.$$typeof.toString() === 'Symbol(react.element)') {
       return message.warning('请保存表单的标题');
     }
@@ -518,12 +500,11 @@ export default class OopFormDesigner extends React.PureComponent {
           ...currentRowItem
         }
         delete jsonItem.active;
-        const currentRowItemJson = jsbeautify(JSON.stringify(jsonItem))
+        delete jsonItem.initialValue;
+        const currentRowItemJson = jsBeautify(JSON.stringify(jsonItem))
         this.setState({
-          currentRowItem: null,
           currentRowItemJson
         });
-        this.renderCodeMirror(this.state.rowItems);
       } else {
         const item = JSON.parse(this.state.currentRowItemJson);
         if (item.name) {
@@ -534,6 +515,55 @@ export default class OopFormDesigner extends React.PureComponent {
   }
   renderCodeMirror = (formJson)=>{
     console.log(formJson)
+  }
+  validateItemJson = (formJson) =>{
+    try {
+      const fn = new Function(`return ${formJson}`); // eslint-disable-line
+      const result = fn();
+      return result;
+    } catch (e) {
+      message.error(`语法错误，${e.message}`);
+      return false;
+    }
+  }
+  renderEditPanel = (formPattern, currentRowItem, currentRowItemJson, config)=>{
+    if (formPattern === 'advanced') {
+      return (
+        <CodeMirror
+          ref={ (el)=>{ this.codeMirror = el }}
+          value={currentRowItemJson}
+          options={{
+            mode: {name: 'javascript', json: true},
+            matchBrackets: true,
+            lineWrapping: true,
+            theme: 'material',
+            lineNumbers: true
+          }}
+          onBeforeChange={(editor, data, value) => {
+            this.setState({currentRowItemJson: value});
+          }}
+          onChange={(editor, value) => {
+            this.handleCodeMirrorChange(editor, value);
+          }}
+        />);
+    }
+    return buildEditPanel(currentRowItem, config);
+  }
+  @Debounce(300)
+  handleCodeMirrorChange(editor, value) {
+    if ('+input,+delete,undo,*compose'.includes(value.origin)) {
+      const values = editor.getValue();
+      const item = this.validateItemJson(values);
+      if (item) {
+        const index = this.state.rowItems.findIndex(it=>it.active === true);
+        const oldItem = this.state.rowItems[index];
+        this.state.rowItems[index] = {
+          ...oldItem,
+          ...item
+        }
+        this.forceUpdate();
+      }
+    }
   }
   render() {
     const { formPattern } = this.state;
