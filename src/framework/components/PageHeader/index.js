@@ -1,6 +1,6 @@
 import React, { PureComponent, createElement } from 'react';
 import PropTypes from 'prop-types';
-import pathToRegexp from 'path-to-regexp';
+// import pathToRegexp from 'path-to-regexp';
 import { Breadcrumb, Tabs } from 'antd';
 import classNames from 'classnames';
 import { getMenuData } from '@framework/common/frameHelper';
@@ -9,15 +9,15 @@ import styles from './index.less';
 
 const { TabPane } = Tabs;
 
-function getBreadcrumb(breadcrumbNameMap, url) {
-  let breadcrumb = {};
-  Object.keys(breadcrumbNameMap).forEach((item) => {
-    if (pathToRegexp(item).test(url)) {
-      breadcrumb = breadcrumbNameMap[item];
-    }
-  });
-  return breadcrumb;
-}
+// function getBreadcrumb(breadcrumbNameMap, url) {
+//   let breadcrumb = {};
+//   Object.keys(breadcrumbNameMap).forEach((item) => {
+//     if (pathToRegexp(item).test(url)) {
+//       breadcrumb = breadcrumbNameMap[item];
+//     }
+//   });
+//   return breadcrumb;
+// }
 
 export default class PageHeader extends PureComponent {
   static contextTypes = {
@@ -56,32 +56,89 @@ export default class PageHeader extends PureComponent {
       </Breadcrumb>
     );
   }
+  // conversionFromLocation = (routerLocation, breadcrumbNameMap) => {
+  //   if (!routerLocation && !breadcrumbNameMap) {
+  //     return null;
+  //   }
+  //   const { linkElement = 'a' } = this.props;
+  //   // Convert the path to an array
+  //   const pathSnippets = routerLocation.pathname.split('/').filter(i => i);
+  //   // Loop data mosaic routing
+  //   const extraBreadcrumbItems = pathSnippets.map((_, index) => {
+  //     const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
+  //     const currentBreadcrumb = getBreadcrumb(breadcrumbNameMap, url);
+  //     const isLinkable = (index !== pathSnippets.length - 1) && currentBreadcrumb.component;
+  //     return currentBreadcrumb.name && !currentBreadcrumb.hideInBreadcrumb ? (
+  //       <Breadcrumb.Item key={url}>
+  //         {createElement(
+  //           isLinkable ? linkElement : 'span',
+  //           { [linkElement === 'a' ? 'href' : 'to']: url },
+  //           currentBreadcrumb.name,
+  //         )}
+  //       </Breadcrumb.Item>
+  //     ) : null;
+  //   });
+  //   // Add crumbs from the first order menu
+  //   const menuData = getMenuData();
+  //   if (menuData.length) {
+  //     const {pathname, search} = routerLocation;
+  //     let path = pathname;
+  //     if (path === '/outerIframe') {
+  //       path = `${path}${search}`;
+  //     }
+  //     const menu = menuData.find((item) => {
+  //       if (item.route === path) {
+  //         return item;
+  //       }
+  //       return null;
+  //     })
+  //     if (menu) {
+  //       const menuParent = menuData.find((item) => {
+  //         if (item.id === menu.parentId) {
+  //           return item
+  //         }
+  //         return null;
+  //       })
+  //       menuParent && extraBreadcrumbItems.unshift(
+  //         <Breadcrumb.Item key="parent">
+  //           {createElement('span', {to: '/' }, menuParent.name)}
+  //         </Breadcrumb.Item>
+  //       );
+  //     }
+  //   }
+  //   // Add home breadcrumbs to your head
+  //   extraBreadcrumbItems.unshift(
+  //     <Breadcrumb.Item key="home">
+  //       {createElement(linkElement, {
+  //       [linkElement === 'a' ? 'href' : 'to']: '/' }, '首页')}
+  //     </Breadcrumb.Item>
+  //   );
+  //   return (
+  //     <Breadcrumb className={styles.breadcrumb}>
+  //       {extraBreadcrumbItems}
+  //     </Breadcrumb>
+  //   );
+  // }
+  /**
+   * 用menuData实现的Breadcrumb
+   * @param routerLocation
+   * @param breadcrumbNameMap
+   * @returns {*}
+   */
   conversionFromLocation = (routerLocation, breadcrumbNameMap) => {
     if (!routerLocation && !breadcrumbNameMap) {
       return null;
     }
+    const extraBreadcrumbItems = [];
     const { linkElement = 'a' } = this.props;
-    // Convert the path to an array
-    const pathSnippets = routerLocation.pathname.split('/').filter(i => i);
-    // Loop data mosaic routing
-    const extraBreadcrumbItems = pathSnippets.map((_, index) => {
-      const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
-      const currentBreadcrumb = getBreadcrumb(breadcrumbNameMap, url);
-      const isLinkable = (index !== pathSnippets.length - 1) && currentBreadcrumb.component;
-      return currentBreadcrumb.name && !currentBreadcrumb.hideInBreadcrumb ? (
-        <Breadcrumb.Item key={url}>
-          {createElement(
-            isLinkable ? linkElement : 'span',
-            { [linkElement === 'a' ? 'href' : 'to']: url },
-            currentBreadcrumb.name,
-          )}
-        </Breadcrumb.Item>
-      ) : null;
-    });
     // Add crumbs from the first order menu
     const menuData = getMenuData();
     if (menuData.length) {
-      const path = routerLocation.pathname;
+      const {pathname, search} = routerLocation;
+      let path = pathname;
+      if (path === '/outerIframe') {
+        path = `${path}${search}`;
+      }
       const menu = menuData.find((item) => {
         if (item.route === path) {
           return item;
@@ -89,20 +146,36 @@ export default class PageHeader extends PureComponent {
         return null;
       })
       if (menu) {
-        const menuParent = menuData.find((item) => {
-          if (item.id === menu.parentId) {
-            return item
-          }
-          return null;
-        })
-        menuParent && extraBreadcrumbItems.unshift(
+        // 最后一级
+        extraBreadcrumbItems.unshift(
           <Breadcrumb.Item key="parent">
-            {createElement('span', {to: '/' }, menuParent.name)}
+            {createElement('span', {to: '/' }, menu.name)}
           </Breadcrumb.Item>
         );
+        let {parentId} = menu;
+        while (parentId) {
+          const menuParent = menuData.find((item) => { // eslint-disable-line
+            if (item.id === parentId) {
+              return item
+            }
+            return null;
+          });
+          if (menuParent) {
+            // 倒数第二级
+            extraBreadcrumbItems.unshift(
+              <Breadcrumb.Item key="parent">
+                {createElement('span', {to: '/' }, menuParent.name)}
+              </Breadcrumb.Item>
+            );
+            const {parentId: pid} = menuParent;
+            parentId = pid;
+          } else {
+            parentId = null;
+          }
+        }
       }
     }
-    // Add home breadcrumbs to your head
+    // 第一级根节点
     extraBreadcrumbItems.unshift(
       <Breadcrumb.Item key="home">
         {createElement(linkElement, {

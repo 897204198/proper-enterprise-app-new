@@ -398,7 +398,7 @@ export default class Role extends PureComponent {
             oopToast(res, '删除成功');
             if (me.oopTable) {
               me.oopTable.clearSelection();
-              me.refresh();
+              me.onLoad();
             }
           }
         });

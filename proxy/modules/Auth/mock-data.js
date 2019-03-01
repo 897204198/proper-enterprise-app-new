@@ -42,7 +42,17 @@ module.exports = {
     {"id":"pep-message","name":"消息配置管理","route":"/message","sequenceNumber":9,"icon":"appstore","description":null,"menuType":{"catalog":"MENU_TYPE","code":"0"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":true,"leaf":false},
     {"id":"pep-message-app","name":"应用配置","route":"/message/client/app","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
     {"id":"pep-message-official","name":"文案配置","route":"/message/client/official","sequenceNumber":0,"icon":"solution","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"pep-message","root":false,"leaf":true},
-  ]},
+      {"id":"f47b081f-5d41-485b-a17f-4fe8a4c36c51","name":"医师档案管理","route":"f47b081f-5d41-485b-a17f-4fe8a4c36c51","sequenceNumber":0,"icon":"folder","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":false,"leaf":true},
+      {"id":"25f7d700-0f51-4320-83f2-8fda8e3ffa33","name":"医师档案字典","route":"/outerIframe?resourceId=8ecd6367-c9fa-451f-9e8c-31b5d6a2c70f","sequenceNumber":0,"icon":"file","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"f47b081f-5d41-485b-a17f-4fe8a4c36c51","root":false,"leaf":true},
+      {"id":"06b3a83c-ec06-48ad-a502-cad936c63255","name":"医师信息管理","route":"/outerIframe?resourceId=2161ca3f-fbbd-4f5f-9bad-7265c532a4e3","sequenceNumber":0,"icon":"file","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"f47b081f-5d41-485b-a17f-4fe8a4c36c51","root":false,"leaf":true},
+
+      {"id":"b4f63873-a59e-4ef6-a7a4-bdbbd238ce03","name":"档案查询和分析","route":"b4f63873-a59e-4ef6-a7a4-bdbbd238ce03","sequenceNumber":0,"icon":"folder","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":null,"root":false,"leaf":true},
+      {"id":"209a0f0d-9767-4def-a062-d538f1425c6b","name":"查询条件管理","route":"/outerIframe?resourceId=7f35b131-3e27-410c-aefe-6ba78a6a2414","sequenceNumber":0,"icon":"file","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"b4f63873-a59e-4ef6-a7a4-bdbbd238ce03","root":false,"leaf":true},
+      {"id":"d5291eee-0bdf-4047-aa03-26bc0887b842","name":"医生信息查询","route":"/outerIframe?resourceId=92d0c2ef-2169-4d55-8319-475c30e6e6a9","sequenceNumber":0,"icon":"file","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"b4f63873-a59e-4ef6-a7a4-bdbbd238ce03","root":false,"leaf":true},
+      {"id":"ejcd","name":"二级菜单","route":"ejcd","sequenceNumber":0,"icon":"folder","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"b4f63873-a59e-4ef6-a7a4-bdbbd238ce03","root":false,"leaf":false},
+      {"id":"sjcd","name":"三级级菜单","route":"/outerIframe?resourceId=d5d25f83-5af7-4117-985c-2587674cb2181","sequenceNumber":0,"icon":"folder","description":null,"menuType":{"catalog":"MENU_TYPE","code":"1"},"enable":true,"identifier":null,"menuCode":null,"parentId":"ejcd","root":false},
+
+    ]},
   "GET:/auth/users": {
     "count":100,
     "data":[

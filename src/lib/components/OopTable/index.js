@@ -258,7 +258,7 @@ export default class OopTable extends PureComponent {
     }
   }
   render() {
-    const { grid: {list, pagination },
+    const { grid: {list = [], pagination },
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
       _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], ...otherProps } = this.props
