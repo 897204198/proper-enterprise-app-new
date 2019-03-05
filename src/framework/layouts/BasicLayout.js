@@ -256,6 +256,7 @@ export default class BasicLayout extends React.PureComponent {
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
             onMainClick={this.handleMainClick}
             onMsgClick={this.handleMsgClick}
+            location={location}
           />
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>

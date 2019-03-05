@@ -229,29 +229,18 @@ export default class PageHeader extends PureComponent {
         to: paths.join('/') || '/',
       }, route.breadcrumbName);
   }
-
-  render() {
+  renderPageHeader = (props)=>{
     const {
-      title, logo, action, content, extraContent,
-      tabList, className, tabActiveKey,
-    } = this.props;
-    const clsString = classNames(styles.pageHeader, className);
-
-    let tabDefaultValue;
-    if (tabActiveKey !== undefined && tabList) {
-      tabDefaultValue = tabList.filter(item => item.default)[0] || tabList[0];
+      title, logo, action, content, extraContent, clsString,
+      // breadcrumb,
+      tabList, activeKeyProps
+    } = props;
+    if (!logo && !title && !action && !content && !extraContent) {
+      return null;
     }
-    const breadcrumb = this.conversionBreadcrumbList();
-    const activeKeyProps = {
-      defaultActiveKey: tabDefaultValue && tabDefaultValue.key,
-    };
-    if (tabActiveKey !== undefined) {
-      activeKeyProps.activeKey = tabActiveKey;
-    }
-
     return (
       <div className={clsString}>
-        {breadcrumb}
+         {/* {breadcrumb} */}
         <div className={styles.detail}>
           {logo && <div className={styles.logo}>{logo}</div>}
           <div className={styles.main}>
@@ -281,5 +270,28 @@ export default class PageHeader extends PureComponent {
         }
       </div>
     );
+  }
+  render() {
+    const {
+      title, logo, action, content, extraContent,
+      tabList, className, tabActiveKey,
+    } = this.props;
+    const clsString = classNames(styles.pageHeader, className);
+
+    let tabDefaultValue;
+    if (tabActiveKey !== undefined && tabList) {
+      tabDefaultValue = tabList.filter(item => item.default)[0] || tabList[0];
+    }
+    const breadcrumb = this.conversionBreadcrumbList();
+    const activeKeyProps = {
+      defaultActiveKey: tabDefaultValue && tabDefaultValue.key,
+    };
+    if (tabActiveKey !== undefined) {
+      activeKeyProps.activeKey = tabActiveKey;
+    }
+
+    return this.renderPageHeader({
+      tabList, activeKeyProps, title, logo, action, content, extraContent, clsString, breadcrumb
+    });
   }
 }

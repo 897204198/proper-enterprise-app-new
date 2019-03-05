@@ -48,6 +48,9 @@ export default class OopTreeTable extends PureComponent {
           <Card bordered={false} title={title}>
             <OopSearch
               {...oopSearch}
+              style={{
+                marginBottom: 16
+              }}
               ref={(el)=>{ el && (this.oopSearch = el && el.getWrappedInstance()) }}
             />
             <OopTable
