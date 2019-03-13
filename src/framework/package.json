@@ -1,6 +1,6 @@
 {
   "name": "@proper/framework",
-  "version": "0.6.2-rc.04",
+  "version": "0.6.2-rc.05",
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.36",
     "antd": "3.11.6",
