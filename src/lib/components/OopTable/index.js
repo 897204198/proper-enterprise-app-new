@@ -31,11 +31,67 @@ const getFilterParams = (filters)=>{
   return filtersParam
 }
 export default class OopTable extends PureComponent {
-  state = {
-    selectedRowKeys: [],
-    selectedRowItems: [],
-    changeRows: [],
-    filters: null
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedRowKeys: [],
+      selectedRowItems: [],
+      changeRows: [],
+      filters: null,
+      sorter: null,
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showQuickJumper: true,
+        showSizeChanger: true,
+      }
+    };
+  }
+  componentWillReceiveProps(props) {
+    const state = {};
+    if (props.dataDefaultSelectedRowKeys) {
+      state.selectedRowKeys = props.dataDefaultSelectedRowKeys
+    }
+    // if (props.grid.pagination && props.grid.pagination.total !== this.state.pagination.total) {
+    //   state.pagination = {
+    //     ...this.state.pagination,
+    //     total: props.grid.pagination.total
+    //   }
+    // }
+    if (props.grid.pagination === undefined) {
+      state.pagination = {
+        current: 1,
+        pageSize: 10,
+      }
+    } else {
+      state.pagination = props.grid.pagination === false ? false : {
+        ...props.grid.pagination,
+      }
+    }
+    if (Object.keys(state).length > 0) {
+      this.setState({
+        ...this.state,
+        ...state
+      })
+    }
+  }
+  onLoad = (param = {}) =>{
+    const {onLoad} = this.props;
+    const {pagination, filters, sorter} = this.state;
+    const filtersParam = getFilterParams(filters)
+    if (onLoad) {
+      onLoad({
+        pagination: {
+          pageNo: pagination.current,
+          pageSize: pagination.pageSize,
+        },
+        ...filtersParam,
+        ...sorter,
+        ...param
+      });
+    }
   }
   rowSelectionChange = (selectedRowKeys, selectedRowItems)=>{
     this.setState({
@@ -45,15 +101,11 @@ export default class OopTable extends PureComponent {
   }
   onChange = (pagination, filters, sorter)=>{
     this.setState({
-      filters
+      filters,
+      pagination,
+      sorter
     }, ()=>{
-      const filtersParam = getFilterParams(this.state.filters)
-      this.props.onLoad && this.props.onLoad({pagination: {
-        pageNo: pagination.current,
-        pageSize: pagination.pageSize,
-        sorter,
-        ...filtersParam
-      }});
+      this.onLoad();
     });
   }
   clearSelection = ()=>{
@@ -69,18 +121,18 @@ export default class OopTable extends PureComponent {
       } else {
         // 1.btn属性配置了displayReg并且displayReg执行返回结果为true 或者 2.没有配置displayReg 渲染按钮
         return ((btn.display && btn.display(this.state.selectedRowKeys)) || !btn.display) &&
-        (
-          <Button
-            key={btn.name}
-            icon={btn.icon}
-            type={btn.type}
-            style={(typeof btn.style === 'function') ? btn.style() : btn.style}
-            onClick={()=>{
-              btn.onClick && btn.onClick(this.state.selectedRowKeys, this.state.selectedRowItems)
-            }}>
-            {btn.text}
-          </Button>
-        )
+          (
+            <Button
+              key={btn.name}
+              icon={btn.icon}
+              type={btn.type}
+              style={(typeof btn.style === 'function') ? btn.style() : btn.style}
+              onClick={()=>{
+                btn.onClick && btn.onClick(this.state.selectedRowKeys, this.state.selectedRowItems)
+              }}>
+              {btn.text}
+            </Button>
+          )
       }
     });
     if (this.props.showExport === true) {
@@ -91,11 +143,11 @@ export default class OopTable extends PureComponent {
         </Menu>
       );
       const exportButton = (
-      <Dropdown overlay={menu} key="export">
-        <Button style={{ paddingLeft: 8, paddingRight: 8, float: 'right'}} icon="export">
-          导出 <Icon type="down" />
-        </Button>
-      </Dropdown>);
+        <Dropdown overlay={menu} key="export">
+          <Button style={{ paddingLeft: 8, paddingRight: 8, float: 'right'}} icon="export">
+            导出 <Icon type="down" />
+          </Button>
+        </Dropdown>);
       btns.push(exportButton)
     }
     return btns
@@ -227,13 +279,6 @@ export default class OopTable extends PureComponent {
     console.log(str);
     downloadContext(str);
   }
-  componentWillReceiveProps(props) {
-    if (props.dataDefaultSelectedRowKeys) {
-      this.setState({
-        selectedRowKeys: props.dataDefaultSelectedRowKeys,
-      })
-    }
-  }
   getTableClassName = ()=>{
     const {onRowSelect, scroll} = this.props;
     const className = [];
@@ -257,14 +302,29 @@ export default class OopTable extends PureComponent {
       return rowKey(record);
     }
   }
+  // 重置分页信息
+  resetPagination = (callback)=>{
+    this.setState({
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showQuickJumper: true,
+        showSizeChanger: true,
+      }
+    }, ()=> {
+      callback && callback();
+    });
+  }
   render() {
-    const { grid: {list, pagination },
+    const { grid: {list = [] },
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
-      _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], ...otherProps } = this.props
-    const { selectedRowKeys } = this.state
+      _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], ...otherProps } = this.props;
+    const { selectedRowKeys, pagination } = this.state;
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
-    const tableData = [...list]
+    const tableData = [...list];
     if (multiple !== false) {
       if (tableData.length && selectedDisabled.length) {
         tableData.forEach((item, i) => {
@@ -276,7 +336,7 @@ export default class OopTable extends PureComponent {
         })
       }
     }
-    let rowSelectionCfg
+    let rowSelectionCfg;
     if (checkable) {
       rowSelectionCfg = multiple ? {
         onChange: this.rowSelectionChange,
@@ -345,14 +405,9 @@ export default class OopTable extends PureComponent {
           rowSelection={rowSelectionCfg}
           columns={cols}
           loading={loading}
-          pagination={
-            pagination ? {...pagination,
-              current: pagination.pageNo, pageSize: pagination.pageSize, total: pagination.count
-            } : (pagination !== false ? {
-                showSizeChanger: true,
-                showQuickJumper: true,
-              } : false)
-          }
+          pagination={{
+            ...pagination
+          }}
           onChange={this.onChange}
           size={size}
           onRow={onRowSelect ? this.rowClick : undefined}

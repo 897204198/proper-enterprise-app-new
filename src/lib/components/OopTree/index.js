@@ -310,7 +310,7 @@ export default class OopTree extends PureComponent {
   getCurrentSelectTreeNode = ()=>{
     return {...this.state.currentSelectTreeNode}
   }
-  generateList = (data, props) => {
+  generateList = (data = [], props) => {
     const key = props.treeKey || 'key';
     const title = props.treeTitle || 'title';
     const parentId = props.treeParentKey || 'parentId';

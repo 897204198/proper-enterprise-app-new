@@ -152,19 +152,24 @@ export default class OopSearch extends React.Component {
   }
   // 根据input框触发最终查询
   handleButtonClick = ()=>{
-    if (this.props.moduleName === undefined) {
+    if (this.props.moduleName === undefined && this.props.onLoad === undefined) {
       return
     }
     // 如果显示下拉 那么不请求
     if (this.state.showDropMenu) {
       return
     }
-    this.load({
-      pagination: {
-        pageNo: 1,
-        pageSize: 10
-      }
-    })
+    const pagination = {
+      pageNo: 1,
+      pageSize: 10
+    }
+    if (this.props.onLoad) {
+      this.props.onLoad({
+        pagination
+      })
+    } else {
+      this.load({pagination})
+    }
   }
   // 下拉框点击事件
   handleOptionSelect = (event, option)=>{
@@ -376,20 +381,22 @@ export default class OopSearch extends React.Component {
   }
   load = (param = {})=>{
     const { dispatch, moduleName } = this.props;
-    const pagination = param.pagination ||
-      { pageNo: 1, pageSize: 10, ...this.props.global.oopSearchGrid.pagination};
-    const params = {
-      ...pagination,
-      ...param,
-      req: JSON.stringify(this.getRepParam()),
-      restPath: JSON.stringify(this.getRestPathParam()),
-      moduleName
-    }
-    dispatch({type: 'global/oopSearchResult', payload: params, callback: (resp)=>{
-      if (this.props.onLoadCallback) {
-        this.props.onLoadCallback(resp)
+    if (moduleName) {
+      const pagination = param.pagination ||
+        { pageNo: 1, pageSize: 10, ...this.props.global.oopSearchGrid.pagination};
+      const params = {
+        ...pagination,
+        ...param,
+        req: JSON.stringify(this.getRepParam()),
+        restPath: JSON.stringify(this.getRestPathParam()),
+        moduleName
       }
-    }});
+      dispatch({type: 'global/oopSearchResult', payload: params, callback: (resp)=>{
+        if (this.props.onLoadCallback) {
+          this.props.onLoadCallback(resp)
+        }
+      }});
+    }
   }
 
   staticRetrievalData(inputValue) {
@@ -475,6 +482,9 @@ export default class OopSearch extends React.Component {
         </li>
       );
     });
+  }
+  getInputValue = () =>{
+    return this.state.inputValue;
   }
   render() {
     const {global: {searchOptions}} = this.props;
