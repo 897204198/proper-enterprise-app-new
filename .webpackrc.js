@@ -35,11 +35,11 @@ const config = {
       "target": "http://localhost:8080",
       "pathRewrite": {"^/api" : "/pep"},
     },
-    "/home": {
-      "target": "http://172.168.1.125:8080",
-      "pathRewrite": {"^/home" : "/home"},
-      "changeOrigin": true
-    },
+    // "/home": {
+    //   "target": "http://172.168.1.125:8080",
+    //   "pathRewrite": {"^/home" : "/home"},
+    //   "changeOrigin": true
+    // },
     // "/pep": {
     //   "target": "http://localhost:8080",
     //   "pathRewrite": {"^/pep/workflow/service" : "/pep/workflow/service"}
