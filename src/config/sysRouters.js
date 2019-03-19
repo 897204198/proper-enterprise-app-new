@@ -46,5 +46,9 @@ const routers = {
   '/webapp/other/reset-pwd': {
     component: ()=>import('@pea/components/WebApp/Other/ResetPwd')
   },
+  '/document': {
+    component: ()=>import('@/document'),
+    name: '组件文档'
+  },
 };
 export default routers

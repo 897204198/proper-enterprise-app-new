@@ -84,12 +84,16 @@ const dynamicWrapper = (component) => {
 };
 
 // 初始化路由数据
-const initRouter = (routerConfig)=>{
+export const initRouter = (routerConfig)=>{
   const router = {};
   for (const path in routerConfig) {
     const com = routerConfig[path]
     if (com && com.component) {
-      router[path] = {component: dynamicWrapper(com.component)};
+      const component = {component: dynamicWrapper(com.component)};
+      if (com.name) {
+        component.name = com.name
+      }
+      router[path] = component;
     }
   }
   return router
