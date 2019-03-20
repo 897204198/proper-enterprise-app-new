@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import {getParamObj} from '@framework/utils/utils';
-import {transServerUrl} from '@/config/config';
+// import {transServerUrl} from '@/config/config';
 // import cookie from 'react-cookies';
 import IframeLoader from './components/IframeLoader';
 
@@ -28,7 +28,10 @@ export default class OuterIframe extends PureComponent {
   render() {
     const { location: { search } } = this.props;
     const { resourceId} = getParamObj(search);
-    const { title = 'title', url = `${transServerUrl}/home/home/proxyUrl?resourceId=${resourceId}&access_token=${this.token}` } = {};
+    const { title = 'title' // ,url = `/home/home/proxyUrl?resourceId=${resourceId}&access_token=${this.token}`
+    } = {};
+    const url = `/iframe.html?resourceId=${resourceId}&access_token=${this.token}`;
+
     return (
       <PageHeaderLayout stampe={(new Date().getTime())}>
           <IframeLoader
