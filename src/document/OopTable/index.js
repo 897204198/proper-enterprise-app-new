@@ -1,8 +1,13 @@
 import React from 'react';
-import {Card, Icon} from 'antd';
+import {Card, Icon, Tooltip} from 'antd';
 import Markdown from 'react-markdown';
 import OopTable from '@pea/components/OopTable';
+import {Controlled as CodeMirror} from 'react-codemirror2';
 import styles from './index.less';
+
+require('codemirror/lib/codemirror.css');
+require('codemirror/theme/neat.css');
+require('codemirror/mode/javascript/javascript.js');
 
 const list = [{
   key: '1',
@@ -63,7 +68,8 @@ const rowButtons = [
 export default class OopTableUIDOC extends React.PureComponent {
   state = {
     markdown: null,
-    showCode: false
+    showCode: false,
+    demoCode: ''
   }
   componentDidMount() {
     const {pathname} = this.props.location;
@@ -78,6 +84,24 @@ export default class OopTableUIDOC extends React.PureComponent {
         markdown: source
       })
     })
+  }
+  renderCode = ()=>{
+    const {demoCode} = this.state;
+    if (demoCode) {
+      return (
+        <CodeMirror
+          ref={ (el)=>{ this.codeMirror = el }}
+          value={demoCode}
+          options={{
+            mode: {name: 'javascript', json: true},
+            matchBrackets: true,
+            lineWrapping: true,
+            theme: 'material',
+            lineNumbers: true
+          }}
+        />);
+    }
+    return null;
   }
   handleShowCode = ()=>{
     this.setState(({showCode})=>({
@@ -101,9 +125,15 @@ export default class OopTableUIDOC extends React.PureComponent {
           <div><p>一个简单的 loading 状态。</p></div>
           <span className={styles.toggleCode} onClick={this.handleShowCode}>
             {
-              showCode ? <Icon type="eye" theme="twoTone" /> : <Icon type="eye-invisible" theme="twoTone" />
+              showCode ? <Tooltip placement="top" title="Hide Code"><Icon type="eye-invisible" theme="twoTone" /></Tooltip>
+                : <Tooltip placement="top" title="Show Code"><Icon type="eye" theme="twoTone" /></Tooltip>
             }
           </span>
+        </div>
+        <div>
+          {
+            showCode ? this.renderCode() : null
+          }
         </div>
       </Card>
     </div>)
