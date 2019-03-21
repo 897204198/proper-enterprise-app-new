@@ -39,6 +39,9 @@ export default class IframeLoader extends PureComponent {
     });
     this.props.onLoad && this.props.onLoad(event);
   }
+  onIframeError = (event)=>{
+    console.log(event)
+  }
   render() {
     const { title } = this.props;
     const { src } = this.state;
@@ -49,6 +52,7 @@ export default class IframeLoader extends PureComponent {
               style
             }
             onLoad={this.onIframeLoad}
+            onError={this.onIframeError}
             title={title}
             src={src} />
         </Spin>);
