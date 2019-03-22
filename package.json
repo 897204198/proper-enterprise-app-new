@@ -53,6 +53,7 @@
     "react-color": "^2.14.1",
     "react-container-query": "^0.9.1",
     "react-cookies": "^0.1.0",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-dnd": "^2.6.0",
     "react-dnd-html5-backend": "^2.6.0",
     "react-document-title": "^2.0.3",

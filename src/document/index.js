@@ -9,7 +9,7 @@ const componentNames = ['OopTable', 'OopTree'];
 const docuRouters = {};
 componentNames.forEach((it)=>{
   docuRouters[`/document/${it.toLowerCase()}`] = {
-    component: ()=>import(`@/document/${it}`),
+    component: ()=>import(`@/document/UI${it}`),
     name: it
   }
 })
@@ -21,13 +21,27 @@ const { SubMenu } = Menu;
 const MenuItemGroup = Menu.ItemGroup;
 
 export default class Document extends React.PureComponent {
+  state = {
+    selectedKeys: []
+  }
+  componentDidMount() {
+  }
+
+  handleClick = (menu)=>{
+    // console.log(menu)
+    this.setState({
+      selectedKeys: [menu.key]
+    })
+  }
   render() {
+    const { selectedKeys } = this.state;
+    console.log(selectedKeys)
     const menu = (
       <Menu
         onClick={this.handleClick}
         style={{ width: 256 }}
-        // defaultSelectedKeys={['1']}
-        // defaultOpenKeys={['sub1']}
+        defaultSelectedKeys={selectedKeys}
+        defaultOpenKeys={['sub1']}
         mode="inline"
       >
         <SubMenu key="sub1" title={<span><Icon type="mail" /><span>Navigation One</span></span>}>
