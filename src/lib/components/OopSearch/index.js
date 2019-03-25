@@ -487,9 +487,9 @@ export default class OopSearch extends React.Component {
     return this.state.inputValue;
   }
   render() {
-    const {global: {searchOptions}} = this.props;
+    const {global: {searchOptions}, style} = this.props;
     return (
-      <div className={styles.globalSearchWrapper}>
+      <div className={styles.globalSearchWrapper} style={style}>
         <div className={styles.searchContainer}>
           <div className={styles.searchTips}>
             <ul>

@@ -51,6 +51,9 @@ export default class OopTreeTable extends PureComponent {
             {oopSearch ? (
               <OopSearch
                 {...oopSearch}
+                style={{
+                  marginBottom: 16
+                }}
                 ref={(el)=>{ el && (this.oopSearch = el && el.getWrappedInstance()) }}
               />) : null}
             <OopTable

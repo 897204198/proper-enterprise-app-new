@@ -22,6 +22,33 @@ const getIcon = (icon) => {
   return icon;
 };
 
+/* 根据pathname + search 查询出 最末级的菜单 menuData
+ * 再记录出从root->leaf 之间的路径path
+ */
+const getMenuOpenPath = (nodePath, menuData = []) =>{
+  let result = [];
+  for (let i = 0; i < menuData.length; i++) {
+    const menu = menuData[i];
+    const ifExist = menu.path === nodePath;
+    if (!ifExist) {
+      if (menu.children) {
+        result.push(menu.path);
+        const r = getMenuOpenPath(nodePath, menu.children);
+        if (r.length) {
+          result = result.concat(r);
+          break;
+        } else {
+          result.pop();
+        }
+      }
+    } else {
+      result.push(menu.path);
+      break;
+    }
+  }
+  return result;
+}
+
 export default class SiderMenu extends PureComponent {
   constructor(props) {
     super(props);
@@ -31,9 +58,11 @@ export default class SiderMenu extends PureComponent {
     };
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.location.pathname !== this.props.location.pathname) {
+    const {location: {pathname: newPathname, search: newSearch}, newMenuData = []} = nextProps;
+    const {location: {pathname, search}, menuData = []} = this.props;
+    if (`${pathname}${search}` !== `${newPathname}${newSearch}` || menuData.length !== newMenuData.length) {
       this.setState({
-        openKeys: this.getDefaultCollapsedSubMenus(nextProps),
+        openKeys: this.getDefaultCollapsedSubMenus(nextProps)
       });
     }
   }
@@ -42,36 +71,46 @@ export default class SiderMenu extends PureComponent {
    * /list/search/articles = > ['list','/list/search']
    * @param  props
    */
+  // getDefaultCollapsedSubMenus(props) {
+  //   const { location: { pathname } } = props || this.props;
+  //   // eg. /list/search/articles = > ['','list','search','articles']
+  //   if (pathname === '/outerIframe') {
+  //     const flatMenus = this.getFlatMenuKeys(this.props.menuData);
+  //     console.log(flatMenus);
+  //   }
+  //   let snippets = pathname.split('/');
+  //   // Delete the end
+  //   // eg.  delete 'articles'
+  //   snippets.pop();
+  //   // Delete the head
+  //   // eg. delete ''
+  //   snippets.shift();
+  //   // eg. After the operation is completed, the array should be ['list','search']
+  //   // eg. Forward the array as ['list','list/search']
+  //   if (this.props.menuData.length === 0) {
+  //     // return snippets when the menuData in fetching
+  //     return ['/'.concat(...snippets)]
+  //   }
+  //   snippets = snippets.map((item, index) => {
+  //     // If the array length > 1
+  //     if (index > 0) {
+  //       // eg. search => ['list','search'].join('/')
+  //       return snippets.slice(0, index + 1).join('/');
+  //     }
+  //     // index 0 to not do anything
+  //     return item;
+  //   });
+  //   snippets = snippets.map((item) => {
+  //     return this.getSelectedMenuKeys(`/${item}`)[0];
+  //   });
+  //   // eg. ['list','list/search']
+  //   return snippets;
+  // }
   getDefaultCollapsedSubMenus(props) {
-    const { location: { pathname } } = props || this.props;
-    // eg. /list/search/articles = > ['','list','search','articles']
-    let snippets = pathname.split('/');
-    // Delete the end
-    // eg.  delete 'articles'
-    snippets.pop();
-    // Delete the head
-    // eg. delete ''
-    snippets.shift();
-    // eg. After the operation is completed, the array should be ['list','search']
-    // eg. Forward the array as ['list','list/search']
-    if (this.props.menuData.length === 0) {
-      // return snippets when the menuData in fetching
-      return ['/'.concat(...snippets)]
-    }
-    snippets = snippets.map((item, index) => {
-      // If the array length > 1
-      if (index > 0) {
-        // eg. search => ['list','search'].join('/')
-        return snippets.slice(0, index + 1).join('/');
-      }
-      // index 0 to not do anything
-      return item;
-    });
-    snippets = snippets.map((item) => {
-      return this.getSelectedMenuKeys(`/${item}`)[0];
-    });
-    // eg. ['list','list/search']
-    return snippets;
+    const { location: { pathname, search }, menuData = [] } = props || this.props;
+    const openMenuParentPath = getMenuOpenPath(`${pathname}${search}`, menuData);
+    console.log(openMenuParentPath);
+    return openMenuParentPath;
   }
   /**
    * Recursively flatten the data
@@ -202,14 +241,16 @@ export default class SiderMenu extends PureComponent {
     });
   }
   render() {
-    const { logo, collapsed, location: { pathname }, onCollapse } = this.props;
+    const { logo, collapsed, location: { pathname, search }, onCollapse } = this.props;
     const { openKeys } = this.state;
     // Don't show popup menu when it is been collapsed
     const menuProps = collapsed ? {} : {
       openKeys,
     };
     // if pathname can't match, use the nearest parent's key
-    let selectedKeys = this.getSelectedMenuKeys(pathname);
+    // if pathname === 'outerIframe' concat search
+    const p = pathname === '/outerIframe' ? `${pathname}${search}` : pathname;
+    let selectedKeys = this.getSelectedMenuKeys(p);
     if (!selectedKeys.length) {
       selectedKeys = [openKeys[openKeys.length - 1]];
     }

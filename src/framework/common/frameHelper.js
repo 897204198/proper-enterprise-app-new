@@ -24,6 +24,11 @@ function getFlatMenuData(menus) {
   });
   return keys;
 }
+// 把带url参数的path去掉 列如：a/b?c=1 => a/b
+function clearPathParam(path) {
+  const index = path.indexOf('?');
+  return index > 0 ? path.substr(0, index) : path;
+}
 // 通过modelUrl解析出modelName
 // 如通过authUser解析出Auth
 function exchangePath2Router(path) {
@@ -35,16 +40,20 @@ function exchangePath2Router(path) {
     paths.shift();
   }
   paths.forEach((item) => {
-    if (item.indexOf('-') > 0) {
+    let it = item;
+    if (item.indexOf('?') > 0) {
+      it = clearPathParam(item);
+    }
+    if (it.indexOf('-') > 0) {
       let arr = '';
-      item.split('-').forEach((sItem) => {
+      it.split('-').forEach((sItem) => {
         arr += firstUpperCase(sItem);
       });
       if (arr) {
         result.push(arr);
       }
     } else {
-      result.push(firstUpperCase(item));
+      result.push(firstUpperCase(it));
     }
   });
   // const routePath = result.join('/');
@@ -132,18 +141,19 @@ export const getRouterDataFromMenuData = (res)=>{
   const menuData = getFlatMenuData(res);
   for (const k of Object.keys(menuData)) {
     const menu = menuData[k];
+    const pathname = clearPathParam(k);
     if (!menu.hideInMenu && (!menu.children || menu.subRoute)) {
       const { moduleName, pathName } = exchangePath2Router(k);
       if (moduleName) {
-        if (pathName) {
-          const originRouter = getRouterData();
-          if (originRouter[`${k}`] === undefined) {
-            routerConfig[`${k}`] = getPageEntryByDependencies(dependencies, moduleName, pathName)
+        const originRouter = getRouterData();
+        if (originRouter[`${pathname}`] === undefined) {
+          if (pathName) {
+            routerConfig[`${pathname}`] = getPageEntryByDependencies(dependencies, moduleName, pathName)
+          } else {
+            routerConfig[`${pathname}`] = {
+              component: dynamicWrapper(()=> import(`@/lib/modules/${moduleName}/pages`))
+            };
           }
-        } else {
-          routerConfig[`${k}`] = {
-            component: dynamicWrapper(()=> import(`@/lib/modules/${moduleName}/pages`))
-          };
         }
       }
     }

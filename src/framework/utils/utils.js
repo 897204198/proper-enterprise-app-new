@@ -207,11 +207,12 @@ function culMenu(oldMenu, newMenu) {
   return newMenuTemp;
 }
 
+
 // 删除children长度为0的字段
-function delInvalidMenu(oldMenu) {
+function delInvalidMenu(oldMenu = []) {
   const temp = oldMenu;
   for (let i = 0; i < temp.length; i++) {
-    if (temp[i].children.length === 0) {
+    if (temp[i].children && temp[i].children.length === 0) {
       delete temp[i].children;
     } else {
       temp[i].children = delInvalidMenu(temp[i].children);

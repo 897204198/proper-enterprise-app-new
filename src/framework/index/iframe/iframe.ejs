@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      iframe {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        border: 0px;
+        margin: 0px;
+        padding: 0px;
+        position: absolute;
+      }
+    </style>
+    <link type="text/css" rel="stylesheet"     href="./style.css"/>
+</head>
+<body>
+<iframe name="frame" id="frame"  src="" scrolling="no"></iframe>
+<script>
+  (function (win) {
+    var ifr = win.document.getElementById('frame');
+    var search = win.document.location.search;
+    ifr.src = '/home/home/proxyUrl' + search;
+    ifr.onload = function (e) {
+      win.top.Dialog = win.Dialog
+    }
+    ifr.onerror = function (e) {
+      console.log(e)
+    }
+  })(window);
+</script>
+<script src="/file/jquery.js"></script>
+<script src="/file/language/cn.js"></script>
+<script src="/file/dialog.js"></script>
+<script src="/file/main.js"></script>
+</body>
+</html>
