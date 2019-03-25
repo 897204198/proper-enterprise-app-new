@@ -18,12 +18,14 @@ export default class OopTreeTable extends PureComponent {
       }
     }
     this.oopTable.clearSelection();
-    this.oopSearch.clearSearchCondition(()=>{
-      this.onLoad({
-        pagination: {
-          pageNo: 1,
-          pageSize: 10
-        }
+    this.oopTable.resetPagination(()=>{
+      this.oopSearch.clearSearchCondition(()=>{
+        this.onLoad({
+          pagination: {
+            pageNo: 1,
+            pageSize: 10
+          }
+        });
       });
     });
   }
@@ -46,13 +48,14 @@ export default class OopTreeTable extends PureComponent {
       <Row gutter={16} className={styles.OopTreeTable}>
         <Col span={18} push={6}>
           <Card bordered={false} title={title}>
-            <OopSearch
-              {...oopSearch}
-              style={{
-                marginBottom: 16
-              }}
-              ref={(el)=>{ el && (this.oopSearch = el && el.getWrappedInstance()) }}
-            />
+            {oopSearch ? (
+              <OopSearch
+                {...oopSearch}
+                style={{
+                  marginBottom: 16
+                }}
+                ref={(el)=>{ el && (this.oopSearch = el && el.getWrappedInstance()) }}
+              />) : null}
             <OopTable
               grid={grid}
               columns={columns}

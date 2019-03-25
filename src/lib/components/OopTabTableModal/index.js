@@ -264,7 +264,7 @@ export default class OopTabTableModal extends React.PureComponent {
                 columns: tableCfg.columns,
                 dataDefaultSelectedRowKeys: selectedRowKeys,
                 selectedDisabled,
-                grid: {list: tableCfg.data},
+                grid: {list: tableCfgState.data},
                 gridLoading: tableCfg.loading,
                 onLoad: f=>f,
                 oopSearch: {

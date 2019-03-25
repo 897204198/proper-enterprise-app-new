@@ -26,7 +26,7 @@ export default {
         pageSize: 10,
         showSizeChanger: true,
         showQuickJumper: true,
-        count: 0
+        total: 0
       }
     },
     size: getWindowSize()
@@ -132,7 +132,7 @@ export default {
               ...pagination,
               pageNo: pagination.pageNo,
               pageSize: pagination.pageSize,
-              count: result.count || 0,
+              total: result.count || 0,
             }
           }
         }
@@ -145,7 +145,7 @@ export default {
               ...pagination,
               pageNo: pagination.pageNo,
               pageSize: pagination.pageSize,
-              count: 0,
+              total: 0,
             }
           }
         }
@@ -161,7 +161,7 @@ export default {
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            count: 0
+            total: 0
           }
         },
       }
