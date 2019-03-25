@@ -43,7 +43,7 @@ export default class IframeLoader extends PureComponent {
     console.log(event)
   }
   render() {
-    const { title } = this.props;
+    const { title, name } = this.props;
     const { src } = this.state;
     return (
         <Spin spinning={this.state.loading}>
@@ -51,6 +51,7 @@ export default class IframeLoader extends PureComponent {
             style={
               style
             }
+            name={name}
             onLoad={this.onIframeLoad}
             onError={this.onIframeError}
             title={title}

@@ -1,4 +1,4 @@
-import {dependencies, devMode, workflowServerUrl} from './src/config/config';
+import {dependencies, devMode, workflowServerUrl, proxy} from './src/config/config';
 
 const config = {
   'entry': {
@@ -35,15 +35,7 @@ const config = {
       "target": "http://localhost:8080",
       "pathRewrite": {"^/api" : "/pep"},
     },
-    "/home": {
-      "target": "http://172.168.1.180:8080",
-      "pathRewrite": {"^/home" : "/home"},
-      "changeOrigin": true
-    },
-    // "/pep": {
-    //   "target": "http://localhost:8080",
-    //   "pathRewrite": {"^/pep/workflow/service" : "/pep/workflow/service"}
-    // }
+    ... proxy
   }
 }
 
