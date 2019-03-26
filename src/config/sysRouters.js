@@ -35,7 +35,7 @@ const routers = {
     component: ()=>import('@pea/components/WebApp/Workflow/WorkflowMainPop')
   },
   '/main': {
-    component: ()=>import('@/document')
+    component: ()=>import('@framework/modules/Base/pages/NewMain')
   },
   '/personal-center': {
     component: ()=>import('@framework/modules/Base/pages/PersonalCenter')
