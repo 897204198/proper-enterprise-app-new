@@ -50,5 +50,8 @@ const routers = {
     component: ()=>import('@/document'),
     name: '组件文档'
   },
+  '/outerIframe': {
+    component: ()=>import('@framework/modules/Base/pages/OuterIframe')
+  },
 };
 export default routers

@@ -1,4 +1,4 @@
-import { dependencies } from './src/config/config';
+import { dependencies, htmlWebpackPlugin } from './src/config/config';
 import { generateAlias } from './.generateAlias';
 
 /**
@@ -7,6 +7,7 @@ import { generateAlias } from './.generateAlias';
  * @param webpackConfig
  */
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 export default (webpackConfig) => {
   return getWebpackConfig(webpackConfig, dependencies);
@@ -69,6 +70,11 @@ function getWebpackConfig(webpackConfig, des = []) {
   }
   // 输出alias配置到webpackAlias.txt
   generateAlias(webpackConfig)
+  // 处理 htmlWebpackPlugin
+  if (htmlWebpackPlugin) {
+    const iframePlugin = new HtmlWebpackPlugin(htmlWebpackPlugin)
+    webpackConfig.plugins.push(iframePlugin)
+  }
   return webpackConfig;
 }
 

@@ -189,6 +189,14 @@ export default {
           dispatch({type: 'resize'})
         }, 300)
       }
+      // history.listen((location) => {
+      //   console.log('location is: %o', location);
+      //   console.log('重定向接收参数：%o', location.state)
+      //   dispatch({
+      //     type: 'query',
+      //     payload: location.state,
+      //   })
+      // });
     },
   },
 };
