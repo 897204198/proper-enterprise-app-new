@@ -15,9 +15,6 @@ export default class OopTreeUIDOC extends React.PureComponent {
   handleTreeListAdd = () => {
     console.log('handleTreeListAdd');
   }
-  treeListDelete = () => {
-    console.log('treeListDelete');
-  }
   rightClick = () => {
     console.log('rightClick');
   }
@@ -33,21 +30,6 @@ export default class OopTreeUIDOC extends React.PureComponent {
         path: '/workflow',
         route: '/workflow',
         title: '流程设置',
-        menuType: {
-          catalog: 'MENU_TYPE',
-          code: '0'
-        }
-      },
-      {
-        enable: false,
-        icon: 'lock',
-        id: 'pep-auth',
-        key: 'pep-auth',
-        name: '权限设置',
-        parentId: null,
-        path: '/auth',
-        route: '/auth',
-        title: '权限设置',
         menuType: {
           catalog: 'MENU_TYPE',
           code: '0'
@@ -77,15 +59,6 @@ export default class OopTreeUIDOC extends React.PureComponent {
         onClick: ()=>{
           this.handleTreeListAdd()
         }
-      },
-      {
-        confirm: '确认删除这条信息吗？',
-        icon: 'delete',
-        text: '删除',
-        name: 'remove',
-        onClick: (record) => {
-          this.treeListDelete(record)
-        }
       }
     ];
     const OnRightClick = {
@@ -96,7 +69,6 @@ export default class OopTreeUIDOC extends React.PureComponent {
     }
     const component = (
       <OopTree
-        styles={{width: '240px'}}
         {...tree}
         size="small"
         onTreeNodeSelect={this.handleTableTreeNodeSelect}
@@ -104,7 +76,7 @@ export default class OopTreeUIDOC extends React.PureComponent {
       />
     )
     const option = [
-      {component, fileName: 'demo.md', title: '基本用法', desc: 'OopTree用法', width: '240px'},
+      {component, fileName: 'demo.md', title: '基本用法', desc: 'OopTree用法'},
     ]
     return (<UIDocument name="OopTree" option={option} />)
   }

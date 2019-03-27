@@ -19,7 +19,7 @@ export default class UIDocument extends React.PureComponent {
         <Card title="代码演示">
           {
             option.map(it=>(
-              <UIDocDemoCode key={it.fileName} name={name} fileName={it.fileName} component={it.component} title={it.title} desc={it.desc} />
+              <UIDocDemoCode key={it.fileName} name={name} fileName={it.fileName} component={it.component} title={it.title} desc={it.desc} width={it.width} />
             ))
           }
         </Card>
