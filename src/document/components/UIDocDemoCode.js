@@ -67,14 +67,16 @@ export default class UIDocDemoCode extends React.PureComponent {
     }))
   }
   render() {
-    const {title, desc, component = Fragment} = this.props;
+    const {title, desc, component = Fragment, width = '100%'} = this.props;
     const {showCode, collapse} = this.state;
     return (
       <div className={styles.container}>
         { collapse ? <div style={{borderTop: '1px dashed #ddd'}} /> :
           (
             <div className={styles.wrapper}>
-              {component}
+              <div className={styles.componentwrapper} style={{width}}>
+                {component}
+              </div>
               <div className={styles.tools}>
                 <span className={styles.title}>{title}</span>
                 <div><p>{desc}</p></div>
