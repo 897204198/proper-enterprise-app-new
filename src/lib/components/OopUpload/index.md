@@ -21,4 +21,7 @@ Components | Data Entry | OopUpload | 上传图片 |
 | type | 支持上传文件的类型 | string[] (例如：['.jpg','.png','.jpeg']) | - |
 | size | 限制上传图片的大小 | string | - |
 | maxFiles | 上传文件的个数 | string | -1 |
+| wrapperStyles | 容器样式 | object | - |
+| dragable | 可拖拽上传 | boolean | false |
+| hideMessage | 隐藏上传结果全局提示 | boolean | false |
 其他属性详见[upload](https://ant.design/components/upload-cn/)
