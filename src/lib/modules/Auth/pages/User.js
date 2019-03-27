@@ -492,13 +492,19 @@ export default class User extends React.PureComponent {
       }
     });
   }
-  // 查询方法 加载所有数据
+  // 查询方法 加载所有数据 ENABLE/DISABLE
   onLoad = (param = {})=> {
-    const { pagination } = param;
+    const { pagination, enable } = param;
+    let userEnable = 'ALL';
+    if (enable === 'true') {
+      userEnable = 'ENABLE'
+    } else if (enable === 'false') {
+      userEnable = 'DISABLE'
+    }
     const params = {
       pagination,
       ...param,
-      userEnable: 'ALL'
+      userEnable
     }
     // console.log(this)
     this.oopSearch.load(params)
@@ -647,7 +653,12 @@ export default class User extends React.PureComponent {
               <Badge status="processing" text="已启用" /> :
               <Badge status="default" text={<span style={{color: '#aaa'}}>已停用</span>} />}
           </Fragment>
-        )
+        ),
+        filters: [
+          { text: '停用', value: false },
+          { text: '启用', value: true }
+        ],
+        filterMultiple: false,
       }
     ]
     const userRolesColumns = [
@@ -671,7 +682,7 @@ export default class User extends React.PureComponent {
           <Fragment>
             {text === true ? <Badge status="processing" text="已启用" /> : <Badge status="default" text="已停用" />}
           </Fragment>
-        )
+        ),
       },
     ]
     const topButtons = [

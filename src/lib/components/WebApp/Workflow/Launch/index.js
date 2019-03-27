@@ -59,7 +59,7 @@ export default class Launch extends React.PureComponent {
                 this.context.setHeader({
                   title: `${name}历史记录`
                 })
-                this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
+                this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}&delta=-2`));
               }
             },
           });

@@ -5,7 +5,7 @@ const {fetchById, update, save, deleteById, fetchByEqual} = formTemplateService;
 
 export async function queryFormTemplate() {
   return formTemplateService.fetch((query)=>{
-    query.addAscending('CT').addAscending('name');
+    query.addDescending('CT');
   })
 }
 export async function queryTemplateById(param) {

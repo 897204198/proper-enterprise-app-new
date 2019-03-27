@@ -109,7 +109,7 @@ export default class SiderMenu extends PureComponent {
   getDefaultCollapsedSubMenus(props) {
     const { location: { pathname, search }, menuData = [] } = props || this.props;
     const openMenuParentPath = getMenuOpenPath(`${pathname}${search}`, menuData);
-    console.log(openMenuParentPath);
+    // console.log(openMenuParentPath);
     return openMenuParentPath;
   }
   /**
