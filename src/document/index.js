@@ -5,7 +5,7 @@ import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { Route, Switch } from 'dva/router';
 import styles from './index.less';
 
-const componentNames = ['OopTable', 'OopSearch', 'OopTree', 'OopTreeTable', 'OopForm', 'OopUpload', 'OopOrgEmpPicker'];
+const componentNames = ['OopTable', 'OopSearch', 'OopTree', 'OopTreeTable', 'OopForm', 'OopUpload', 'OopOrgEmpPicker', 'OopModal'];
 const docuRouters = {};
 componentNames.forEach((it)=>{
   docuRouters[`/document/${it.toLowerCase()}`] = {
