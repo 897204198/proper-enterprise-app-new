@@ -5,7 +5,7 @@ import UIDocument from '../components/UIDocument';
 
 const dateFormat = 'YYYY-MM-DD'
 
-export default class OopFormUIDOC extends React.Component {
+export default class App extends React.Component {
   formJson = [
     {
       label: '上传报销单',
@@ -43,33 +43,6 @@ export default class OopFormUIDOC extends React.Component {
         required: true,
         message: '请选择账单日'
       }],
-    },
-    {
-      label: '报销人',
-      key: 'OopSystemCurrent',
-      component: {
-        name: 'OopSystemCurrent',
-        props: {
-          url: '/auth/current/user',
-          showPropName: 'name',
-          code: 'currentLoginUser'
-        }
-      },
-      name: 'name'
-    },
-    {
-      label: '部门',
-      key: 'OopSystemCurrent',
-      component: {
-        name: 'OopSystemCurrent',
-        props: {
-          url: '/hr/organization/current',
-          showPropName: 'name',
-          code: 'currentDept',
-          editable: false
-        }
-      },
-      name: 'organization'
     },
     {
       label: '申请时间',
