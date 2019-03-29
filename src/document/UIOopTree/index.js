@@ -55,7 +55,6 @@ export default class OopTreeUIDOC extends React.PureComponent {
       }
     ]
     const tree = {
-      title: '菜单列表',
       treeLoading: false,
       defaultSelectedKeys: ['-1'],
       defaultExpandedKeys: ['-1'],
