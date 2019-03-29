@@ -255,7 +255,7 @@ export default class OopTabTableModal extends React.PureComponent {
                     }}>{item.name}</Tag>
                   )
                 })}
-                {selectedRecord.length ? (<Tag onClick={this.clearAll}>清空选择</Tag>) : null}
+                {selectedRecord.length ? (<Tag color="red" onClick={this.clearAll}>清空选择</Tag>) : null}
               </div>
             </div>
             <OopTreeTable
