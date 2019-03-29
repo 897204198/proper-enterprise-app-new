@@ -1,8 +1,7 @@
 import React from 'react';
 import OopTree from '@pea/components/OopTree';
-import UIDocument from '../components/UIDocument';
 
-export default class OopTreeUIDOC extends React.PureComponent {
+export default class APP extends React.PureComponent {
   state = {
 
   }
@@ -67,7 +66,7 @@ export default class OopTreeUIDOC extends React.PureComponent {
         this.rightClick(data)
       },
     }
-    const component = (
+    return (
       <OopTree
         {...tree}
         size="small"
@@ -75,9 +74,5 @@ export default class OopTreeUIDOC extends React.PureComponent {
         onRightClickConfig = {OnRightClick}
       />
     )
-    const option = [
-      {component, fileName: 'demo.md', title: '基本用法', desc: 'OopTree用法'},
-    ]
-    return (<UIDocument name="OopTree" option={option} />)
   }
 }

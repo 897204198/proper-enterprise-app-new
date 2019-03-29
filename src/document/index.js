@@ -15,7 +15,6 @@ componentNames.forEach((it)=>{
 })
 const routers = initRouter(docuRouters);
 addRoutersData(routers);
-console.log(routers)
 
 const { SubMenu } = Menu;
 const MenuItemGroup = Menu.ItemGroup;
