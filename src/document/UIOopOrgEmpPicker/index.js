@@ -26,6 +26,6 @@ export default class App extends React.Component {
       {component, fileName: 'demo.md', title: '基本用法', desc: 'OopOrgEmpPicker多选(默认)'},
       {component: component2, fileName: 'demo2.md', title: '基本用法', desc: 'OopOrgEmpPicker单选'},
     ]
-    return (<UIDocument name="OopUpload" option={option} />)
+    return (<UIDocument name="OopOrgEmpPicker" option={option} />)
   }
 }

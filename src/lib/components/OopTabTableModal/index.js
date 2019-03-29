@@ -241,7 +241,7 @@ export default class OopTabTableModal extends React.PureComponent {
               <div style={{minWidth: 80}}>已选择(<span className={styles.primaryColor}>{this.state.selectedRecord.length}</span>):</div>
               <div style={{lineHeight: 2, minHeight: 28}}>
                 {selectedRecord.map((item) => {
-                  return ('disabled' in item && item.disabled) || !multiple ? (
+                  return ('disabled' in item && item.disabled) ? (
                     <Tag
                       key={item.id}
                       closable={false}
@@ -255,7 +255,7 @@ export default class OopTabTableModal extends React.PureComponent {
                     }}>{item.name}</Tag>
                   )
                 })}
-                {selectedRecord.length && multiple ? (<Tag onClick={this.clearAll}>清空选择</Tag>) : null}
+                {selectedRecord.length ? (<Tag color="red" onClick={this.clearAll}>清空选择</Tag>) : null}
               </div>
             </div>
             <OopTreeTable
