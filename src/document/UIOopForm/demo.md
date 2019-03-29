@@ -5,7 +5,7 @@ import UIDocument from '../components/UIDocument';
 
 const dateFormat = 'YYYY-MM-DD'
 
-export default class OopFormUIDOC extends React.Component {
+export default class App extends React.Component {
   formJson = [
     {
       label: '上传报销单',
