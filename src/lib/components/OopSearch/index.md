@@ -32,14 +32,13 @@ Components | Data Entry | OopSearch | 多功能搜索
 | onLoad | 配置自定义的接口调用 | () => void | - |
 | extra | 对搜索组件的扩展 | string\|ReactNode | - |
 
-##### OopSearch.onInputChage
+##### OopSearch.onInputChange
 
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | inputValue | 输入框中输入的值 | string | - |
 | filter | 组件内置的过滤方法```filterTableList``` |  (searchValue: any, tableList: any, columns: any) => any | - |
 | columns | 自定义的字段配置 | object | - |
-| extra | 对搜索组件的扩展 | string\|ReactNode | - |
 
 其余属性与[Input.Search](https://ant.design/components/input-cn/#Input.Search)   一致。
 
