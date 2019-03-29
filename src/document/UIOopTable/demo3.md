@@ -18,78 +18,82 @@ import OopTable from '@pea/components/OopTable';
     ];
 
 export default class App extends React.Component {
-  componentDidMount() {
-    this.onLoad()
-  }
-  onLoad = (param = {}) => {
-    this.oopSearch.load(param);
+  constructor(props) {
+    super(props);
+    this.state = {
+      list: gridList,
+      filterList: gridList,
+    }
   }
   render() {
-      const { global: { oopSearchGrid } } = this.props;
-      const columns = [
+    const { global: { oopSearchGrid } } = this.props;
+    const { filterList, list } = this.state;
+    const filterSearch = (inputValue, filter) => {
+        this.setState({
+            filterList: inputValue ? filter(list, ['username', 'phone', 'email']) : list
+        })
+    }
+    const columns = [
         {
-          title: '姓名',
-          dataIndex: 'username',
-          key: 'username',
+        title: '姓名',
+        dataIndex: 'username',
+        key: 'username',
         }, {
-          title: '邮箱',
-          dataIndex: 'email',
-          key: 'email',
+        title: '邮箱',
+        dataIndex: 'email',
+        key: 'email',
         }, {
-          title: '电话',
-          dataIndex: 'phone',
-          key: 'phone',
+        title: '电话',
+        dataIndex: 'phone',
+        key: 'phone',
         }
-      ];
-      const topButtons = [
+    ];
+    const topButtons = [
         {
-          text: '新建',
-          name: 'create',
-          type: 'primary',
-          icon: 'plus',
-          onClick: ()=>{ console.log('do your create option here'); }
+        text: '新建',
+        name: 'create',
+        type: 'primary',
+        icon: 'plus',
+        onClick: ()=>{ console.log('do your create option here'); }
         },
         {
-          text: '删除',
-          name: 'batchDelete',
-          icon: 'delete',
-          display: items=>(items.length > 0),
-          onClick: (items)=>{ console.log('do your batch remove option here', items); }
+        text: '删除',
+        name: 'batchDelete',
+        icon: 'delete',
+        display: items=>(items.length > 0),
+        onClick: (items)=>{ console.log('do your batch remove option here', items); }
         },
-      ];
-      const rowButtons = [
+    ];
+    const rowButtons = [
         {
-          text: '编辑',
-          name: 'edit',
-          icon: 'edit',
-          onClick: (record)=>{ console.log('do your edit option here', record) },
+        text: '编辑',
+        name: 'edit',
+        icon: 'edit',
+        onClick: (record)=>{ console.log('do your edit option here', record) },
         },
         {
-          text: '删除',
-          name: 'delete',
-          icon: 'delete',
-          confirm: '是否要删除此条信息',
-          onClick: (record)=>{ console.log('do your remove option here', record) },
+        text: '删除',
+        name: 'delete',
+        icon: 'delete',
+        confirm: '是否要删除此条信息',
+        onClick: (record)=>{ console.log('do your remove option here', record) },
         },
-      ];
+    ];
     return (
-      <div>
-          <OopSearch
-              placeholder="请输入"
-              enterButtonText="搜索"
-              moduleName="authusers"
-              ref={(el)=>{ this.oopSearch = el && el.getWrappedInstance() }}
+        <div>
+            <OopSearch
+                placeholder="请输入"
+                enterButtonText="搜索"
+                onInputChange={filterSearch}
+                ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
             />
             <OopTable
-              grid={{...oopSearchGrid,
-                list: oopSearchGrid.list.map(item=>({...item, disabled: item.superuser === true}))}}
-              columns={columns}
-              onLoad={this.onLoad}
-              topButtons={topButtons}
-              rowButtons={rowButtons}
-              ref={(el)=>{ this.oopTable = el }}
+                grid={{list: filterList.map(item=>({...item, disabled: item.superuser === true})) }}
+                columns={columns}
+                topButtons={topButtons}
+                rowButtons={rowButtons}
             />
-      </div>
+        </div>
     );
   }
 }

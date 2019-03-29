@@ -1,32 +1,40 @@
 import React from 'react';
+import {connect} from 'dva';
+import {inject} from '@framework/common/inject';
 import OopTable from '@pea/components/OopTable';
+import OopSearch from '@pea/components/OopSearch';
 import UIDocument from '../components/UIDocument';
 
 
-const list = [{
-  key: '1',
-  name: '胡彦斌',
-  age: 32,
-  address: '西湖区湖底公园1号'
-}, {
-  key: '2',
-  name: '胡彦祖',
-  age: 42,
-  address: '西湖区湖底公园1号'
-}];
-const columns = [{
-  title: '姓名',
-  dataIndex: 'name',
-  key: 'name',
-}, {
-  title: '年龄',
-  dataIndex: 'age',
-  key: 'age',
-}, {
-  title: '住址',
-  dataIndex: 'address',
-  key: 'address',
-}];
+const gridList = [
+  {id: '1', username: '此条不可以选择，已开启disable属性', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: true},
+  {id: '2', username: 'shasha', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '3', username: 'haha', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '4', username: 'wawa', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '5', username: 'guagua', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '6', username: 'lala', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '7', username: 'niuniu', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '8', username: 'jiujiu', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '9', username: 'leilei', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '10', username: 'hahahah', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '11', username: '123123', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+  {id: '12', username: '123123123', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false}
+];
+const columns = [
+  {
+    title: '姓名',
+    dataIndex: 'username',
+    key: 'username',
+  }, {
+    title: '邮箱',
+    dataIndex: 'email',
+    key: 'email',
+  }, {
+    title: '电话',
+    dataIndex: 'phone',
+    key: 'phone',
+  }
+];
 const topButtons = [
   {
     text: '新建',
@@ -59,32 +67,82 @@ const rowButtons = [
   },
 ];
 
+@inject(['authUser', 'global'])
+@connect(({authUser, global, loading}) => ({
+  authUser,
+  global,
+  loading: loading.models.authUser,
+  gridLoading: loading.effects['global/oopSearchResult']
+}))
 export default class OopTableUIDOC extends React.PureComponent {
-  state = {
-    // markdown: null,
+  constructor(props) {
+    super(props);
+    this.state = {
+      list: gridList,
+      filterList: gridList,
+    }
   }
   componentDidMount() {
-
+    this.onLoad()
+  }
+  onLoad = (param = {}) => {
+    this.oopSearch2.load(param);
   }
   render() {
+    const { filterList, list } = this.state;
+    const { global: { oopSearchGrid } } = this.props;
+    const filterSearch = (inputValue, filter) => {
+      this.setState({
+        filterList: inputValue ? filter(list, ['username', 'phone', 'email']) : list
+      })
+    }
     const component = (
       <OopTable
-        grid={{list}}
         columns={columns}
+        grid={{ list: list.map(item=>({...item, disabled: item.superuser === true})) }}
         topButtons={topButtons}
         rowButtons={rowButtons}
       />
     )
     const component2 = (
-      <OopTable
-        grid={{list}}
-        columns={columns}
-        topButtons={topButtons}
-      />
+      <div>
+          <OopSearch
+              placeholder="请输入"
+              enterButtonText="搜索"
+              moduleName="authusers"
+              ref={(el2)=>{ this.oopSearch2 = el2 && el2.getWrappedInstance() }}
+            />
+            <OopTable
+              grid={{...oopSearchGrid,
+                list: oopSearchGrid.list.map(item=>({...item, disabled: item.superuser === true}))}}
+              columns={columns}
+              onLoad={this.onLoad}
+              topButtons={topButtons}
+              rowButtons={rowButtons}
+              ref={(el2)=>{ this.oopTable2 = el2 }}
+            />
+      </div>
+    )
+    const component3 = (
+      <div>
+        <OopSearch
+            placeholder="请输入"
+            enterButtonText="搜索"
+            onInputChange={filterSearch}
+            ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
+          />
+          <OopTable
+            grid={{list: filterList.map(item=>({...item, disabled: item.superuser === true})) }}
+            columns={columns}
+            topButtons={topButtons}
+            rowButtons={rowButtons}
+          />
+      </div>
     )
     const option = [
       {component, fileName: 'demo.md', title: '基本用法', desc: '一个简单的OopTable用法'},
-      {component: component2, fileName: 'demo2.md', title: '高级用法', desc: '一个高级的OopTable用法'},
+      {component: component2, fileName: 'demo2.md', title: '基本用法', desc: '一个简单的OopTable的后台分页用法'},
+      {component: component3, fileName: 'demo3.md', title: '高级用法', desc: '一个高级的OopTable静态搜索用法'},
     ]
     return (<UIDocument name="OopTable" option={option} />)
   }
