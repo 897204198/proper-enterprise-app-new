@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button} from 'antd';
+import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button, Switch} from 'antd';
 import {List, TextareaItem, Picker, DatePicker as DatePickerM, InputItem, Button as ButtonM} from 'antd-mobile';
 import zhCN2 from 'antd-mobile/lib/date-picker/locale/zh_CN';
 import { getUuid } from '@framework/common/oopUtils';
@@ -91,6 +91,9 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
     case 'OopOrgEmpPicker':
       component = <OopOrgEmpPicker {...props} />
       break;
+    case 'Switch':
+      component = <Switch {...props} />
+      break;
     default: null
   }
   return component;
@@ -143,6 +146,9 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       break;
     case 'OopOrgEmpPicker':
       component = <OopOrgEmpPicker {...props} />
+      break;
+    case 'Switch':
+      component = <Switch {...props} />
       break;
     default: null
   }

@@ -15,10 +15,10 @@ Components | Data Display | OopTable | 表格列表|
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | actionColumn | 可以配置组件内置【操作】列的column属性，需注意无论如何配置title，width，render这三个属性会被组件内部重写 | object[] | - |
-| checkable | 是否显示多选或单选框 | boolean | true | - |
+| checkable | 是否显示多选或单选框 | boolean | true |
 | dataDefaultSelectedRowKeys | 已经选中的多选框 | object[] | - |
 | grid | 列表数据和分页信息 | object | {list: object[],pagination:object} |
-| multiple | 是否多选 | boolean | true | - |
+| multiple | 是否多选 | boolean | true |
 | onLoad | 与OopSearch联合使用时，切换分页即刷新表格数据 |  (param = {})=> void | - |
 | onSelectAll | 用户手动选择/取消选择所有列的回调 | Function(selected, selectedRows, changeRows) | - |
 | onRowSelect |设置行的`点击事件`回调函数, 扩展至table.onRow.onClick | Function(record, index) | - |

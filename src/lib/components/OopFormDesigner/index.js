@@ -192,6 +192,14 @@ export default class OopFormDesigner extends React.PureComponent {
             placeholder: '请选择'
           }
         }
+      },
+      {
+        label: '开关',
+        key: 'Switch',
+        component: {
+          name: 'Switch',
+        },
+        valuePropName: 'checked'
       }
     ],
     rowItems: this.props.formDetails.formJson,
