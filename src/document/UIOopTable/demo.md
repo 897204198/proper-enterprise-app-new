@@ -8,11 +8,11 @@ import OopTable from '@pea/components/OopTable';
       {id: '4', username: 'wawa', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
       {id: '5', username: 'guagua', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
       {id: '6', username: 'lala', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
-      {id: '7', username: 'niuniu', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
-      {id: '8', username: 'jiujiu', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
-      {id: '9', username: 'leilei', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
-      {id: '10', username: 'hahahah', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
-      {id: '11', username: '123123', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false},
+      {id: '7', username: 'niuniu', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: false, superuser: false},
+      {id: '8', username: 'jiujiu', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: false, superuser: false},
+      {id: '9', username: 'leilei', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: false, superuser: false},
+      {id: '10', username: 'hahahah', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: false, superuser: false},
+      {id: '11', username: '123123', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: false, superuser: false},
       {id: '12', username: '123123123', password: '123456', name: '77777', email: '132333232@qq.com', phone: '13236676767', enable: true, superuser: false}
     ];
 
@@ -24,6 +24,20 @@ export default class App extends React.Component {
           dataIndex: 'username',
           key: 'username',
         }, {
+          title: '在职',
+          dataIndex: 'enable',
+          key: 'enable',
+          filters: [{
+            text: '在职',
+            value: true,
+          }, {
+            text: '离职',
+            value: false,
+          }],
+          render: (text) => {
+            return <span>{text === true ? '在职' : '离职'}</span>
+          }
+        }, {
           title: '邮箱',
           dataIndex: 'email',
           key: 'email',
@@ -31,6 +45,7 @@ export default class App extends React.Component {
           title: '电话',
           dataIndex: 'phone',
           key: 'phone',
+          sorter: true
         }
       ];
       const topButtons = [

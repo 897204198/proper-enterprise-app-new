@@ -32,6 +32,20 @@ export default class App extends React.Component {
           dataIndex: 'username',
           key: 'username',
         }, {
+          title: '在职',
+          dataIndex: 'enable',
+          key: 'enable',
+          filters: [{
+            text: '在职',
+            value: true,
+          }, {
+            text: '离职',
+            value: false,
+          }],
+          render: (text) => {
+            return <span>{text === true ? '在职' : '离职'}</span>
+          }
+        }, {
           title: '邮箱',
           dataIndex: 'email',
           key: 'email',
@@ -39,6 +53,7 @@ export default class App extends React.Component {
           title: '电话',
           dataIndex: 'phone',
           key: 'phone',
+          sorter: true
         }
       ];
       const topButtons = [
@@ -87,6 +102,7 @@ export default class App extends React.Component {
               onLoad={this.onLoad}
               topButtons={topButtons}
               rowButtons={rowButtons}
+              showTableInfo
               ref={(el)=>{ this.oopTable = el }}
             />
       </div>
