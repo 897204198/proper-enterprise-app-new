@@ -1,0 +1,89 @@
+.messageWrap {
+  width: 375px;
+  padding: 0 10px;
+  -webkit-box-sizing: border-box;
+  background: #fff;
+  .messageBox {
+    height: 180px;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      background-color: transparent;
+    }
+  }
+  .message {
+    position: relative;
+    padding: 7px 0;
+    .userImg {
+      position: absolute;
+      // border-radius: 45px;
+      // width: 45px;
+      // height: 45px;
+      // box-shadow: 0 0 2px rgba(0, 0, 0, 0.36);
+    }
+    .msgDetail {
+      width: 100%;
+      display: inline-block;
+      p {
+        margin: 0;
+      }
+      .msgInfo {
+        p {
+          font-size: 14px;
+          color: #888;
+        }
+      }
+      .msgContent {
+        position: relative;
+        margin-top: 5px;
+        border-radius: 5px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        color: #fff;
+        width: auto;
+      }
+    }
+  }
+  .messageLeft {
+    .msgContent {
+      background: #fff;
+      float: left;
+      p {
+        color: #343434;
+      }
+    }
+    .msgDetail {
+      padding-left: 40px;
+    }
+    .userImg {
+      left: 0;
+    }
+  }
+  .messageRight {
+    .msgDetail {
+      padding-right: 40px;
+      .msgInfo {
+        text-align: right;
+      }
+    }
+    .userImg {
+      right: 0;
+    }
+    .msgContent {
+      background-color: #387ef5;
+      float: left;
+    }
+  }
+  .sendWrap {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #c6c6c6;
+    .inputBox {
+      // display: inline-block;
+      flex: 1;
+    }
+    .buttonBox {
+      margin-left: 10px;
+      // display: inline-block;
+    }
+  }
+}
