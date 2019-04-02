@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
 import OopForm from '@pea/components/OopForm';
-import UIDocument from '../components/UIDocument';
 
 const dateFormat = 'YYYY-MM-DD'
 
