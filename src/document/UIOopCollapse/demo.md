@@ -16,7 +16,7 @@ const panelList = [
     disabled: true
   }
 ]
-export default class Test extends PureComponent {
+export default class App extends PureComponent {
   state = {
   }
   componentDidMount() {
