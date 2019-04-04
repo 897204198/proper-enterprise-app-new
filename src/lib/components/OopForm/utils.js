@@ -35,7 +35,7 @@ export const formGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, initialValue, rules = [], component, show = true, formItemLayout = _formLayout } = formItemConfig;
+      const {name, initialValue, rules = [], component, show = true, valuePropName = 'value', formItemLayout = _formLayout } = formItemConfig;
       if (show === true) {
         let formItem = null;
         let _rules = null;
@@ -46,7 +46,7 @@ export const formGenerator = (formConfig)=>{
           }
           const com = createComponent(component);
           if (com) {
-            const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules})(
+            const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules, valuePropName})(
               com
             );
             formItem = getFormItem(formItemInner,
@@ -144,7 +144,7 @@ export const appFormGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, label, initialValue, rules = [], component, show = true } = formItemConfig;
+      const {name, label, initialValue, rules = [], component, show = true, valuePropName = 'value' } = formItemConfig;
       if (show === true) {
         let formItem = null;
         let _rules = null;
@@ -160,7 +160,7 @@ export const appFormGenerator = (formConfig)=>{
             }
           }
           const formItemInner = getFieldDecorator(name, obj)(
-            createComponent({...component, label, rules}, true)
+            createComponent({...component, label, rules, valuePropName}, true)
           );
           formItem = getListItem(formItemInner,
             {...formItemConfig});

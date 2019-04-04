@@ -8,6 +8,8 @@ import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import {htmlWebpackPlugin} from '@/config/config';
 import IframeLoader from './components/IframeLoader';
 
+const hwp = htmlWebpackPlugin ? htmlWebpackPlugin.find(it=>it.outerIframe) : null;
+
 export default class OuterIframe extends PureComponent {
   state = {
   }
@@ -21,8 +23,8 @@ export default class OuterIframe extends PureComponent {
   render() {
     const { location: { search }, title = '', name = '' } = this.props;
     let url = search;
-    if (htmlWebpackPlugin && htmlWebpackPlugin.filename) {
-      url = `${htmlWebpackPlugin.filename}${search}`;
+    if (hwp && hwp.filename) {
+      url = `${hwp.filename}${search}`;
     } else {
       url = decodeURIComponent(url.replace('?', ''))
     }
