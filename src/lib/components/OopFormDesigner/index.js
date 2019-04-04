@@ -200,6 +200,13 @@ export default class OopFormDesigner extends React.PureComponent {
           name: 'Switch',
         },
         valuePropName: 'checked'
+      },
+      {
+        label: '文本编辑器',
+        key: 'OopTextEditor',
+        component: {
+          name: 'OopTextEditor',
+        },
       }
     ],
     rowItems: this.props.formDetails.formJson,

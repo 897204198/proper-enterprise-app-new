@@ -29,6 +29,7 @@
     "av-core": "^1.1.1",
     "babel-preset-umi": "^0.2.8",
     "babel-runtime": "^6.9.2",
+    "braft-editor": "^2.2.9",
     "classnames": "^2.2.5",
     "codemirror": "^5.43.0",
     "dva": "^2.1.0",
