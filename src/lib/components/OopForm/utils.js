@@ -6,11 +6,10 @@ import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
 // import styles from './index.less';
 
-
 export const formGenerator = (formConfig)=>{
   const {loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
-    rowItemSetValue, dragable = false, showSetValueIcon = false} = formConfig;
-  const formItemLayout = formLayout === 'horizontal' ? {
+    rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1} = formConfig;
+  const _formLayout = formLayoutConfig || formLayout === 'horizontal' ? {
     labelCol: {
       xs: {span: 24},
       sm: {span: 5},
@@ -36,7 +35,7 @@ export const formGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, initialValue, rules = [], component, show = true, valuePropName = 'value' } = formItemConfig;
+      const {name, initialValue, rules = [], component, show = true, valuePropName = 'value', formItemLayout = _formLayout } = formItemConfig;
       if (show === true) {
         let formItem = null;
         let _rules = null;
@@ -51,7 +50,7 @@ export const formGenerator = (formConfig)=>{
               com
             );
             formItem = getFormItem(formItemInner,
-              {...formItemConfig, formItemLayout, rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemSetValue, showSetValueIcon});
+              {...formItemConfig, columnsNum, formItemLayout, rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemSetValue, showSetValueIcon});
             formItemList.push(formItem);
           }
         }
@@ -66,15 +65,16 @@ export const formGenerator = (formConfig)=>{
     (
       <FormContainer
         className={className}
-        formLayout={formLayout}
+        formLayout={_formLayout}
         formItemList={formItemList}
         formTitle={formTitle}
         loading={loading}
-        onMove={rowItemDrag} />) : (<Spin spinning={loading}><div className={className}><h3>{formTitle}</h3><Form layout={formLayout}>{formItemList}</Form></div></Spin>));
+        onMove={rowItemDrag} />
+    ) : (<Spin spinning={loading}><div className={className}><h3>{formTitle}</h3><Form layout={formLayout}>{formItemList}</Form></div></Spin>));
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout,
-    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue} = formItemConfig;
+    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum} = formItemConfig;
   const FormItem = Form.Item;
   const content = (
     <div>
@@ -82,10 +82,16 @@ const getFormItem = (formItemInner, formItemConfig)=>{
     </div>
   );
   return wrapper ? (
-    <div className={wrapperClass} key={name}>
-      {formItemInner}
-    </div>) : (
-    <div key={name} className={active ? 'rowItemWrapper active' : 'rowItemWrapper'} onClick={(event)=>{ rowItemClick(name, event) }}>
+      <div className={wrapperClass} key={name}>
+        {formItemInner}
+      </div>
+  ) : (
+    <div
+      key={name}
+      className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
+      style={{display: 'inline-block', width: `${100 / columnsNum}%`}}
+      onClick={(event)=>{ rowItemClick(name, event) }}
+      >
       <FormItem
         key={name}
         {...formItemLayout}
@@ -94,12 +100,14 @@ const getFormItem = (formItemInner, formItemConfig)=>{
         {formItemInner}
       </FormItem>{active ? (
       <div className="ant-form-item-action">
-        {showSetValueIcon ? (
-          <Popover content={content} title="该项的值" trigger="click">
-            <Tooltip title="设置值" getPopupContainer={triggerNode=> triggerNode.parentNode} placement="bottom">
-              <Icon type="up-square-o" onClick={(event)=>{ rowItemSetValue(event, name) }} />
-            </Tooltip>
-          </Popover>) : null
+        {
+          showSetValueIcon ? (
+            <Popover content={content} title="该项的值" trigger="click">
+              <Tooltip title="设置值" getPopupContainer={triggerNode=> triggerNode.parentNode} placement="bottom">
+                <Icon type="up-square-o" onClick={(event)=>{ rowItemSetValue(event, name) }} />
+              </Tooltip>
+            </Popover>
+          ) : null
         }
         <Tooltip title="复制">
           <Icon type="copy" onClick={(event)=>{ rowItemIconCopy(event, name) }} />
@@ -112,9 +120,10 @@ const getFormItem = (formItemInner, formItemConfig)=>{
             type="pause-circle-o"
             style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
         </Tooltip>
-      </div>) : null}</div>);
+      </div>
+) : null}</div>
+  );
 }
-
 
 // appFormGenerator 为了移动端展示用 没有设计的功能
 export const appFormGenerator = (formConfig)=>{
@@ -170,7 +179,8 @@ export const appFormGenerator = (formConfig)=>{
         <h3>{formTitle}</h3>
         <List>{formItemList}</List>
       </div>
-    </Spin>);
+    </Spin>
+  );
 }
 // 获取ListItem
 const getListItem = (formItemInner, formItemConfig)=>{
@@ -196,7 +206,8 @@ const getListItem = (formItemInner, formItemConfig)=>{
   return wrapper ? (
     <div className={wrapperClass} key={name}>
       {formItemInner}
-    </div>) : listItem;
+    </div>
+  ) : listItem;
 }
 // 获取web端和移动端组件
 const createComponent = (component, isApp)=>{

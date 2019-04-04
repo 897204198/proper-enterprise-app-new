@@ -25,6 +25,7 @@ Components | Data Display | OopTable | 表格列表|
 | rowButtons | 显示在行中的按钮,如编辑，删除。主要对该条数据进行的操作 | object[ ] | - |
 | selectTriggerOnRowClick | 用户选中或取消本行的多选框，是否调用它的回调函数，扩展table.onSelect属性 | boolean | false |
 | topButtons | 显示在表格外部的按钮，一般为对整个表格数据进行的操作 | object[ ] | - |
+| showTableInfo | 显示表格顶部的信息显示栏 | boolean | false |
 
 其他属性详见antd的[Table](https://ant.design/components/table-cn/)组件
 

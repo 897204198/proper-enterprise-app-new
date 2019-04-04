@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import {Table, Button, Divider, Popconfirm, Tooltip, Icon, Dropdown, Menu, message} from 'antd';
+import {Table, Button, Divider, Popconfirm, Tooltip, Icon, Dropdown, Menu, message, Alert} from 'antd';
 import styles from './index.less';
 
 const downloadContext = (context)=>{
@@ -22,13 +22,19 @@ const caculateRowButtonWidth = (n)=>{
 }
 
 const getFilterParams = (filters)=>{
-  const filtersParam = {}
-  if (Object.values(filters).length) {
-    for (const k in filters) {
-      filtersParam[k] = filters[k].toString()
+  if (filters) {
+    const filtersParam = {}
+    if (Object.keys(filters).length) {
+      for (const k in filters) {
+        if (filters[k].value) {
+          filtersParam[k] = filters[k].value.toString()
+        }
+      }
     }
+    return filtersParam
+  } else {
+    return {}
   }
-  return filtersParam
 }
 export default class OopTable extends PureComponent {
   constructor(props) {
@@ -83,13 +89,13 @@ export default class OopTable extends PureComponent {
     const filtersParam = getFilterParams(filters)
     if (onLoad) {
       onLoad({
+        ...param,
         pagination: {
-          pageNo: pagination.current,
+          pageNo: pagination.current || pagination.pageNo,
           pageSize: pagination.pageSize,
         },
         ...filtersParam,
         ...sorter,
-        ...param
       });
     }
   }
@@ -100,8 +106,27 @@ export default class OopTable extends PureComponent {
     })
   }
   onChange = (pagination, filters, sorter)=>{
+    const { columns } = this.props
+    const filterObj = {}
+    if (filters) {
+      for (const key in filters) {
+        const obj = {
+          title: [],
+          value: []
+        }
+        filters[key] && filters[key].forEach((fliter) => {
+          for (let i = 0; i < columns.length; i++) {
+            if (columns[i].dataIndex === key) {
+              obj.title.push(columns[i].filters.find(it => it.value.toString() === fliter).text)
+            }
+          }
+        })
+        obj.value = filters[key]
+        filterObj[key] = obj
+      }
+    }
     this.setState({
-      filters,
+      filters: filterObj,
       pagination,
       sorter
     }, ()=>{
@@ -147,7 +172,8 @@ export default class OopTable extends PureComponent {
           <Button style={{ paddingLeft: 8, paddingRight: 8, float: 'right'}} icon="export">
             导出 <Icon type="down" />
           </Button>
-        </Dropdown>);
+        </Dropdown>
+      );
       btns.push(exportButton)
     }
     return btns
@@ -173,7 +199,8 @@ export default class OopTable extends PureComponent {
                         <a>
                           <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
                         </a>
-                      </Tooltip>) : <a>{item.text}</a>
+                      </Tooltip>
+) : <a>{item.text}</a>
                   }
                 </Popconfirm>
               ) : (
@@ -182,7 +209,8 @@ export default class OopTable extends PureComponent {
                     <a onClick={() => item.onClick(record)}>
                       <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
                     </a>
-                  </Tooltip>) : <a onClick={() => item.onClick(record)}>{item.text}</a>
+                  </Tooltip>
+) : <a onClick={() => item.onClick(record)}>{item.text}</a>
               )
             }
           </Fragment>)
@@ -317,12 +345,60 @@ export default class OopTable extends PureComponent {
       callback && callback();
     });
   }
+  clearFilters = () => {
+    this.setState({
+      filters: null
+    }, () => {
+      this.onLoad()
+    })
+  }
+  clearSorter = () => {
+    this.setState({
+      sorter: null
+    }, () => {
+      this.onLoad()
+    })
+  }
   render() {
     const { grid: {list = [] },
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
-      _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], ...otherProps } = this.props;
-    const { selectedRowKeys, pagination } = this.state;
+      _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], showTableInfo, ...otherProps } = this.props;
+    const { selectedRowKeys, pagination, filters, sorter } = this.state;
+    let filterFields = []
+    if (filters && Object.keys(filters).length) {
+      for (const field in filters) {
+        if (filters[field].value && filters[field].value.length) {
+          filterFields = filters[field].title
+        } else {
+          filterFields = []
+        }
+      }
+      columns.forEach((col)=>{
+        if (col.filters) {
+          col.filteredValue = filters[col.dataIndex].value
+        }
+      })
+    } else {
+      columns.forEach((col)=>{
+        if ('filteredValue' in col) {
+          col.filteredValue = null
+        }
+      })
+    }
+    if (sorter && Object.keys(sorter).length) {
+      columns.forEach((col)=>{
+        if (col.dataIndex === sorter.field) {
+          col.sortOrder = sorter.order
+        }
+      })
+    } else {
+      columns.forEach((col)=>{
+        if ('sortOrder' in col) {
+          col.sortOrder = null
+        }
+      })
+    }
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
     const tableData = [...list];
     if (multiple !== false) {
@@ -397,6 +473,35 @@ export default class OopTable extends PureComponent {
               }
             </div>
           )
+        }
+        {
+          showTableInfo ? (
+            <div className={styles.tableInfo}>
+              <Alert
+                message={
+                  <Fragment>
+                    {
+                      selectedRowKeys && selectedRowKeys.length
+                      ? <span>已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;</span>
+                      : <span>{`共${pagination.total}条`}&nbsp;&nbsp;</span>
+                    }
+                    {
+                      filterFields.length
+                      ? <span>已按 <a>{filterFields.join(',')}</a> 筛选 <a onClick={this.clearFilters}>重置 </a>{(sorter && Object.keys(sorter).length) ? ',' : ''} </span>
+                      : null
+                    }
+                    {
+                      sorter && Object.keys(sorter).length
+                      ? <span>已按 <a>{sorter.column.title}</a> {`${sorter.order === 'ascend' ? '升序' : '降序'}排序`} <a onClick={this.clearSorter}>重置</a></span>
+                      : null
+                    }
+                  </Fragment>
+                }
+                type="info"
+                showIcon
+              />
+            </div>
+          ) : null
         }
         <Table
           className={this.getTableClassName()}
