@@ -24,11 +24,13 @@ export default class OopCollapse extends PureComponent {
     const defaultKey = Array.isArray(defaultActiveKey) && defaultActiveKey.length ? defaultActiveKey : null
     return (
       <div className={horizontal ? styles.OopCollapse : ''}>
-        <Collapse defaultActiveKey={defaultKey} onChange={onChange} {...params}>
-          {
-            this.renderPanels(panelList)
-          }
-        </Collapse>
+        <div className="OopcollapseWrapper">
+          <Collapse defaultActiveKey={defaultKey} onChange={onChange} {...params}>
+            {
+              this.renderPanels(panelList)
+            }
+          </Collapse>
+        </div>
       </div>
     )
   }
