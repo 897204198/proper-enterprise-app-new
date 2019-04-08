@@ -4,7 +4,7 @@ category | type | title | subtitle
 Components | Data Display | OopTreeTable | 根据树形列表显示详细信息的复合组件 |
 
 
-## 何时使用
+### 何时使用
 展示树形数据，并对详细信息进行展示。
 
 ## API

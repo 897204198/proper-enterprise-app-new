@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Form, Modal, Spin, Input, Button, List, Icon, Popconfirm, Tooltip, Badge, Popover, Tabs } from 'antd';
+import { Card, Form, Modal, Spin, Input, Button, List, Icon, Popconfirm, Tooltip, Badge, Popover, Tabs, Radio } from 'antd';
 import QRCode from 'qrcode.react';
 import { inject } from '@framework/common/inject';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
@@ -10,6 +10,7 @@ import styles from './Appver.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const { TabPane } = Tabs;
+const RadioGroup = Radio.Group;
 
 const formItemLayout = {
   labelCol: {
@@ -141,6 +142,19 @@ const CreateForm = Form.create()((props) => {
               rules: [{ required: true, message: '版本内容不能为空' }],
             })(
               <TextArea placeholder="请输入版本内容" autosize={{ minRows: 4, maxRows: 8 }} />
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="强制更新"
+          >
+            {form.getFieldDecorator('forceUpdate', {
+              initialValue: verInfo.forceUpdate || false,
+            })(
+              <RadioGroup>
+                <Radio value={true}>启用</Radio>
+                <Radio value={false}>停用</Radio>
+              </RadioGroup>
             )}
           </FormItem>
         </Form>
@@ -305,7 +319,8 @@ export default class Appver extends React.Component {
         <TabPane tab={<span><Icon type="android" />安卓</span>} key="2" style={{display: 'flex', justifyContent: 'center'}} forceRender={true}>
           {item.androidUrl ? <QRCode value={item.androidUrl} /> : null}
         </TabPane>
-      </Tabs>);
+      </Tabs>
+    );
   }
   render() {
     const { loading,

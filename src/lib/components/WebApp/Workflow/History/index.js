@@ -280,7 +280,7 @@ export default class History extends React.PureComponent {
                   initialLoad={false}
                   pageStart={1}
                   loadMore={this.fetchData}
-                  hasMore={!gridLoading && process.data.length < process.pagination.count}
+                  hasMore={!gridLoading && process.data.length < process.pagination.total}
                   useWindow={false}
                 >
                   <List
@@ -311,7 +311,7 @@ export default class History extends React.PureComponent {
                     )}
                   />
                 </InfiniteScroll>
-                {gridLoading && process.data.length < process.pagination.count && (
+                {gridLoading && process.data.length < process.pagination.total && (
                   <div className={styles.loadingContainer}>
                     <Spin />
                   </div>

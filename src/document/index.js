@@ -5,7 +5,7 @@ import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { Route, Switch } from 'dva/router';
 import styles from './index.less';
 
-const componentNames = ['OopTable', 'OopTree'];
+const componentNames = ['OopTable', 'OopSearch', 'OopTree', 'OopTreeTable', 'OopForm', 'OopUpload', 'OopOrgEmpPicker', 'OopModal', 'OopCollapse', 'OopAnswer'];
 const docuRouters = {};
 componentNames.forEach((it)=>{
   docuRouters[`/document/${it.toLowerCase()}`] = {
@@ -15,7 +15,6 @@ componentNames.forEach((it)=>{
 })
 const routers = initRouter(docuRouters);
 addRoutersData(routers);
-console.log(routers)
 
 const { SubMenu } = Menu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -77,6 +76,7 @@ export default class Document extends React.PureComponent {
           </Switch>
         </Layout>
       </div>
-    </PageHeaderLayout>)
+    </PageHeaderLayout>
+    )
   }
 }
