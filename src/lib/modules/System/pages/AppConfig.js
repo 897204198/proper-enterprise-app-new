@@ -613,6 +613,7 @@ export default class AppConfig extends PureComponent {
               rightClick: (data)=>{
                 this.rightClick(data)
               },
+              top: 150
             },
             title: '应用管理',
             treeLoading: loading,

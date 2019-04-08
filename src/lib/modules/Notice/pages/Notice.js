@@ -408,8 +408,9 @@ export default class Notice extends PureComponent {
       <PageHeaderLayout >
         <Row gutter={16}>
           <Col span={18} push={6}>
-            <Card bordered={false} style={{ marginBottom: 16 }}>
+            <Card bordered={false} title="通知列表">
               <OopSearch
+                style={{marginBottom: 16}}
                 placeholder="请输入"
                 enterButtonText="搜索"
                 onInputChange={this.filterTable}
