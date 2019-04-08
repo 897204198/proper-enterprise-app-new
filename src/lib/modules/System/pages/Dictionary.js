@@ -638,6 +638,7 @@ export default class Dictionary extends React.PureComponent {
               rightClick: (data)=>{
                 this.rightClick(data)
               },
+              top: 150
             },
             title: '数据字典项',
             treeLoading,

@@ -48,14 +48,15 @@ export default class History extends React.PureComponent {
   constructor(props) {
     super(props);
     const {atob, decodeURIComponent, JSON} = window;
-    const { param } = getParamObj(this.props.location.search);
+    const { param, delta = -1 } = getParamObj(this.props.location.search);
     const { name } = JSON.parse(decodeURIComponent(atob(param)));
     this.state = {
       activeKey: 'process',
       activeIndex: 1,
       design: {data: [], pagination: {}},
       process: {data: [], pagination: {}},
-      name
+      name,
+      delta
     }
   }
   componentWillMount() {
@@ -64,10 +65,12 @@ export default class History extends React.PureComponent {
         text: '返回',
         icon: 'left',
         onClick: ()=>{
+          const {name, delta} = this.state;
           this.context.setHeader({
-            title: this.state.name
+            title: name
           });
-          history.go(-2);
+          console.log('delta', delta);
+          history.go(delta);
         }
       },
       headerRightButton: {
