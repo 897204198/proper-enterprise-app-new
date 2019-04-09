@@ -135,10 +135,7 @@ export default class Manager extends React.PureComponent {
     }
     return (
       <PageHeaderLayout>
-        {
-          React.createElement(BusinessForm, {...formConfig})
-        }
-
+        this is test page.
       </PageHeaderLayout>)
   }
 }

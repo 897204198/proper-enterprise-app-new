@@ -68,37 +68,6 @@ export default class MyBusinessForm extends React.PureComponent {
         {title: '排序', dataIndex: 'sort'}
       ]
     };
-    const topButtons = [
-      {
-        text: '新建',
-        name: 'create',
-        type: 'primary',
-        icon: 'plus',
-        onClick: ()=>{ this.handleCreate() }
-      },
-      {
-        text: '删除',
-        name: 'batchDelete',
-        icon: 'delete',
-        display: items=>(items.length > 0),
-        onClick: (items)=>{ this.handleBatchRemove(items) }
-      },
-    ];
-    const rowButtons = [
-      {
-        text: '编辑',
-        name: 'edit',
-        icon: 'edit',
-        onClick: (record)=>{ this.handleEdit(record) },
-      },
-      {
-        text: '删除',
-        name: 'delete',
-        icon: 'delete',
-        confirm: '是否要删除此条信息',
-        onClick: (record)=>{ this.handleRemove(record) },
-      },
-    ];
     return (
       <Fragment>
         <FormItem>
@@ -160,8 +129,6 @@ export default class MyBusinessForm extends React.PureComponent {
           loading={!!loading}
           grid={{list}}
           columns={columns}
-          rowButtons={rowButtons}
-          topButtons={topButtons}
         />
     </Fragment>);
   }

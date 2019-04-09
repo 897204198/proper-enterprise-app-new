@@ -80,7 +80,6 @@ export default class OopWorkflowMainModal extends PureComponent {
   render() {
     const {visible, ...otherProps} = this.props;
     const {taskOrProcDefKey} = this.props;
-    console.log('buttonLoading', this.state.buttonLoading)
     const footer = (
       <Fragment>
         <Popover

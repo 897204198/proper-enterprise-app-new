@@ -10,7 +10,7 @@ import {inject} from '@framework/common/inject';
 import {isApp, getApplicationContextUrl} from '@framework/utils/utils';
 import OopForm from '../OopForm';
 import OopPreview from '../OopPreview';
-import {authorityFormField, getWorkflowFormByFormPath} from './util';
+import {authorityFormField, getWorkflowFormByFormPath} from './utils';
 import styles from './index.less';
 
 
@@ -112,14 +112,15 @@ export default class OopWorkflowMain extends PureComponent {
       }
       // formKey包含“/”则代表是表单的相对路径
       if (formKey.includes('/')) {
-        const formPath = window.localStorage.getItem('formPath');
-        const businessForm = getWorkflowFormByFormPath(formPath);
-        // eslint-disable-next-line
-        this.setState({
-          businessForm
-        }, ()=>{
-          this.isComplete = true
-        })
+        const businessForm = getWorkflowFormByFormPath(formKey);
+        if (businessForm && businessForm.default) {
+          // eslint-disable-next-line
+          this.setState({
+            businessForm: businessForm.default
+          }, ()=>{
+            this.isComplete = true
+          })
+        }
       } else {
         this.props.dispatch({
           type: 'OopWorkflowMain$model/fetchByFormCode',
@@ -172,7 +173,7 @@ export default class OopWorkflowMain extends PureComponent {
   // 获取流程处理tab
   getHandleTabComponent = ()=>{
     const { name = null, OopWorkflowMain$model: {formEntity}, businessObj: {formData, formTitle, formProperties}, formLoading, isLaunch, taskOrProcDefKey} = this.props;
-    if ((formEntity === undefined || formEntity.formDetails === undefined) && this.state.businessForm === null) {
+    if ((formEntity === undefined || formEntity.formDetails === undefined) && this.state.businessForm === undefined) {
       return null;
     }
     const { formDetails } = formEntity;
@@ -185,7 +186,7 @@ export default class OopWorkflowMain extends PureComponent {
           self={this}
           isLaunch={isLaunch}
           taskOrProcDefKey={taskOrProcDefKey}
-          formLoading={this.state.businessForm !== null ? false : formLoading}
+          formLoading={this.state.businessForm !== undefined ? false : formLoading}
           defaultValue={formData}
           formConfig={{...formConfig, formTitle, formProperties}}
           approvalRemarksRequire={this.state.approvalRemarksRequire}>

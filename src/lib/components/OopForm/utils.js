@@ -73,8 +73,8 @@ export const formGenerator = (formConfig)=>{
       }
     }
   }
-  if (formItemList.length === 0) {
-    console.error('the arguments `formJson` no be length === 0')
+  if (formItemList.length === 0 && !Component) {
+    console.error('the arguments `formJson` no be `[]` and no children')
     return null
   }
   return (dragable ?
