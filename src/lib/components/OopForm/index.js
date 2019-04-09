@@ -232,7 +232,7 @@ export default class OopForm extends React.PureComponent {
     //     }
     //   }
     // });
-    const formConfig = {...this.props, form, className: styles.container };
+    const formConfig = {...this.props, form, className: styles.container, oopForm: this };
     return ifRenderByAntdMobile ? appFormGenerator(formConfig) : formGenerator(formConfig);
   }
 }

@@ -6,8 +6,23 @@ import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
 // import styles from './index.less';
 
+const getOopFormChildrenRef = (el, oopForm)=>{
+  if (el) {
+    try {
+      const instance = el.getWrappedInstance && el.getWrappedInstance();
+      if (instance) {
+        oopForm.childrenRef = instance;
+      } else {
+        oopForm.childrenRef = el;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
 export const formGenerator = (formConfig)=>{
-  const {loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
+  const {children: Component, loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
     rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1} = formConfig;
   const _formLayout = formLayoutConfig || formLayout === 'horizontal' ? {
     labelCol: {
@@ -20,6 +35,7 @@ export const formGenerator = (formConfig)=>{
     },
   } : null;
   // 把正则的字符串形式转义成正则形式 fe: "/^0-9*$/" => /^0-9*$/
+  // {React.createElement(extraComponent, {...formConfig})}
   const transformRules = (rules)=>{
     const arr = cloneDeep(rules);
     arr.forEach((it)=>{
@@ -57,8 +73,8 @@ export const formGenerator = (formConfig)=>{
       }
     }
   }
-  if (formItemList.length === 0) {
-    console.error('the arguments `formJson` no be length === 0')
+  if (formItemList.length === 0 && !Component) {
+    console.error('the arguments `formJson` no be `[]` and no children')
     return null
   }
   return (dragable ?
@@ -70,7 +86,12 @@ export const formGenerator = (formConfig)=>{
         formTitle={formTitle}
         loading={loading}
         onMove={rowItemDrag} />
-    ) : (<Spin spinning={loading}><div className={className}><h3>{formTitle}</h3><Form layout={formLayout}>{formItemList}</Form></div></Spin>));
+    ) : (
+      <Spin spinning={loading}>
+        <div className={className}><h3>{formTitle}</h3>
+          <Form layout={formLayout}>{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
+        </div>
+      </Spin>));
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout,

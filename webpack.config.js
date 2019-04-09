@@ -37,7 +37,7 @@ function getWebpackConfig(webpackConfig, des = []) {
   if (length) {
     // 处理.js
     const rule = {
-      test: /\.js$/,
+      test: /\.js|jsx$/,
       include: pathReg,
       use: [
         {loader: require.resolve('af-webpack/lib/debugLoader')},
