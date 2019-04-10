@@ -91,7 +91,8 @@ export const formGenerator = (formConfig)=>{
         <div className={className}><h3>{formTitle}</h3>
           <Form layout={formLayout}>{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
         </div>
-      </Spin>));
+      </Spin>
+    ));
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout,
@@ -110,7 +111,7 @@ const getFormItem = (formItemInner, formItemConfig)=>{
     <div
       key={name}
       className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
-      style={{display: 'inline-block', width: `${100 / columnsNum}%`}}
+      style={active ? null : {display: 'inline-block', width: `${100 / columnsNum}%`}}
       onClick={(event)=>{ rowItemClick(name, event) }}
       >
       <FormItem
