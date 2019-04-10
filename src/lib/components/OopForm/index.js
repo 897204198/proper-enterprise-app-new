@@ -15,7 +15,7 @@ let ifRenderByAntdMobile = isApp();
 // 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
 function isItemShow(itemValue, displayValue) {
   // TODO 支持表达式匹配
-  return itemValue === displayValue
+  return JSON.stringify(itemValue) === JSON.stringify(displayValue);
 }
 
 @inject('OopForm$model')
@@ -219,7 +219,10 @@ export default class OopForm extends React.PureComponent {
       // 解析display配置
       if (display) {
         const changeItem = formJson.find(it=>it.name === display.name);
-        item.show = isItemShow(changeItem.initialValue, display.value)
+        if (changeItem) {
+          const currentValue = form.getFieldValue(changeItem.name) || changeItem.initialValue;
+          item.show = isItemShow(currentValue, display.value)
+        }
         // changeEventSequence.add(display.name);
       }
     });

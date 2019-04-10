@@ -23,7 +23,7 @@ const getOopFormChildrenRef = (el, oopForm)=>{
 
 export const formGenerator = (formConfig)=>{
   const {children: Component, loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
-    rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1} = formConfig;
+    rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1, mode} = formConfig;
   const _formLayout = formLayoutConfig || formLayout === 'horizontal' ? {
     labelCol: {
       xs: {span: 24},
@@ -52,7 +52,7 @@ export const formGenerator = (formConfig)=>{
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
       const {name, initialValue, rules = [], component, show = true, valuePropName = 'value', formItemLayout = _formLayout } = formItemConfig;
-      if (show === true) {
+      if (show === true || mode === 'design') {
         let formItem = null;
         let _rules = null;
         if (name && component) {
@@ -95,7 +95,7 @@ export const formGenerator = (formConfig)=>{
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout,
-    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum} = formItemConfig;
+    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, show} = formItemConfig;
   const FormItem = Form.Item;
   const content = (
     <div>
@@ -110,7 +110,7 @@ const getFormItem = (formItemInner, formItemConfig)=>{
     <div
       key={name}
       className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
-      style={{display: 'inline-block', width: `${100 / columnsNum}%`}}
+      style={{display: 'inline-block', width: `${100 / columnsNum}%`, opacity: show === false ? 0.5 : 1}}
       onClick={(event)=>{ rowItemClick(name, event) }}
       >
       <FormItem

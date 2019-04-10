@@ -68,7 +68,7 @@ const CenterPanel = (props) => {
   return (
     <div className={styles.centerPanel}>
       <Card title={title} extra={toggleFormLayoutButtons}>
-        <OopForm {...param} ref={(el)=>{ self.oopForm = el }} />
+        <OopForm {...param} mode="design" ref={(el)=>{ self.oopForm = el }} />
         <div style={{textAlign: 'center', display: 'none'}}>
           {rowItems.length ? (<Button type="primary" onClick={onFormSubmit}>保存为自定义组件</Button>) : null}
         </div>
@@ -584,7 +584,7 @@ export default class OopFormDesigner extends React.PureComponent {
     const { formPattern } = this.state;
     const isAdvanced = formPattern === 'advanced';
     return (
-      <div className={styles.container} id="OopFormDesigner">
+      <div className={styles.container}>
         <Row gutter={16}>
           <Col span={6} style={ isAdvanced ? {display: 'none'} : null }>
             <AddPanel
