@@ -89,7 +89,7 @@ export const formGenerator = (formConfig)=>{
     ) : (
       <Spin spinning={loading}>
         <div className={className}><h3>{formTitle}</h3>
-          <Form layout={formLayout}>{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
+          <Form layout={formLayout} style={{display: 'flex', flexWrap: 'wrap'}}>{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
         </div>
       </Spin>
     ));
@@ -108,42 +108,44 @@ const getFormItem = (formItemInner, formItemConfig)=>{
         {formItemInner}
       </div>
   ) : (
-    <div
-      key={name}
-      className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
-      style={active ? null : {display: 'inline-block', width: `${100 / columnsNum}%`}}
-      onClick={(event)=>{ rowItemClick(name, event) }}
-      >
-      <FormItem
+    <div style={{flex: `0 0 ${100 / columnsNum}%`}}>
+      <div
         key={name}
-        {...formItemLayout}
-        label={label}
-      >
-        {formItemInner}
-      </FormItem>{active ? (
-      <div className="ant-form-item-action">
-        {
-          showSetValueIcon ? (
-            <Popover content={content} title="该项的值" trigger="click">
-              <Tooltip title="设置值" getPopupContainer={triggerNode=> triggerNode.parentNode} placement="bottom">
-                <Icon type="up-square-o" onClick={(event)=>{ rowItemSetValue(event, name) }} />
-              </Tooltip>
-            </Popover>
-          ) : null
-        }
-        <Tooltip title="复制">
-          <Icon type="copy" onClick={(event)=>{ rowItemIconCopy(event, name) }} />
-        </Tooltip>
-        <Tooltip title="删除">
-          <Icon type="delete" onClick={(event)=>{ rowItemIconDelete(event, name) }} />
-        </Tooltip>
-        <Tooltip title="拖拽">
-          <Icon
-            type="pause-circle-o"
-            style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
-        </Tooltip>
-      </div>
-) : null}</div>
+        className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
+        style={active ? null : {display: 'inline-block', width: `${100 / columnsNum}%`}}
+        onClick={(event)=>{ rowItemClick(name, event) }}
+        >
+        <FormItem
+          key={name}
+          {...formItemLayout}
+          label={label}
+        >
+          {formItemInner}
+        </FormItem>{active ? (
+        <div className="ant-form-item-action">
+          {
+            showSetValueIcon ? (
+              <Popover content={content} title="该项的值" trigger="click">
+                <Tooltip title="设置值" getPopupContainer={triggerNode=> triggerNode.parentNode} placement="bottom">
+                  <Icon type="up-square-o" onClick={(event)=>{ rowItemSetValue(event, name) }} />
+                </Tooltip>
+              </Popover>
+            ) : null
+          }
+          <Tooltip title="复制">
+            <Icon type="copy" onClick={(event)=>{ rowItemIconCopy(event, name) }} />
+          </Tooltip>
+          <Tooltip title="删除">
+            <Icon type="delete" onClick={(event)=>{ rowItemIconDelete(event, name) }} />
+          </Tooltip>
+          <Tooltip title="拖拽">
+            <Icon
+              type="pause-circle-o"
+              style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
+          </Tooltip>
+        </div>
+      ) : null}</div>
+    </div>
   );
 }
 
