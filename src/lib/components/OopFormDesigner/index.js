@@ -521,7 +521,9 @@ export default class OopFormDesigner extends React.PureComponent {
           currentRowItemJson
         });
       } else {
-        const item = JSON.parse(this.state.currentRowItemJson);
+        // const item = JSON.parse(this.state.currentRowItemJson);
+        // eslint-disable-next-line
+        const item = new Function('return '.concat(this.state.currentRowItemJson))();
         if (item.name) {
           this.onRowItemClick(item.name);
         }
@@ -566,7 +568,8 @@ export default class OopFormDesigner extends React.PureComponent {
   }
   @Debounce(300)
   handleCodeMirrorChange(editor, value) {
-    if ('+input,+delete,undo,*compose'.includes(value.origin)) {
+    console.log(value.origin, value)
+    if ('+input,+delete,undo,*compose,cut,paste'.includes(value.origin)) {
       const values = editor.getValue();
       const item = this.validateItemJson(values);
       if (item) {

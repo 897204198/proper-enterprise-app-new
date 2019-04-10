@@ -226,15 +226,6 @@ export default class OopForm extends React.PureComponent {
         // changeEventSequence.add(display.name);
       }
     });
-    // changeEventSequence.forEach((name)=>{
-    //   const item = formJson.find(it=>it.name === name);
-    //   item.component.props = {
-    //     ...item.component.props,
-    //     onChange: (e)=>{
-    //       this.renderForm(name, e)
-    //     }
-    //   }
-    // });
     const formConfig = {...this.props, form, className: styles.container, oopForm: this };
     return ifRenderByAntdMobile ? appFormGenerator(formConfig) : formGenerator(formConfig);
   }

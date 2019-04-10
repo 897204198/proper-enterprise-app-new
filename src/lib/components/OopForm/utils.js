@@ -106,11 +106,11 @@ const getFormItem = (formItemInner, formItemConfig)=>{
 
   let style = {opacity: show === false ? 0.5 : 1}
   if (!active) {
-	  style = {
-		  ...style,
-		  display: 'inline-block',
-		  width: `${100 / columnsNum}%`
-	  }
+    style = {
+      ...style,
+      display: 'inline-block',
+      width: `${100 / columnsNum}%`
+    }
   }
   return wrapper ? (
       <div className={wrapperClass} key={name}>
