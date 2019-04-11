@@ -110,19 +110,21 @@ export default class OopTable extends PureComponent {
     const filterObj = {}
     if (filters) {
       for (const key in filters) {
-        const obj = {
-          title: [],
-          value: []
-        }
-        filters[key] && filters[key].forEach((fliter) => {
-          for (let i = 0; i < columns.length; i++) {
-            if (columns[i].dataIndex === key) {
-              obj.title.push(columns[i].filters.find(it => it.value.toString() === fliter).text)
-            }
+        if (filters[key]) {
+          const obj = {
+            title: [],
+            value: []
           }
-        })
-        obj.value = filters[key]
-        filterObj[key] = obj
+          filters[key].forEach((fliter) => {
+            for (let i = 0; i < columns.length; i++) {
+              if (columns[i].dataIndex === key) {
+                obj.title.push(columns[i].filters.find(it => it.value.toString() === fliter).text)
+              }
+            }
+          })
+          obj.value = filters[key]
+          filterObj[key] = obj
+        }
       }
     }
     this.setState({
@@ -365,40 +367,34 @@ export default class OopTable extends PureComponent {
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
       _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], showTableInfo, ...otherProps } = this.props;
     const { selectedRowKeys, pagination, filters, sorter } = this.state;
+    const hasFilters = filters && Object.keys(filters).length > 0;
+    const hasSorter = sorter && Object.keys(sorter).length > 0;
     let filterFields = []
-    if (filters && Object.keys(filters).length) {
+    if (hasFilters) {
       for (const field in filters) {
         if (filters[field].value && filters[field].value.length) {
-          filterFields = filters[field].title
-        } else {
-          filterFields = []
+          filterFields = [...filterFields, ...filters[field].title]
         }
       }
-      columns.forEach((col)=>{
-        if (col.filters) {
-          col.filteredValue = filters[col.dataIndex].value
-        }
-      })
-    } else {
-      columns.forEach((col)=>{
-        if ('filteredValue' in col) {
-          col.filteredValue = null
-        }
-      })
     }
-    if (sorter && Object.keys(sorter).length) {
-      columns.forEach((col)=>{
+    columns.forEach((col)=>{
+      if (hasFilters) {
+        for (const key in filters) {
+          if (col.dataIndex === key && filters[col.dataIndex].value) {
+            col.filteredValue = filters[col.dataIndex].value
+          }
+        }
+      } else if ('filteredValue' in col || col.filters) {
+        col.filteredValue = null
+      }
+      if (hasSorter) {
         if (col.dataIndex === sorter.field) {
           col.sortOrder = sorter.order
         }
-      })
-    } else {
-      columns.forEach((col)=>{
-        if ('sortOrder' in col) {
-          col.sortOrder = null
-        }
-      })
-    }
+      } else if ('sortOrder' in col) {
+        col.sortOrder = null
+      }
+    })
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
     const tableData = [...list];
     if (multiple !== false) {
