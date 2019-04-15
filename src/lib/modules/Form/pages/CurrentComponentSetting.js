@@ -69,7 +69,7 @@ const ModalForm = Form.create()((props) => {
   return (
     <Modal title={title} visible={visible} footer={footer} onCancel={cancelForm} maskClosable={false}>
       <Spin spinning={loading}>
-        <OopForm {...formConfig} ref={(el)=>{ self.oopForm = el }} defaultValue={formEntity} />
+        <OopForm {...formConfig} ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }} defaultValue={formEntity} />
       </Spin>
     </Modal>
   )
@@ -142,6 +142,7 @@ export default class CurrentComponentSetting extends React.PureComponent {
     });
   }
   handleModalCancel = ()=>{
+    console.log(this)
     const form = this.oopForm.getForm();
     this.setModalFormVisible(false);
     setTimeout(()=>{

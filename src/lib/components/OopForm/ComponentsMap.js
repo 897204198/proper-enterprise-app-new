@@ -93,7 +93,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <OopOrgEmpPicker {...props} />
       break;
     case 'Switch':
-      component = <Switch {...props} />
+      component = <List.Item arrow="horizontal" extra={<Switch {...props} />}>{label}</List.Item>
       break;
     case 'OopTextEditor':
       component = <OopTextEditor {...props} />
@@ -143,7 +143,7 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       component = <OopUpload {...props} />
       break;
     case 'OopSystemCurrent':
-      component = <OopSystemCurrent {...props} label={componentLabel} />
+      component = <OopSystemCurrent {...props} />
       break;
     case 'OopGroupUserPicker':
       component = <OopGroupUserPicker {...props} />

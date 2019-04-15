@@ -112,7 +112,7 @@ export default class App extends React.Component {
   ]
   state = {}
   onSubmit = () => {
-    const oopForm = this.oopForm.wrappedInstance;
+    const {oopForm} = this;
     const form = oopForm.getForm();
     form.validateFields((error) => {
       if (error) {
@@ -130,7 +130,7 @@ export default class App extends React.Component {
         formJson={this.formJson}
         formTitle="报销单"
         formLayout="horizontal"
-        wrappedComponentRef={(el)=>{ this.oopForm = el }}
+        ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }}
       />
     )
     const option = [

@@ -4,8 +4,11 @@ import {List, Toast} from 'antd-mobile';
 import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
-// import styles from './index.less';
 
+// const a = <span>222</span>;
+// const node = <div>{a}</div>;
+// console.log(node.toString())
+// console.log(node)
 const getOopFormChildrenRef = (el, oopForm)=>{
   if (el) {
     try {
@@ -24,7 +27,7 @@ const getOopFormChildrenRef = (el, oopForm)=>{
 export const formGenerator = (formConfig)=>{
   const {children: Component, loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
     rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1, mode} = formConfig;
-  const _formLayout = formLayoutConfig || formLayout === 'horizontal' ? {
+  const _formLayout = formLayoutConfig || (formLayout === 'horizontal' ? {
     labelCol: {
       xs: {span: 24},
       sm: {span: 5},
@@ -33,7 +36,7 @@ export const formGenerator = (formConfig)=>{
       xs: {span: 24},
       sm: {span: 16},
     },
-  } : null;
+  } : undefined);
   // 把正则的字符串形式转义成正则形式 fe: "/^0-9*$/" => /^0-9*$/
   // {React.createElement(extraComponent, {...formConfig})}
   const transformRules = (rules)=>{
@@ -51,7 +54,7 @@ export const formGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, initialValue, rules = [], component, show = true, valuePropName = 'value', formItemLayout = _formLayout } = formItemConfig;
+      const {name, label, initialValue, rules = [], component, show = true, valuePropName = 'value', formItemLayout = _formLayout } = formItemConfig;
       if (show === true || mode === 'design') {
         let formItem = null;
         let _rules = null;
@@ -60,7 +63,7 @@ export const formGenerator = (formConfig)=>{
           if (rules.length) {
             _rules = transformRules(rules);
           }
-          const com = createComponent(component);
+          const com = createComponent({...component, label, rules, valuePropName, form}, false)
           if (com) {
             const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules, valuePropName})(
               com
@@ -81,7 +84,7 @@ export const formGenerator = (formConfig)=>{
     (
       <FormContainer
         className={className}
-        formLayout={_formLayout}
+        formLayout={formLayout}
         formItemList={formItemList}
         formTitle={formTitle}
         loading={loading}
@@ -89,70 +92,65 @@ export const formGenerator = (formConfig)=>{
     ) : (
       <Spin spinning={loading}>
         <div className={className}><h3>{formTitle}</h3>
-          <Form layout={formLayout}>{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
+          <Form layout={formLayout} style={{display: 'flex', flexWrap: 'wrap'}}>{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
         </div>
       </Spin>
     ));
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
-  const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout,
+  const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout = {},
     rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, show} = formItemConfig;
   const FormItem = Form.Item;
+  const { itemStyle } = formItemLayout;
   const content = (
     <div>
       <Input name={name.replace('label', 'value')} defaultValue={initialChildrenValue} onChange={rowItemSetValue} />
     </div>
   );
 
-  let style = {opacity: show === false ? 0.5 : 1}
-  if (!active) {
-    style = {
-      ...style,
-      display: 'inline-block',
-      width: `${100 / columnsNum}%`
-    }
-  }
+  const style = {opacity: show === false ? 0.5 : 1}
   return wrapper ? (
       <div className={wrapperClass} key={name}>
         {formItemInner}
       </div>
   ) : (
-    <div
-      key={name}
-      className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
-      style={style}
-      onClick={(event)=>{ rowItemClick(name, event) }}
-      >
-      <FormItem
-        key={name}
-        {...formItemLayout}
-        label={label}
-      >
-        {formItemInner}
-      </FormItem>{active ? (
-      <div className="ant-form-item-action">
-        {
-          showSetValueIcon ? (
-            <Popover content={content} title="该项的值" trigger="click">
-              <Tooltip title="设置值" getPopupContainer={triggerNode=> triggerNode.parentNode} placement="bottom">
-                <Icon type="up-square-o" onClick={(event)=>{ rowItemSetValue(event, name) }} />
-              </Tooltip>
-            </Popover>
-          ) : null
-        }
-        <Tooltip title="复制">
-          <Icon type="copy" onClick={(event)=>{ rowItemIconCopy(event, name) }} />
-        </Tooltip>
-        <Tooltip title="删除">
-          <Icon type="delete" onClick={(event)=>{ rowItemIconDelete(event, name) }} />
-        </Tooltip>
-        <Tooltip title="拖拽">
-          <Icon
-            type="pause-circle-o"
-            style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
-        </Tooltip>
-      </div>
-) : null}</div>
+    <div key={name} style={itemStyle ? {...itemStyle} : {flex: `0 0 ${100 / columnsNum}%`}}>
+      <div
+        className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
+        style={style}
+        onClick={(event)=>{ rowItemClick(name, event) }}
+        >
+        <FormItem
+          key={name}
+          {...formItemLayout}
+          label={label}
+        >
+          {formItemInner}
+        </FormItem>{active ? (
+        <div className="ant-form-item-action">
+          {
+            showSetValueIcon ? (
+              <Popover content={content} title="该项的值" trigger="click">
+                <Tooltip title="设置值" getPopupContainer={triggerNode=> triggerNode.parentNode} placement="bottom">
+                  <Icon type="up-square-o" onClick={(event)=>{ rowItemSetValue(event, name) }} />
+                </Tooltip>
+              </Popover>
+            ) : null
+          }
+          <Tooltip title="复制">
+            <Icon type="copy" onClick={(event)=>{ rowItemIconCopy(event, name) }} />
+          </Tooltip>
+          <Tooltip title="删除">
+            <Icon type="delete" onClick={(event)=>{ rowItemIconDelete(event, name) }} />
+          </Tooltip>
+          <Tooltip title="拖拽">
+            <Icon
+              type="pause-circle-o"
+              style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
+          </Tooltip>
+        </div>
+      ) : null}</div>
+    </div>
   );
 }
 
@@ -191,7 +189,7 @@ export const appFormGenerator = (formConfig)=>{
             }
           }
           const formItemInner = getFieldDecorator(name, obj)(
-            createComponent({...component, label, rules, valuePropName}, true)
+            createComponent({...component, label, rules, valuePropName, form}, true)
           );
           formItem = getListItem(formItemInner,
             {...formItemConfig});
@@ -241,6 +239,8 @@ const getListItem = (formItemInner, formItemConfig)=>{
   ) : listItem;
 }
 // 获取web端和移动端组件
+// component中包括了 创建组件需要的form rules label等属性
+// 请注意：这些属性在配置 表单的时候并不在component中配置
 const createComponent = (component, isApp)=>{
   if (typeof component === 'object') {
     if (component.name) {
@@ -279,3 +279,76 @@ export const toastLoading = (flag)=>{
     Toast.hide();
   }
 }
+
+// 根据props、rules的配置进行过滤出真正传递给 组件的props
+// const componentPropsFilter = (component)=>{
+//   const {props, form} = component;
+//   if (props) {
+//     for (const prop in props) {
+//       const propValue = props[prop];
+//       if (Object.prototype.toString.call(propValue) === '[object Object]') {
+//         if (propValue.name && propValue.value) {
+//           props[prop] = isItemShow(form.getFieldValue(propValue.name), propValue.value)
+//         }
+//       }
+//     }
+//   }
+// }
+
+// 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
+export const isItemShow = (itemValue, displayValue)=>{
+  // TODO 支持表达式匹配
+  return JSON.stringify(itemValue) === JSON.stringify(displayValue);
+}
+
+// 注册订阅者与发布者
+export const registerSubscribeAndPublish = (props)=>{
+  const subscribeObj = {};
+  const {formJson} = props;
+  formJson.forEach((item)=>{
+    const {subscribe = [], name: itemName} = item;
+    subscribe.forEach((sbcb)=>{
+      const {name: subscribeName, publish = []} = sbcb;
+      if (publish.length) {
+        // 为publish增加当前formjson的name
+        const newPublish = publish.map(pb=>({...pb, name: itemName}));
+        const publishes = subscribeObj[subscribeName];
+        if (publishes === undefined) {
+          subscribeObj[subscribeName] = newPublish;
+        } else {
+          publishes.push(newPublish);
+        }
+      }
+    })
+  });
+  return Object.keys(subscribeObj).length === 0 ? null : subscribeObj
+}
+
+//
+export const handleFormFieldChangeBySubscribe = (props, changedValues, allValues, subscribe)=>{
+  if (subscribe) {
+    const {formJson} = props;
+    console.log('current subscribe', subscribe)
+    console.log(props, changedValues, allValues);
+    const changeName = Object.keys(changedValues)[0];
+    const publishes = subscribe[changeName];
+    if (publishes) {
+      publishes.forEach((publish)=>{
+        console.log(publish.property)
+        const currentItem = formJson.find(item=>item.name === publish.name);
+        currentItem[publish.property] = equals(changedValues[changeName], publish.value)
+      })
+    }
+  }
+}
+
+// 表单的值是否相等
+export const equals = (value, value2)=>{
+  if (value === value2) {
+    return true;
+  } else {
+    return JSON.stringify(value) === JSON.stringify(value2)
+  }
+}
+
+// 通知formJson变化

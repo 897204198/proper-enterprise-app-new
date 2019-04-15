@@ -568,7 +568,6 @@ export default class OopFormDesigner extends React.PureComponent {
   }
   @Debounce(300)
   handleCodeMirrorChange(editor, value) {
-    console.log(value.origin, value)
     if ('+input,+delete,undo,*compose,cut,paste'.includes(value.origin)) {
       const values = editor.getValue();
       const item = this.validateItemJson(values);
@@ -576,8 +575,9 @@ export default class OopFormDesigner extends React.PureComponent {
         const index = this.state.rowItems.findIndex(it=>it.active === true);
         const oldItem = this.state.rowItems[index];
         this.state.rowItems[index] = {
-          ...oldItem,
-          ...item
+          ...item,
+          initialValue: oldItem.initialValue,
+          active: oldItem.active,
         }
         this.forceUpdate();
       }
