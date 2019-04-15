@@ -68,7 +68,7 @@ const CenterPanel = (props) => {
   return (
     <div className={styles.centerPanel}>
       <Card title={title} extra={toggleFormLayoutButtons}>
-        <OopForm {...param} ref={(el)=>{ self.oopForm = el }} />
+        <OopForm {...param} mode="design" ref={(el)=>{ self.oopForm = el }} />
         <div style={{textAlign: 'center', display: 'none'}}>
           {rowItems.length ? (<Button type="primary" onClick={onFormSubmit}>保存为自定义组件</Button>) : null}
         </div>
@@ -521,7 +521,9 @@ export default class OopFormDesigner extends React.PureComponent {
           currentRowItemJson
         });
       } else {
-        const item = JSON.parse(this.state.currentRowItemJson);
+        // const item = JSON.parse(this.state.currentRowItemJson);
+        // eslint-disable-next-line
+        const item = new Function('return '.concat(this.state.currentRowItemJson))();
         if (item.name) {
           this.onRowItemClick(item.name);
         }
@@ -566,15 +568,16 @@ export default class OopFormDesigner extends React.PureComponent {
   }
   @Debounce(300)
   handleCodeMirrorChange(editor, value) {
-    if ('+input,+delete,undo,*compose'.includes(value.origin)) {
+    if ('+input,+delete,undo,*compose,cut,paste'.includes(value.origin)) {
       const values = editor.getValue();
       const item = this.validateItemJson(values);
       if (item) {
         const index = this.state.rowItems.findIndex(it=>it.active === true);
         const oldItem = this.state.rowItems[index];
         this.state.rowItems[index] = {
-          ...oldItem,
-          ...item
+          ...item,
+          initialValue: oldItem.initialValue,
+          active: oldItem.active,
         }
         this.forceUpdate();
       }
@@ -584,7 +587,7 @@ export default class OopFormDesigner extends React.PureComponent {
     const { formPattern } = this.state;
     const isAdvanced = formPattern === 'advanced';
     return (
-      <div className={styles.container} id="OopFormDesigner">
+      <div className={styles.container}>
         <Row gutter={16}>
           <Col span={6} style={ isAdvanced ? {display: 'none'} : null }>
             <AddPanel

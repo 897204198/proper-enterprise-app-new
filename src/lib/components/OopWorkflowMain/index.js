@@ -51,7 +51,7 @@ const BusinessPanel = (props)=>{
                 approvalRemarksRequire: value === 0
               }, ()=>{
                 if (value === 1) {
-                  const form = self.oopForm.wrappedInstance.getForm();
+                  const form = self.oopForm.getForm();
                   form.validateFields(['approvalRemarks'], { force: true });
                 }
               })
@@ -79,7 +79,7 @@ const BusinessPanel = (props)=>{
   }
   return (
     <Spin spinning={formLoading}>
-      <OopForm {...formConfig} defaultValue={defaultValue} wrappedComponentRef={(el)=>{ if (el) { self.oopForm = el } }}>
+      <OopForm {...formConfig} defaultValue={defaultValue} ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }}>
         {children}
       </OopForm>
     </Spin>);
@@ -323,7 +323,7 @@ export default class OopWorkflowMain extends PureComponent {
       });
       return
     }
-    const oopForm = this.oopForm.wrappedInstance;
+    const {oopForm} = this;
     const form = oopForm.getForm();
     const oopFormChildrenRef = oopForm.childrenRef;
     form.validateFields({force: true}, (err)=>{

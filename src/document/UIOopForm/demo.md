@@ -195,7 +195,7 @@ export default class App extends React.Component {
         formJson={formJson}
         formTitle="报销单"
         formLayout="horizontal"
-        wrappedComponentRef={(el)=>{ this.oopForm = el }}
+        ref={(el)=>{ this.oopForm = el && el.getWrappedInstance() }}
       />
     )
   }
