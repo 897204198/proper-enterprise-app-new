@@ -189,7 +189,9 @@ export default class OopTabTableModal extends React.PureComponent {
     const {
       buttonCfg = {
         icon: 'user',
+        showIcon: true,
         text: '',
+        styleCfg: {}
       },
       treeCfg = {
         dataSource: [],
@@ -217,10 +219,11 @@ export default class OopTabTableModal extends React.PureComponent {
       <Fragment>
         <Tooltip title={selectedRowNames.length ? selectedRowNames : '点击选择'}>
           <Button
-            icon={buttonCfg.icon}
+            icon={buttonCfg.showIcon ? buttonCfg.icon : ''}
             disabled={buttonCfg.disabled}
             onClick={this.handleButtonClick}
             className={buttonCfg.disabled ? styles.disabledBtn : styles.btn}
+            style={{...buttonCfg.styleCfg}}
             ref={(el)=>{ this.btn = el }}>{selectedRowNames.length ? selectedRowNames : buttonCfg.text}
           </Button>
         </Tooltip>

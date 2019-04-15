@@ -70,6 +70,7 @@ export default class OopOrgEmpPicker extends React.PureComponent {
       disabled,
       onOk,
       onCancel,
+      buttonCfg = {},
       multiple = true
     } = this.props
     // const { selectedRowItems } = this.state
@@ -120,7 +121,9 @@ export default class OopOrgEmpPicker extends React.PureComponent {
           icon: 'user',
           onClick: this.handleButtonClick,
           text: placeholder,
-          disabled
+          disabled,
+          showIcon: true,
+          ...buttonCfg
         }}
         defaultSelected={ this.state.selectedRowItems }
         modalTitle={placeholder}
