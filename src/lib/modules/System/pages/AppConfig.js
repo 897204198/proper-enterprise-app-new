@@ -88,7 +88,7 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
   const { getFieldDecorator, getFieldValue } = form;
   const handleConfirmJson = (rule, value, callback) => {
     try {
-      if (value !== '') {
+      if (value !== '' && value && value != null) {
         JSON.parse(getFieldValue('data'))
       }
     } catch (err) {
