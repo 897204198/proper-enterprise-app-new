@@ -128,3 +128,26 @@ export async function GroupDelRole(params) {
 export async function menuResource() {
   return request('/auth/menus/resources');
 }
+
+// 获取规则项
+export async function fetchRule() {
+  return request('/auth/rule');
+}
+
+// 获取所有用户组不分页
+export async function fetchUserGroup() {
+  const p = {
+    pageNo: 1,
+    pageSize: 999
+  }
+  return request(`/auth/user-groups?${stringify(p)}`);
+}
+
+// 获取所有用户
+export async function fetchUserList() {
+  const p = {
+    pageNo: 1,
+    pageSize: 999
+  }
+  return request(`/auth/users?${stringify(p)}`);
+}
