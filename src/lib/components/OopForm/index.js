@@ -4,7 +4,7 @@ import { Form } from 'antd';
 import moment from 'moment';
 import {inject} from '@framework/common/inject';
 import {isApp} from '@framework/utils/utils';
-import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties, registerSubscribeAndPublish, handleFormFieldChangeBySubscribe} from './utils';
+import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties} from './utils';
 import styles from './index.less';
 
 let ifRenderByAntdMobile = isApp();
@@ -230,18 +230,7 @@ export default class OopForm extends React.PureComponent {
       toastLoading(flag);
     }
   }
-  handleFormValuesChange = (props, changedValues, allValues)=>{
-    console.time()
-    const subscribe = registerSubscribeAndPublish(props);
-    if (subscribe) {
-      handleFormFieldChangeBySubscribe(props, changedValues, allValues, subscribe);
-      console.timeEnd()
-      setTimeout(()=>{
-        this.forceUpdate()
-      })
-    }
-  }
   render() {
-    return <FormContainer {...this.props} self={this} onFormValuesChange={this.handleFormValuesChange} ref={(el)=>{ this.formContainer = el }} />
+    return <FormContainer {...this.props} self={this} ref={(el)=>{ this.formContainer = el }} />
   }
 }

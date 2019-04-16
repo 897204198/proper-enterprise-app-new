@@ -286,7 +286,7 @@ export const isItemShow = (itemValue, displayValue)=>{
   return JSON.stringify(itemValue) === JSON.stringify(displayValue);
 }
 
-// 注册订阅者与发布者
+// 注册订阅者与发布者 deprecated
 export const registerSubscribeAndPublish = (props)=>{
   const subscribeObj = {};
   const {formJson} = props;
@@ -309,7 +309,7 @@ export const registerSubscribeAndPublish = (props)=>{
   return Object.keys(subscribeObj).length === 0 ? null : subscribeObj
 }
 
-// 表单改变之后根据subscribe 设置表单属性
+// 表单改变之后根据subscribe 设置表单属性 deprecated
 export const handleFormFieldChangeBySubscribe = (props, changedValues, allValues, subscribe)=>{
   if (subscribe) {
     const {formJson} = props;
