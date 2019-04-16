@@ -4,24 +4,17 @@ import { Form } from 'antd';
 import moment from 'moment';
 import {inject} from '@framework/common/inject';
 import {isApp} from '@framework/utils/utils';
-import Debounce from 'lodash-decorators/debounce';
-import {appFormGenerator, formGenerator, toastValidErr, toastLoading, isItemShow, registerSubscribeAndPublish, handleFormFieldChangeBySubscribe} from './utils';
+import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties} from './utils';
 import styles from './index.less';
 
 let ifRenderByAntdMobile = isApp();
 
 const FormContainer = Form.create({
   wrappedComponentRef: true,
-  @Debounce(300)
-  onValuesChange(props, changedValues, allValues) {
-    const {onFormValuesChange} = props;
-    if (onFormValuesChange) {
-      onFormValuesChange(props, changedValues, allValues)
-    }
-  }})((props)=>{
+})((props)=>{
   const { OopForm$model, disabled = false, formJson = [], defaultValue = {}, form, self } = props;
   formJson.forEach((item)=>{
-    const {name, initialValue, component, display} = item;
+    const {name, initialValue, component, subscribe = []} = item;
     // initialValue是数组但是长度为0 或者 没有initialValue;
     const value = defaultValue[name];
     if ((Array.isArray(initialValue) && initialValue.length === 0)
@@ -54,7 +47,7 @@ const FormContainer = Form.create({
     if (component.children && component.children.length === 0 && component.dictCatalog) {
       const {dictCatalog} = component;
       if (dictCatalog !== '请选择') {
-        if (!OopForm$model[dictCatalog] || OopForm$model[dictCatalog].length === 0) {
+        if (OopForm$model[dictCatalog] === undefined) {
           if (self.dictCatalogRequestCount <= 3) {
             self.loadDictData(dictCatalog, name);
             self.dictCatalogRequestCount += 1;
@@ -81,13 +74,21 @@ const FormContainer = Form.create({
       }
     }
     // 解析display配置
-    if (display) {
-      const changeItem = formJson.find(it=>it.name === display.name);
-      if (changeItem) {
-        const currentValue = form.getFieldValue(changeItem.name) || changeItem.initialValue;
-        item.show = isItemShow(currentValue, display.value)
-      }
-      // changeEventSequence.add(display.name);
+    if (subscribe.length) {
+      subscribe.forEach((sbcb)=>{
+        const {name: subscribeName, publish: publishes = []} = sbcb;
+        if (publishes.length) {
+          publishes.forEach((publish)=>{
+            const changeItem = formJson.find(it=>it.name === subscribeName);
+            if (changeItem) {
+              const changeItemValue = form.getFieldValue(changeItem.name) || changeItem.initialValue;
+              // console.log(item.name, publish.property, isItemShow(changeItemValue, publish.value));
+              // item[publish.property] = isItemShow(currentValue, publish.value); 简单版实现
+              setFormJsonProperties(item, changeItemValue, publish)
+            }
+          })
+        }
+      })
     }
   });
   const formConfig = {...props, form, className: styles.container, oopForm: self };
@@ -229,18 +230,7 @@ export default class OopForm extends React.PureComponent {
       toastLoading(flag);
     }
   }
-  handleFormValuesChange = (props, changedValues, allValues)=>{
-    console.time()
-    const subscribe = registerSubscribeAndPublish(props);
-    if (subscribe) {
-      handleFormFieldChangeBySubscribe(props, changedValues, allValues, subscribe);
-      console.timeEnd()
-      setTimeout(()=>{
-        this.forceUpdate()
-      })
-    }
-  }
   render() {
-    return <FormContainer {...this.props} self={this} onFormValuesChange={this.handleFormValuesChange} ref={(el)=>{ this.formContainer = el }} />
+    return <FormContainer {...this.props} self={this} ref={(el)=>{ this.formContainer = el }} />
   }
 }

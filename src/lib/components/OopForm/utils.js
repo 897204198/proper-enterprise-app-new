@@ -54,8 +54,8 @@ export const formGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, label, initialValue, rules = [], component, show = true, valuePropName = 'value', formItemLayout = _formLayout } = formItemConfig;
-      if (show === true || mode === 'design') {
+      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value', formItemLayout = {} } = formItemConfig;
+      if (display === true || mode === 'design') {
         let formItem = null;
         let _rules = null;
         if (name && component) {
@@ -69,7 +69,7 @@ export const formGenerator = (formConfig)=>{
               com
             );
             formItem = getFormItem(formItemInner,
-              {...formItemConfig, columnsNum, formItemLayout, rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemSetValue, showSetValueIcon});
+              {...formItemConfig, columnsNum, formItemLayout: {..._formLayout, ...formItemLayout}, rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemSetValue, showSetValueIcon});
             formItemList.push(formItem);
           }
         }
@@ -99,7 +99,7 @@ export const formGenerator = (formConfig)=>{
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout = {},
-    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, show} = formItemConfig;
+    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, display} = formItemConfig;
   const FormItem = Form.Item;
   const { itemStyle } = formItemLayout;
   const content = (
@@ -108,7 +108,7 @@ const getFormItem = (formItemInner, formItemConfig)=>{
     </div>
   );
 
-  const style = {opacity: show === false ? 0.5 : 1}
+  const style = {opacity: display === false ? 0.5 : 1}
   return wrapper ? (
       <div className={wrapperClass} key={name}>
         {formItemInner}
@@ -173,8 +173,8 @@ export const appFormGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, label, initialValue, rules = [], component, show = true, valuePropName = 'value' } = formItemConfig;
-      if (show === true) {
+      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value' } = formItemConfig;
+      if (display === true) {
         let formItem = null;
         let _rules = null;
         if (name && component) {
@@ -280,28 +280,13 @@ export const toastLoading = (flag)=>{
   }
 }
 
-// 根据props、rules的配置进行过滤出真正传递给 组件的props
-// const componentPropsFilter = (component)=>{
-//   const {props, form} = component;
-//   if (props) {
-//     for (const prop in props) {
-//       const propValue = props[prop];
-//       if (Object.prototype.toString.call(propValue) === '[object Object]') {
-//         if (propValue.name && propValue.value) {
-//           props[prop] = isItemShow(form.getFieldValue(propValue.name), propValue.value)
-//         }
-//       }
-//     }
-//   }
-// }
-
 // 判断item的值 与 display配置的value 是否匹配 目前支持字符串 以后会支持表达式
 export const isItemShow = (itemValue, displayValue)=>{
   // TODO 支持表达式匹配
   return JSON.stringify(itemValue) === JSON.stringify(displayValue);
 }
 
-// 注册订阅者与发布者
+// 注册订阅者与发布者 deprecated
 export const registerSubscribeAndPublish = (props)=>{
   const subscribeObj = {};
   const {formJson} = props;
@@ -324,7 +309,7 @@ export const registerSubscribeAndPublish = (props)=>{
   return Object.keys(subscribeObj).length === 0 ? null : subscribeObj
 }
 
-//
+// 表单改变之后根据subscribe 设置表单属性 deprecated
 export const handleFormFieldChangeBySubscribe = (props, changedValues, allValues, subscribe)=>{
   if (subscribe) {
     const {formJson} = props;
@@ -352,3 +337,36 @@ export const equals = (value, value2)=>{
 }
 
 // 通知formJson变化
+export const setFormJsonProperties = (item, changedValue, publish)=>{
+  const {value, property} = publish;
+  if (property) {
+    const properties = property.split('.');
+    if (properties.length > 1) {
+      let tempObj = item;
+      for (let i = 0; i < properties.length; i++) {
+        const proper = properties[i];
+        if (tempObj[proper] === undefined) {
+          if (properties.length !== (i + 1)) {
+            tempObj[proper] = {}
+          }
+        } else {
+          tempObj = tempObj[proper]
+        }
+      }
+      const funcStr = `return this.${property} = arguments[0](arguments[1], arguments[2])`;
+      let fn = null;
+      try {
+        // eslint-disable-next-line
+        fn = new Function(funcStr);
+        fn.apply(item, [equals, changedValue, value]);
+      } catch (e) {
+        console.error(e)
+      }
+      setTimeout(()=>{
+        fn = null;
+      })
+    } else {
+      item[property] = equals(changedValue, value)
+    }
+  }
+}

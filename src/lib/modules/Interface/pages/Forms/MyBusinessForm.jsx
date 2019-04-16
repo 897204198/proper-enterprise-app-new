@@ -20,6 +20,11 @@ const formItemLayout = {
   },
 };
 
+@inject('formCurrentComponentSetting')
+@connect(({formCurrentComponentSetting, loading})=>({
+  formCurrentComponentSetting,
+  loading: loading.models.formCurrentComponentSetting
+}), null, null, {withRef: true})
 export default class MyBusinessForm extends React.PureComponent {
   state = {
     list: []
@@ -70,16 +75,17 @@ export default class MyBusinessForm extends React.PureComponent {
     };
     return (
       <Fragment>
-        <FormItem>
+        <div style={{flex: '0 0 100%'}}>
           {form.getFieldDecorator('id', {
             initialValue: groupsBasicInfo.id,
           })(
             <Input type="hidden" />
           )}
-        </FormItem>
+        </div>
         <FormItem
           {...formItemLayout}
           label="名称"
+          style={{flex: '0 0 100%'}}
         >
           {form.getFieldDecorator('name', {
             initialValue: groupsBasicInfo.name,

@@ -192,10 +192,13 @@ export default (item, eventsCollection)=>{
         props: {type: 'hidden'}
       },
       initialValue: '',
-      display: {
+      subscribe: [{
         name: dataDictItem.name,
-        value: 'changeless',
-      }
+        publish: [{
+          value: 'changeless',
+          property: 'display'
+        }]
+      }],
     },
     {
       name: `${name}${prefix}_dataUrl`,
@@ -204,10 +207,13 @@ export default (item, eventsCollection)=>{
         name: 'Input',
         props: {type: 'hidden'}
       },
-      display: {
+      subscribe: [{
         name: dataDictItem.name,
-        value: 'outer',
-      }
+        publish: [{
+          value: 'outer',
+          property: 'display'
+        }]
+      }],
     },
     {
       name: `${name}${prefix}_dataUrl_value`,
@@ -221,10 +227,13 @@ export default (item, eventsCollection)=>{
         }]
       },
       initialValue: component.dataUrl && component.dataUrl.value,
-      display: {
+      subscribe: [{
         name: dataDictItem.name,
-        value: 'outer',
-      }
+        publish: [{
+          value: 'outer',
+          property: 'display'
+        }]
+      }],
     },
     {
       name: `${name}${prefix}_dataUrl_labelPropName`,
@@ -238,10 +247,13 @@ export default (item, eventsCollection)=>{
         }]
       },
       initialValue: component.dataUrl && component.dataUrl.labelPropName,
-      display: {
+      subscribe: [{
         name: dataDictItem.name,
-        value: 'outer',
-      }
+        publish: [{
+          value: 'outer',
+          property: 'display'
+        }]
+      }],
     },
     {
       name: `${name}${prefix}_dataUrl_valuePropName`,
@@ -255,10 +267,13 @@ export default (item, eventsCollection)=>{
         }]
       },
       initialValue: component.dataUrl && component.dataUrl.valuePropName,
-      display: {
+      subscribe: [{
         name: dataDictItem.name,
-        value: 'outer',
-      }
+        publish: [{
+          value: 'outer',
+          property: 'display'
+        }]
+      }],
     },
     {
       name: `${name}${prefix}_dataUrl_button`,
@@ -281,10 +296,13 @@ export default (item, eventsCollection)=>{
       }}>
         测试
       </Button>),
-      display: {
+      subscribe: [{
         name: dataDictItem.name,
-        value: 'outer',
-      }
+        publish: [{
+          value: 'outer',
+          property: 'display'
+        }]
+      }],
     }];
     const childrenArr = children.map((cld, i)=>(
       {
@@ -298,10 +316,13 @@ export default (item, eventsCollection)=>{
         initialChildrenValue: cld.value,
         dragable: true,
         active: true,
-        display: {
+        subscribe: [{
           name: dataDictItem.name,
-          value: 'changeless',
-        }
+          publish: [{
+            value: 'changeless',
+            property: 'display'
+          }]
+        }],
       }
     ))
     childrenArr.push({
@@ -321,10 +342,13 @@ export default (item, eventsCollection)=>{
         }}
       },
       initialValue: component.dictCatalog,
-      display: {
+      subscribe: [{
         name: dataDictItem.name,
-        value: 'dict',
-      }
+        publish: [{
+          value: 'dict',
+          property: 'display'
+        }]
+      }],
     })
     childrenArr.push({
       name: `${name}${prefix}_name`,
