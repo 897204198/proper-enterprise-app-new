@@ -4,7 +4,7 @@ import { queryUsers } from '../services/authUserS';
 import { queryRoles, queryRole, removeRoles, queryRoleUsers, queryRoleGroups, fetchUpdateStatus,
   createOrUpdate, queryParents, queryCheckedMenus, menusAdd, menusDelete,
   userAddRole, userDelRole, GroupAddRole, GroupDelRole, menuResource,
-  resourcesAdd, resourcesDelete, queryCheckedResources } from '../services/authRoleS';
+  resourcesAdd, resourcesDelete, queryCheckedResources, fetchRule, fetchUserGroup, fetchUserList } from '../services/authRoleS';
 
 export default {
   namespace: 'authRole',
@@ -31,6 +31,16 @@ export default {
       yield put({
         type: 'saveRoleList',
         payload: Array.isArray(data) ? data : [],
+      });
+      if (callback) callback(response.result);
+    },
+    // 过去规则项
+    *fetchRule({ payload = {}, callback }, { call, put }) {
+      const response = yield call(fetchRule, payload);
+      const { data } = response.result;
+      yield put({
+        type: 'saveRuleList',
+        payload: data,
       });
       if (callback) callback(response.result);
     },
@@ -166,6 +176,22 @@ export default {
       const response = yield call(GroupDelRole, payload);
       if (callback) callback(response);
     },
+    *fetchUserGroup({ payload = {}, callback }, { call, put }) {
+      const res = yield call(fetchUserGroup, payload);
+      yield put({
+        type: 'saveUserGroups',
+        payload: res.result.data,
+      });
+      if (callback) callback(res)
+    },
+    *fetchUserList({ payload = {}, callback }, { call, put }) {
+      const res = yield call(fetchUserList, payload);
+      yield put({
+        type: 'saveUserList',
+        payload: res.result.data
+      })
+      if (callback) callback(res)
+    }
   },
 
   reducers: {
@@ -241,5 +267,23 @@ export default {
         roleMenus: []
       }
     },
+    saveRuleList(state, action) {
+      return {
+        ...state,
+        ruleList: action.payload
+      }
+    },
+    saveUserGroups(state, action) {
+      return {
+        ...state,
+        userGroups: action.payload
+      }
+    },
+    saveUserList(state, action) {
+      return {
+        ...state,
+        userList: action.payload
+      }
+    }
   },
 };
