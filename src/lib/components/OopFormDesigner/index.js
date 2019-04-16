@@ -68,7 +68,7 @@ const CenterPanel = (props) => {
   return (
     <div className={styles.centerPanel}>
       <Card title={title} extra={toggleFormLayoutButtons}>
-        <OopForm {...param} mode="design" ref={(el)=>{ self.oopForm = el }} />
+        <OopForm {...param} mode="design" ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }} />
         <div style={{textAlign: 'center', display: 'none'}}>
           {rowItems.length ? (<Button type="primary" onClick={onFormSubmit}>保存为自定义组件</Button>) : null}
         </div>
