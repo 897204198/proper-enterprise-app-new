@@ -159,11 +159,11 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
                   showSearch
                   placeholder="请选择"
                   mode="multiple"
-                  // optionFilterProp="children"
+                  optionFilterProp="children"
                   allowClear={true}
                   // onChange={ruleChange}
-                  // filterOption={(input, option) =>
-                  //   option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
+                  filterOption={(input, option) =>
+                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
                 >
                   {
                     userList.length > 0 ? userList.map(item => (
@@ -191,11 +191,11 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
                   showSearch
                   placeholder="请选择"
                   mode="multiple"
-                  // optionFilterProp="children"
+                  optionFilterProp="children"
                   allowClear={true}
                   // onChange={ruleChange}
-                  // filterOption={(input, option) =>
-                  //   option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
+                  filterOption={(input, option) =>
+                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
                 >
                   {
                     userGroups.length > 0 ? userGroups.map(item => (
