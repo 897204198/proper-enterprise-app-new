@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import { Modal, Card, Form, Spin, Button } from 'antd';
+import { Modal, Card, Form, Spin, Button, Alert } from 'antd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import {inject} from '@framework/common/inject';
@@ -75,6 +75,7 @@ const ModalForm = Form.create()((props) => {
   };
   return (
     <Modal title={title} visible={visible} footer={footer} onCancel={cancelForm}>
+    <Alert message="约定：规则的实现bean名称 应为规则code+AuthRuleImpl 否则规则工厂无法根据code找到对应规则的解析方式" type="warning" showIcon />
       <Spin spinning={loading}>
         <OopForm {...formConfig} ref={(el)=>{ this.oopForm = el }} defaultValue={formEntity} />
       </Spin>
