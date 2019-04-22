@@ -2,17 +2,21 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 // import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Dropdown,
 //   Menu, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
-import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
+import { Spin, Row, Col, Button, Card, Icon, Badge, List, Tooltip, Checkbox, Upload, Modal, Popconfirm, Form, Input, message, TreeSelect } from 'antd';
 import cookie from 'react-cookies'
 import { inject } from '@framework/common/inject';
 import { getApplicationContextUrl } from '@framework/utils/utils';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import Ellipsis from '@framework/components/Ellipsis';
-import {prefix} from '@/config/config';
+import { oopToast } from '@framework/common/oopUtils';
+import { prefix } from '@/config/config';
+import OopModal from '../../../components/OopModal';
+import OopTree from '../../../components/OopTree';
 import styles from './Designer.less';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const { TreeNode } = TreeSelect;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -87,11 +91,158 @@ const CreateModal = (props) => {
   );
 };
 
+/* 修改分类 */
+const InfoChangeForm = Form.create()((props) => {
+  const renderTreeNodes = (data) => {
+    return data.map((item) => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item}>
+            {renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return (
+        <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item} />
+      );
+    });
+  }
+  const {loading = false, form, formInfo, treeData } = props;
+  return (
+    <Spin spinning={loading}>
+    <div>
+      {form.getFieldDecorator('modelId', {
+        initialValue: formInfo.id,
+      })(
+        <Input type="hidden" />
+      )}
+    </div>
+     <Form id="designer_type_form">
+     <FormItem
+        {...formItemLayout}
+        label="当前流程名称"
+      >
+        {form.getFieldDecorator('name', {
+          initialValue: formInfo.name,
+          rules: [{ required: true, message: '类别名称不能为空'}]
+        })(
+          <Input placeholder="请输入问题类别名称长度2~5个字" disabled />
+        )}
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="流程分类"
+      >
+        {form.getFieldDecorator('workflowCategory', {
+          initialValue: formInfo.workflowCategory != null ? formInfo.workflowCategory.name : null,
+          rules: [{ required: true, message: '流程分类不能为空' }],
+        })(
+          <TreeSelect
+            showSearch
+            style={{ width: '100%' }}
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            placeholder="请选择分类"
+            allowClear
+            treeDefaultExpandAll
+            getPopupContainer={() => document.getElementById('designer_type_form')}
+          >
+            {
+              renderTreeNodes(treeData)
+            }
+          </TreeSelect>
+        )}
+      </FormItem>
+    </Form>
+  </Spin>
+  );
+})
+/* 流程定义 */
+const InfoSubmitForm = Form.create()((props) => {
+  const {loading = false, form, formInfo, parentName, isTop } = props;
+  return (
+    <Spin spinning={loading}>
+    <div>
+      {form.getFieldDecorator('id', {
+        initialValue: formInfo.id,
+      })(
+        <Input type="hidden" />
+      )}
+    </div>
+     <Form>
+      <FormItem
+            {...formItemLayout}
+            label="所属分类"
+          >
+          {form.getFieldDecorator('parentName', {
+            initialValue: isTop ? '流程分类' : parentName,
+            rules: [{ required: true, message: '所属分类名称不能为空' }]
+          })(
+            <Input placeholder="请输入所属分类名称" disabled />
+          )}
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="类别名称"
+      >
+        {form.getFieldDecorator('name', {
+          initialValue: formInfo.name,
+          rules: [{ required: true, message: '类别名称不能为空'}]
+        })(
+          <Input placeholder="请输入问题类别名称长度2~5个字" />
+        )}
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="类别编码"
+      >
+        {form.getFieldDecorator('code', {
+          initialValue: formInfo.code,
+          rules: [
+            { required: true, message: '类别编码不能为空' },
+            // { pattern: new RegExp(/^[0-9]\d*$/, 'g'), message: '类别编码只能是XX'}
+          ]
+        })(
+          <Input placeholder="请输入类别编码" />
+        )}
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="当前排序"
+      >
+        {form.getFieldDecorator('sort', {
+          initialValue: formInfo.sort,
+          rules: [
+            { required: true, message: '排序不能为空' },
+            { pattern: new RegExp(/^[0-9]\d*$/, 'g'), message: '排序只能是数值'}
+          ]
+        })(
+          <Input placeholder="请输入排序对应数值" />
+        )}
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="描述"
+      >
+        {form.getFieldDecorator('description', {
+          initialValue: formInfo.description,
+        })(
+          <TextArea placeholder="请输入描述" autosize={{ minRows: 2, maxRows: 5 }} />
+        )}
+      </FormItem>
+    </Form>
+  </Spin>
+  );
+});
+
+
 @inject(['workflowDesigner'])
 @connect(({ workflowDesigner, global, loading }) => ({
   workflowDesigner,
   global,
-  loading: loading.models.workflowDesigner
+  loading: loading.models.workflowDesigner,
+  treeLoading: loading.effects['workflowDesigner/fetchTreeData'],
+  submitLoading: loading.effects['workflowDesigner/addTree'],
+  typeSubmitLoading: loading.effects['workflowDesigner/editTree'],
 }))
 @Form.create()
 export default class Designer extends PureComponent {
@@ -100,7 +251,28 @@ export default class Designer extends PureComponent {
     buttonSize: 'default',
     showUploadList: false,
     deleteLists: [],
-    viewVisible: false
+    editDisable: false,
+    deleteDisable: false,
+    handleSelect: null,
+    viewVisible: false,
+    typeVisible: false,
+    typeIsCreate: true,
+    typeCloseConfirm: {
+      visible: false
+    },
+    // 单条分类数据
+    typeInfo: {},
+    // 流程分类描述
+    listTitle: '流程分类',
+    // 当前选中的分类节点
+    nowTreeKey: 'root',
+    nowTreeCode: 'ROOT',
+    // 流程详细数据
+    workInfo: {},
+    // 流程分类修改modal
+    changeVisible: false,
+    // 当前父节点标题
+    nowParentName: '流程分类'
   };
 
   componentDidMount() {
@@ -109,26 +281,29 @@ export default class Designer extends PureComponent {
     // 在flowable的前端页面里获取表单的属性 需要的请求前缀
     cookie.save('X-PEP-TOKEN', window.localStorage.getItem('proper-auth-login-token'), { path: '/' });
     window.localStorage.setItem('pea_workflow_dynamic_request_prefix', prefix);
-    this.props.dispatch({
-      type: 'workflowDesigner/fetch',
-      payload: {
-        modelType: '0',
-        sort: 'modifiedDesc'
-      }
-    });
+    /* 获取分类列表 */
+    this.getTreeData();
+    this.refresh(this.state.nowTreeCode);
   }
   componentWillUnmount() {
     cookie.remove('X-PEP-TOKEN', { path: '/' });
   }
   // 查询
   handleSearch = (value) => {
+    const haveRoot = {
+      filter: value,
+      modelType: '0',
+      sort: 'modifiedDesc',
+    }
+    const unHaveRoot = {
+      filter: value,
+      modelType: '0',
+      sort: 'modifiedDesc',
+      workflowCategoryCode: this.state.nowTreeCode,
+    }
     this.props.dispatch({
       type: 'workflowDesigner/fetch',
-      payload: {
-        filter: value,
-        modelType: '0',
-        sort: 'modifiedDesc'
-      }
+      payload: this.state.nowTreeCode !== 'ROOT' ? unHaveRoot : haveRoot
     });
   }
 
@@ -214,9 +389,16 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/remove',
       payload: id,
       callback: () => {
-        this.refresh();
+        this.refresh(this.state.nowTreeCode);
         this.state.deleteLists = this.arrayRemove(this.state.deleteLists, id);
       }
+    });
+  }
+  /* 修改流程表单状态 */
+  changeNowTypeCode = (item) => {
+    this.setState({
+      workInfo: item,
+      changeVisible: true,
     });
   }
 
@@ -279,6 +461,12 @@ export default class Designer extends PureComponent {
         if (this.props.workflowDesigner.newId == null) {
           message.error('关键字重复');
         } else {
+          /* 默认添加当前流程分类 */
+          const defaultType = {
+            modelId: this.props.workflowDesigner.newId,
+            workflowCategory: this.state.nowTreeCode
+          }
+          this.changeWorkType(defaultType);
           this.goActivity(this.props.workflowDesigner.newId);
         }
       }
@@ -297,13 +485,19 @@ export default class Designer extends PureComponent {
     window.location = `workflow/app/rest/models/${id}/bpmn20?version=${Date.now()}`;
   }
   // 刷新
-  refresh = () => {
+  refresh = (root) => {
+    const params = {
+      modelType: '0',
+      sort: 'modifiedDesc',
+      workflowCategoryCode: root,
+    }
+    const paramsRoot = {
+      modelType: '0',
+      sort: 'modifiedDesc',
+    }
     this.props.dispatch({
       type: 'workflowDesigner/fetch',
-      payload: {
-        modelType: '0',
-        sort: 'modifiedDesc'
-      }
+      payload: root !== 'ROOT' ? params : paramsRoot,
     });
   }
 
@@ -311,7 +505,7 @@ export default class Designer extends PureComponent {
   uploadChange = (info) => {
     if (info.file.status === 'done') {
       message.success(`${info.file.name} 导入成功`);
-      this.refresh();
+      this.refresh(this.state.nowTreeCode);
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} 导入失败`);
     }
@@ -323,7 +517,6 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/repository',
       payload: item.id,
       callback: () => {
-        // this.refresh();
         for (let i = 0; i < this.state.lists.length; i++) {
           if (this.state.lists[i].id === this.props.workflowDesigner.deployData.id) {
             this.state.lists[i].deploymentTime =
@@ -346,150 +539,469 @@ export default class Designer extends PureComponent {
       }
     });
   }
+  /*
+  * 树右键点击
+  */
+  rightClick = (data) =>{
+    this.setState({
+      handleSelect: data
+    });
+    /* 根节点不可以编辑和删除 */
+    if (data.key === 'root') {
+      this.setState({
+        editDisable: true,
+        deleteDisable: true,
+        isTop: true,
+      })
+    } else if (!data.children) {
+      /* 父级节点中子节点为空时才可删除 */
+      this.setState({
+        editDisable: false,
+        deleteDisable: false,
+        isTop: false,
+      })
+    } else {
+      this.setState({
+        editDisable: false,
+        deleteDisable: true,
+        isTop: false,
+      })
+    }
+  }
+
+  /* 新建流程分类  */
+  handleTreeListAdd = ()=>{
+    const { handleSelect } = this.state;
+    this.setState({
+      typeIsCreate: true,
+      typeVisible: true,
+      nowParentName: handleSelect.parentName,
+      addOrEditTypeTitle: '新建'
+    })
+  }
+  /*  编辑流程分类 */
+  handleTreeListEdit = ()=>{
+    const { handleSelect } = this.state;
+    this.setState({
+      typeIsCreate: false,
+      typeVisible: true,
+      addOrEditTypeTitle: '编辑',
+      nowParentName: handleSelect.parentName,
+      typeInfo: handleSelect
+    })
+  }
+  /* 删除该节点 */
+  handleTreeListDelete = ()=>{
+    const { workflowDesigner: { treeData } } = this.props;
+    if (treeData.length > 1) {
+      Modal.confirm({
+        title: '提示',
+        content: '是否确认删除该分类',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          this.treeListDelete()
+        }
+      });
+    } else {
+      Modal.info({
+        title: '至少要保留一个分类',
+        okText: '知道了'
+      });
+    }
+  }
+  treeListDelete = () => {
+    const { handleSelect, nowTreeCode } = this.state;
+    this.props.dispatch({
+      type: 'workflowDesigner/removeTreeById',
+      payload: handleSelect.id,
+      callback: (res)=>{
+        oopToast(res, '删除成功', '删除失败');
+        this.setState({
+          typeVisible: false,
+          // nowQestionTypeId: '',
+        }, ()=>{
+          this.getTreeData();
+          /* 刷新流程列表 */
+          this.refresh(nowTreeCode);
+        })
+      }
+    })
+  }
+  /* 选中树节点 */
+  handleOnSelect = (selectedKeys, info) => {
+    this.setState({
+      listTitle: info.title,
+      nowTreeKey: info.key,
+      nowTreeCode: info.code,
+    }, ()=>{
+      /* 更新右侧流程列表 */
+      this.refresh(this.state.nowTreeCode);
+    })
+  }
+  // 取消类别&分类的表单
+  typenCancel = ()=>{
+    this.setState({
+      typeCloseConfirm: {
+        visible: false
+      },
+      typeVisible: false,
+      changeVisible: false,
+      workInfo: {},
+      typeInfo: {}
+    })
+  }
+  /*
+  * 提交分类表单
+  */
+  typeSubmit = () =>{
+    const { typeIsCreate, nowTreeKey } = this.state;
+    const flowType = this.flowType.getForm();
+    if (flowType) {
+      flowType.validateFieldsAndScroll((err, data) => {
+        if (err) return;
+        const params = {
+          ...data,
+          parentId: nowTreeKey,
+        }
+        typeIsCreate ? this.treeListAdd(params) : this.treeListEdit(params);
+      })
+    }
+  }
+  /*
+    修改当前流程的分类
+  */
+  typeChangeSubmit = () =>{
+    const changeType = this.changeType.getForm();
+    if (changeType) {
+      changeType.validateFieldsAndScroll((err, data) => {
+        if (err) return;
+        this.changeWorkType(data);
+      })
+    }
+  }
+  /* 分类列表 */
+  getTreeData = () => {
+    this.props.dispatch({
+      type: 'workflowDesigner/fetchTreeData',
+    });
+  }
+  /*  添加分类树节点  */
+  treeListAdd = (record) => {
+    this.props.dispatch({
+      type: 'workflowDesigner/addTree',
+      payload: record,
+      callback: (res)=>{
+        oopToast(res, '添加成功', '添加失败');
+        this.setState({
+          typeVisible: false,
+        }, ()=>{
+          this.getTreeData();
+        })
+      }
+    })
+  }
+  /* 编辑分类节点 */
+  treeListEdit = (record) => {
+    this.props.dispatch({
+      type: 'workflowDesigner/editTree',
+      payload: record,
+      callback: (res)=>{
+        oopToast(res, '修改成功', '修改失败');
+        this.setState({
+          typeVisible: false
+        }, ()=>{
+          this.getTreeData();
+        })
+      }
+    })
+  }
+  /*
+    修改流程分类
+  */
+  changeWorkType = (params)=> {
+    this.props.dispatch({
+      type: 'workflowDesigner/changeWorkType',
+      payload: params,
+      callback: (res)=>{
+        oopToast(res, '修改成功', '修改失败');
+        this.setState({
+          changeVisible: false
+        }, ()=>{
+          this.refresh(this.state.nowTreeCode);
+        })
+      }
+    })
+  }
 
   render() {
-    const { workflowDesigner: { data }, loading, global: {size} } = this.props;
-    const { deleteLists, buttonSize, showUploadList, viewVisible } = this.state;
+    const { workflowDesigner: { data, treeData }, loading, treeLoading, typeSubmitLoading, submitLoading } = this.props;
+    const { deleteLists, buttonSize, showUploadList, viewVisible, editDisable, isTop, listTitle, typeVisible, workInfo,
+      deleteDisable, addOrEditTypeTitle, changeVisible, typeIsCreate, typeInfo, typeCloseConfirm, nowParentName } = this.state;
     this.state.lists = data.data;
-    // const itemMenu = [
-    //   {key: 'item_0', type: 'lock', content: '权限'},
-    //   {key: 'item_1', type: 'file-text', content: '复制'},
-    //   {key: 'item_2', type: 'right-circle-o', content: '发起'},
-    //   {key: 'item_3', type: 'swap', content: '移动'}
-    // ];
+    const formatTreeData = treeData;
+    const treeConfig = {
+      title: '流程分类列表',
+      treeLoading,
+      treeData: formatTreeData,
+      treeTitle: 'name',
+      treeKey: 'id',
+      defaultSelectedKeys: ['root'],
+      defaultExpandedKeys: ['root'],
+    }
+    const menuList = [
+      {
+        icon: 'folder-add',
+        text: '新建',
+        name: 'add',
+        disabled: false,
+        onClick: ()=>{
+          this.handleTreeListAdd()
+        }
+      },
+      {
+        icon: 'edit',
+        text: '编辑',
+        name: 'edit',
+        disabled: editDisable,
+        onClick: () => {
+          this.handleTreeListEdit();
+        },
+      },
+      {
+        icon: 'delete',
+        text: '删除',
+        name: 'remove',
+        disabled: deleteDisable,
+        onClick: (record) => {
+          this.handleTreeListDelete(record);
+        },
+      }
+    ];
+
     const token = window.localStorage.getItem('proper-auth-login-token');
 
     const uploadParams = {
       action: `${getApplicationContextUrl()}/workflow/service/app/rest/import-process-model?access_token=${token}`,
       accept: 'text/xml',
+      onSuccess: (res)=>{
+        const params = {
+          modelId: res.id,
+          workflowCategory: this.state.nowTreeCode,
+        }
+        /* 添加分类 */
+        this.changeWorkType(params);
+      }
     }
 
     return (
-      <PageHeaderLayout content={
-        <div>
-          <Input.Search
-            style={{marginBottom: '16px'}}
-            onSearch={value => this.handleSearch(value)}
-            enterButton="搜索"
-            size={size}
-            placeholder="请输入流程名称"
-          />
-          <Button className={styles.headerButton} icon="plus" type="primary" size={buttonSize} onClick={() => this.create(true)}>
-            新建
-          </Button>
-          <span style={{float: 'right'}}>
-            <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
-              <Button className={styles.headerButton} icon="select" size={buttonSize}>
-                导入
-              </Button>
-            </Upload>
-          </span>
-          <Button className={styles.headerButton} icon={deleteLists.length ? 'check-square' : 'check-square-o'} size={buttonSize} onClick={() => this.checkAll()}>
-            全选
-          </Button>
-          {deleteLists.length > 0 ? <Button icon="delete" size={buttonSize} type="danger" onClick={() => this.deleteAll()}>批量删除</Button> : null}
-        </div>
-      }>
-        <div>
-          <div>
-            <List
-              loading={loading}
-              grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
-              dataSource={this.state.lists}
-              renderItem={item => (
-                <List.Item key={item.id} className={styles.contolFontSize}>
-                  <Card
-                    hoverable
-                    className={styles.cardContent}
-                    cover={
-                      <div
-                        style={{ background: `url(${item.sourceExtraUrl}) 50% 50% / contain no-repeat` }}
-                      />
-                    }
-                    actions={
-                      [
-                        <Tooltip placement="bottom" title="部署" onClick={() => this.repository(item)}>
-                          <Icon type="api" />
-                        </Tooltip>,
-                        <Tooltip placement="bottom" title="导出">
-                          <Icon type="download" onClick={() => this.exportActivity(item.id)} />
-                        </Tooltip>,
-                        <Tooltip placement="bottom" title="删除">
-                          <Popconfirm title="确定删除选中的数据吗" onConfirm={() => this.deleteItem(item.id)}>
-                            <Icon type="delete" />
-                          </Popconfirm>
-                        </Tooltip>,
-                        // <Dropdown
-                        //   overlay={
-                        //     <Menu onClick={value => this.menuClick(value, item)}>
-                        //       {
-                        //         itemMenu.map(it => (
-                        //           <Menu.Item key={it.key}>
-                        //             <a><Icon type={it.type} /> {it.content}</a>
-                        //           </Menu.Item>
-                        //         ))
-                        //       }
-                        //       <Menu.Item key="item_4">
-                        //         <Popconfirm title="确定删除选中的数据吗"
-                        //           onConfirm={() => this.deleteItem(item.id)}>
-                        //           <a><Icon type="delete" /> 删除</a>
-                        //         </Popconfirm>
-                        //       </Menu.Item>
-                        //     </Menu>
-                        //   }
-                        //   placement="topCenter">
-                        //   <Icon type="ellipsis" />
-                        // </Dropdown>
-                      ]
-                    }
-                  >
-                    <Card.Meta
-                      description={(
-                        <div>
-                          <Checkbox
-                            checked={item.isChecked}
-                            className={styles.checkboxPosition}
-                            onChange={value => this.checkboxChange(value, item)}
+      <PageHeaderLayout>
+        <Row gutter={16}>
+          <Col span={18} push={6}>
+            <Card bordered={false} title={listTitle}>
+            <div style={{ marginBottom: 20 }}>
+                <Input.Search
+                  style={{marginBottom: '16px'}}
+                  onSearch={value => this.handleSearch(value)}
+                  enterButton="搜索"
+                  placeholder="请输入流程名称"
+                />
+               {
+                 this.state.nowTreeCode !== 'ROOT' ? (
+                 <Button className={styles.headerButton} icon="plus" type="primary" size={buttonSize} onClick={() => this.create(true)} >
+                  新建
+                </Button>
+                ) : null
+               }
+                <span style={{float: 'right'}}>
+                  <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
+                    <Button className={styles.headerButton} icon="select" size={buttonSize}>
+                      导入
+                    </Button>
+                  </Upload>
+                </span>
+                <Button className={styles.headerButton} icon={deleteLists.length ? 'check-square' : 'check-square-o'} size={buttonSize} onClick={() => this.checkAll()}>
+                  全选
+                </Button>
+                {deleteLists.length > 0 ? <Button icon="delete" size={buttonSize} type="danger" onClick={() => this.deleteAll()}>批量删除</Button> : null}
+            </div>
+              <List
+                  loading={loading}
+                  grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
+                  dataSource={this.state.lists}
+                  renderItem={item => (
+                    <List.Item key={item.id} className={styles.contolFontSize}>
+                      <Card
+                        hoverable
+                        className={styles.cardContent}
+                        cover={
+                          <div
+                            style={{ background: `url(${item.sourceExtraUrl}) 50% 50% / contain no-repeat` }}
                           />
-                          <Ellipsis className={styles.item} lines={1}>
-                            <Tooltip placement="bottom" title="编辑">
-                              <a onClick={() => this.goActivity(item.id)} style={{textDecoration: 'underline', cursor: 'pointer'}}>
-                                <span>流程名称 : {item.name}</span>
-                              </a>
-                            </Tooltip>
-                            <div style={{color: '#333', cursor: 'text'}}>流程定义ID : {item.key}</div>
-                          </Ellipsis>
-                          <Ellipsis className={styles.item} lines={4}>
-                            <Badge
-                              status={ item.status ? (item.status.code === 'UN_DEPLOYED' ? 'default' : (item.status.code === 'DEPLOYED' ? 'success' : (item.status.code === '2' ? 'processing' : 'error'))) : 'default' }
-                              text={ item.status ? item.status.name : '未部署' }
-                              className={styles.status} />
-                            <Ellipsis className={styles.item} lines={1}>
-                              版本号: { item.processVersion }
+                        }
+                        actions={
+                          [
+                            <Tooltip placement="bottom" title="部署" onClick={() => this.repository(item)}>
+                              <Icon type="api" />
+                            </Tooltip>,
+                            <Tooltip placement="bottom" title="导出">
+                              <Icon type="download" onClick={() => this.exportActivity(item.id)} />
+                            </Tooltip>,
+                            <Tooltip placement="bottom" title="修改流程分类" onClick={() => this.changeNowTypeCode(item)}>
+                              <Icon type="edit" />
+                            </Tooltip>,
+                            <Tooltip placement="bottom" title="删除">
+                              <Popconfirm title="确定删除选中的数据吗" onConfirm={() => this.deleteItem(item.id)}>
+                                <Icon type="delete" />
+                              </Popconfirm>
+                            </Tooltip>,
+                            // <Dropdown
+                            //   overlay={
+                            //     <Menu onClick={value => this.menuClick(value, item)}>
+                            //       {
+                            //         itemMenu.map(it => (
+                            //           <Menu.Item key={it.key}>
+                            //             <a><Icon type={it.type} /> {it.content}</a>
+                            //           </Menu.Item>
+                            //         ))
+                            //       }
+                            //       <Menu.Item key="item_4">
+                            //         <Popconfirm title="确定删除选中的数据吗"
+                            //           onConfirm={() => this.deleteItem(item.id)}>
+                            //           <a><Icon type="delete" /> 删除</a>
+                            //         </Popconfirm>
+                            //       </Menu.Item>
+                            //     </Menu>
+                            //   }
+                            //   placement="topCenter">
+                            //   <Icon type="ellipsis" />
+                            // </Dropdown>
+                          ]
+                        }
+                      >
+                        <Card.Meta
+                          description={(
+                            <div>
+                              <Checkbox
+                                checked={item.isChecked}
+                                className={styles.checkboxPosition}
+                                onChange={value => this.checkboxChange(value, item)}
+                              />
+                              <Ellipsis className={styles.item} lines={1}>
+                                <Tooltip placement="bottom" title="编辑">
+                                  <a onClick={() => this.goActivity(item.id)} style={{textDecoration: 'underline', cursor: 'pointer'}}>
+                                    <span>流程名称 : {item.name}</span>
+                                  </a>
+                                </Tooltip>
+                                <div style={{color: '#333', cursor: 'text'}}>流程分类 : {item.workflowCategory ? item.workflowCategory.name : '流程分类'}</div>
+                                <div style={{color: '#333', cursor: 'text'}}>流程定义ID : {item.key}</div>
+                              </Ellipsis>
+                              <Ellipsis className={styles.item} lines={4}>
+                                <Badge
+                                  status={ item.status ? (item.status.code === 'UN_DEPLOYED' ? 'default' : (item.status.code === 'DEPLOYED' ? 'success' : (item.status.code === '2' ? 'processing' : 'error'))) : 'default' }
+                                  text={ item.status ? item.status.name : '未部署' }
+                                  className={styles.status} />
+                                <Ellipsis className={styles.item} lines={1}>
+                                  版本号: { item.processVersion }
+                                </Ellipsis>
+                                <Ellipsis className={styles.item} lines={1}>
+                                  部署时间: { item.deploymentTime }
+                                </Ellipsis>
+                                <Ellipsis className={styles.item} lines={1}>
+                                  最后更新: { item.lastUpdated }
+                                </Ellipsis>
+                                <Ellipsis className={styles.item} lines={1}>
+                                  创建时间: { item.created }
+                                </Ellipsis>
                             </Ellipsis>
-                            <Ellipsis className={styles.item} lines={1}>
-                              部署时间: { item.deploymentTime }
-                            </Ellipsis>
-                            <Ellipsis className={styles.item} lines={1}>
-                              最后更新: { item.lastUpdated }
-                            </Ellipsis>
-                            <Ellipsis className={styles.item} lines={1}>
-                              创建时间: { item.created }
-                            </Ellipsis>
-                        </Ellipsis>
-                        </div>
-                      )}
-                    />
-                  </Card>
-                </List.Item>
-              )}
-            />
-          </div>
-        </div>
-        <CreateModal
+                            </div>
+                          )}
+                        />
+                      </Card>
+                    </List.Item>
+                )}
+              />
+            </Card>
+          </Col>
+          <Col span={6} pull={18} >
+          <Card bordered={false} title={treeConfig.title}>
+            <Spin spinning={treeLoading}>
+              <OopTree
+                onTreeNodeSelect={this.handleOnSelect}
+                onRightClickConfig={{
+                  menuList,
+                  rightClick: (item)=>{
+                    this.rightClick(item)
+                  },
+                }}
+                {...treeConfig}
+                ref={(el)=>{ el && (this.oopTree = el) }}
+              />
+            </Spin>
+          </Card>
+        </Col>
+        </Row>
+      {/* 新建流程表单 */}
+      <CreateModal
           createOk={this.createOk}
           createCancel={this.createCancel}
           viewVisible={viewVisible}
+        />
+      {/* 流程分类表单 */}
+      <OopModal
+          width={600}
+          loading={submitLoading}
+          title={`${addOrEditTypeTitle}流程分类`}
+          visible={typeVisible}
+          closeConfirm={typeCloseConfirm}
+          destroyOnClose={true}
+          isCreate={typeIsCreate}
+          onCancel={this.typenCancel}
+          onOk={this.typeSubmit}
+          onDelete={this.treeListDelete}
+          tabs={[
+          {
+            key: 'flowType',
+            title: '基本信息',
+            main: true,
+            content:
+            <InfoSubmitForm
+              ref={(el) => {
+                this.flowType = el;
+              }}
+              formInfo={typeIsCreate ? {} : typeInfo}
+              parentName={nowParentName}
+              isTop={isTop}
+            />
+            },
+          ]}
+        />
+       {/* 编辑流程分类表单 */}
+       <OopModal
+          width={600}
+          loading={typeSubmitLoading}
+          title= "编辑流程分类"
+          visible={changeVisible}
+          closeConfirm={typeCloseConfirm}
+          destroyOnClose={true}
+          isCreate={false}
+          onCancel={this.typenCancel}
+          onOk={this.typeChangeSubmit}
+          tabs={[
+          {
+            key: 'changeType',
+            title: '基本信息',
+            main: true,
+            content:
+            <InfoChangeForm
+              ref={(el) => {
+                this.changeType = el;
+              }}
+              formInfo={workInfo}
+              treeData={formatTreeData}
+            />
+            },
+          ]}
         />
       </PageHeaderLayout>
     );
