@@ -97,13 +97,13 @@ const InfoChangeForm = Form.create()((props) => {
     return data.map((item) => {
       if (item.children) {
         return (
-          <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item}>
+          <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item} disabled={item.code === 'ROOT'}>
             {renderTreeNodes(item.children)}
           </TreeNode>
         );
       }
       return (
-        <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item} />
+        <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item} disabled={item.code === 'ROOT'} />
       );
     });
   }
@@ -126,7 +126,7 @@ const InfoChangeForm = Form.create()((props) => {
           initialValue: formInfo.name,
           rules: [{ required: true, message: '类别名称不能为空'}]
         })(
-          <Input placeholder="请输入问题类别名称长度2~5个字" disabled />
+          <Input placeholder="请输入类别名称" disabled />
         )}
       </FormItem>
       <FormItem
@@ -188,7 +188,7 @@ const InfoSubmitForm = Form.create()((props) => {
           initialValue: formInfo.name,
           rules: [{ required: true, message: '类别名称不能为空'}]
         })(
-          <Input placeholder="请输入问题类别名称长度2~5个字" />
+          <Input placeholder="请输入类别名称" />
         )}
       </FormItem>
       <FormItem
@@ -199,7 +199,6 @@ const InfoSubmitForm = Form.create()((props) => {
           initialValue: formInfo.code,
           rules: [
             { required: true, message: '类别编码不能为空' },
-            // { pattern: new RegExp(/^[0-9]\d*$/, 'g'), message: '类别编码只能是XX'}
           ]
         })(
           <Input placeholder="请输入类别编码" />
@@ -264,15 +263,15 @@ export default class Designer extends PureComponent {
     typeInfo: {},
     // 流程分类描述
     listTitle: '流程分类',
-    // 当前选中的分类节点
-    nowTreeKey: 'root',
     nowTreeCode: 'ROOT',
     // 流程详细数据
     workInfo: {},
     // 流程分类修改modal
     changeVisible: false,
     // 当前父节点标题
-    nowParentName: '流程分类'
+    nowParentName: '流程分类',
+    // 当前节点名称
+    nowTypeName: null,
   };
 
   componentDidMount() {
@@ -443,9 +442,14 @@ export default class Designer extends PureComponent {
 
   // 打开新建窗口
   create = (flag) => {
-    this.setState({
-      viewVisible: flag,
-    });
+    const { nowTreeCode } = this.state;
+    if (nowTreeCode === 'ROOT') {
+      message.info('[流程分类] 下不可以新建流程，请选择其他的分类，再新建流程！');
+    } else {
+      this.setState({
+        viewVisible: flag,
+      });
+    }
   }
 
   // 新建确认
@@ -576,7 +580,8 @@ export default class Designer extends PureComponent {
       typeIsCreate: true,
       typeVisible: true,
       nowParentName: handleSelect.parentName,
-      addOrEditTypeTitle: '新建'
+      addOrEditTypeTitle: '新建',
+      nowTypeName: handleSelect.name,
     })
   }
   /*  编辑流程分类 */
@@ -591,27 +596,20 @@ export default class Designer extends PureComponent {
     })
   }
   /* 删除该节点 */
-  handleTreeListDelete = ()=>{
-    const { workflowDesigner: { treeData } } = this.props;
-    if (treeData.length > 1) {
-      Modal.confirm({
-        title: '提示',
-        content: '是否确认删除该分类',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.treeListDelete()
-        }
-      });
-    } else {
-      Modal.info({
-        title: '至少要保留一个分类',
-        okText: '知道了'
-      });
-    }
+  handleTreeListDelete = () => {
+    const { handleSelect } = this.state;
+    Modal.confirm({
+      title: '提示',
+      content: `是否确认删除分类 - "${handleSelect.name}"`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        this.treeListDelete();
+      }
+    });
   }
   treeListDelete = () => {
-    const { handleSelect, nowTreeCode } = this.state;
+    const { handleSelect } = this.state;
     this.props.dispatch({
       type: 'workflowDesigner/removeTreeById',
       payload: handleSelect.id,
@@ -619,11 +617,13 @@ export default class Designer extends PureComponent {
         oopToast(res, '删除成功', '删除失败');
         this.setState({
           typeVisible: false,
-          // nowQestionTypeId: '',
         }, ()=>{
           this.getTreeData();
           /* 刷新流程列表 */
-          this.refresh(nowTreeCode);
+          this.setState({
+            listTitle: '流程分类',
+          })
+          this.refresh('ROOT');
         })
       }
     })
@@ -632,7 +632,6 @@ export default class Designer extends PureComponent {
   handleOnSelect = (selectedKeys, info) => {
     this.setState({
       listTitle: info.title,
-      nowTreeKey: info.key,
       nowTreeCode: info.code,
     }, ()=>{
       /* 更新右侧流程列表 */
@@ -655,14 +654,14 @@ export default class Designer extends PureComponent {
   * 提交分类表单
   */
   typeSubmit = () =>{
-    const { typeIsCreate, nowTreeKey } = this.state;
+    const { typeIsCreate, handleSelect } = this.state;
     const flowType = this.flowType.getForm();
     if (flowType) {
       flowType.validateFieldsAndScroll((err, data) => {
         if (err) return;
         const params = {
           ...data,
-          parentId: nowTreeKey,
+          parentId: handleSelect.id,
         }
         typeIsCreate ? this.treeListAdd(params) : this.treeListEdit(params);
       })
@@ -734,10 +733,13 @@ export default class Designer extends PureComponent {
     })
   }
 
+  showInfo = () => {
+    message.info('[流程分类] 下不可以新建流程，请选择其他的分类，再新建流程！');
+  }
   render() {
     const { workflowDesigner: { data, treeData }, loading, treeLoading, typeSubmitLoading, submitLoading } = this.props;
     const { deleteLists, buttonSize, showUploadList, viewVisible, editDisable, isTop, listTitle, typeVisible, workInfo,
-      deleteDisable, addOrEditTypeTitle, changeVisible, typeIsCreate, typeInfo, typeCloseConfirm, nowParentName } = this.state;
+      deleteDisable, addOrEditTypeTitle, changeVisible, typeIsCreate, typeInfo, typeCloseConfirm, nowParentName, nowTypeName } = this.state;
     this.state.lists = data.data;
     const formatTreeData = treeData;
     const treeConfig = {
@@ -756,7 +758,7 @@ export default class Designer extends PureComponent {
         name: 'add',
         disabled: false,
         onClick: ()=>{
-          this.handleTreeListAdd()
+          this.handleTreeListAdd();
         }
       },
       {
@@ -806,19 +808,21 @@ export default class Designer extends PureComponent {
                   enterButton="搜索"
                   placeholder="请输入流程名称"
                 />
-               {
-                 this.state.nowTreeCode !== 'ROOT' ? (
-                 <Button className={styles.headerButton} icon="plus" type="primary" size={buttonSize} onClick={() => this.create(true)} >
-                  新建
-                </Button>
-                ) : null
-               }
+                 <Button className={styles.headerButton} icon="plus" type="primary" size={buttonSize} onClick={() => this.create(true)} > 新建</Button>
                 <span style={{float: 'right'}}>
-                  <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
-                    <Button className={styles.headerButton} icon="select" size={buttonSize}>
-                      导入
-                    </Button>
-                  </Upload>
+                  {
+                    this.state.nowTreeCode === 'ROOT' ? (
+                      <Button className={styles.headerButton} icon="select" size={buttonSize} onClick={() => this.showInfo()}>
+                        导入
+                     </Button>
+                    ) : (
+                      <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
+                        <Button className={styles.headerButton} icon="select" size={buttonSize}>
+                          导入
+                        </Button>
+                      </Upload>
+                    )
+                  }
                 </span>
                 <Button className={styles.headerButton} icon={deleteLists.length ? 'check-square' : 'check-square-o'} size={buttonSize} onClick={() => this.checkAll()}>
                   全选
@@ -893,7 +897,7 @@ export default class Designer extends PureComponent {
                                     <span>流程名称 : {item.name}</span>
                                   </a>
                                 </Tooltip>
-                                <div style={{color: '#333', cursor: 'text'}}>流程分类 : {item.workflowCategory ? item.workflowCategory.name : '流程分类'}</div>
+                                <div style={{color: '#333', cursor: 'text'}}>流程分类 : {item.workflowCategory ? item.workflowCategory.name : null }</div>
                                 <div style={{color: '#333', cursor: 'text'}}>流程定义ID : {item.key}</div>
                               </Ellipsis>
                               <Ellipsis className={styles.item} lines={4}>
@@ -970,7 +974,7 @@ export default class Designer extends PureComponent {
                 this.flowType = el;
               }}
               formInfo={typeIsCreate ? {} : typeInfo}
-              parentName={nowParentName}
+              parentName={typeIsCreate ? nowTypeName : nowParentName}
               isTop={isTop}
             />
             },
