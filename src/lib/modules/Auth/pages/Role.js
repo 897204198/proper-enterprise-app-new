@@ -53,8 +53,11 @@ function onValuesChange(props, changedValues, allValues) {
 const BasicInfoForm = Form.create({onValuesChange})((props) => {
   const { form, roleInfo, roleList, loading, warningField, warningWrapper, ruleList = [], typeChange, userGroups, ruleType, userList } = props;
   const ruleChange = (val) => {
+    form.setFieldsValue({
+      ruleValue: []
+    })
     // const type = option.props.code;
-    if (val.substring(val.length - 3) !== 'All') {
+    if (val && val.substring(val.length - 3) !== 'All') {
       if (val === 'group') {
         typeChange('group');
       } else if (val === 'user') {
@@ -138,7 +141,7 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
                 ruleList.length > 0 ? ruleList.map(item => (
                   (
                     <Option key={item.id} value={item.code} code={item.type.code}>
-                      {item.name}
+                        {item.name}
                     </Option>)
                 )) : null
               }
@@ -169,7 +172,9 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
                     userList.length > 0 ? userList.map(item => (
                       (
                         <Option key={item.id} value={item.id}>
-                          {item.name}
+                          <span className={item.enable ? '' : styles.optionBox}>
+                            {`${item.name}(${item.username})`}
+                          </span>
                         </Option>)
                     )) : null
                   }
@@ -281,7 +286,7 @@ const UserInfoForm = (props) => {
   const { loading, columns, roleUsers,
     handleUserChange, roleUsersList,
     rolesSearchType, userRolesAll, setRolesSearchType, setRolesList,
-    filterColumns, rolesCheckedData, setRoleCheckedTypeData, groupSelf } = props;
+    filterColumns, rolesCheckedData, setRoleCheckedTypeData, groupSelf, getPaganation, userPagination } = props;
   const handleChange = (record, selectedRowKeys) => {
     handleUserChange(selectedRowKeys, record.id)
   }
@@ -322,10 +327,10 @@ const UserInfoForm = (props) => {
           ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
         />
         <OopTable
-          onLoad={this.onLoad}
+          onLoad={getPaganation}
           loading={loading}
           size="small"
-          grid={{ list: roleUsersList }}
+          grid={{ list: roleUsersList, pagination: userPagination }}
           columns={columns}
           onRowSelect={handleChange}
           selectTriggerOnRowClick={true}
@@ -468,6 +473,7 @@ export default class Role extends PureComponent {
   }
   // 查看基本信息
   handleView = (record) => {
+    const { ruleList, userList, userGroups } = this.props.authRole;
     const self = this;
     this.props.dispatch({
       type: 'authRole/fetchById',
@@ -476,6 +482,54 @@ export default class Role extends PureComponent {
         const text = res.enable;
         res.enableLabel = text === true ? '已启用' : '已停用';
         res.badge = text === true ? 'processing' : 'default';
+        if (res.ruleCode) {
+          for (let i = 0; i < ruleList.length; i++) {
+            if (res.ruleCode === ruleList[i].code) {
+              if (res.ruleCode === 'user') {
+                res.ruleCode = ruleList[i].name;
+                res.ruleTitle = '用户'
+                if (res.ruleValue) {
+                  let names = '';
+                  res.ruleValue = res.ruleValue.split(',');
+                  for (let j = 0; j < userList.length; j++) {
+                    for (let k = 0; k < res.ruleValue.length; k++) {
+                      if (res.ruleValue[k] === userList[j].id) {
+                        if (names === '') {
+                          names += `${userList[j].name}(${userList[j].username})`
+                        } else {
+                          names += `, ${userList[j].name}(${userList[j].username})`
+                        }
+                      }
+                    }
+                  }
+                  res.ruleValue = names
+                }
+              } else if (res.ruleCode === 'group') {
+                res.ruleCode = ruleList[i].name;
+                res.ruleTitle = '用户组'
+                if (res.ruleValue) {
+                  let goups = '';
+                  res.ruleValue = res.ruleValue.split(',');
+                  for (let b = 0; b < userGroups.length; b++) {
+                    for (let a = 0; a < res.ruleValue.length; a++) {
+                      if (res.ruleValue[a] === userGroups[b].id) {
+                        if (goups === '') {
+                          goups += `${userGroups[b].name}`
+                        } else {
+                          goups += `, ${userGroups[b].name}`
+                        }
+                      }
+                    }
+                  }
+                  res.ruleValue = goups
+                }
+              } else {
+                res.ruleCode = ruleList[i].name;
+                res.ruleValue = ''
+              }
+            }
+          }
+        }
         this.setState({
           viewVisible: true,
         });
@@ -766,6 +820,8 @@ export default class Role extends PureComponent {
         }
         if (data.ruleValue) {
           data.ruleValue = data.ruleValue.join(',');
+        } else {
+          data.ruleValue = ''
         }
         this.props.dispatch({
           type: 'authRole/createOrUpdate',
@@ -975,6 +1031,12 @@ export default class Role extends PureComponent {
       type: 'authRole/fetchUserList',
     })
   }
+  getPaganation = (param = {}) => {
+    const { pagination } = param;
+    this.setState({
+      userPagination: pagination
+    })
+  }
   render() {
     const { loading, gridLoading,
       global: { size, oopSearchGrid },
@@ -983,7 +1045,7 @@ export default class Role extends PureComponent {
     const { viewVisible, checkedMenuKeys, checkedResourceKeys,
       roleUsersList, groupUsersList, addOrEditModalTitle,
       closeConfirmConfig, warningField, warningWrapper, rolesSearchType,
-      groupsSearchType, rolesCheckedData, groupsCheckedData, ruleType } = this.state;
+      groupsSearchType, rolesCheckedData, groupsCheckedData, ruleType, userPagination } = this.state;
     const columns = [
       { title: '名称', dataIndex: 'name', key: 'name',
         render: (text, record) => (
@@ -1139,6 +1201,8 @@ export default class Role extends PureComponent {
                 rolesSearchType={rolesSearchType}
                 userRolesAll={allUsers}
                 dataFilter={dataFilter}
+                getPaganation={this.getPaganation}
+                userPagination={userPagination}
                 setRolesList={this.setRolesList}
                 setRolesSearchType={this.setRolesSearchType}
                 filterColumns={['name', 'username', 'email', 'enableStatus', 'phone']}
@@ -1197,6 +1261,12 @@ export default class Role extends PureComponent {
             <Description term="继承">
               {roleInfo.parentName}
             </Description>
+            <Description term="规则">
+              {roleInfo.ruleCode ? roleInfo.ruleCode : ''}
+            </Description>
+            {
+              roleInfo.ruleValue ? <Description term={roleInfo.ruleTitle}>{roleInfo.ruleValue}</Description> : <div />
+            }
             <Description term="权限">
               <ManagerInfoForm
                 roleInfo = {roleInfo}
