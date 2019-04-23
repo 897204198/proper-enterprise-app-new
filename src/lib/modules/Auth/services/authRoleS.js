@@ -23,7 +23,7 @@ export async function removeRoles(params) {
 
 // 取得指定角色ID的用户列表
 export async function queryRoleUsers(params) {
-  return request(`/auth/roles/${params}/users`);
+  return request(`/auth/roles/${params}/users?userEnable=ALL`);
 }
 
 // 取得指定角色ID的用户列表
@@ -147,7 +147,8 @@ export async function fetchUserGroup() {
 export async function fetchUserList() {
   const p = {
     pageNo: 1,
-    pageSize: 999
+    pageSize: 999,
+    userEnable: 'ALL'
   }
   return request(`/auth/users?${stringify(p)}`);
 }
