@@ -12,6 +12,7 @@ import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopTableForm from '@pea/components/OopTableForm';
 
 const { Option } = Select
+const checkComponentName = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
 const tableInputStyle = {
   height: '32px'
 }
@@ -235,6 +236,7 @@ export default class CustomQuery extends React.PureComponent {
               unCheckedChildren: '停'
             }
           },
+          valuePropName: 'checked',
           initialValue: formEntity.enable || false,
         }
       ]
@@ -484,6 +486,16 @@ export default class CustomQuery extends React.PureComponent {
       if (isNameRepeat) {
         message.error('唯一标识有重复，请修改后再保存')
         return;
+      }
+      const { formConfig } = curRecord
+      const config = JSON.parse(formConfig)
+      const { formJson } = config
+      for (let i = 0; i < list.length; i++) {
+        for (let j = 0; j < formJson.length; j++) {
+          if (list[i].dataIndex === formJson[j].name && checkComponentName.includes(formJson[j].component.name)) {
+            list[i].dataIndex = `${list[i].dataIndex}_text`
+          }
+        }
       }
       const params = {
         ...curRecord,
