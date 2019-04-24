@@ -490,18 +490,17 @@ export default class Designer extends PureComponent {
   }
   // 刷新
   refresh = (root) => {
-    const params = {
+    const common = {
       modelType: '0',
       sort: 'modifiedDesc',
-      workflowCategoryCode: root,
     }
-    const paramsRoot = {
-      modelType: '0',
-      sort: 'modifiedDesc',
+    const params = {
+      ...common,
+      workflowCategoryCode: root,
     }
     this.props.dispatch({
       type: 'workflowDesigner/fetch',
-      payload: root !== 'ROOT' ? params : paramsRoot,
+      payload: root !== 'ROOT' ? params : common,
     });
   }
 
@@ -597,14 +596,38 @@ export default class Designer extends PureComponent {
   }
   /* 删除该节点 */
   handleTreeListDelete = () => {
-    const { handleSelect } = this.state;
+    const { handleSelect: {code, name}, nowTreeCode, lists } = this.state;
+    const common = {
+      modelType: '0',
+      sort: 'modifiedDesc',
+    }
+    const params = {
+      ...common,
+      workflowCategoryCode: code,
+    }
+    let newList = lists;
     Modal.confirm({
       title: '提示',
-      content: `是否确认删除分类 - "${handleSelect.name}"`,
+      content: `是否确认删除分类 - "${name}"`,
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        this.treeListDelete();
+        if (code !== nowTreeCode) {
+          this.props.dispatch({
+            type: 'workflowDesigner/fetchList',
+            payload: code !== 'ROOT' ? params : common,
+            callback: (res)=>{
+              newList = res;
+            }
+          })
+        }
+        setTimeout(()=>{
+          if (newList.length > 0) {
+            message.info(`[${name}]分类下有流程数据不可以删除！`);
+          } else {
+            this.treeListDelete();
+          }
+        }, 1000);
       }
     });
   }
@@ -775,8 +798,8 @@ export default class Designer extends PureComponent {
         text: '删除',
         name: 'remove',
         disabled: deleteDisable,
-        onClick: (record) => {
-          this.handleTreeListDelete(record);
+        onClick: () => {
+          this.handleTreeListDelete();
         },
       }
     ];
