@@ -12,9 +12,12 @@ import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopTableForm from '@pea/components/OopTableForm';
 
 const { Option } = Select
+const tableInputStyle = {
+  height: '32px'
+}
 const defaultButtons = [
   {
-    id: `${Date.now() + Math.random()}`,
+    _id: `${Date.now() + Math.random()}`,
     text: '新建',
     name: 'create',
     position: 'top',
@@ -24,7 +27,7 @@ const defaultButtons = [
     default: true
   },
   {
-    id: `${Date.now() + Math.random()}`,
+    _id: `${Date.now() + Math.random()}`,
     text: '删除',
     name: 'batchDelete',
     position: 'top',
@@ -35,7 +38,7 @@ const defaultButtons = [
     default: true
   },
   {
-    id: `${Date.now() + Math.random()}`,
+    _id: `${Date.now() + Math.random()}`,
     text: '编辑',
     name: 'edit',
     position: 'row',
@@ -45,7 +48,7 @@ const defaultButtons = [
     default: true
   },
   {
-    id: `${Date.now() + Math.random()}`,
+    _id: `${Date.now() + Math.random()}`,
     text: '删除',
     name: 'delete',
     position: 'row',
@@ -158,6 +161,14 @@ export default class CustomQuery extends React.PureComponent {
       formLayout: 'horizontal',
       formJson: [
         {
+          name: 'id',
+          component: {
+            name: 'Input',
+            props: {type: 'hidden'}
+          },
+          wrapper: true
+        },
+        {
           label: '功能名',
           key: 'functionName',
           name: 'functionName',
@@ -224,7 +235,7 @@ export default class CustomQuery extends React.PureComponent {
               unCheckedChildren: '停'
             }
           },
-          initialValue: formEntity.tableName || false,
+          initialValue: formEntity.enable || false,
         }
       ]
     }
@@ -655,6 +666,7 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
               onChange={e => this.tableCfgForm.handleFieldChange(e, 'title', record._id)}
               placeholder="请输入" />
@@ -674,6 +686,7 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
               onChange={e => this.tableCfgForm.handleFieldChange(e, 'dataIndex', record._id)}
               placeholder="请输入" />
@@ -691,6 +704,7 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
               onChange={e => this.tableCfgForm.handleFieldChange(e, 'sorter', record._id)}
               placeholder="请输入" />
@@ -708,6 +722,7 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
               onChange={e => this.tableCfgForm.handleFieldChange(e, 'filter', record._id)}
               placeholder="请输入" />
@@ -725,6 +740,7 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
               onChange={e => this.tableCfgForm.handleFieldChange(e, 'render', record._id)}
               placeholder="请输入" />
@@ -746,8 +762,9 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'text', record.id)}
+              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'text', record._id)}
               placeholder="请输入" />
             )
           }
@@ -764,8 +781,9 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'name', record.id)}
+              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'name', record._id)}
               placeholder="唯一标识不可有重复" />
             )
           }
@@ -780,7 +798,7 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable && !record.default) {
             return (
-              <Select defaultValue="top" style={{ width: 'auto' }} onChange={e => this.buttonCfgForm.handleFieldChange(e, 'position', record.id)}>
+              <Select defaultValue="top" style={{ width: 'auto' }} onChange={e => this.buttonCfgForm.handleFieldChange(e, 'position', record._id)}>
                 <Option value="top">顶部按钮</Option>
                 <Option value="row">操作按钮</Option>
               </Select>
@@ -796,7 +814,7 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable) {
             return (
-              <Select defaultValue="default" style={{ width: 'auto' }} onChange={e => this.buttonCfgForm.handleFieldChange(e, 'type', record.id)}>
+              <Select defaultValue="default" style={{ width: 'auto' }} onChange={e => this.buttonCfgForm.handleFieldChange(e, 'type', record._id)}>
                 <Option value="primary">主按钮</Option>
                 <Option value="default">次按钮</Option>
                 <Option value="dashed">虚线按钮</Option>
@@ -816,8 +834,9 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'icon', record.id)}
+              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'icon', record._id)}
               placeholder="请输入" />
             )
           }
@@ -834,8 +853,9 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'restPath', record.id)}
+              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'restPath', record._id)}
               placeholder="请输入" />
             )
           }
@@ -851,8 +871,9 @@ export default class CustomQuery extends React.PureComponent {
             return (
             <Input
               size="small"
+              style={tableInputStyle}
               value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'display', record.id)}
+              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'display', record._id)}
               placeholder="请输入" />
             )
           }
@@ -867,7 +888,7 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable) {
             return (
-              <Switch checkedChildren="启" unCheckedChildren="停" checked={text} onChange={e => this.buttonCfgForm.handleFieldChange(e, 'enable', record.id)} />
+              <Switch checkedChildren="启" unCheckedChildren="停" checked={text} onChange={e => this.buttonCfgForm.handleFieldChange(e, 'enable', record._id)} />
             )
           }
           return text === true ? '启用' : '停用';
