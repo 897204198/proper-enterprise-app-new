@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.36",
+    "@babel/runtime": "7.0.0-beta.46",
     "antd": "3.11.6",
     "antd-mobile": "2.2.6",
     "av-core": "^1.1.1",

@@ -158,7 +158,7 @@ const InfoChangeForm = Form.create()((props) => {
 })
 /* 流程定义 */
 const InfoSubmitForm = Form.create()((props) => {
-  const {loading = false, form, formInfo, parentName, isTop } = props;
+  const {loading = false, form, formInfo, parentName, isTop, isCreate } = props;
   return (
     <Spin spinning={loading}>
     <div>
@@ -192,17 +192,17 @@ const InfoSubmitForm = Form.create()((props) => {
         )}
       </FormItem>
       <FormItem
-        {...formItemLayout}
-        label="类别编码"
-      >
-        {form.getFieldDecorator('code', {
-          initialValue: formInfo.code,
-          rules: [
-            { required: true, message: '类别编码不能为空' },
-          ]
-        })(
-          <Input placeholder="请输入类别编码" />
-        )}
+          {...formItemLayout}
+          label="类别编码"
+        >
+          {form.getFieldDecorator('code', {
+            initialValue: formInfo.code,
+            rules: [
+              { required: true, message: '类别编码不能为空' },
+            ]
+          })(
+            <Input placeholder="请输入类别编码" disabled={ !isCreate } />
+          )}
       </FormItem>
       <FormItem
         {...formItemLayout}
@@ -614,7 +614,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/removeTreeById',
       payload: handleSelect.id,
       callback: (res)=>{
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功');
         this.setState({
           typeVisible: false,
         }, ()=>{
@@ -691,7 +691,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/addTree',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '添加成功', '添加失败');
+        oopToast(res, '添加成功');
         this.setState({
           typeVisible: false,
         }, ()=>{
@@ -706,7 +706,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/editTree',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '修改成功', '修改失败');
+        oopToast(res, '修改成功');
         this.setState({
           typeVisible: false
         }, ()=>{
@@ -723,7 +723,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/changeWorkType',
       payload: params,
       callback: (res)=>{
-        oopToast(res, '修改成功', '修改失败');
+        oopToast(res, '修改成功');
         this.setState({
           changeVisible: false
         }, ()=>{
@@ -976,6 +976,7 @@ export default class Designer extends PureComponent {
               formInfo={typeIsCreate ? {} : typeInfo}
               parentName={typeIsCreate ? nowTypeName : nowParentName}
               isTop={isTop}
+              isCreate={typeIsCreate}
             />
             },
           ]}
