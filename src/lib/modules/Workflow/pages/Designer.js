@@ -247,7 +247,6 @@ export default class Designer extends PureComponent {
     lists: [],
     buttonSize: 'default',
     showUploadList: false,
-    deleteLists: [],
     editDisable: false,
     deleteDisable: false,
     handleSelect: null,
@@ -304,20 +303,6 @@ export default class Designer extends PureComponent {
     });
   }
 
-  // 删除数组中的某个元素
-  arrayRemove = (arr, val) => {
-    let index;
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] === val) {
-        index = i;
-      }
-    }
-    if (index > -1) {
-      arr.splice(index, 1);
-    }
-    return arr;
-  }
-
   // 删除单个元素
   deleteItem = (id) => {
     this.props.dispatch({
@@ -325,7 +310,6 @@ export default class Designer extends PureComponent {
       payload: id,
       callback: () => {
         this.refresh(this.state.nowTreeCode);
-        this.state.deleteLists = this.arrayRemove(this.state.deleteLists, id);
       }
     });
   }
@@ -558,7 +542,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/removeTreeById',
       payload: handleSelect.id,
       callback: (res)=>{
-        oopToast(res, '删除成功');
+        oopToast(res, '删除成功', '删除失败');
         this.setState({
           typeVisible: false,
         }, ()=>{
@@ -635,7 +619,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/addTree',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '添加成功');
+        oopToast(res, '添加成功', '添加失败');
         this.setState({
           typeVisible: false,
         }, ()=>{
@@ -650,7 +634,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/editTree',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '修改成功');
+        oopToast(res, '修改成功', '修改失败');
         this.setState({
           typeVisible: false
         }, ()=>{
@@ -667,7 +651,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/changeWorkType',
       payload: params,
       callback: (res)=>{
-        oopToast(res, '修改成功');
+        oopToast(res, '修改成功', '修改失败');
         this.setState({
           changeVisible: false
         }, ()=>{
