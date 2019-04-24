@@ -40,13 +40,6 @@ export default {
       });
       if (callback) callback();
     },
-    *checkAll({ payload, callback }, { put }) {
-      yield put({
-        type: 'getCheckList',
-        payload
-      });
-      if (callback) callback();
-    },
     *checkItem({ payload, callback }, { put }) {
       yield put({
         type: 'getCheckList',
