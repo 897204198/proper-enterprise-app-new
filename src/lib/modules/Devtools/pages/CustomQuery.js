@@ -457,7 +457,7 @@ export default class CustomQuery extends React.PureComponent {
     }
   }
   handleTableCfgSubmit = () => {
-    const { curRecord } = this.state
+    const { curRecord, gridConfig } = this.state
     const datas = this.tableCfgForm.checkStatuAndFormData()
     const { edit, list } = datas
     if (edit) {
@@ -468,9 +468,13 @@ export default class CustomQuery extends React.PureComponent {
         message.error('唯一标识有重复，请修改后再保存')
         return;
       }
+      const obj = {
+        ...gridConfig,
+        columns: list
+      }
       const params = {
         ...curRecord,
-        gridConfig: JSON.stringify({columns: list}),
+        gridConfig: JSON.stringify(obj),
         id: this.currentRowRecordId
       }
       this.props.dispatch({
@@ -522,8 +526,6 @@ export default class CustomQuery extends React.PureComponent {
     const { curRecord } = this.state
     const datas = this.buttonCfgForm.checkStatuAndFormData()
     const { edit, list } = datas
-    const topButtons = []
-    const rowButtons = []
     if (edit) {
       message.error('有数据在编辑状态，尚未保存')
     } else {
@@ -532,14 +534,8 @@ export default class CustomQuery extends React.PureComponent {
         message.error('唯一标识有重复，请修改后再保存')
         return;
       }
-      list.map((data) => {
-        if (data.position === 'top') {
-          topButtons.push(data)
-        } else if (data.position === 'row') {
-          rowButtons.push(data)
-        }
-        return null
-      })
+      const topButtons = list.filter(item => item.position === 'top')
+      const rowButtons = list.filter(item => item.position === 'row')
       const params = {
         ...curRecord,
         gridConfig: JSON.stringify({
