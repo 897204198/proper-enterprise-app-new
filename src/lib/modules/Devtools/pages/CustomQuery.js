@@ -457,7 +457,7 @@ export default class CustomQuery extends React.PureComponent {
     }
   }
   handleTableCfgSubmit = () => {
-    const { curRecord } = this.state
+    const { curRecord, gridConfig } = this.state
     const datas = this.tableCfgForm.checkStatuAndFormData()
     const { edit, list } = datas
     if (edit) {
@@ -468,9 +468,13 @@ export default class CustomQuery extends React.PureComponent {
         message.error('唯一标识有重复，请修改后再保存')
         return;
       }
+      const obj = {
+        ...gridConfig,
+        columns: list
+      }
       const params = {
         ...curRecord,
-        gridConfig: JSON.stringify({columns: list}),
+        gridConfig: JSON.stringify(obj),
         id: this.currentRowRecordId
       }
       this.props.dispatch({
