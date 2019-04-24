@@ -8,16 +8,25 @@ export default class OopTableForm extends PureComponent {
     super(props);
     this.state = {
       // loading: false,
+      editState: false
     };
   }
 
   getRowByKey(key, newData) {
-    return (newData || this.props.value).filter(item => item.id === key)[0];
+    return (newData || this.props.value).filter(item => item._id === key)[0];
   }
   index = 0;
   cacheOriginData = {};
-  toggleEditable = (e, key) => {
+  toggleEditable = (e, key, type = false) => {
+    const { editState } = this.state;
     e.preventDefault();
+    if (editState) {
+      message.error('正处于编辑状态');
+      return false;
+    }
+    this.setState({
+      editState: type
+    })
     const target = this.getRowByKey(key, this.props.value);
     if (target) {
       // 进入编辑状态时保存原始数据
@@ -29,21 +38,23 @@ export default class OopTableForm extends PureComponent {
     }
   };
   remove(key) {
-    if (key.indexOf('NEW_TEMP_ID_') === 0) {
+    if (key._id.indexOf('NEW_TEMP_ID_') === 0) {
       const { value } = this.props;
-      const delIndex = value.map(item=>item.id).indexOf(key);
+      const delIndex = value.map(item=>item._id).indexOf(key);
       value.splice(delIndex, 1);
       this.forceUpdate();
     } else {
-      this.onChange('delete', this.props.value.filter(item => item.id === key)[0]);
+      this.onChange('delete', key);
     }
+    this.setState({
+      editState: false
+    })
   }
   onChange = (type, item)=>{
     const data = {
       ...item
     }
-    if (type === 'post' && data.id.indexOf('NEW_TEMP_ID_') === 0) {
-      delete data.id
+    if (type === 'post' && data._id.indexOf('NEW_TEMP_ID_') === 0) {
       delete data.editable
     }
     // 调用父组件的方法 返回数据
@@ -61,10 +72,10 @@ export default class OopTableForm extends PureComponent {
             return (
               <span>
                 <Tooltip placement="bottom" title="添加">
-                  <a onClick={e => this.saveRow(e, record.id)}><Icon type="check" /></a>
+                  <a onClick={e => this.saveRow(e, record._id, 'post')}><Icon type="check" /></a>
                 </Tooltip>
                 <Divider type="vertical" />
-                <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.id)}>
+                <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record)}>
                   <Tooltip placement="bottom" title="删除">
                     <a><Icon type="close" /></a>
                   </Tooltip>
@@ -75,11 +86,11 @@ export default class OopTableForm extends PureComponent {
           return (
             <span>
               <Tooltip placement="bottom" title="保存">
-                <a onClick={e => this.saveRow(e, record.id)}><Icon type="check" /></a>
+                <a onClick={e => this.saveRow(e, record._id, 'put')}><Icon type="check" /></a>
               </Tooltip>
               <Divider type="vertical" />
               <Tooltip placement="bottom" title="取消">
-                <a onClick={e => this.cancel(e, record.id)}><Icon type="close" /></a>
+                <a onClick={e => this.cancel(e, record._id)}><Icon type="close" /></a>
               </Tooltip>
             </span>
           );
@@ -87,14 +98,20 @@ export default class OopTableForm extends PureComponent {
         return (
           <span>
             <Tooltip placement="bottom" title="编辑">
-              <a onClick={e => this.toggleEditable(e, record.id)}><Icon type="edit" /></a>
+              <a onClick={e => this.toggleEditable(e, record._id, true)}><Icon type="edit" /></a>
             </Tooltip>
-            <Divider type="vertical" />
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.id)}>
-              <Tooltip placement="bottom" title="删除">
-                <a><Icon type="delete" /></a>
-              </Tooltip>
-            </Popconfirm>
+            {
+              !record.default ? (
+                <Fragment>
+                  <Divider type="vertical" />
+                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record)}>
+                    <Tooltip placement="bottom" title="删除">
+                      <a><Icon type="delete" /></a>
+                    </Tooltip>
+                  </Popconfirm>
+                </Fragment>
+              ) : null
+            }
           </span>
         );
       },
@@ -103,12 +120,20 @@ export default class OopTableForm extends PureComponent {
   }
   newMember = () => {
     const { columns } = this.props;
+    const { editState } = this.state;
+    if (editState) {
+      message.error('正处于编辑状态');
+      return false;
+    }
     const newObj = {};
+    this.setState({
+      editState: true
+    })
     columns.forEach((element) => {
       newObj[element.key] = element.defaultValue;
     });
     const newData = this.props.value;
-    newData.unshift({
+    newData.push({
       ...newObj,
       id: `NEW_TEMP_ID_${this.index}`,
       editable: true,
@@ -117,11 +142,14 @@ export default class OopTableForm extends PureComponent {
     this.index += 1;
     this.forceUpdate();
   };
-  handleKeyPress(e, key) {
-    if (e.key === 'Enter') {
-      this.saveRow(e, key);
-    }
-  }
+  // handleKeyPress(e, key) {
+  //   if (e.key === 'Enter') {
+  //     this.setState({
+  //       editState: false
+  //     })
+  //     this.saveRow(e, key);
+  //   }
+  // }
   handleFieldChange(e, fieldName, key, type = false) {
     const target = this.getRowByKey(key, this.props.value);
     if (target) {
@@ -136,7 +164,7 @@ export default class OopTableForm extends PureComponent {
       }
     }
   }
-  saveRow(e, key) {
+  saveRow(e, key, type) {
     e.persist();
     const {columns} = this.props;
     const requiredArray = [];
@@ -173,8 +201,12 @@ export default class OopTableForm extends PureComponent {
         return;
       }
       delete target.isNew;
-      this.toggleEditable(e, key);
-      this.onChange('post', target);
+      this.setState({
+        editState: false
+      }, () => {
+        this.toggleEditable(e, key);
+        this.onChange(type, target);
+      })
       // this.setState({
       //   loading: false,
       // });
@@ -191,6 +223,9 @@ export default class OopTableForm extends PureComponent {
     }
     this.forceUpdate();
     this.clickedCancel = false;
+    this.setState({
+      editState: false
+    })
   }
   titleFactory = (title) => {
     return (
@@ -199,9 +234,40 @@ export default class OopTableForm extends PureComponent {
       </div>
     )
   }
+  checkStatuAndFormData = () => {
+    const { value } = this.props;
+    const list = [
+      ...value
+    ]
+    const { editState } = this.state;
+    const newList = [];
+    for (let i = 0; i < list.length; i++) {
+      if (list[i]._id && list[i]._id.indexOf('NEW_TEMP_ID_') === 0 && list[i].editable) {
+        // eslint-disable-next-line
+        continue;
+      } else {
+        delete list[i].editable
+        newList.push(list[i])
+      }
+    }
+    const obj = {
+      list: newList,
+      edit: editState
+    }
+    return obj;
+  }
+  addItemId = (value) => {
+    value.map((item) => {
+      if (!item._id) {
+        item._id = `${Date.now() + Math.random()}`
+      }
+      return null
+    })
+  }
   render() {
-    const { columns } = this.props;
+    const { columns, value } = this.props;
     const colarray = cloneDeep(columns);
+    this.addItemId(value);
     for (let i = 0; i < colarray.length; i++) {
       if (colarray[i].required) {
         colarray[i].title = this.titleFactory(colarray[i].title)
@@ -220,10 +286,10 @@ export default class OopTableForm extends PureComponent {
         </Button>
         <Table
           {...this.props}
-          rowKey={record=>record.id}
+          rowKey={record=>record._id}
           loading={this.props.loading}
           columns={cols}
-          dataSource={this.props.value}
+          dataSource={value}
           pagination={false}
           rowClassName={(record) => {
             return record.editable ? styles.editable : '';
