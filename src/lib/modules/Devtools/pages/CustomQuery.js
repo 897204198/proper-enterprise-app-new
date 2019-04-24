@@ -12,7 +12,6 @@ import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopTableForm from '@pea/components/OopTableForm';
 
 const { Option } = Select
-const checkComponentName = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
 const tableInputStyle = {
   height: '32px'
 }
@@ -242,60 +241,39 @@ export default class CustomQuery extends React.PureComponent {
       ]
     }
   }
+  setModalVisible = (field, flag) => {
+    this.setState({[field]: flag})
+  }
+  handleToggleEnable = (checked, record) => {
+    const me = this
+    this.props.dispatch({
+      type: 'devtoolsCustomQuery/saveOrUpdate',
+      payload: {
+        id: record.id,
+        enable: checked
+      },
+      callback(res) {
+        if (checked) {
+          oopToast(res, '启用成功', '启用失败');
+        } else {
+          oopToast(res, '停用成功', '停用失败');
+        }
+        me.onLoad()
+      }
+    })
+  }
+  handleModalCancel = () => {
+    this.setModalVisible('modalFormVisible', false);
+    // setTimeout(() => {
+    //   form.resetFields();
+    //   this.props.dispatch({
+    //     type: 'devtoolsCustomQuery/clearEntity'
+    //   });
+    // }, 300)
+  }
   handleCreate = () => {
     this.setModalVisible('isCreate', true);
     this.setModalVisible('modalCreateVisible', true);
-  }
-  onTableCfgChange = (type, item) => {
-    const { gridConfig } = this.state
-    const { columns } = gridConfig
-    if (type === 'delete') {
-      columns.map((btn, index) => {
-        if (btn.dataIndex === item.dataIndex) {
-          columns.splice(index, 1)
-        }
-        return null
-      })
-      const obj = {
-        ...gridConfig,
-        columns
-      }
-      this.setState({
-        gridConfig: obj
-      })
-    }
-    if (type !== 'delete') {
-      if (columns.length) {
-        const isRepeat = checkRepeat(columns, 'dataIndex', item)
-        if (isRepeat) {
-          message.error('唯一标识不可重复，请修改')
-        }
-      }
-    }
-  }
-  onButtonCfgChange = (type, item) => {
-    const { buttons } = this.state
-    if (type === 'delete') {
-      buttons.map((btn, index) => {
-        if (btn.name === item.name) {
-          buttons.splice(index, 1)
-        }
-        return null
-      })
-      this.setState({
-        buttons
-      }, () => {
-        this.forceUpdate()
-      })
-    }
-    if (type !== 'delete') {
-      if (buttons.length) {
-        const isRepeat = checkRepeat(buttons, 'name', item)
-        if (isRepeat) {
-          message.error('唯一标识不可重复，请修改')
-        }
-      }
-    }
   }
   handleEdit = (record) => {
     this.props.dispatch({
@@ -335,48 +313,20 @@ export default class CustomQuery extends React.PureComponent {
       }
     });
   }
-  handleToggleEnable = (checked, record) => {
-    const me = this
-    this.props.dispatch({
-      type: 'devtoolsCustomQuery/saveOrUpdate',
-      payload: {
-        id: record.id,
-        enable: checked
-      },
-      callback(res) {
-        if (checked) {
-          oopToast(res, '启用成功', '启用失败');
-        } else {
-          oopToast(res, '停用成功', '停用失败');
+  handleSubmit = () => {
+    const form = this.oopCreateForm.getForm()
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      this.props.dispatch({
+        type: 'devtoolsCustomQuery/saveOrUpdate',
+        payload: fieldsValue,
+        callback: (res) => {
+          oopToast(res, '保存成功', '保存失败');
+          if (res.status === 'ok') this.setModalVisible('modalCreateVisible', false);
+          this.onLoad();
         }
-        me.onLoad()
-      }
-    })
-  }
-  handleModalCancel = () => {
-    this.setModalVisible('modalFormVisible', false);
-    // setTimeout(() => {
-    //   form.resetFields();
-    //   this.props.dispatch({
-    //     type: 'devtoolsCustomQuery/clearEntity'
-    //   });
-    // }, 300)
-  }
-  setModalVisible = (field, flag) => {
-    this.setState({[field]: flag})
-  }
-  onLoad = () => {
-    this.props.dispatch({
-      type: 'devtoolsCustomQuery/fetch'
+      });
     });
-  }
-  handleFormDesignerModalCancel = ()=>{
-    this.setState({modalFormDesignerVisible: false});
-    this.currentRowRecordId = null;
-    this.oopFormDesigner.resetForm();
-    // this.setState({
-    //   curRecord: {}
-    // })
   }
   handleDesignForm = (record) => {
     this.setState({
@@ -386,38 +336,18 @@ export default class CustomQuery extends React.PureComponent {
     this.setModalVisible('modalFormDesignerVisible', true);
   }
   handleDesignTable = (record) => {
-    const { gridConfig, formConfig } = record;
-    let columns = []
-    let obj = {}
-    if (gridConfig) {
-      const config = JSON.parse(gridConfig)
-      // eslint-disable-next-line
-      columns = config.columns
-      obj = {...config, columns}
-    } else {
-      columns = JSON.parse(formConfig).formJson.map((item) => { return {title: item.label, dataIndex: item.name} })
-      obj = {columns}
-    }
+    const { gridConfig } = record;
     this.setState({
       curRecord: record,
-      gridConfig: obj
+      gridConfig: JSON.parse(gridConfig)
     })
     this.currentRowRecordId = record.id;
     this.setModalVisible('modalTableCfgVisible', true);
   }
   handleDesignButton = (record) => {
-    const { gridConfig = {} } = record
-    let config = {}
-    if (gridConfig) {
-      config = JSON.parse(gridConfig)
-    }
-    const { topButtons = [], rowButtons = [] } = config
-    let buttons = []
-    if (topButtons.length && rowButtons.length) {
-      buttons = [...topButtons, ...rowButtons]
-    } else {
-      buttons = defaultButtons
-    }
+    const { gridConfig } = record
+    const { topButtons, rowButtons } = JSON.parse(gridConfig)
+    const buttons = [...topButtons, ...rowButtons]
     this.setState({
       curRecord: record,
       buttons
@@ -425,13 +355,13 @@ export default class CustomQuery extends React.PureComponent {
     this.currentRowRecordId = record.id;
     this.setModalVisible('modalButtonCfgVisible', true);
   }
-  handleModalTableDesignerCancel = () => {
-    const datas = this.tableCfgForm.checkStatuAndFormData()
-    if (datas.edit) {
-      message.error('有数据在编辑状态，尚未保存')
-    } else {
-      this.setModalVisible('modalTableDesignerVisible', false)
-    }
+  handleFormDesignerModalCancel = ()=>{
+    this.setState({modalFormDesignerVisible: false});
+    this.currentRowRecordId = null;
+    this.oopFormDesigner.resetForm();
+    // this.setState({
+    //   curRecord: {}
+    // })
   }
   handleFormDesignerModalSubmit = () => {
     const formDetails = this.oopFormDesigner.getFormConfig();
@@ -440,6 +370,8 @@ export default class CustomQuery extends React.PureComponent {
     } else if (formDetails.formJson && formDetails.formJson.length === 0) {
       message.warning('请设计表单');
     } else {
+      const { curRecord } = this.state
+      const { gridConfig } = curRecord;
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item)=>{
         if (item.initialValue && typeof item.initialValue === 'object') {
@@ -449,12 +381,31 @@ export default class CustomQuery extends React.PureComponent {
           }
         }
       });
-      const obj = {
+      const FormObj = {
         ...otherProps,
         formJson: formJson.map(fj=>({...fj, active: false})),
       }
+      const columns = []
+      let topButtons = []
+      let rowButtons = []
+      let gridObj = {}
+      if (!gridConfig) {
+        for (let i = 0; i < formJson.length; i++) {
+          const obj = {
+            title: formJson[i].label,
+            dataIndex: formJson[i].name
+          }
+          columns.push(obj)
+        }
+        topButtons = defaultButtons.filter(item => item.position === 'top')
+        rowButtons = defaultButtons.filter(item => item.position === 'row')
+        gridObj = JSON.stringify({columns, topButtons, rowButtons})
+      } else {
+        gridObj = gridConfig
+      }
       const params = {
-        formConfig: JSON.stringify(obj),
+        gridConfig: gridObj,
+        formConfig: JSON.stringify(FormObj),
         id: this.currentRowRecordId
       }
       this.props.dispatch({
@@ -462,7 +413,10 @@ export default class CustomQuery extends React.PureComponent {
         payload: params,
         callback: (res)=>{
           oopToast(res, '保存成功', '保存失败');
-          this.onLoad();
+          if (res.status === 'ok') {
+            this.setModalVisible('modalFormDesignerVisible', false)
+            this.onLoad();
+          }
         }
       });
     }
@@ -473,6 +427,33 @@ export default class CustomQuery extends React.PureComponent {
       message.error('有数据在编辑状态，尚未保存')
     } else {
       this.setModalVisible('modalTableCfgVisible', false)
+    }
+  }
+  onTableCfgChange = (type, item) => {
+    const { gridConfig } = this.state
+    const { columns } = gridConfig
+    if (type === 'delete') {
+      columns.map((btn, index) => {
+        if (btn.dataIndex === item.dataIndex) {
+          columns.splice(index, 1)
+        }
+        return null
+      })
+      const obj = {
+        ...gridConfig,
+        columns
+      }
+      this.setState({
+        gridConfig: obj
+      })
+    }
+    if (type !== 'delete') {
+      if (columns.length) {
+        const isRepeat = checkRepeat(columns, 'dataIndex', item)
+        if (isRepeat) {
+          message.error('唯一标识不可重复，请修改')
+        }
+      }
     }
   }
   handleTableCfgSubmit = () => {
@@ -486,16 +467,6 @@ export default class CustomQuery extends React.PureComponent {
       if (isNameRepeat) {
         message.error('唯一标识有重复，请修改后再保存')
         return;
-      }
-      const { formConfig } = curRecord
-      const config = JSON.parse(formConfig)
-      const { formJson } = config
-      for (let i = 0; i < list.length; i++) {
-        for (let j = 0; j < formJson.length; j++) {
-          if (list[i].dataIndex === formJson[j].name && checkComponentName.includes(formJson[j].component.name)) {
-            list[i].dataIndex = `${list[i].dataIndex}_text`
-          }
-        }
       }
       const params = {
         ...curRecord,
@@ -521,6 +492,30 @@ export default class CustomQuery extends React.PureComponent {
       message.error('有数据在编辑状态，尚未保存')
     } else {
       this.setModalVisible('modalButtonCfgVisible', false)
+    }
+  }
+  onButtonCfgChange = (type, item) => {
+    const { buttons } = this.state
+    if (type === 'delete') {
+      buttons.map((btn, index) => {
+        if (btn.name === item.name) {
+          buttons.splice(index, 1)
+        }
+        return null
+      })
+      this.setState({
+        buttons
+      }, () => {
+        this.forceUpdate()
+      })
+    }
+    if (type !== 'delete') {
+      if (buttons.length) {
+        const isRepeat = checkRepeat(buttons, 'name', item)
+        if (isRepeat) {
+          message.error('唯一标识不可重复，请修改')
+        }
+      }
     }
   }
   handleButtonCfgSubmit = () => {
@@ -566,21 +561,6 @@ export default class CustomQuery extends React.PureComponent {
         }
       });
     }
-  }
-  handleSubmit = () => {
-    const form = this.oopCreateForm.getForm()
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      this.props.dispatch({
-        type: 'devtoolsCustomQuery/saveOrUpdate',
-        payload: fieldsValue,
-        callback: (res) => {
-          oopToast(res, '保存成功', '保存失败');
-          if (res.status === 'ok') this.setModalVisible('modalCreateVisible', false);
-          this.onLoad();
-        }
-      });
-    });
   }
   render() {
     const {devtoolsCustomQuery: {entity, list}, loading,
