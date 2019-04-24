@@ -152,7 +152,7 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
           ruleType === 'user' ? (
             <FormItem
               {...formItemLayout}
-              label="人员"
+              label="用户"
               className={warningField && warningField.description && styles.hasWarning}
             >
               {/* <OopOrgEmpPicker /> */}
@@ -166,7 +166,7 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
                   allowClear={true}
                   // onChange={ruleChange}
                   filterOption={(input, option) =>
-                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
+                  option.props.children.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
                 >
                   {
                     userList.length > 0 ? userList.map(item => (
@@ -175,6 +175,7 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
                           <span className={item.enable ? '' : styles.optionBox}>
                             {`${item.name}(${item.username})`}
                           </span>
+                          {/* {item.name} */}
                         </Option>)
                     )) : null
                   }
@@ -819,9 +820,12 @@ export default class Role extends PureComponent {
           params.parentId = null;
         }
         if (data.ruleValue) {
-          data.ruleValue = data.ruleValue.join(',');
+          params.ruleValue = data.ruleValue.join(',');
         } else {
-          data.ruleValue = ''
+          params.ruleValue = ''
+        }
+        if (!data.ruleCode) {
+          params.ruleCode = ''
         }
         this.props.dispatch({
           type: 'authRole/createOrUpdate',
