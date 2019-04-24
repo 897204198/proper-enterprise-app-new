@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-// import { Button, Card, Icon, Badge, List, Tooltip, Checkbox, Dropdown,
-//   Menu, Upload, Modal, Popconfirm, Form, Input, message } from 'antd';
-import { Spin, Row, Col, Button, Card, Icon, Badge, List, Tooltip, Checkbox, Upload, Modal, Popconfirm, Form, Input, message, TreeSelect } from 'antd';
+import { Spin, Row, Col, Button, Card, Icon, Badge, List, Tooltip, Upload, Modal, Popconfirm, Form, Input, message, TreeSelect } from 'antd';
 import cookie from 'react-cookies'
 import { inject } from '@framework/common/inject';
 import { getApplicationContextUrl } from '@framework/utils/utils';
@@ -306,68 +304,6 @@ export default class Designer extends PureComponent {
     });
   }
 
-  // 全选
-  checkAll = () => {
-    if (this.state.lists.length === this.state.deleteLists.length) {
-      for (let i = 0; i < this.state.lists.length; i++) {
-        this.state.lists[i].isChecked = false;
-      }
-      this.state.deleteLists = [];
-    } else {
-      this.state.deleteLists = [];
-      for (let i = 0; i < this.state.lists.length; i++) {
-        this.state.lists[i].isChecked = true;
-        this.state.deleteLists.push(this.state.lists[i].id);
-      }
-    }
-    this.props.dispatch({
-      type: 'workflowDesigner/checkAll',
-      payload: this.state.lists,
-      callback: () => {
-        this.setState({
-          lists: this.props.workflowDesigner.changeList
-        })
-      }
-    });
-  }
-
-  checkboxChange = (e, item) => {
-    const isChecked = e.target.checked;
-    // 渲染页面使用
-    for (let i = 0; i < this.state.lists.length; i++) {
-      if (this.state.lists[i].id === item.id) {
-        this.state.lists[i].isChecked = isChecked;
-      }
-    }
-    this.props.dispatch({
-      type: 'workflowDesigner/checkItem',
-      payload: this.state.lists,
-      callback: () => {
-        this.setState({
-          lists: this.props.workflowDesigner.changeList
-        })
-      }
-    });
-
-    let isInList = false;
-
-    let index;
-    for (let i = 0; i < this.state.deleteLists.length; i++) {
-      if (item.id === this.state.deleteLists[i]) {
-        index = i;
-        isInList = true;
-      }
-    }
-    if (!isChecked && isInList) {
-      this.state.deleteLists = [
-        ...this.state.deleteLists.slice(0, index),
-        ...this.state.deleteLists.slice(index + 1, this.state.deleteLists.length)
-      ]
-    } else if (isChecked && !isInList) {
-      this.state.deleteLists.push(item.id);
-    }
-  }
-
   // 删除数组中的某个元素
   arrayRemove = (arr, val) => {
     let index;
@@ -418,21 +354,6 @@ export default class Designer extends PureComponent {
       default:
         break;
     }
-  }
-
-  // 删除选中的所有元素
-  deleteAll = () => {
-    Modal.confirm({
-      title: '提示',
-      content: `确定删除选中的${this.state.deleteLists.length}条数据吗`,
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        for (let i = 0; i < this.state.deleteLists.length; i++) {
-          this.deleteItem(this.state.deleteLists[i]);
-        }
-      }
-    });
   }
 
   // 跳转到activiti
@@ -490,18 +411,17 @@ export default class Designer extends PureComponent {
   }
   // 刷新
   refresh = (root) => {
-    const params = {
+    const common = {
       modelType: '0',
       sort: 'modifiedDesc',
-      workflowCategoryCode: root,
     }
-    const paramsRoot = {
-      modelType: '0',
-      sort: 'modifiedDesc',
+    const params = {
+      ...common,
+      workflowCategoryCode: root,
     }
     this.props.dispatch({
       type: 'workflowDesigner/fetch',
-      payload: root !== 'ROOT' ? params : paramsRoot,
+      payload: root !== 'ROOT' ? params : common,
     });
   }
 
@@ -597,14 +517,38 @@ export default class Designer extends PureComponent {
   }
   /* 删除该节点 */
   handleTreeListDelete = () => {
-    const { handleSelect } = this.state;
+    const { handleSelect: {code, name}, nowTreeCode, lists } = this.state;
+    const common = {
+      modelType: '0',
+      sort: 'modifiedDesc',
+    }
+    const params = {
+      ...common,
+      workflowCategoryCode: code,
+    }
+    let newList = lists;
     Modal.confirm({
       title: '提示',
-      content: `是否确认删除分类 - "${handleSelect.name}"`,
+      content: `是否确认删除分类 - "${name}"`,
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        this.treeListDelete();
+        if (code !== nowTreeCode) {
+          this.props.dispatch({
+            type: 'workflowDesigner/fetchList',
+            payload: code !== 'ROOT' ? params : common,
+            callback: (res)=>{
+              newList = res;
+            }
+          })
+        }
+        setTimeout(()=>{
+          if (newList.length > 0) {
+            message.info(`[${name}]分类下有流程数据不可以删除！`);
+          } else {
+            this.treeListDelete();
+          }
+        }, 1000);
       }
     });
   }
@@ -738,7 +682,7 @@ export default class Designer extends PureComponent {
   }
   render() {
     const { workflowDesigner: { data, treeData }, loading, treeLoading, typeSubmitLoading, submitLoading } = this.props;
-    const { deleteLists, buttonSize, showUploadList, viewVisible, editDisable, isTop, listTitle, typeVisible, workInfo,
+    const { buttonSize, showUploadList, viewVisible, editDisable, isTop, listTitle, typeVisible, workInfo,
       deleteDisable, addOrEditTypeTitle, changeVisible, typeIsCreate, typeInfo, typeCloseConfirm, nowParentName, nowTypeName } = this.state;
     this.state.lists = data.data;
     const formatTreeData = treeData;
@@ -775,8 +719,8 @@ export default class Designer extends PureComponent {
         text: '删除',
         name: 'remove',
         disabled: deleteDisable,
-        onClick: (record) => {
-          this.handleTreeListDelete(record);
+        onClick: () => {
+          this.handleTreeListDelete();
         },
       }
     ];
@@ -824,10 +768,6 @@ export default class Designer extends PureComponent {
                     )
                   }
                 </span>
-                <Button className={styles.headerButton} icon={deleteLists.length ? 'check-square' : 'check-square-o'} size={buttonSize} onClick={() => this.checkAll()}>
-                  全选
-                </Button>
-                {deleteLists.length > 0 ? <Button icon="delete" size={buttonSize} type="danger" onClick={() => this.deleteAll()}>批量删除</Button> : null}
             </div>
               <List
                   loading={loading}
@@ -886,11 +826,6 @@ export default class Designer extends PureComponent {
                         <Card.Meta
                           description={(
                             <div>
-                              <Checkbox
-                                checked={item.isChecked}
-                                className={styles.checkboxPosition}
-                                onChange={value => this.checkboxChange(value, item)}
-                              />
                               <Ellipsis className={styles.item} lines={1}>
                                 <Tooltip placement="bottom" title="编辑">
                                   <a onClick={() => this.goActivity(item.id)} style={{textDecoration: 'underline', cursor: 'pointer'}}>

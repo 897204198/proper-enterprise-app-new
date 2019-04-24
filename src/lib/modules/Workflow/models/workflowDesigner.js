@@ -24,6 +24,10 @@ export default {
       });
       if (callback) callback();
     },
+    *fetchList({ payload, callback }, { call }) {
+      const response = yield call(queryWorkflowList, payload);
+      if (callback) callback(response.result.data);
+    },
     *remove({ payload, callback }, { call }) {
       const response = yield call(removeWorkflowList, payload);
       if (callback) callback(response);
@@ -33,13 +37,6 @@ export default {
       yield put({
         type: 'getCreateId',
         payload: response.result,
-      });
-      if (callback) callback();
-    },
-    *checkAll({ payload, callback }, { put }) {
-      yield put({
-        type: 'getCheckList',
-        payload
       });
       if (callback) callback();
     },
