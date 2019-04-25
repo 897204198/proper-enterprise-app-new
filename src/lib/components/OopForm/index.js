@@ -161,7 +161,7 @@ export default class OopForm extends React.PureComponent {
     const formData = form.getFieldsValue();
     console.log(formData);
     formJson.forEach((it)=>{
-      const {name, component: {name: cName, children, props}} = it;
+      const {name, component: {name: cName, children, props = {}}} = it;
       const value = formData[name];
       if (value !== null && value !== undefined && value !== '') {
         if ('Select,RadioGroup,CheckboxGroup'.includes(cName)) {

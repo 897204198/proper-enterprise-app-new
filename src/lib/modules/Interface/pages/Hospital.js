@@ -8,7 +8,6 @@ import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopForm from '../../../components/OopForm';
 import OopTable from '../../../components/OopTable';
-import MyBusinessForm from '@pea/modules/Interface/pages/Forms/MyBusinessForm';
 
 const ModalForm = Form.create()((props) => {
   const {loading, visible, title, onModalCancel, onModalSubmit, formEntity} = props;
@@ -32,7 +31,7 @@ const ModalForm = Form.create()((props) => {
   return (
     <Modal title={title} visible={visible} footer={footer} onCancel={cancelForm}>
       <Spin spinning={loading}>
-        <OopForm {...formConfig} ref={(el)=>{ this.oopForm = el }} defaultValue={formEntity} />
+        <OopForm {...formConfig} ref={(el)=>{ this.oopForm = el && el.getWrappedInstance() }} defaultValue={formEntity} />
       </Spin>
     </Modal>
   )
@@ -50,7 +49,7 @@ export default class Manager extends React.PureComponent {
     modalFormVisible: false,
   }
   componentDidMount() {
-    // this.onLoad();
+    this.onLoad();
   }
   onLoad = (param = {})=>{
     const {pagination, condition} = param;
@@ -128,14 +127,68 @@ export default class Manager extends React.PureComponent {
     this.setState({modalFormVisible: flag})
   }
   render() {
-    const BusinessForm = require('@pea/modules/Interface/pages/Forms/MyBusinessForm.jsx').default;
-
-    const formConfig = {
-      a: 1
-    }
+    const {interfaceHospital: {entity, list}, loading,
+      global: { oopSearchGrid, size }, gridLoading } = this.props;
+    const { columns } = {columns: [{title: '入院途径', dataIndex: 'HbgaH8FhIs'},{title: '多选框', dataIndex: 'uIYihadNFg'},{title: '数字输入框', dataIndex: 'gqBRnY3K43'},{title: '选择器', dataIndex: 'cHxQmucH8x'},{title: '日期选择', dataIndex: 'YMLVOtWnUJ'}]};
+    const topButtons = [
+      {
+        text: '新建',
+        name: 'create',
+        type: 'primary',
+        icon: 'plus',
+        onClick: ()=>{ this.handleCreate() }
+      },
+      {
+        text: '删除',
+        name: 'batchDelete',
+        icon: 'delete',
+        display: items=>(items.length > 0),
+        onClick: (items)=>{ this.handleBatchRemove(items) }
+      },
+    ];
+    const rowButtons = [
+      {
+        text: '编辑',
+        name: 'edit',
+        icon: 'edit',
+        onClick: (record)=>{ this.handleEdit(record) },
+      },
+      {
+        text: '删除',
+        name: 'delete',
+        icon: 'delete',
+        confirm: '是否要删除此条信息',
+        onClick: (record)=>{ this.handleRemove(record) },
+      },
+    ];
     return (
-      <PageHeaderLayout>
-        this is test page.
+      <PageHeaderLayout content={
+        <OopSearch
+          placeholder="请输入"
+          enterButtonText="搜索"
+          moduleName="interfacehospital"
+          ref={(el)=>{ this.oopSearch = el && el.getWrappedInstance() }}
+        />
+      }>
+        <Card bordered={false}>
+          <OopTable
+            loading={loading === undefined ? gridLoading : loading}
+            grid={{list} || oopSearchGrid}
+            columns={columns}
+            rowButtons={rowButtons}
+            topButtons={topButtons}
+            size={size}
+            ref={(el)=>{ this.oopTable = el }}
+          />
+        </Card>
+        <ModalForm
+          visible={this.state.modalFormVisible}
+          title={entity.id ? '编辑' : '新建'}
+          onModalCancel={this.handleModalCancel}
+          onModalSubmit={this.handleModalSubmit}
+          formEntity={entity}
+          loading={!!loading}
+        />
       </PageHeaderLayout>)
   }
 }

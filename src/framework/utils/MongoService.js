@@ -5,6 +5,34 @@ import AV from 'av-core';
 import { prefix, devMode } from '@/config/config';
 import {getCurrentUser} from './utils';
 
+// av-core 会把从mongo里的数据加一些奇怪的封装 这里做下清理 和 处理mongo本身的$id 等
+const retrievalData = (data)=>{
+  if (Array.isArray(data)) {
+    return data.map((item)=>{
+      const r = {
+        ...item._serverData,
+        id: item._serverData._id.$oid
+      }
+      for (const k in r) {
+        if (r[k] && r[k].$numberLong) {
+          r[k] = Number(r[k].$numberLong)
+        }
+      }
+      return r
+    })
+  } else if (Object.prototype.toString.call(data) === '[object Object]') {
+    const r = {
+      ...data._serverData,
+      id: data._serverData._id.$oid
+    }
+    for (const k in r) {
+      if (r[k] && r[k].$numberLong) {
+        r[k] = Number(r[k].$numberLong)
+      }
+    }
+    return r
+  }
+}
 
 export default class MongoService {
   constructor(tableName, url, ctx) {
@@ -40,7 +68,7 @@ export default class MongoService {
         callbackReturn.then((callbackReturnValue)=>{
           query.find().then((res)=>{
             resolve({
-              result: res.map(item=> ({...item._serverData, id: item._serverData._id.$oid})),
+              result: retrievalData(res),
               extra: callbackReturnValue
             });
           }, (err)=>{ this.errorFn(resolve, err) });
@@ -49,8 +77,7 @@ export default class MongoService {
       }
       query.find().then((res)=>{
         resolve({
-          result: res.map(item=>
-            ({...item._serverData, id: item._serverData._id.$oid}))
+          result: retrievalData(res)
         });
       }, (err)=>{ this.errorFn(resolve, err) })
     })
@@ -99,7 +126,7 @@ export default class MongoService {
             // 为了给oopToast提供成功的标识
             resolve({
               status: 'ok',
-              result: {...res._serverData, id: res._serverData._id.$oid}
+              result: retrievalData(res)
             });
           }, (err)=>{ this.errorFn(resolve, err) })
         }, (err)=>{ this.errorFn(resolve, err) })
@@ -115,7 +142,7 @@ export default class MongoService {
         query.get(id).then((res)=>{
           resolve({
             status: 'ok',
-            result: {...res._serverData, id: res._serverData._id.$oid}
+            result: retrievalData(res)
           });
         }, (err)=>{ this.errorFn(resolve, err) })
       })

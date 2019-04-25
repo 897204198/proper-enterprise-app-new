@@ -1,4 +1,4 @@
-import { fetchDictionary, fetch, fetchById, remove, saveOrUpdate, removeAll} from '../services/authRuleS';
+import { fetchDictionary, fetchById, remove, saveOrUpdate, removeAll} from '../services/authRuleS';
 
 export default {
   namespace: 'authRule',

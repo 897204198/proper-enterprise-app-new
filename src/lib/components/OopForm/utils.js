@@ -58,16 +58,29 @@ export const formGenerator = (formConfig)=>{
       if (display === true || mode === 'design') {
         let formItem = null;
         let _rules = null;
-        if (name && component) {
+        if (component) {
           // component增加loading属性
           if (rules.length) {
             _rules = transformRules(rules);
           }
-          const com = createComponent({...component, label, rules, valuePropName, form}, false)
+          // component是函数的时候直接作为参数传入createComponent ，否则解构component 再附加其他参数传入
+          let comArgs = {};
+          if (typeof component === 'function') {
+            comArgs = component;
+          } else if (typeof component === 'object') {
+            comArgs = {
+              ...component, label, rules, valuePropName, form
+            }
+          }
+          const com = createComponent(comArgs, false);
           if (com) {
-            const formItemInner = getFieldDecorator(name, {initialValue, rules: _rules, valuePropName})(
-              com
-            );
+            let formItemInner;
+            // 有name表示需要双相绑定的组件 否则是展示组件 不做双向绑定的处理
+            if (name) {
+              formItemInner = getFieldDecorator(name, {initialValue, rules: _rules, valuePropName})(com);
+            } else {
+              formItemInner = com;
+            }
             formItem = getFormItem(formItemInner,
               {...formItemConfig, columnsNum, formItemLayout: {..._formLayout, ...formItemLayout}, rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemSetValue, showSetValueIcon});
             formItemList.push(formItem);

@@ -19,7 +19,7 @@ export default {
       const response = yield call(service.findUser, payload);
       yield put({
         type: 'saveUser',
-        payload: response.result.data,
+        payload: response.result,
       });
       if (callback) callback();
     },
