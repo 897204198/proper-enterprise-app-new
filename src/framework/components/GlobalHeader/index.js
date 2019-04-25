@@ -94,7 +94,7 @@ export default class GlobalHeader extends PureComponent {
     if (menuData.length) {
       const {pathname, search} = routerLocation;
       let path = pathname;
-      if (path === '/outerIframe') {
+      if (path === '/outerIframe' || path === '/customFunction') {
         path = `${path}${search}`;
       }
       const menu = menuData.find((item) => {

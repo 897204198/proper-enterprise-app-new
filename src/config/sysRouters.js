@@ -53,5 +53,8 @@ const routers = {
   '/outerIframe': {
     component: ()=>import('@framework/modules/Base/pages/OuterIframe')
   },
+  '/customFunction': {
+    component: ()=>import('@framework/modules/Base/pages/CustomFunction')
+  },
 };
 export default routers

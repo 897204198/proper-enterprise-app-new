@@ -79,7 +79,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
     case 'OopUpload':
       component =
       (
-      <OopUpload
+        <OopUpload
         {...props}
       >{ p => <List.Item arrow="horizontal" extra={p.extra}>{label}</List.Item>}</OopUpload>)
       break;

@@ -74,7 +74,7 @@ const filterTableList = (searchValue, tableList, columns)=>{
     }
     const itemName = Object.keys(item)[index];
     // 不对数据中的id、key、_开头 做过滤
-    if (itemName === 'id' || itemName === 'key' || itemName.indexOf('_') > -1) {
+    if (itemName === 'id' || itemName === 'key' || itemName.indexOf('_') === 0) {
       return false;
     }
     // 不对未在columns中设置的列过滤
@@ -98,7 +98,7 @@ const filterTableList = (searchValue, tableList, columns)=>{
   }
   const data = copyList.filter(item=>
     (
-      Object.values(item).filter((value, index)=>{ return filter(value, index, item) })
+      Object.values(item).filter((value, index)=>{ return filter(value, index, item) }) // eslint-disable-line
     ).length > 0)
   return data;
 }
@@ -513,7 +513,8 @@ export default class OopSearch extends React.Component {
               <ul className="ant-menu ant-menu-light ant-menu-root ant-menu-vertical">
                 {this.renderSuggestOption(searchOptions)}
               </ul>
-            </div>)}
+            </div>)
+          }
         </div>
         {this.state.showDropMenu &&
         (

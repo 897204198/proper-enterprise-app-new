@@ -134,7 +134,9 @@ export default class TomcatLog extends React.Component {
     if (!this.state.overflowLock) {
       setTimeout(() => {
         const div = document.querySelector('.tomcatCardContent');
-        div.scrollTop = div.scrollHeight;
+        if (div) {
+          div.scrollTop = div.scrollHeight;
+        }
       }, 50);
     }
   }
