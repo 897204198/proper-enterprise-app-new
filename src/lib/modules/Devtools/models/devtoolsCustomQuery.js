@@ -1,4 +1,4 @@
-import { fetch, fetchById, remove, saveOrUpdate, removeAll, updateFormConfig, checkFieldRepeat} from '../services/devtoolsCustomQueryS';
+import { fetch, fetchById, remove, saveOrUpdate, removeAll, updateFormConfig, checkCodeRepeat, checkTableNameRepeat} from '../services/devtoolsCustomQueryS';
 
 export default {
   namespace: 'devtoolsCustomQuery',
@@ -42,8 +42,12 @@ export default {
       const resp = yield call(updateFormConfig, payload);
       if (callback) callback(resp)
     },
-    *checkFieldRepeat({payload, callback}, {call}) {
-      const resp = yield call(checkFieldRepeat, payload);
+    *checkCodeRepeat({payload, callback}, {call}) {
+      const resp = yield call(checkCodeRepeat, payload);
+      if (callback) callback(resp)
+    },
+    *checkTableNameRepeat({payload, callback}, {call}) {
+      const resp = yield call(checkTableNameRepeat, payload);
       if (callback) callback(resp)
     },
   },
