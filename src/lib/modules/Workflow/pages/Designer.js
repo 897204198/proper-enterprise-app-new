@@ -91,11 +91,12 @@ const CreateModal = (props) => {
 
 /* 修改分类 */
 const InfoChangeForm = Form.create()((props) => {
+  const { loading = false, form, formInfo, treeData } = props;
   const renderTreeNodes = (data) => {
     return data.map((item) => {
       if (item.children) {
         return (
-          <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item} disabled={item.code === 'ROOT'}>
+           <TreeNode title={item.name} value={item.code} key={item.id} dataRef={item} disabled={item.code === 'ROOT'}>
             {renderTreeNodes(item.children)}
           </TreeNode>
         );
@@ -105,7 +106,6 @@ const InfoChangeForm = Form.create()((props) => {
       );
     });
   }
-  const {loading = false, form, formInfo, treeData } = props;
   return (
     <Spin spinning={loading}>
     <div>
@@ -142,6 +142,8 @@ const InfoChangeForm = Form.create()((props) => {
             placeholder="请选择分类"
             allowClear
             treeDefaultExpandAll
+            searchPlaceholder="请输入想要搜索的类别名称"
+            treeNodeFilterProp= "title"
             getPopupContainer={() => document.getElementById('designer_type_form')}
           >
             {
@@ -347,14 +349,9 @@ export default class Designer extends PureComponent {
 
   // 打开新建窗口
   create = (flag) => {
-    const { nowTreeCode } = this.state;
-    if (nowTreeCode === 'ROOT') {
-      message.info('[流程分类] 下不可以新建流程，请选择其他的分类，再新建流程！');
-    } else {
-      this.setState({
-        viewVisible: flag,
-      });
-    }
+    this.setState({
+      viewVisible: flag,
+    });
   }
 
   // 新建确认
@@ -619,7 +616,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/addTree',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '添加成功', '添加失败');
+        oopToast(res, '添加成功');
         this.setState({
           typeVisible: false,
         }, ()=>{
@@ -634,7 +631,7 @@ export default class Designer extends PureComponent {
       type: 'workflowDesigner/editTree',
       payload: record,
       callback: (res)=>{
-        oopToast(res, '修改成功', '修改失败');
+        oopToast(res, '修改成功');
         this.setState({
           typeVisible: false
         }, ()=>{
@@ -661,13 +658,10 @@ export default class Designer extends PureComponent {
     })
   }
 
-  showInfo = () => {
-    message.info('[流程分类] 下不可以新建流程，请选择其他的分类，再新建流程！');
-  }
   render() {
     const { workflowDesigner: { data, treeData }, loading, treeLoading, typeSubmitLoading, submitLoading } = this.props;
     const { buttonSize, showUploadList, viewVisible, editDisable, isTop, listTitle, typeVisible, workInfo,
-      deleteDisable, addOrEditTypeTitle, changeVisible, typeIsCreate, typeInfo, typeCloseConfirm, nowParentName, nowTypeName } = this.state;
+      deleteDisable, addOrEditTypeTitle, changeVisible, typeIsCreate, typeInfo, typeCloseConfirm, nowParentName, nowTypeName, nowTreeCode } = this.state;
     this.state.lists = data.data;
     const formatTreeData = treeData;
     const treeConfig = {
@@ -736,27 +730,26 @@ export default class Designer extends PureComponent {
                   enterButton="搜索"
                   placeholder="请输入流程名称"
                 />
-                 <Button className={styles.headerButton} icon="plus" type="primary" size={buttonSize} onClick={() => this.create(true)} > 新建</Button>
+                <Button
+                  className={styles.headerButton}
+                  icon="plus"
+                  type="primary"
+                  size={buttonSize}
+                  onClick={() => this.create(true)}
+                  disabled={nowTreeCode === 'ROOT'}> 新建</Button>
                 <span style={{float: 'right'}}>
-                  {
-                    this.state.nowTreeCode === 'ROOT' ? (
-                      <Button className={styles.headerButton} icon="select" size={buttonSize} onClick={() => this.showInfo()}>
-                        导入
-                     </Button>
-                    ) : (
-                      <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
-                        <Button className={styles.headerButton} icon="select" size={buttonSize}>
-                          导入
-                        </Button>
-                      </Upload>
-                    )
-                  }
+                  <Upload {...uploadParams} showUploadList={showUploadList} onChange={this.uploadChange}>
+                    <Button className={styles.headerButton} icon="select" size={buttonSize} disabled={nowTreeCode === 'ROOT'}>
+                      导入
+                    </Button>
+                  </Upload>
                 </span>
             </div>
               <List
                   loading={loading}
                   grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
                   dataSource={this.state.lists}
+                  rowKey="id"
                   renderItem={item => (
                     <List.Item key={item.id} className={styles.contolFontSize}>
                       <Card
