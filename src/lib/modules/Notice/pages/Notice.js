@@ -194,7 +194,7 @@ export default class Notice extends PureComponent {
     formInfo: {},
     nowInfoType: null,
     list: [],
-    pagination: null
+    pagination: undefined
   }
   componentDidMount() {
     this.infoType();
@@ -241,7 +241,7 @@ export default class Notice extends PureComponent {
       pagination: { pageNo: 1 }
     }, () => {
       this.setState({
-        pagination: null
+        pagination: undefined
       })
       this.refresh();
     })
@@ -424,7 +424,7 @@ export default class Notice extends PureComponent {
                 size={size}
                 topButtons={topButtons}
                 rowButtons={rowButtons}
-                pagination={pagination || null}
+                pagination={pagination || undefined}
                 ref={(el) => { this.oopTable = el }}
               />
             </Card>

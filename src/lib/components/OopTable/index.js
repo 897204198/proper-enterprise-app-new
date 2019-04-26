@@ -142,24 +142,24 @@ export default class OopTable extends PureComponent {
     })
   }
   createTopButtons = (topButtons)=>{
-    const btns = topButtons.map((btn) =>{
+    const btns = topButtons.map((btn)=> {
       if (btn.render) {
         return btn.render()
       } else {
-        // 1.btn属性配置了displayReg并且displayReg执行返回结果为true 或者 2.没有配置displayReg 渲染按钮
-        return ((btn.display && btn.display(this.state.selectedRowKeys)) || !btn.display) &&
-          (
-            <Button
-              key={btn.name}
-              icon={btn.icon}
-              type={btn.type}
-              style={(typeof btn.style === 'function') ? btn.style() : btn.style}
-              onClick={()=>{
-                btn.onClick && btn.onClick(this.state.selectedRowKeys, this.state.selectedRowItems)
-              }}>
-              {btn.text}
-            </Button>
-          )
+        // 1.btn属性配置了display为true或者display为函数 执行返回结果为true 或者 2.没有配置display 渲染按钮
+        return (btn.display === true || btn.display === undefined || (typeof btn.display === 'function' && btn.display(this.state.selectedRowKeys))) ? (
+          <Button
+            key={btn.name}
+            icon={btn.icon}
+            type={btn.type}
+            disabled={btn.disabled}
+            style={(typeof btn.style === 'function') ? btn.style() : btn.style}
+            onClick={()=>{
+              btn.onClick && btn.onClick(this.state.selectedRowKeys, this.state.selectedRowItems)
+            }}>
+            {btn.text}
+          </Button>
+        ) : false;
       }
     });
     if (this.props.showExport === true) {

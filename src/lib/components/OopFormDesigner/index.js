@@ -397,12 +397,12 @@ export default class OopFormDesigner extends React.PureComponent {
       this.state.currentRowItem.rules = rules;
       // 数据字典切换
     } else if (attr === 'dict') {
-      this.state.currentRowItem.initialValue = '';
+      this.state.currentRowItem.initialValue = undefined;
       this.state.currentRowItem.component.children = [];
       this.state.currentRowItem.component.dictCatalog = value;
       // 外部数据源切换
     } else if (attr === 'dataUrl') {
-      this.state.currentRowItem.initialValue = '';
+      this.state.currentRowItem.initialValue = undefined;
       this.state.currentRowItem.component.children = [];
       this.state.currentRowItem.component.dataUrl = value;
       // 数据来源切换

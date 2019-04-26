@@ -598,7 +598,7 @@ export default class Question extends React.PureComponent {
         type: 'primary',
         icon: 'plus',
         onClick: ()=>{ this.handleCreate() },
-        display: ()=> (tableTitle !== '全部')
+        disabled: tableTitle === '全部'
       },
       {
         text: '批量删除',

@@ -30,7 +30,7 @@
       "assignment": "ignore",
       "return": "ignore",
       "arrow": "parens-new-line",
-      "condition": "parens-new-line",
+      "condition": "ignore",
       "logical": "ignore",
       "prop": "ignore"
     }],

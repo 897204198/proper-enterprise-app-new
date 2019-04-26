@@ -39,7 +39,8 @@ export default class MongoService {
     const token = window.localStorage.getItem('proper-auth-login-token');
     // const serviceKey = window.localStorage.getItem('proper-auth-service-key');
     if (!token) {
-      throw Error('the token cannot be empty when you instantiate an \'MongoService\' object ');
+      window.location.href = '#/base/login';
+      // throw Error('the token cannot be empty when you instantiate an \'MongoService\' object ');
     }
     this.currentUser = getCurrentUser(token);
     this.tableName = tableName;
