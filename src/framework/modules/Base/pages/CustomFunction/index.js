@@ -43,7 +43,11 @@ const convertProperties = (props)=>{
                 if (isReactObject(items)) {
                   return items;
                 }
-                return fn(items);
+                try {
+                  return fn(items);
+                } catch (e) {
+                  return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
+                }
               }
             } catch (e) {
               it.render = ()=>{
