@@ -105,6 +105,7 @@ export default class CustomQuery extends React.PureComponent {
     modalFormDesignerVisible: false,
     modalTableCfgVisible: false,
     modalButtonCfgVisible: false,
+    modalModalCfgVisible: false,
     curRecord: {},
     gridConfig: {},
     buttons: [],
@@ -128,11 +129,11 @@ export default class CustomQuery extends React.PureComponent {
     });
   }
   @Debounce(300)
-  checkFormkeydefinition(rule, value, callback, self) {
+  checkCode(rule, value, callback, self) {
     console.log(this)
     self.props.dispatch({
-      type: 'devtoolsCustomQuery/checkFieldRepeat',
-      payload: {[rule.field]: value},
+      type: 'devtoolsCustomQuery/checkCodeRepeat',
+      payload: value,
       callback: (cb)=>{
         if (cb.result.length === 0) {
           callback();
@@ -142,18 +143,43 @@ export default class CustomQuery extends React.PureComponent {
       }
     });
   }
-  makeCreateFormConfig = (formEntity, checkFormkeydefinition) => {
+  @Debounce(300)
+  checkTableName(rule, value, callback, self) {
+    console.log(this)
+    self.props.dispatch({
+      type: 'devtoolsCustomQuery/checkTableNameRepeat',
+      payload: value,
+      callback: (cb)=>{
+        if (cb.result.length === 0) {
+          callback();
+        } else {
+          callback('表单表名已存在');
+        }
+      }
+    });
+  }
+  makeCreateFormConfig = (formEntity, checkCode, checkTableName) => {
     const me = this
     const rule = {};
     if (!formEntity.code && !formEntity.tableName) {
-      rule.checkFieldRepeat = [{
+      rule.checkCodeRepeat = [{
         required: true,
         max: 20,
         pattern: /^[_0-9A-Za-z]+$/,
         message: '字段名称不能为空,且必须是"_"、数字或英文字符'
       }, {
         validator(rules, value, callback) {
-          checkFormkeydefinition(rules, value, callback, me);
+          checkCode(rules, value, callback, me);
+        }
+      }];
+      rule.checkTableNameRepeat = [{
+        required: true,
+        max: 20,
+        pattern: /^[_0-9A-Za-z]+$/,
+        message: '字段名称不能为空,且必须是"_"、数字或英文字符'
+      }, {
+        validator(rules, value, callback) {
+          checkTableName(rules, value, callback, me);
         }
       }];
     }
@@ -196,7 +222,7 @@ export default class CustomQuery extends React.PureComponent {
             }
           },
           initialValue: formEntity.tableName || '',
-          rules: rule.checkFieldRepeat
+          rules: rule.checkTableNameRepeat
         },
         {
           label: '编码',
@@ -210,7 +236,7 @@ export default class CustomQuery extends React.PureComponent {
             }
           },
           initialValue: formEntity.code || '',
-          rules: rule.checkFieldRepeat
+          rules: rule.checkCodeRepeat
         },
         {
           label: '备注',
@@ -280,6 +306,9 @@ export default class CustomQuery extends React.PureComponent {
       type: 'devtoolsCustomQuery/fetchById',
       payload: record.id,
     });
+    this.setState({
+      curRecord: record
+    })
     this.setModalVisible('isCreate', false);
     this.setModalVisible('modalCreateVisible', true);
   }
@@ -317,12 +346,19 @@ export default class CustomQuery extends React.PureComponent {
     const form = this.oopCreateForm.getForm()
     form.validateFields((err, fieldsValue) => {
       if (err) return;
+      const { curRecord } = this.state
+      const params = Object.assign(curRecord, fieldsValue)
       this.props.dispatch({
         type: 'devtoolsCustomQuery/saveOrUpdate',
-        payload: fieldsValue,
+        payload: params,
         callback: (res) => {
           oopToast(res, '保存成功', '保存失败');
-          if (res.status === 'ok') this.setModalVisible('modalCreateVisible', false);
+          if (res.status === 'ok') {
+            this.setState({
+              curRecord: {}
+            })
+            this.setModalVisible('modalCreateVisible', false);
+          }
           this.onLoad();
         }
       });
@@ -355,6 +391,15 @@ export default class CustomQuery extends React.PureComponent {
     this.currentRowRecordId = record.id;
     this.setModalVisible('modalButtonCfgVisible', true);
   }
+  handleDesignModal = (record) => {
+    const { modalConfig } = record
+    this.setState({
+      curRecord: record,
+      modalConfig: JSON.parse(modalConfig)
+    })
+    this.currentRowRecordId = record.id;
+    this.setModalVisible('modalModalCfgVisible', true);
+  }
   handleFormDesignerModalCancel = ()=>{
     this.setState({modalFormDesignerVisible: false});
     this.currentRowRecordId = null;
@@ -371,7 +416,7 @@ export default class CustomQuery extends React.PureComponent {
       message.warning('请设计表单');
     } else {
       const { curRecord } = this.state
-      const { gridConfig } = curRecord;
+      const { gridConfig, modalConfig } = curRecord;
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item)=>{
         if (item.initialValue && typeof item.initialValue === 'object') {
@@ -389,6 +434,7 @@ export default class CustomQuery extends React.PureComponent {
       let topButtons = []
       let rowButtons = []
       let gridObj = {}
+      let modalObj = {}
       if (!gridConfig) {
         for (let i = 0; i < formJson.length; i++) {
           const obj = {
@@ -403,7 +449,19 @@ export default class CustomQuery extends React.PureComponent {
       } else {
         gridObj = gridConfig
       }
+      if (!modalConfig) {
+        modalObj = JSON.stringify({
+          title: '',
+          width: '',
+          footer: ['submit', 'cancel'],
+          afterClose: true,
+          maskClosable: false
+        })
+      } else {
+        modalObj = modalConfig
+      }
       const params = {
+        modalConfig: modalObj,
         gridConfig: gridObj,
         formConfig: JSON.stringify(FormObj),
         id: this.currentRowRecordId
@@ -558,10 +616,34 @@ export default class CustomQuery extends React.PureComponent {
       });
     }
   }
+  handleModalCfgCancel = () => {
+    this.setModalVisible('modalModalCfgVisible', false);
+  }
+  handleModalCfgSubmit = () => {
+    const form = this.oopModalCfgForm.getForm()
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      const { curRecord } = this.state
+      const params = {
+        ...curRecord,
+        modalConfig: JSON.stringify(fieldsValue),
+        id: this.currentRowRecordId
+      }
+      this.props.dispatch({
+        type: 'devtoolsCustomQuery/saveOrUpdate',
+        payload: params,
+        callback: (res) => {
+          oopToast(res, '保存成功', '保存失败');
+          if (res.status === 'ok') this.setModalVisible('modalModalCfgVisible', false);
+          this.onLoad();
+        }
+      });
+    });
+  }
   render() {
     const {devtoolsCustomQuery: {entity, list}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
-    const { modalCreateVisible, modalButtonCfgVisible, modalTableCfgVisible, curRecord, gridConfig, isCreate, buttons } = this.state;
+    const { modalCreateVisible, modalButtonCfgVisible, modalTableCfgVisible, modalModalCfgVisible, curRecord, gridConfig, modalConfig = {}, isCreate, buttons } = this.state;
     const { formConfig = {formJson: [], formLayout: 'horizontal'} } = curRecord
     const parseFormConfig = typeof formConfig === 'string' ? JSON.parse(formConfig) : formConfig
     const buttonCfgDatas = filterDefault(buttons)
@@ -627,6 +709,13 @@ export default class CustomQuery extends React.PureComponent {
         icon: 'plus-square',
         display: record => (record.formConfig && JSON.parse(record.formConfig).formJson.length > 0),
         onClick: (record) => { this.handleDesignButton(record) },
+      },
+      {
+        text: '设计模态窗口',
+        name: 'designModal',
+        icon: 'switcher',
+        display: record => (record.formConfig && JSON.parse(record.formConfig).formJson.length > 0),
+        onClick: (record) => { this.handleDesignModal(record) },
       },
       {
         text: '编辑',
@@ -850,6 +939,24 @@ export default class CustomQuery extends React.PureComponent {
           return text;
         }
       }, {
+        title: '确认信息',
+        dataIndex: 'confirm',
+        key: 'confirm',
+        defaultValue: '',
+        render: (text, record) => {
+          if (record.editable) {
+            return (
+            <Input
+              size="small"
+              style={tableInputStyle}
+              value={text}
+              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'confirm', record._id)}
+              placeholder="请输入" />
+            )
+          }
+          return text;
+        }
+      }, {
         title: '显示',
         dataIndex: 'display',
         key: 'display',
@@ -883,6 +990,86 @@ export default class CustomQuery extends React.PureComponent {
         }
       }
     ]
+    const modalCfgFormConfig = {
+      formLayout: 'horizontal',
+      formJson: [
+        {
+          label: '窗口名称',
+          key: 'title',
+          name: 'title',
+          component: {
+            name: 'Input',
+            props: {
+              placeholder: '请输入名称',
+            }
+          },
+          initialValue: modalConfig.title || '',
+          rules: [{
+            required: true,
+            message: '请输入名称'
+          }]
+        },
+        {
+          label: '窗口宽度',
+          key: 'width',
+          name: 'width',
+          component: {
+            name: 'Input',
+            props: {
+              placeholder: '请输入宽度',
+              type: 'number'
+            }
+          },
+          initialValue: modalConfig.width || '',
+        },
+        {
+          label: '按钮',
+          key: 'footer',
+          name: 'footer',
+          component: {
+            name: 'Select',
+            children: [
+              {label: '保存', value: 'submit'},
+              {label: '取消', value: 'cancel'},
+              {label: '删除', value: 'delete'}
+            ],
+            props: {
+              placeholder: '请选择按钮',
+              mode: 'multiple'
+            }
+          },
+          initialValue: modalConfig.footer || ['submit', 'cancel'],
+        },
+        {
+          label: '保存后关闭',
+          key: 'saveAfterClosable',
+          name: 'saveAfterClosable',
+          component: {
+            name: 'Switch',
+            props: {
+              checkedChildren: '是',
+              unCheckedChildren: '否'
+            }
+          },
+          valuePropName: 'checked',
+          initialValue: modalConfig.saveAfterClosable || false,
+        },
+        {
+          label: '点击背景遮罩是否关闭',
+          key: 'maskClosable',
+          name: 'maskClosable',
+          component: {
+            name: 'Switch',
+            props: {
+              checkedChildren: '是',
+              unCheckedChildren: '否'
+            }
+          },
+          valuePropName: 'checked',
+          initialValue: modalConfig.maskClosable || false,
+        }
+      ]
+    }
     return (
       <PageHeaderLayout content={
         <OopSearch
@@ -907,14 +1094,14 @@ export default class CustomQuery extends React.PureComponent {
         <Modal
           visible={modalCreateVisible}
           // width={800}
-          title={renderTitle(`${isCreate ? '新建' : '查看'}调查任务汇总信息`)}
+          title={renderTitle(`${isCreate ? '新建' : '查看'}`)}
           onCancel={() => { this.setState({modalCreateVisible: false}) }}
           onOk={this.handleSubmit}
           destroyOnClose={true}
           maskClosable={false}
           // footer={<Button type="primary" onClick={() => { this.setState({modalAssignmentCollectVisible: false}) }}>关闭</Button>}
         >
-          <OopForm {...this.makeCreateFormConfig(formdata, this.checkFormkeydefinition)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} defaultValue={formdata} />
+          <OopForm {...this.makeCreateFormConfig(formdata, this.checkCode, this.checkTableName)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} defaultValue={formdata} />
         </Modal>
         <Modal
           visible={this.state.modalFormDesignerVisible}
@@ -932,7 +1119,7 @@ export default class CustomQuery extends React.PureComponent {
         </Modal>
         <Modal
           visible={modalTableCfgVisible}
-          width={1200}
+          width="90%"
           title="设计列表"
           onCancel={() => { this.setState({modalTableCfgVisible: false}) }}
           destroyOnClose={true}
@@ -953,7 +1140,7 @@ export default class CustomQuery extends React.PureComponent {
         </Modal>
         <Modal
           visible={modalButtonCfgVisible}
-          width={1200}
+          width="90%"
           title="设计按钮"
           onCancel={() => { this.setState({modalButtonCfgVisible: false}) }}
           destroyOnClose={true}
@@ -971,6 +1158,22 @@ export default class CustomQuery extends React.PureComponent {
             value={buttonCfgDatas}
             ref={(el)=>{ this.buttonCfgForm = el }}
           />
+        </Modal>
+        <Modal
+          visible={modalModalCfgVisible}
+          title="设计模态窗口"
+          width={800}
+          onCancel={() => { this.setState({modalModalCfgVisible: false}) }}
+          destroyOnClose={true}
+          maskClosable={false}
+          footer={
+            <Fragment>
+              <Button onClick={this.handleModalCfgCancel}>关闭</Button>
+              <Button type="primary" onClick={this.handleModalCfgSubmit}>保存</Button>
+            </Fragment>
+          }
+        >
+          <OopForm {...modalCfgFormConfig} ref={(el)=>{ this.oopModalCfgForm = el && el.getWrappedInstance() }} defaultValue={modalConfig} />
         </Modal>
       </PageHeaderLayout>
     )

@@ -39,6 +39,9 @@ export async function updateFormConfig(param) {
   return update(param);
 }
 
-export async function checkFieldRepeat(param) {
-  return fetchByEqual(param);
+export async function checkCodeRepeat(param) {
+  return fetchByEqual({code: param});
+}
+export async function checkTableNameRepeat(param) {
+  return fetchByEqual({tableName: param});
 }
