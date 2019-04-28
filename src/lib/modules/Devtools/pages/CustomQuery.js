@@ -452,9 +452,9 @@ export default class CustomQuery extends React.PureComponent {
       if (!modalConfig) {
         modalObj = JSON.stringify({
           title: '',
-          width: '',
+          width: 1000,
           footer: ['submit', 'cancel'],
-          afterClose: true,
+          saveAfterClosable: true,
           maskClosable: false
         })
       } else {
@@ -1004,10 +1004,6 @@ export default class CustomQuery extends React.PureComponent {
             }
           },
           initialValue: modalConfig.title || '',
-          rules: [{
-            required: true,
-            message: '请输入名称'
-          }]
         },
         {
           label: '窗口宽度',
@@ -1041,7 +1037,7 @@ export default class CustomQuery extends React.PureComponent {
           initialValue: modalConfig.footer || ['submit', 'cancel'],
         },
         {
-          label: '保存后关闭',
+          label: '保存后是否关闭',
           key: 'saveAfterClosable',
           name: 'saveAfterClosable',
           component: {
@@ -1055,7 +1051,7 @@ export default class CustomQuery extends React.PureComponent {
           initialValue: modalConfig.saveAfterClosable || false,
         },
         {
-          label: '点击背景遮罩是否关闭',
+          label: '点击遮罩是否关闭',
           key: 'maskClosable',
           name: 'maskClosable',
           component: {
