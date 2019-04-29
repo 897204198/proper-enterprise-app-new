@@ -7,7 +7,6 @@ import styles from './index.less';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
-const specialPaths = ['/outerIframe', '/pupa'];
 
 // Allow menu.js config icon as string or ReactNode
 //   icon: 'setting',
@@ -56,57 +55,19 @@ export default class SiderMenu extends PureComponent {
     this.menus = props.menuData;
     this.state = {
       openKeys: this.getDefaultCollapsedSubMenus(props),
+      selectedKeys: []
     };
   }
   componentWillReceiveProps(nextProps) {
-    const {location: {pathname: newPathname, search: newSearch}, newMenuData = []} = nextProps;
+    const {location: {pathname: newPathname, search: newSearch}} = nextProps;
     const {location: {pathname, search}, menuData = []} = this.props;
-    if (`${pathname}${search}` !== `${newPathname}${newSearch}` || menuData.length !== newMenuData.length) {
+    if (`${pathname}${search}` !== `${newPathname}${newSearch}` || menuData.length > 0) {
       this.setState({
-        openKeys: this.getDefaultCollapsedSubMenus(nextProps)
+        openKeys: this.getDefaultCollapsedSubMenus(nextProps),
+        selectedKeys: pathname === '/' ? [] : this.state.selectedKeys
       });
     }
   }
-  /**
-   * Convert pathname to openKeys
-   * /list/search/articles = > ['list','/list/search']
-   * @param  props
-   */
-  // getDefaultCollapsedSubMenus(props) {
-  //   const { location: { pathname } } = props || this.props;
-  //   // eg. /list/search/articles = > ['','list','search','articles']
-  //   if (pathname === '/outerIframe') {
-  //     const flatMenus = this.getFlatMenuKeys(this.props.menuData);
-  //     console.log(flatMenus);
-  //   }
-  //   let snippets = pathname.split('/');
-  //   // Delete the end
-  //   // eg.  delete 'articles'
-  //   snippets.pop();
-  //   // Delete the head
-  //   // eg. delete ''
-  //   snippets.shift();
-  //   // eg. After the operation is completed, the array should be ['list','search']
-  //   // eg. Forward the array as ['list','list/search']
-  //   if (this.props.menuData.length === 0) {
-  //     // return snippets when the menuData in fetching
-  //     return ['/'.concat(...snippets)]
-  //   }
-  //   snippets = snippets.map((item, index) => {
-  //     // If the array length > 1
-  //     if (index > 0) {
-  //       // eg. search => ['list','search'].join('/')
-  //       return snippets.slice(0, index + 1).join('/');
-  //     }
-  //     // index 0 to not do anything
-  //     return item;
-  //   });
-  //   snippets = snippets.map((item) => {
-  //     return this.getSelectedMenuKeys(`/${item}`)[0];
-  //   });
-  //   // eg. ['list','list/search']
-  //   return snippets;
-  // }
   getDefaultCollapsedSubMenus(props) {
     const { location: { pathname, search }, menuData = [] } = props || this.props;
     const openMenuParentPath = getMenuOpenPath(`${pathname}${search}`, menuData);
@@ -190,7 +151,7 @@ export default class SiderMenu extends PureComponent {
       );
     } else {
       return (
-        <Menu.Item key={item.path}>
+        <Menu.Item key={item.path} name={item.name}>
           {this.getMenuItemPath(item)}
         </Menu.Item>
       );
@@ -207,8 +168,7 @@ export default class SiderMenu extends PureComponent {
     return menusData
       .filter(item => item.name && !item.hideInMenu)
       .map((item) => {
-        const ItemDom = this.getSubMenuOrItem(item);
-        return this.checkPermissionItem(item.authority, ItemDom);
+        return this.getSubMenuOrItem(item);
       })
       .filter(item => !!item);
   }
@@ -221,17 +181,6 @@ export default class SiderMenu extends PureComponent {
       return `/${path || ''}`.replace(/\/+/g, '/');
     }
   }
-  // permission to check
-  checkPermissionItem = (authority, ItemDom) => {
-    if (this.props.Authorized && this.props.Authorized.check) {
-      const { check } = this.props.Authorized;
-      return check(
-        authority,
-        ItemDom
-      );
-    }
-    return ItemDom;
-  }
   handleOpenChange = (openKeys) => {
     const lastOpenKey = openKeys[openKeys.length - 1];
     const isMainMenu = this.props.menuData.some(
@@ -241,23 +190,18 @@ export default class SiderMenu extends PureComponent {
       openKeys: isMainMenu ? [lastOpenKey] : [...openKeys],
     });
   }
-  handleOnSelect = ({ item })=>{
-    console.error(item, this.props.onMenuSelect);
+  handleOnSelect = ({ selectedKeys })=>{
+    this.setState({
+      selectedKeys
+    })
   }
   render() {
-    const { logo, collapsed, location: { pathname, search }, onCollapse } = this.props;
-    const { openKeys } = this.state;
+    const { logo, collapsed, onCollapse } = this.props;
+    const { openKeys, selectedKeys } = this.state;
     // Don't show popup menu when it is been collapsed
     const menuProps = collapsed ? {} : {
       openKeys,
     };
-    // if pathname can't match, use the nearest parent's key
-    // if pathname === 'outerIframe' concat search
-    const p = (specialPaths.includes(pathname)) ? `${pathname}${search}` : pathname;
-    let selectedKeys = this.getSelectedMenuKeys(p);
-    if (!selectedKeys.length) {
-      selectedKeys = [openKeys[openKeys.length - 1]];
-    }
     return (
       <Sider
         trigger={null}
@@ -280,7 +224,7 @@ export default class SiderMenu extends PureComponent {
           mode="inline"
           {...menuProps}
           onOpenChange={this.handleOpenChange}
-          selectedKeys={selectedKeys}
+          selectedKeys={selectedKeys.length ? selectedKeys : [openKeys[openKeys.length - 1]]}
           onSelect={this.handleOnSelect}
           style={{ padding: '16px 0', width: '100%', height: 'calc(100vh - 64px)', overflowY: 'auto'}} >
           {this.getNavMenuItems(this.props.menuData)}

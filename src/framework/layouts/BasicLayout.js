@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { enquireScreen } from 'enquire-js';
 import logo from '@/assets/logo.svg';
 import {webImUrl} from '@/config/config';
+import { getMenuData } from '@framework/common/frameHelper';
 import * as properties from '@/config/properties';
 import GlobalHeader from '../components/GlobalHeader';
 import GlobalFooter from '../components/GlobalFooter';
@@ -21,6 +22,7 @@ import styles from './BasicLayout.less';
 
 const { Content } = Layout;
 let redirectData = [];
+const specialPaths = ['/outerIframe', '/pupa'];
 /**
  * 根据菜单取得重定向地址.
  */
@@ -104,11 +106,20 @@ export default class BasicLayout extends React.PureComponent {
     });
   }
   getPageTitle() {
-    const { routerData, location } = this.props;
-    const { pathname } = location;
+    const { location, routerData } = this.props;
+    const menuData = getMenuData();
+    const { pathname, search } = location;
+    let path = pathname;
+    if (specialPaths.includes(path)) {
+      path = `${path}${search}`;
+    }
     let title = properties.appName;
-    if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - ${properties.appName}`;
+    const item = menuData.find(it=>it.route === path);
+    if (item !== undefined) {
+      title = `${item.name} - ${properties.appName}`;
+    } else {
+      const router = routerData[path];
+      title = (router && router.name) ? router.name : title
     }
     return title;
   }
@@ -256,6 +267,7 @@ export default class BasicLayout extends React.PureComponent {
             onMainClick={this.handleMainClick}
             onMsgClick={this.handleMsgClick}
             location={location}
+            menuData={menus} // just for render <GlobalHeader/>
           />
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>
