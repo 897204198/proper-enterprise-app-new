@@ -7,6 +7,7 @@ import styles from './index.less';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
+const specialPaths = ['/outerIframe', '/pupa'];
 
 // Allow menu.js config icon as string or ReactNode
 //   icon: 'setting',
@@ -240,6 +241,9 @@ export default class SiderMenu extends PureComponent {
       openKeys: isMainMenu ? [lastOpenKey] : [...openKeys],
     });
   }
+  handleOnSelect = ({ item })=>{
+    console.error(item, this.props.onMenuSelect);
+  }
   render() {
     const { logo, collapsed, location: { pathname, search }, onCollapse } = this.props;
     const { openKeys } = this.state;
@@ -249,7 +253,7 @@ export default class SiderMenu extends PureComponent {
     };
     // if pathname can't match, use the nearest parent's key
     // if pathname === 'outerIframe' concat search
-    const p = (pathname === '/outerIframe' || pathname === '/customFunction') ? `${pathname}${search}` : pathname;
+    const p = (specialPaths.includes(pathname)) ? `${pathname}${search}` : pathname;
     let selectedKeys = this.getSelectedMenuKeys(p);
     if (!selectedKeys.length) {
       selectedKeys = [openKeys[openKeys.length - 1]];
@@ -277,6 +281,7 @@ export default class SiderMenu extends PureComponent {
           {...menuProps}
           onOpenChange={this.handleOpenChange}
           selectedKeys={selectedKeys}
+          onSelect={this.handleOnSelect}
           style={{ padding: '16px 0', width: '100%', height: 'calc(100vh - 64px)', overflowY: 'auto'}} >
           {this.getNavMenuItems(this.props.menuData)}
         </Menu>

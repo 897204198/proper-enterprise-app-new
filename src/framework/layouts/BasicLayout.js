@@ -213,8 +213,7 @@ export default class BasicLayout extends React.PureComponent {
       })
       return redirectData
     }
-  };
-
+  }
   render() {
     const {
       currentUser, collapsed, fetchingNotices, notices, routerData, match, location, menus

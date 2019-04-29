@@ -5,10 +5,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
 import FormContainer from './components/FormContainer';
 
-// const a = <span>222</span>;
-// const node = <div>{a}</div>;
-// console.log(node.toString())
-// console.log(node)
 const getOopFormChildrenRef = (el, oopForm)=>{
   if (el) {
     try {
@@ -111,30 +107,26 @@ export const formGenerator = (formConfig)=>{
     ));
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
-  const {name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout = {},
+  const {key, name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout = {},
     rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, display} = formItemConfig;
   const FormItem = Form.Item;
   const { itemStyle } = formItemLayout;
-  const content = (
-    <div>
-      <Input name={name.replace('label', 'value')} defaultValue={initialChildrenValue} onChange={rowItemSetValue} />
-    </div>
-  );
-
-  const style = {opacity: display === false ? 0.5 : 1}
-  return wrapper ? (
-      <div className={wrapperClass} key={name}>
+  if (wrapper) {
+    return (
+      <div className={wrapperClass} key={key || name}>
         {formItemInner}
       </div>
-  ) : (
-    <div key={name} style={itemStyle ? {...itemStyle} : {flex: `0 0 ${100 / columnsNum}%`}}>
+    )
+  } else {
+    const style = {opacity: display === false ? 0.5 : 1}
+    return (<div key={key || name} style={itemStyle ? {...itemStyle} : {flex: `0 0 ${100 / columnsNum}%`}}>
       <div
         className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
         style={style}
         onClick={(event)=>{ rowItemClick(name, event) }}
-        >
+      >
         <FormItem
-          key={name}
+          key={key || name}
           {...formItemLayout}
           label={label}
         >
@@ -143,7 +135,10 @@ const getFormItem = (formItemInner, formItemConfig)=>{
         <div className="ant-form-item-action">
           {
             showSetValueIcon ? (
-              <Popover content={content} title="该项的值" trigger="click">
+              <Popover
+                content={(<div><Input name={name.replace('label', 'value')} defaultValue={initialChildrenValue} onChange={rowItemSetValue} /></div>)}
+                title="该项的值"
+                trigger="click">
                 <Tooltip title="设置值" getPopupContainer={triggerNode=> triggerNode.parentNode} placement="bottom">
                   <Icon type="up-square-o" onClick={(event)=>{ rowItemSetValue(event, name) }} />
                 </Tooltip>
@@ -163,8 +158,8 @@ const getFormItem = (formItemInner, formItemConfig)=>{
           </Tooltip>
         </div>
       ) : null}</div>
-    </div>
-  );
+    </div>);
+  }
 }
 
 // appFormGenerator 为了移动端展示用 没有设计的功能
@@ -227,26 +222,14 @@ export const appFormGenerator = (formConfig)=>{
 // 获取ListItem
 const getListItem = (formItemInner, formItemConfig)=>{
   // const {name, label, component, rules, wrapper, wrapperClass} = formItemConfig;
-  const {name, component, wrapper, wrapperClass} = formItemConfig;
+  const {key, name, component, wrapper, wrapperClass} = formItemConfig;
   let className = null;
   if (component.props && component.props.disabled) {
     className = 'oopform-list-item-disabled';
   }
-  const listItem = (<div key={name} className={className}>{formItemInner}</div>);
-  // if ('RadioGroup,CheckboxGroup'.includes(component.name)) {
-  //   const rule = rules && rules.find(it=>it.required);
-  //   listItem = (
-  // <div key={name} className={component.props.disabled ? 'oopform-list-item-disabled' : null}>
-  //   <div className="am-list-item am-list-item-middle">
-  //     <div className="am-list-line">
-  //       <div className="am-list-content">{rule ? (<Fragment><span className={styles.required}>*</span>{label}</Fragment>) : label}</div>
-  //       <div className="am-list-extra">{formItemInner}</div>
-  //     </div>
-  //   </div>
-  // </div>);
-  // }
+  const listItem = (<div key={key || name} className={className}>{formItemInner}</div>);
   return wrapper ? (
-    <div className={wrapperClass} key={name}>
+    <div className={wrapperClass} key={key || name}>
       {formItemInner}
     </div>
   ) : listItem;

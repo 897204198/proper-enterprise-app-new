@@ -12,6 +12,7 @@ import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 
 const { Header } = Layout;
+const specialPaths = ['/outerIframe', '/pupa'];
 
 export default class GlobalHeader extends PureComponent {
   static contextTypes = {
@@ -64,12 +65,13 @@ export default class GlobalHeader extends PureComponent {
     this.triggerResizeEvent();
   }
   getAvatar = (avatar) => {
-    const tokenFix = window.localStorage.getItem('proper-auth-login-token');
     if (!avatar) {
-      avatar = 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
+      return <Avatar size="small" className={styles.avatar} icon="user" />
     }
-    return (avatar.indexOf('http') === 0 || avatar.indexOf('data:image/') === 0) ?
+    const tokenFix = window.localStorage.getItem('proper-auth-login-token');
+    const src = (avatar.indexOf('http') === 0 || avatar.indexOf('data:image/') === 0) ?
       avatar : `${getApplicationContextUrl()}/file/${avatar}?access_token=${tokenFix}`;
+    return <Avatar size="small" className={styles.avatar} src={src} />;
   }
   @Debounce(600)
   triggerResizeEvent() { // eslint-disable-line
@@ -94,7 +96,7 @@ export default class GlobalHeader extends PureComponent {
     if (menuData.length) {
       const {pathname, search} = routerLocation;
       let path = pathname;
-      if (path === '/outerIframe' || path === '/customFunction') {
+      if (specialPaths.includes(path)) {
         path = `${path}${search}`;
       }
       const menu = menuData.find((item) => {
@@ -243,7 +245,7 @@ export default class GlobalHeader extends PureComponent {
           {currentUser ? (currentUser.name ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <Avatar size="small" className={styles.avatar} src={this.getAvatar(currentUser.avatar)} />
+                {this.getAvatar(currentUser.avatar)}
                 <span className={styles.name}>{currentUser.name}</span>
               </span>
             </Dropdown>

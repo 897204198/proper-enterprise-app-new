@@ -207,7 +207,7 @@ export default class Rule extends React.PureComponent {
     this.setState({modalFormVisible: flag})
   }
   render() {
-    const {authRule: {entity, RULE}, loading,
+    const {authRule: {entity, RULE = []}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
     const { columns } = {
       columns: [
