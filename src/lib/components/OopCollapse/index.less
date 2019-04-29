@@ -16,7 +16,7 @@
         background-color: #fff;
         border: 1px solid #d9d9d9;
         & > .ant-collapse-header {
-          padding: 40px 0 12px 20px;
+          padding: 40px 6px 12px;
           writing-mode: vertical-lr;
           writing-mode: tb-lr;
           transition: none;
@@ -59,6 +59,10 @@
       }
       & > .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
         position: static;
+        margin-bottom: 5px;
+        svg {
+          margin-left: 3px;
+        }
       }
       & > .ant-collapse > .ant-collapse-item-active > .ant-collapse-header .ant-collapse-arrow {
         position: absolute;
