@@ -24,7 +24,7 @@ const formItemLayout = {
   },
 };
 const TreeForm = Form.create()((props) => {
-  const { form } = props;
+  const { form, child, parentId, parentName } = props;
   const handleSubmit = (e) => {
     e.preventDefault();
     props.form.validateFields((err, values) => {
@@ -38,6 +38,20 @@ const TreeForm = Form.create()((props) => {
   }
   return (
     <Form key="form" style={{ backgroundColor: '#fff', border: '1px solid #e8e8e8', padding: 15, borderRadius: 5, width: 300}}>
+          {
+            child && (
+              <Fragment>
+                <FormItem { ...formItemLayout } key="6" label="父级">
+                  {parentName}
+                </FormItem>
+                <div>
+                  {form.getFieldDecorator('parentId', {
+                    initialValue: parentId
+                  })(<Input type="hidden" />)}
+                </div>
+              </Fragment>
+            )
+          }
           <FormItem { ...formItemLayout } key="1" label="名称">
             {form.getFieldDecorator('catalogName', {
               initialValue: props.catalogName,
@@ -283,7 +297,8 @@ export default class Dictionary extends React.PureComponent {
       catalogCode: data.catalogCode,
       catalogType: data.catalogType,
       sort: data.sort,
-      id: data.id
+      id: data.id,
+      parentName: (data.parent && data.parent.catalogName) || null
     }
     if (data.key === '-1') {
       this.setState({
@@ -578,11 +593,25 @@ export default class Dictionary extends React.PureComponent {
     const menuList = [
       {
         icon: 'folder-add',
-        text: '增加',
+        text: '增加同级',
         name: 'add',
         disabled: false,
         render: (
             <TreeForm
+              onSubmit={(values)=>{ this.handlePopoverAddSub(values) }}
+              onCancel={()=>{ this.handlePopoverC() }}
+            />)
+      },
+      {
+        icon: 'folder-add',
+        text: '增加下级',
+        name: 'addChild',
+        disabled: false,
+        render: (
+            <TreeForm
+              child={true}
+              parentId={this.state.id}
+              parentName={this.state.catalogName}
               onSubmit={(values)=>{ this.handlePopoverAddSub(values) }}
               onCancel={()=>{ this.handlePopoverC() }}
             />)
@@ -594,10 +623,13 @@ export default class Dictionary extends React.PureComponent {
         disabled: editDisable,
         render: (
               <TreeForm
+              child={this.state.parentName !== null}
               catalogType={this.state.catalogType}
               catalogName={this.state.catalogName}
               catalogCode={this.state.catalogCode}
               sort={this.state.sort}
+              parentId={this.state.parentId}
+              parentName={this.state.parentName}
               onSubmit={(values)=>{ this.handlePopoverEditSub(values) }}
               onCancel={()=>{ this.handlePopoverC() }}
             />)
