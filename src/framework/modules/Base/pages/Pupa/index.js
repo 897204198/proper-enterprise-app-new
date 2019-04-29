@@ -1,3 +1,8 @@
+/**
+ * @desc Pupa是一个提供“能够在页面上配置出一套增删改查及其他简单业务功能实现”的功能
+ *  此页面只负责根据路由配置的code进行功能配置的查询
+ *  CommonPage 提供对配置的解析
+ */
 import React from 'react';
 import {connect} from 'dva';
 import {Input, Spin, Tooltip, message} from 'antd';
@@ -100,7 +105,7 @@ const Page = (props)=>{
   global,
   loading: loading.models.basePageCfg
 }))
-export default class CustomFunction extends React.PureComponent {
+export default class Pupa extends React.PureComponent {
   state = {
     code: undefined,
     pageConfig: undefined

@@ -246,20 +246,36 @@ export default class CommonPage extends React.PureComponent {
     }
   }
   restfulActionButtonHandle = (button, param)=>{
-    const { restPath } = button;
+    const { restPath, confirm } = button;
     if (restPath) {
-      this.props.dispatch({
-        type: 'basePage/restfulAction',
-        payload: {
-          restPath,
-          param
-        },
-        tableName: this.props.tableName,
-        callback: (res)=>{
-          oopToast(res, '操作成功');
-          this.onLoad();
-        }
-      })
+      const dofn = ()=>{
+        this.props.dispatch({
+          type: 'basePage/restfulAction',
+          payload: {
+            restPath,
+            param
+          },
+          tableName: this.props.tableName,
+          callback: (res)=>{
+            oopToast(res, '操作成功');
+            this.oopTable.clearSelection();
+            this.onLoad();
+          }
+        })
+      }
+      if (confirm) {
+        Modal.confirm({
+          title: '提示',
+          content: confirm,
+          okText: '确认',
+          cancelText: '取消',
+          onOk: () => {
+            dofn();
+          }
+        });
+      } else {
+        dofn();
+      }
     }
   }
   render() {

@@ -121,7 +121,6 @@ export default class OopForm extends React.PureComponent {
     });
   }
   loadDictData = (dictCatalog, name)=>{
-    console.log('before', name)
     this.setState({
       [name]: true
     })
@@ -131,7 +130,6 @@ export default class OopForm extends React.PureComponent {
         catalog: dictCatalog
       },
       callback: ()=>{
-        console.log('after', name)
         this.setState({
           [name]: false
         })
