@@ -61,10 +61,11 @@ export default class SiderMenu extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {location: {pathname: newPathname, search: newSearch}} = nextProps;
     const {location: {pathname, search}, menuData = []} = this.props;
-    if (`${pathname}${search}` !== `${newPathname}${newSearch}` || menuData.length > 0) {
+    const newPath = `${newPathname}${newSearch}`;
+    if (`${pathname}${search}` !== newPath || menuData.length > 0) {
       this.setState({
         openKeys: this.getDefaultCollapsedSubMenus(nextProps),
-        selectedKeys: pathname === '/' ? [] : this.state.selectedKeys
+        selectedKeys: newPath === '/' ? [] : [newPath]
       });
     }
   }

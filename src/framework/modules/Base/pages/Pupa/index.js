@@ -49,7 +49,11 @@ const convertProperties = (props)=>{
                   return items;
                 }
                 try {
-                  return fn(items);
+                  const rr = fn(items);
+                  if (rr.includes('<')) {
+                    return <span dangerouslySetInnerHTML={{__html: rr}} />;
+                  }
+                  return rr;
                 } catch (e) {
                   return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
                 }

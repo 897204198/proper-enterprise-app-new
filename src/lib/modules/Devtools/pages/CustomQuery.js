@@ -392,7 +392,7 @@ export default class CustomQuery extends React.PureComponent {
     this.setModalVisible('modalButtonCfgVisible', true);
   }
   handleDesignModal = (record) => {
-    const { modalConfig } = record
+    const { modalConfig = '{}' } = record
     this.setState({
       curRecord: record,
       modalConfig: JSON.parse(modalConfig)
@@ -706,14 +706,14 @@ export default class CustomQuery extends React.PureComponent {
       {
         text: '设计按钮',
         name: 'designButton',
-        icon: 'plus-square',
+        icon: 'bars',
         display: record => (record.formConfig && JSON.parse(record.formConfig).formJson.length > 0),
         onClick: (record) => { this.handleDesignButton(record) },
       },
       {
         text: '设计模态窗口',
         name: 'designModal',
-        icon: 'switcher',
+        icon: 'border',
         display: record => (record.formConfig && JSON.parse(record.formConfig).formJson.length > 0),
         onClick: (record) => { this.handleDesignModal(record) },
       },
@@ -1010,10 +1010,9 @@ export default class CustomQuery extends React.PureComponent {
           key: 'width',
           name: 'width',
           component: {
-            name: 'Input',
+            name: 'InputNumber',
             props: {
-              placeholder: '请输入宽度',
-              type: 'number'
+              placeholder: '请输入宽度'
             }
           },
           initialValue: modalConfig.width || '',

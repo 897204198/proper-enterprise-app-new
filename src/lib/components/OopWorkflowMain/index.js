@@ -78,7 +78,7 @@ const BusinessPanel = (props)=>{
     }
   }
   return (
-    <Spin spinning={formLoading}>
+    <Spin spinning={!!formLoading}>
       <OopForm {...formConfig} defaultValue={defaultValue} ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }}>
         {children}
       </OopForm>
@@ -110,8 +110,8 @@ export default class OopWorkflowMain extends PureComponent {
         message.error('表单ID未设置')
         return
       }
-      // formKey包含“/”则代表是表单的相对路径
-      if (formKey.includes('/')) {
+      // formKey包含“.jsx”则代表是表单的相对路径
+      if (formKey.includes('.jsx')) {
         const businessForm = getWorkflowFormByFormPath(formKey);
         if (businessForm && businessForm.default) {
           // eslint-disable-next-line
@@ -121,6 +121,29 @@ export default class OopWorkflowMain extends PureComponent {
             this.isComplete = true
           })
         }
+        // formKey包含“/”则代表是一个redux 的action 参数用#分割
+      } else if (formKey.includes('/')) {
+        const action = formKey.split('#')[0];
+        const payload = formKey.split('#')[1];
+        this.props.dispatch({
+          type: action,
+          payload,
+          callback: (resp)=>{
+            this.isComplete = true;
+            if (!resp) {
+              setButtonLoading(true);
+              message.error(`表单接口${formKey}获取表单数据失败`);
+            } else {
+              // 让数据走一遍redux
+              this.props.dispatch({
+                type: 'OopWorkflowMain$model/saveFormEntity',
+                payload: {
+                  result: [{formDetails: resp}]
+                }
+              })
+            }
+          }
+        })
       } else {
         this.props.dispatch({
           type: 'OopWorkflowMain$model/fetchByFormCode',
@@ -176,6 +199,7 @@ export default class OopWorkflowMain extends PureComponent {
     if ((formEntity === undefined || formEntity.formDetails === undefined) && this.state.businessForm === undefined) {
       return null;
     }
+    console.log('formLoading', formLoading)
     const { formDetails } = formEntity;
     const formConfig = formDetails ? JSON.parse(formDetails) : {};
     const title = (<h2 style={{paddingLeft: 16}}>{name}</h2>);

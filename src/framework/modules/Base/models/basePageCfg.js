@@ -10,17 +10,28 @@ export default {
       let config;
       if (resp.result.length) {
         const result = resp.result[0];
-        const {formConfig = '{}', gridConfig = '{}'} = result;
+        const {formConfig = '{}', gridConfig = '{}', modalConfig = '{}'} = result;
         config = {
           tableName: result.tableName,
           formConfig: JSON.parse(formConfig),
           gridConfig: JSON.parse(gridConfig),
+          modalConfig: JSON.parse(modalConfig),
         }
         yield put({
           type: 'saveEntity',
           payload: config,
           code: payload
         })
+      }
+      if (callback) callback(config);
+    },
+    *fetchPageCfgByCodeForWf({ payload = {}, callback}, { call }) {
+      const resp = yield call(queryPageConfigByCode, payload);
+      let config;
+      if (resp.result.length) {
+        const result = resp.result[0];
+        const {formConfig} = result;
+        config = formConfig
       }
       if (callback) callback(config);
     },

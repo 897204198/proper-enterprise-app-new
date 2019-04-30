@@ -29,7 +29,7 @@
       "declaration": "ignore",
       "assignment": "ignore",
       "return": "ignore",
-      "arrow": "parens-new-line",
+      "arrow": "ignore",
       "condition": "ignore",
       "logical": "ignore",
       "prop": "ignore"

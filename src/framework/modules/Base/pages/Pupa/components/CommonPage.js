@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import { Modal, Card, Spin, Button, message } from 'antd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
@@ -9,33 +9,41 @@ import OopTable from '@pea/components/OopTable';
 import styles from './CommonPage.less';
 
 const ModalForm = (props) => {
-  const {formConfig, loading, visible, title, onModalCancel, onModalSubmit, formEntity} = props;
+  const {modalConfig: {title, width, footer: footerKeys = [], maskClosable, saveAfterClosable}, formConfig, loading, visible, onModalCancel, onModalSubmit, formEntity} = props;
   const submitForm = ()=>{
     const form = this.oopForm.getForm();
     const data = this.oopForm.getFormData();
     form.validateFields((err) => {
       if (err) return;
       onModalSubmit(data, form);
+      if (saveAfterClosable) {
+        cancelForm()
+      }
     });
   }
   const cancelForm = ()=>{
     const form = this.oopForm.getForm()
     onModalCancel(form)
   }
-  const footer = (
-    <Fragment>
-      <Button onClick={cancelForm}>取消</Button>
-      <Button type="primary" onClick={submitForm} loading={loading}>保存</Button>
-    </Fragment>
-  );
+  const footer = [];
+  footerKeys.forEach((key)=>{
+    if (key === 'delete') {
+      footer.push(<Button key={key} onClick={cancelForm}>删除</Button>)
+    } else if (key === 'submit') {
+      footer.push(<Button key={key} type="primary" onClick={submitForm} loading={loading}>保存</Button>)
+    } else if (key === 'cancel') {
+      footer.push(<Button key={key} onClick={cancelForm}>取消</Button>)
+    }
+  })
   return (
     <Modal
-      title={title}
+      title={formEntity.id ? `编辑${title}` : `新建${title}`}
       visible={visible}
       footer={footer}
       onCancel={cancelForm}
       destroyOnClose={true}
-      width={1000}
+      width={width || 1000}
+      maskClosable={maskClosable}
       className={styles.commonPageModalContainer}
       style={{
         top: 20,
@@ -140,7 +148,7 @@ export default class CommonPage extends React.PureComponent {
         (item)=>{
           item.initialValue = undefined
         }
-      )
+      );
     }, 300)
   }
   handleModalSubmit = (values)=>{
@@ -281,7 +289,7 @@ export default class CommonPage extends React.PureComponent {
   render() {
     const {list} = this.state;
     const {basePage, global: {size},
-      loading, gridLoading, gridConfig: {columns, topButtons: tbCfg, rowButtons: rbCfg}, formConfig, tableName } = this.props;
+      loading, gridLoading, gridConfig: {columns, topButtons: tbCfg, rowButtons: rbCfg}, formConfig, modalConfig, tableName } = this.props;
     let entity = {};
     if (basePage && basePage[tableName]) {
       entity = basePage[tableName].entity || {};
@@ -310,8 +318,8 @@ export default class CommonPage extends React.PureComponent {
         </Card>
         <ModalForm
           formConfig={formConfig}
+          modalConfig={modalConfig}
           visible={this.state.modalFormVisible}
-          title={entity.id ? '编辑' : '新建'}
           onModalCancel={this.handleModalCancel}
           onModalSubmit={this.handleModalSubmit}
           formEntity={entity}
