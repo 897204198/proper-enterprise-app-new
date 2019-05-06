@@ -119,7 +119,7 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       component = (
         <Select allowClear={true} style={{ width: '100%' }} {...props} getPopupContainer={ triggerNode=>triggerNode.parentNode }>
           {
-            children.map(item=>(<Option key={getUuid(5)} value={item.value}>{item.label}</Option>))
+            children.map(item=>(<Option key={getUuid(5)} value={item.value} disabled={item.disabled || false}>{item.label}</Option>))
           }
         </Select>
       );

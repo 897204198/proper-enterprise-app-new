@@ -121,7 +121,23 @@ export default class CustomQuery extends React.PureComponent {
   currentRowRecordId = null;
   componentDidMount() {
     this.onLoad();
-    // 加载工作流下拉选项
+  }
+  onLoad = (param = {}) => {
+    const {pagination, condition} = param;
+    // this.oopSearch.load({
+    //  pagination
+    // });
+    this.props.dispatch({
+      type: 'devtoolsCustomQuery/fetch',
+      payload: {
+        pagination,
+        ...condition
+      }
+    }, () => {
+      this.getWf()
+    });
+  }
+  getWf = () => {
     this.props.dispatch({
       type: 'workflowManager/findDesign',
       payload: {
@@ -136,24 +152,23 @@ export default class CustomQuery extends React.PureComponent {
             value: it.key
           }))
           this.setState({
-            workflowSelection
+            workflowSelection: this.filterWf(workflowSelection)
           })
         }
       }
     });
   }
-  onLoad = (param = {}) => {
-    const {pagination, condition} = param;
-    // this.oopSearch.load({
-    //  pagination
-    // });
-    this.props.dispatch({
-      type: 'devtoolsCustomQuery/fetch',
-      payload: {
-        pagination,
-        ...condition
+  filterWf = (data) => {
+    const newData = [...data]
+    const { devtoolsCustomQuery: {list} } = this.props;
+    for (let i = 0; i < list.length; i++) {
+      for (let j = 0; j < newData.length; j++) {
+        if (list[i].wfKey && (list[i].wfKey === newData[j].value)) {
+          newData[j].disabled = true
+        }
       }
-    });
+    }
+    return newData
   }
   @Debounce(300)
   checkCode(rule, value, callback, self) {
@@ -532,7 +547,7 @@ export default class CustomQuery extends React.PureComponent {
           callback(res) {
             me.oopTable.clearSelection()
             oopToast(res, '删除成功', '删除失败');
-            this.setState({
+            me.setState({
               curTableRecord: {},
               curRecord: {}
             })
