@@ -61,7 +61,9 @@ const defaultButtons = [
   }
 ]
 const defaultBtnArr = defaultButtons.map(btn => btn.name)
-
+const makeRandomId = () => {
+  return Math.random().toString(36).substring(2)
+}
 const filterDefault = (arr) => {
   for (let i = 0; i < defaultBtnArr.length; i++) {
     for (let j = 0; j < arr.length; j++) {
@@ -544,9 +546,6 @@ export default class CustomQuery extends React.PureComponent {
     this.setState({modalFormDesignerVisible: false});
     this.currentRowRecordId = null;
     this.oopFormDesigner.resetForm();
-    // this.setState({
-    //   curRecord: {}
-    // })
   }
   handleFormDesignerModalSubmit = () => {
     const formDetails = this.oopFormDesigner.getFormConfig();
@@ -578,7 +577,7 @@ export default class CustomQuery extends React.PureComponent {
       if (!gridConfig) {
         for (let i = 0; i < formJson.length; i++) {
           const obj = {
-            _id: Math.random().toString(36).substring(2),
+            _id: makeRandomId(),
             title: formJson[i].label,
             dataIndex: formJson[i].name
           }
@@ -636,33 +635,6 @@ export default class CustomQuery extends React.PureComponent {
       const form = this.oopTableCfgForm.getForm()
       for (const key in JSON.parse(record)) {
         form.setFieldsValue({[key]: JSON.parse(record)[key]})
-      }
-    }
-  }
-  onTableCfgChange = (type, item) => {
-    const { gridConfig } = this.state
-    const { columns } = gridConfig
-    if (type === 'delete') {
-      columns.map((btn, index) => {
-        if (btn.dataIndex === item.dataIndex) {
-          columns.splice(index, 1)
-        }
-        return null
-      })
-      const obj = {
-        ...gridConfig,
-        columns
-      }
-      this.setState({
-        gridConfig: obj
-      })
-    }
-    if (type !== 'delete') {
-      if (columns.length) {
-        const isRepeat = checkRepeat(columns, 'dataIndex', item)
-        if (isRepeat) {
-          message.error('唯一标识不可重复，请修改')
-        }
       }
     }
   }
@@ -733,7 +705,11 @@ export default class CustomQuery extends React.PureComponent {
           const record = list.length ? list[0] : {
             _id: '',
             title: '',
-            dataIndex: ''
+            dataIndex: '',
+            sorter: '',
+            filter: '',
+            render: '',
+            enable: false
           }
           this.setState({
             curRecord: params,
@@ -752,7 +728,18 @@ export default class CustomQuery extends React.PureComponent {
     const { columns } = gridConfig
     const config = {
       ...gridConfig,
-      columns: [...columns, {_id: Math.random().toString(36).substring(2), title: '新建列', dataIndex: Math.random().toString(36).substring(2)}]
+      columns: [
+        ...columns,
+        {
+          _id: makeRandomId(),
+          title: '新建列',
+          dataIndex: makeRandomId(),
+          sorter: '',
+          filter: '',
+          render: '',
+          enable: true
+        }
+      ]
     }
     const { length } = config.columns
     const record = JSON.stringify(config.columns[length - 1])
