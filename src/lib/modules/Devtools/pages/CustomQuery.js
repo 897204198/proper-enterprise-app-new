@@ -133,9 +133,8 @@ export default class CustomQuery extends React.PureComponent {
         pagination,
         ...condition
       }
-    }, () => {
-      this.getWf()
     });
+    this.getWf()
   }
   getWf = () => {
     this.props.dispatch({
