@@ -97,7 +97,7 @@ const checkRepeat = (arr, field, param) => {
     return false
   }
 }
-@inject(['devtoolsCustomQuery', 'global'])
+@inject(['devtoolsCustomQuery', 'workflowManager', 'global'])
 @connect(({ devtoolsCustomQuery, global, loading }) => ({
   devtoolsCustomQuery,
   global,
@@ -114,12 +114,33 @@ export default class CustomQuery extends React.PureComponent {
     curTableRecord: {},
     gridConfig: {},
     buttons: [],
+    workflowSelection: [],
     selectedKeys: [],
     isCreate: false,
   }
   currentRowRecordId = null;
   componentDidMount() {
     this.onLoad();
+    // 加载工作流下拉选项
+    this.props.dispatch({
+      type: 'workflowManager/findDesign',
+      payload: {
+        modelType: '0',
+        sort: 'modifiedDesc',
+        modelStatus: 'DEPLOYED'
+      },
+      callback: (resp) => {
+        if (resp && resp.data && resp.data.length) {
+          const workflowSelection = resp.data.map(it=>({
+            label: it.name,
+            value: it.key
+          }))
+          this.setState({
+            workflowSelection
+          })
+        }
+      }
+    });
   }
   onLoad = (param = {}) => {
     const {pagination, condition} = param;
@@ -243,6 +264,44 @@ export default class CustomQuery extends React.PureComponent {
           },
           initialValue: formEntity.code || '',
           rules: rule.checkCodeRepeat
+        },
+        {
+          label: '关联流程',
+          key: 'relaWf',
+          name: 'relaWf',
+          component: {
+            name: 'Switch',
+            props: {
+              checkedChildren: '是',
+              unCheckedChildren: '否'
+            }
+          },
+          valuePropName: 'checked'
+        },
+        {
+          label: '选择流程',
+          key: 'wfKey',
+          name: 'wfKey',
+          display: false,
+          component: {
+            name: 'Select',
+            props: {
+              placeholder: '请选择流程',
+              showSearch: true
+            },
+            children: this.state.workflowSelection,
+          },
+          rules: [{
+            required: true,
+            message: '此项为必填项'
+          }],
+          subscribe: [{
+            name: 'relaWf',
+            publish: [{
+              value: true,
+              property: 'display'
+            }]
+          }],
         },
         {
           label: '备注',

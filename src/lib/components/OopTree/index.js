@@ -102,7 +102,6 @@ export default class OopTree extends PureComponent {
       currentSelectTreeNode: null,
       expandedKeys: [...defaultExpandedKeys],
       searchValue: '',
-      autoExpandParent: true,
       selectedKeys: [...defaultSelectedKeys],
       defaultKeys: [...defaultSelectedKeys],
       popoverConfig: {
@@ -112,6 +111,7 @@ export default class OopTree extends PureComponent {
       },
     }
   }
+
   // 缓存树节点的所有数据
   treeNodeDataListCache = []
   handleOnSelect = (treeNode, event)=>{
@@ -120,11 +120,8 @@ export default class OopTree extends PureComponent {
       const id = dataRef.id || dataRef.key;
       this.setState({
         selectedKeys: [id],
-        defaultKeys: [id]
-      });
-      const currentSelectTreeNode = treeNode.length ? {...event.node.props.dataRef} : null;
-      this.setState({
-        currentSelectTreeNode
+        defaultKeys: [id],
+        currentSelectTreeNode: treeNode.length ? {...event.node.props.dataRef} : null
       }, ()=>{
         const { onTreeNodeSelect } = this.props;
         if (onTreeNodeSelect) {
@@ -299,14 +296,12 @@ export default class OopTree extends PureComponent {
     }).filter((item, i, self) => item && self.indexOf(item) === i);
     this.setState({
       expandedKeys,
-      autoExpandParent: true,
       searchValue: value
     });
   }
   onExpand = (expandedKeys) => {
     this.setState({
       expandedKeys,
-      autoExpandParent: false,
     });
   }
   getCurrentSelectTreeNode = ()=>{
@@ -341,8 +336,8 @@ export default class OopTree extends PureComponent {
     })
   }
   render() {
-    const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
-    const { treeData, treeTitle, treeKey, treeRoot, treeLoading, defaultSelectedKeys, defaultExpandedKeys, ...treeConfig} = this.props;
+    const { searchValue, expandedKeys, selectedKeys } = this.state;
+    const { treeData, treeTitle, treeKey, treeRoot, treeLoading, ...treeConfig} = this.props;
     this.setTitle();
     return (
       <Spin spinning={treeLoading}>
@@ -351,12 +346,10 @@ export default class OopTree extends PureComponent {
           <DirectoryTree
             expandAction="doubleClick"
             className="getTreeDom"
-            defaultExpandAll={true}
             onExpand={this.onExpand}
-            expandedKeys={expandedKeys}
-            autoExpandParent={autoExpandParent}
+            expandedKeys={[...expandedKeys]}
             onSelect={this.handleOnSelect}
-            selectedKeys={selectedKeys}
+            selectedKeys={[...selectedKeys]}
             onRightClick={this.handleOnRightClick}
             ref={(el)=>{ this.tree = el }}
             {...treeConfig}

@@ -2,10 +2,12 @@ import React from 'react';
 import { Modal, Card, Spin, Button, message } from 'antd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import { inject } from '@framework/common/inject';
 import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '@pea/components/OopSearch';
 import OopForm from '@pea/components/OopForm';
 import OopTable from '@pea/components/OopTable';
+import OopWorkflowMainModal from '@pea/components/OopWorkflowMainModal';
 import styles from './CommonPage.less';
 
 const ModalForm = (props) => {
@@ -58,6 +60,7 @@ const ModalForm = (props) => {
   )
 }
 
+@inject('workflowDesigner')
 @connect(({ basePage, global, loading}) => ({
   basePage,
   global,
@@ -68,7 +71,15 @@ export default class CommonPage extends React.PureComponent {
     super(props);
     this.state = {
       modalFormVisible: false,
-      list: []
+      list: [],
+      relaWf: props.relaWf,
+      modalWfFormConfig: {
+        wfVisible: false,
+        isLaunch: false,
+        taskOrProcDefKey: null,
+        businessObj: null,
+        procInstId: null,
+      }
     }
   }
 
@@ -82,7 +93,7 @@ export default class CommonPage extends React.PureComponent {
       type: 'basePage/fetch',
       payload: {
         pagination,
-        ...condition
+        ...condition,
       },
       tableName,
       columns,
@@ -94,7 +105,37 @@ export default class CommonPage extends React.PureComponent {
     });
   }
   handleCreate = ()=>{
-    this.setModalFormVisible(true);
+    const {relaWf} = this.state;
+    if (relaWf) {
+      // 打开工作流面板
+      this.props.dispatch({
+        type: 'workflowDesigner/fetchByProcDefKey',
+        payload: relaWf,
+        callback: (res)=>{
+          const { result: {key, name, startFormKey, id, formProperties} } = res;
+          if (key && name && startFormKey && id) {
+            this.setState({
+              modalWfFormConfig: {
+                wfVisible: true,
+                isLaunch: true,
+                taskOrProcDefKey: key,
+                businessObj: {
+                  formKey: startFormKey,
+                  formProperties
+                },
+                name,
+                processDefinitionId: id,
+                stateCode: 'DONE',
+              }
+            })
+          } else {
+            message.error('该流程未部署或参数解析错误');
+          }
+        }
+      });
+    } else {
+      this.setModalFormVisible(true);
+    }
   }
   handleEdit = (record)=>{
     this.props.dispatch({
@@ -136,6 +177,7 @@ export default class CommonPage extends React.PureComponent {
       }
     });
   }
+  // 点击modal窗口取消按钮
   handleModalCancel = (form)=>{
     this.setModalFormVisible(false);
     setTimeout(()=>{
@@ -151,6 +193,7 @@ export default class CommonPage extends React.PureComponent {
       );
     }, 300)
   }
+  // 点击modal窗口保存按钮
   handleModalSubmit = (values)=>{
     this.props.dispatch({
       type: 'basePage/saveOrUpdate',
@@ -162,9 +205,11 @@ export default class CommonPage extends React.PureComponent {
       }
     });
   }
+  // modal开启 关闭
   setModalFormVisible = (flag) =>{
     this.setState({modalFormVisible: flag})
   }
+  // 顶部搜索监听
   handleInputChange = (inputValue, filter)=>{
     const {basePage, tableName, gridConfig: {columns}} = this.props;
     const columnsKeys = columns.map(it=>it.dataIndex);
@@ -174,6 +219,7 @@ export default class CommonPage extends React.PureComponent {
       list: filterList
     })
   }
+  // 构建列表按钮
   constructGridButtons = (tbCfg = [], rbCfg = [])=>{
     const topButtons = [];
     const createBtn = tbCfg.find(it=>it.name === 'create');
@@ -253,6 +299,7 @@ export default class CommonPage extends React.PureComponent {
       rowButtons: otherRowBtns.concat(rowButtons)
     }
   }
+  // 自定义restful接口
   restfulActionButtonHandle = (button, param)=>{
     const { restPath, confirm } = button;
     if (restPath) {
@@ -286,15 +333,43 @@ export default class CommonPage extends React.PureComponent {
       }
     }
   }
+  // 点击流程modal关闭按钮的组件
+  closeProcessModal = ()=>{
+    this.setState(({modalWfFormConfig})=>({
+      modalWfFormConfig: {
+        ...modalWfFormConfig,
+        wfVisible: false
+      }
+    }))
+  }
+  // 流程提交成功的回调
+  afterProcessSubmit = (res, formData)=>{
+    const data = {
+      ...formData,
+      procInstId: res.result.procInstId,
+      filed: 0
+    }
+    this.handleModalSubmit(data);
+  }
   render() {
-    const {list} = this.state;
+    const {list, modalFormVisible, modalWfFormConfig: {
+      name,
+      isLaunch,
+      wfVisible,
+      businessObj,
+      taskOrProcDefKey,
+      procInstId,
+      processDefinitionId,
+      stateCode
+    }} = this.state;
     const {basePage, global: {size},
-      loading, gridLoading, gridConfig: {columns, topButtons: tbCfg, rowButtons: rbCfg}, formConfig, modalConfig, tableName } = this.props;
+      loading, gridLoading, gridConfig: {columns: cols, topButtons: tbCfg, rowButtons: rbCfg}, formConfig, modalConfig, tableName } = this.props;
     let entity = {};
     if (basePage && basePage[tableName]) {
       entity = basePage[tableName].entity || {};
     }
     const {topButtons, rowButtons} = this.constructGridButtons(tbCfg, rbCfg);
+    const columns = cols.filter(it=>it.enable !== false);
     return (
       <PageHeaderLayout content={
         <OopSearch
@@ -319,12 +394,24 @@ export default class CommonPage extends React.PureComponent {
         <ModalForm
           formConfig={formConfig}
           modalConfig={modalConfig}
-          visible={this.state.modalFormVisible}
+          visible={modalFormVisible}
           onModalCancel={this.handleModalCancel}
           onModalSubmit={this.handleModalSubmit}
           formEntity={entity}
           loading={!!loading}
         />
+        <OopWorkflowMainModal
+          name={name}
+          isLaunch={isLaunch}
+          visible={wfVisible}
+          businessObj={businessObj}
+          taskOrProcDefKey={taskOrProcDefKey}
+          procInstId={procInstId}
+          processDefinitionId={processDefinitionId}
+          stateCode={stateCode}
+          closeModal={this.closeProcessModal}
+          afterProcessSubmit={this.afterProcessSubmit}
+         />
       </PageHeaderLayout>
     )
   }

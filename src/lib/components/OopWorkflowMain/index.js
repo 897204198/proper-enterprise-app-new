@@ -374,7 +374,7 @@ export default class OopWorkflowMain extends PureComponent {
         payload: {taskOrProcDefKey, formData: type === 'launchWorkflow' ? {...formData, formTodoDisplayFields} : formData},
         callback: (res)=>{
           oopForm.showPageLoading(false);
-          callback && callback(res)
+          callback && callback(res, formData)
         }
       })
     });

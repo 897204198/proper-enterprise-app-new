@@ -10,12 +10,13 @@ export default {
       let config;
       if (resp.result.length) {
         const result = resp.result[0];
-        const {formConfig = '{}', gridConfig = '{}', modalConfig = '{}'} = result;
+        const {formConfig = '{}', gridConfig = '{}', modalConfig = '{}', relaWf, wfKey} = result;
         config = {
           tableName: result.tableName,
           formConfig: JSON.parse(formConfig),
           gridConfig: JSON.parse(gridConfig),
           modalConfig: JSON.parse(modalConfig),
+          relaWf: (relaWf === true && wfKey !== undefined) ? wfKey : undefined
         }
         yield put({
           type: 'saveEntity',

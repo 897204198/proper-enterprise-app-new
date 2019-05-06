@@ -20,12 +20,12 @@ export default class OopWorkflowMainModal extends PureComponent {
   }
   submitWorkflow = ()=>{
     this.setButtonLoading(true);
-    this.oopWorkflowMain.submitWorkflow((res)=>{
+    this.oopWorkflowMain.submitWorkflow((res, formData)=>{
       if (res.status === 'ok') {
         this.props.closeModal();
         this.setButtonLoading(false)
         message.success('流程提交成功');
-        this.props.afterProcessSubmit();
+        this.props.afterProcessSubmit(res, formData);
       } else {
         message.error(res.result);
       }
@@ -33,12 +33,12 @@ export default class OopWorkflowMainModal extends PureComponent {
   }
   launchWorkflow = ()=>{
     this.setButtonLoading(true)
-    this.oopWorkflowMain.launchWorkflow((res)=>{
+    this.oopWorkflowMain.launchWorkflow((res, formData)=>{
       if (res.status === 'ok') {
         this.props.closeModal();
         this.setButtonLoading(false)
         message.success('流程提交成功');
-        this.props.afterProcessSubmit();
+        this.props.afterProcessSubmit(res, formData);
       } else {
         message.error(res.result);
       }

@@ -16,61 +16,66 @@ const isReactObject = (component)=>{
 }
 const convertProperties = (props)=>{
   const {gridConfig: {columns = [], rowButtons = [], topButtons = []}, formConfig: {formJson = []}} = props;
+  // 为表单 添加 ID
   if (formJson.length) {
     formJson.unshift({name: 'id', component: ()=><Input type="hidden" />, wrapper: true})
   }
+  // 为表单添加 是否归档的标识 关联工作流 默认filed的值为0； 否则filed的值为1 TODO 可能为临时的归档解决方案
+  formJson.unshift({name: 'filed', component: ()=><Input type="hidden" />, initialValue: 1, wrapper: true})
   try {
     if (columns.length) {
       columns.forEach((it)=>{
-        const formItem = formJson.find(item=>item.name === it.dataIndex);
-        if (formItem && formItem.component) {
-          if (checkComponentName.includes(formItem.component.name)) {
-            it.dataIndex = `${it.dataIndex}_text`
-          }
-        }
-        if (it.sorter && typeof it.sorter === 'string') {
-          try {
-            const fn = eval(it.sorter); // eslint-disable-line
-            it.sorter = (a, b)=>{
-              return fn(a, b);
+        if (it.enable !== false) {
+          const formItem = formJson.find(item=>item.name === it.dataIndex);
+          if (formItem && formItem.component) {
+            if (checkComponentName.includes(formItem.component.name)) {
+              it.dataIndex = `${it.dataIndex}_text`
             }
-          } catch (e) {
-            message.error(`${it.dataIndex}列排序配置错误：${e.message}`);
-            it.sorter = f=>f;
           }
-        }
-        if (it.render) {
-          if (typeof it.render === 'string') {
-            // it.dataIndex = `${it.dataIndex}_text`;
+          if (it.sorter && typeof it.sorter === 'string') {
             try {
-              const fn = eval(it.render); // eslint-disable-line
-              it.render = (items)=>{
-                if (isReactObject(items)) {
-                  return items;
-                }
-                try {
-                  const rr = fn(items);
-                  if (rr.includes('<')) {
-                    return <span dangerouslySetInnerHTML={{__html: rr}} />;
+              const fn = eval(it.sorter); // eslint-disable-line
+              it.sorter = (a, b)=>{
+                return fn(a, b);
+              }
+            } catch (e) {
+              message.error(`${it.dataIndex}列排序配置错误：${e.message}`);
+              it.sorter = f=>f;
+            }
+          }
+          if (it.render) {
+            if (typeof it.render === 'string') {
+              // it.dataIndex = `${it.dataIndex}_text`;
+              try {
+                const fn = eval(it.render); // eslint-disable-line
+                it.render = (items)=>{
+                  if (isReactObject(items)) {
+                    return items;
                   }
-                  return rr;
-                } catch (e) {
+                  try {
+                    const rr = fn(items);
+                    if (rr.includes('<')) {
+                      return <span dangerouslySetInnerHTML={{__html: rr}} />;
+                    }
+                    return rr;
+                  } catch (e) {
+                    return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
+                  }
+                }
+              } catch (e) {
+                it.render = ()=>{
                   return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
                 }
               }
-            } catch (e) {
-              it.render = ()=>{
-                return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
-              }
             }
-          }
-        } else {
-          it.render = (text)=> {
-            if (text) {
-              if (isReactObject(text)) {
-                return text;
-              } else {
-                return text.toString()
+          } else {
+            it.render = (text)=> {
+              if (text) {
+                if (isReactObject(text)) {
+                  return text;
+                } else {
+                  return text.toString()
+                }
               }
             }
           }
@@ -95,7 +100,6 @@ const convertProperties = (props)=>{
     console.log(e)
   }
 }
-
 const Page = (props)=>{
   if (Object.keys(props).length > 0) {
     convertProperties(props);
@@ -104,10 +108,8 @@ const Page = (props)=>{
 }
 
 
-@connect(({ basePageCfg, global, loading}) => ({
-  basePageCfg,
+@connect(({ global}) => ({
   global,
-  loading: loading.models.basePageCfg
 }))
 export default class Pupa extends React.PureComponent {
   state = {
@@ -166,8 +168,7 @@ export default class Pupa extends React.PureComponent {
   }
   renderPage = ()=>{
     const {pageConfig} = this.state;
-    const {loading} = this.props;
-    if (pageConfig === undefined || loading || this.isFetching) {
+    if (pageConfig === undefined || this.isFetching) {
       return <Spin size="large" className={styles.globalSpin} />;
     } else {
       if (pageConfig.gridConfig === undefined) { // eslint-disable-line
