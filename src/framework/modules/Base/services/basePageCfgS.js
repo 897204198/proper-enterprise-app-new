@@ -1,8 +1,12 @@
 import MongoService from '@framework/utils/MongoService';
 
-const formTemplateService = new MongoService('PEP_DEVTOOLS_CUSTOMQUERY');
-const {fetchByEqual} = formTemplateService;
+const pupaCfgService = new MongoService('PEP_DEVTOOLS_CUSTOMQUERY');
+const {fetchByEqual} = pupaCfgService;
 
 export async function queryPageConfigByCode(param) {
-  return fetchByEqual({code: param, enable: true})
+  return fetchByEqual({code: param});
+}
+
+export async function queryPageConfigByWfKey(param) {
+  return fetchByEqual({...param});
 }

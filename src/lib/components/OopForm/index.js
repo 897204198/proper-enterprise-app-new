@@ -81,7 +81,8 @@ const FormContainer = Form.create({
           publishes.forEach((publish)=>{
             const changeItem = formJson.find(it=>it.name === subscribeName);
             if (changeItem) {
-              const changeItemValue = form.getFieldValue(changeItem.name) || changeItem.initialValue;
+              const changeValue = form.getFieldValue(changeItem.name);
+              const changeItemValue = changeValue === undefined ? changeItem.initialValue : changeValue;
               // console.log(item.name, publish.property, isItemShow(changeItemValue, publish.value));
               // item[publish.property] = isItemShow(currentValue, publish.value); 简单版实现
               setFormJsonProperties(item, changeItemValue, publish)

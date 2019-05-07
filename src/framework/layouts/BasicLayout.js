@@ -7,6 +7,7 @@ import { Route, Redirect, Switch, routerRedux } from 'dva/router';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import { enquireScreen } from 'enquire-js';
+import OopWebSocket from '@pea/components/OopWebSocket';
 import logo from '@/assets/logo.svg';
 import {webImUrl} from '@/config/config';
 import { getMenuData } from '@framework/common/frameHelper';
@@ -23,9 +24,6 @@ import styles from './BasicLayout.less';
 const { Content } = Layout;
 let redirectData = [];
 const specialPaths = ['/outerIframe', '/pupa'];
-/**
- * 根据菜单取得重定向地址.
- */
 const query = {
   'screen-xs': {
     maxWidth: 575,
@@ -64,6 +62,7 @@ export default class BasicLayout extends React.PureComponent {
   static childContextTypes = {
     location: PropTypes.object,
     breadcrumbNameMap: PropTypes.object,
+    oopWebSocket: PropTypes.object
   }
   state = {
     isMobile,
@@ -76,6 +75,7 @@ export default class BasicLayout extends React.PureComponent {
     return {
       location,
       breadcrumbNameMap: routerData,
+      oopWebSocket: this.oopWebSocket
     };
   }
   componentDidMount() {
@@ -85,7 +85,8 @@ export default class BasicLayout extends React.PureComponent {
       });
     });
     // 从localStorage里查看是否有token
-    if (!window.localStorage.getItem('proper-auth-login-token')) {
+    const token = window.localStorage.getItem('proper-auth-login-token');
+    if (!token) {
       this.props.dispatch({
         type: 'baseLogin/logout'
       })
@@ -104,6 +105,19 @@ export default class BasicLayout extends React.PureComponent {
     this.props.dispatch({
       type: 'baseUser/fetchCurrent',
     });
+    // 注册Pupa归档的ws
+    const subscribe = [
+      {topics: ['/topic/autoArchive'], onMessage: (data)=>{
+        this.props.dispatch({
+          type: 'basePageCfg/filed',
+          payload: data
+        })
+      }}
+    ]
+    this.oopWebSocket.subscribe(subscribe);
+  }
+  componentWillUnmount() {
+    // this.ws.disconnect();
   }
   getPageTitle() {
     const { location, routerData } = this.props;
@@ -296,22 +310,6 @@ export default class BasicLayout extends React.PureComponent {
             </Switch>
           </Content>
           <GlobalFooter
-            // links={[{
-            //   key: 'Pro 首页',
-            //   title: 'Pro 首页',
-            //   href: 'http://pro.ant.design',
-            //   blankTarget: true,
-            // }, {
-            //   key: 'github',
-            //   title: <Icon type="github" />,
-            //   href: 'https://github.com/ant-design/ant-design-pro',
-            //   blankTarget: true,
-            // }, {
-            //   key: 'Ant Design',
-            //   title: 'Ant Design',
-            //   href: 'http://ant.design',
-            //   blankTarget: true,
-            // }]}
             copyright={
               <div>
                 Copyright <Icon type="copyright" /> {properties.footerTitle}
@@ -321,13 +319,15 @@ export default class BasicLayout extends React.PureComponent {
         </Layout>
       </Layout>
     );
-
     return (
-      <DocumentTitle title={this.getPageTitle()}>
-        <ContainerQuery query={query}>
-          {params => <div className={classNames(params)}>{layout}</div>}
-        </ContainerQuery>
-      </DocumentTitle>
+      <div>
+        <DocumentTitle title={this.getPageTitle()}>
+          <ContainerQuery query={query}>
+            {params => <div className={classNames(params)}>{layout}</div>}
+          </ContainerQuery>
+        </DocumentTitle>
+        <OopWebSocket ref={ (ws) => { this.oopWebSocket = ws }} />
+      </div>
     );
   }
 }

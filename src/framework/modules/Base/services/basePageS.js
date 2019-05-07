@@ -18,6 +18,9 @@ export default class BasePageService {
   fetchById = async (param)=>{
     return this.service.fetchById(param)
   }
+  fetchByEqual = async (param)=>{
+    return this.service.fetchByEqual(param)
+  }
   saveOrUpdate = async (param)=>{
     return param.id ? this.service.update(param) : this.service.save(param);
   }

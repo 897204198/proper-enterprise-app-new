@@ -149,6 +149,10 @@ export default class Pupa extends React.PureComponent {
           callback: (config)=>{
             this.isFetching = false;
             if (config) {
+              if (config.enable === false) {
+                message.error('该功能已停用');
+                return
+              }
               this.setState({
                 code,
                 pageConfig: config

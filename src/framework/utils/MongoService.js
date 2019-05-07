@@ -242,9 +242,6 @@ export default class MongoService {
       }
     })
   }
-  test401 = ()=>{
-    return this.fetchById('5cc018c0f532f90001d9c876');
-  }
   getCurrentUser = ()=>{
     return this.currentUser
   }
