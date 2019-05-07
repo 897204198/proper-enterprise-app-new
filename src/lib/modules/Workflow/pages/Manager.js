@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {connect} from 'dva';
 import { Tabs, Card, Badge, message } from 'antd';
 import classNames from 'classnames';
@@ -272,11 +272,10 @@ export default class Manager extends React.PureComponent {
         {title: '名称', dataIndex: 'pepProcInst.processDefinitionName'},
         {title: '发起时间', dataIndex: 'pepProcInst.createTime'},
         {title: '发起人', dataIndex: 'pepProcInst.startUserName'},
-        {title: '当前处理情况', dataIndex: 'pepProcInst.stateValue', render: (val, record) => {
-          return (
-            <Fragment><div>{val}</div><div>到达时间:{record.createTime}</div></Fragment>
-          );
-        }},
+        {title: '当前处理情况', dataIndex: 'pepProcInst.stateValue'},
+        {title: '到达时间', dataIndex: 'pepProcInst.stateValue', render: (val, record) => {
+          return record.createTime
+        }}
       ],
       design: [
         {title: '名称', dataIndex: 'name'},
@@ -303,10 +302,9 @@ export default class Manager extends React.PureComponent {
         {title: '名称', dataIndex: 'pepProcInst.processDefinitionName'},
         {title: '发起时间', dataIndex: 'pepProcInst.createTime'},
         {title: '发起人', dataIndex: 'pepProcInst.startUserName'},
-        {title: '当前处理情况', dataIndex: 'pepProcInst.stateValue', render: (val, record) => {
-          return (
-            <Fragment><div>{val}</div><div>办理时间:{record.endTime}</div></Fragment>
-          );
+        {title: '当前处理情况', dataIndex: 'pepProcInst.stateValue'},
+        {title: '办理时间', dataIndex: 'pepProcInst.stateValue', render: (val, record) => {
+          return record.endTime
         }},
       ]
     }

@@ -17,50 +17,63 @@ const { TreeNode } = Tree
 const tableInputStyle = {
   height: '32px'
 }
-const defaultButtons = [
-  {
+const makeDefaultButtons = (relaWf) => {
+  const startBtn = {
     _id: `${Date.now() + Math.random()}`,
-    text: '新建',
-    name: 'create',
+    text: '发起',
+    name: 'start',
     position: 'top',
     type: 'primary',
     icon: 'plus',
     enable: true,
     default: true
-  },
-  {
-    _id: `${Date.now() + Math.random()}`,
-    text: '删除',
-    name: 'batchDelete',
-    position: 'top',
-    type: 'default',
-    icon: 'delete',
-    display: 'items=>(items.length > 0)',
-    enable: true,
-    default: true
-  },
-  {
-    _id: `${Date.now() + Math.random()}`,
-    text: '编辑',
-    name: 'edit',
-    position: 'row',
-    icon: 'edit',
-    type: 'default',
-    enable: true,
-    default: true
-  },
-  {
-    _id: `${Date.now() + Math.random()}`,
-    text: '删除',
-    name: 'delete',
-    position: 'row',
-    icon: 'delete',
-    type: 'default',
-    enable: true,
-    default: true
   }
-]
-const defaultBtnArr = defaultButtons.map(btn => btn.name)
+  const defaultButtons = [
+    {
+      _id: `${Date.now() + Math.random()}`,
+      text: '新建',
+      name: 'create',
+      position: 'top',
+      type: 'primary',
+      icon: 'plus',
+      enable: true,
+      default: true
+    },
+    {
+      _id: `${Date.now() + Math.random()}`,
+      text: '删除',
+      name: 'batchDelete',
+      position: 'top',
+      type: 'default',
+      icon: 'delete',
+      display: 'items=>(items.length > 0)',
+      enable: true,
+      default: true
+    },
+    {
+      _id: `${Date.now() + Math.random()}`,
+      text: '编辑',
+      name: 'edit',
+      position: 'row',
+      icon: 'edit',
+      type: 'default',
+      enable: true,
+      default: true
+    },
+    {
+      _id: `${Date.now() + Math.random()}`,
+      text: '删除',
+      name: 'delete',
+      position: 'row',
+      icon: 'delete',
+      type: 'default',
+      enable: true,
+      default: true
+    }
+  ]
+  return relaWf ? [startBtn, ...defaultButtons] : defaultButtons
+}
+const defaultBtnArr = makeDefaultButtons(true).map(btn => btn.name)
 const makeRandomId = () => {
   return Math.random().toString(36).substring(2)
 }
@@ -117,6 +130,7 @@ export default class CustomQuery extends React.PureComponent {
     workflowSelection: [],
     selectedKeys: [],
     isCreate: false,
+    list: []
   }
   currentRowRecordId = null;
   componentDidMount() {
@@ -132,6 +146,13 @@ export default class CustomQuery extends React.PureComponent {
       payload: {
         pagination,
         ...condition
+      },
+      callback: (res) => {
+        if (res.status === 'ok') {
+          this.setState({
+            list: res.result.data
+          })
+        }
       }
     });
     this.getWf()
@@ -168,6 +189,13 @@ export default class CustomQuery extends React.PureComponent {
       }
     }
     return newData
+  }
+  onSearch = (value, filter) => {
+    const {devtoolsCustomQuery: {list}} = this.props;
+    const newList = value ? filter(list) : list
+    this.setState({
+      list: newList
+    })
   }
   @Debounce(300)
   checkCode(rule, value, callback, self) {
@@ -258,6 +286,7 @@ export default class CustomQuery extends React.PureComponent {
           component: {
             name: 'Input',
             props: {
+              addonBefore: 'PEP_PUPA_',
               placeholder: '请输入表名',
               disabled: !!formEntity.tableName
             }
@@ -562,6 +591,32 @@ export default class CustomQuery extends React.PureComponent {
       if (err) return;
       const { curRecord } = this.state
       const params = Object.assign(curRecord, fieldsValue)
+      if (!params.id) {
+        params.tableName = `PEP_PUPA_${params.tableName.toUpperCase()}`
+      }
+      if (params.gridConfig) {
+        const { gridConfig } = params
+        const config = JSON.parse(gridConfig)
+        const startBtnArr = config.topButtons.filter(btn => btn.name === 'start')
+        if (params.relaWf) {
+          if (!startBtnArr.length) {
+            const startBtn = {
+              _id: `${Date.now() + Math.random()}`,
+              text: '发起',
+              name: 'start',
+              position: 'top',
+              type: 'primary',
+              icon: 'plus',
+              enable: true,
+              default: true
+            }
+            config.topButtons.unshift(startBtn)
+          }
+        } else if (startBtnArr.length) {
+          config.topButtons = config.topButtons.filter(btn => btn.name !== 'start')
+        }
+        params.gridConfig = JSON.stringify(config)
+      }
       this.props.dispatch({
         type: 'devtoolsCustomQuery/saveOrUpdate',
         payload: params,
@@ -628,7 +683,7 @@ export default class CustomQuery extends React.PureComponent {
       message.warning('请设计表单');
     } else {
       const { curRecord } = this.state
-      const { gridConfig, modalConfig } = curRecord;
+      const { gridConfig, modalConfig, relaWf } = curRecord;
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item) => {
         if (item.initialValue && typeof item.initialValue === 'object') {
@@ -656,8 +711,8 @@ export default class CustomQuery extends React.PureComponent {
           }
           columns.push(obj)
         }
-        topButtons = defaultButtons.filter(item => item.position === 'top')
-        rowButtons = defaultButtons.filter(item => item.position === 'row')
+        topButtons = makeDefaultButtons(relaWf).filter(item => item.position === 'top')
+        rowButtons = makeDefaultButtons(relaWf).filter(item => item.position === 'row')
         gridObj = JSON.stringify({columns, topButtons, rowButtons})
       } else {
         gridObj = gridConfig
@@ -915,9 +970,9 @@ export default class CustomQuery extends React.PureComponent {
     });
   }
   render() {
-    const {devtoolsCustomQuery: {entity, list}, loading,
+    const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
-    const { modalCreateVisible, modalButtonCfgVisible, modalTableCfgVisible, modalModalCfgVisible, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys} = this.state;
+    const { modalCreateVisible, modalButtonCfgVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys, workflowSelection} = this.state;
     const { formConfig = {formJson: [], formLayout: 'horizontal'} } = curRecord
     const { columns } = gridConfig
     const parseFormConfig = typeof formConfig === 'string' ? JSON.parse(formConfig) : formConfig
@@ -937,8 +992,14 @@ export default class CustomQuery extends React.PureComponent {
         dataIndex: 'code',
       },
       {
-        title: '备注',
-        dataIndex: 'note',
+        title: '关联流程',
+        dataIndex: 'wfKey',
+        render: (text, record) => {
+          if (record.relaWf && workflowSelection.length) {
+            return workflowSelection.filter(item => item.value === text)[0].label
+          }
+          return null
+        }
       },
       {
         title: '启/停用',
@@ -1249,7 +1310,7 @@ export default class CustomQuery extends React.PureComponent {
         <OopSearch
           placeholder="请输入"
           enterButtonText="搜索"
-          moduleName="devtoolsCustomQuery"
+          onInputChange={this.onSearch}
           ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
         />
       }>
