@@ -192,7 +192,7 @@ export default class CustomQuery extends React.PureComponent {
   }
   onSearch = (value, filter) => {
     const {devtoolsCustomQuery: {list}} = this.props;
-    const newList = value ? filter(list) : list
+    const newList = value ? filter(list, ['functionName', 'tableName', 'code', 'wfKey']) : list
     this.setState({
       list: newList
     })
@@ -261,6 +261,7 @@ export default class CustomQuery extends React.PureComponent {
             name: 'Input',
             props: {type: 'hidden'}
           },
+          initialValue: formEntity.id || '',
           wrapper: true
         },
         {
@@ -291,7 +292,7 @@ export default class CustomQuery extends React.PureComponent {
               disabled: !!formEntity.tableName
             }
           },
-          initialValue: formEntity.tableName || '',
+          initialValue: formEntity.tableName ? formEntity.tableName.replace('PEP_PUPA_', '') : '',
           rules: rule.checkTableNameRepeat
         },
         {
@@ -591,9 +592,7 @@ export default class CustomQuery extends React.PureComponent {
       if (err) return;
       const { curRecord } = this.state
       const params = Object.assign(curRecord, fieldsValue)
-      if (!params.id) {
-        params.tableName = `PEP_PUPA_${params.tableName.toUpperCase()}`
-      }
+      params.tableName = `PEP_PUPA_${params.tableName.toUpperCase()}`
       if (params.gridConfig) {
         const { gridConfig } = params
         const config = JSON.parse(gridConfig)
@@ -1336,7 +1335,7 @@ export default class CustomQuery extends React.PureComponent {
           maskClosable={false}
           // footer={<Button type="primary" onClick={() => { this.setState({modalAssignmentCollectVisible: false}) }}>关闭</Button>}
         >
-          <OopForm {...this.makeCreateFormConfig(formdata, this.checkCode, this.checkTableName)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} defaultValue={formdata} />
+          <OopForm {...this.makeCreateFormConfig(formdata, this.checkCode, this.checkTableName)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} />
         </Modal>
         <Modal
           visible={this.state.modalFormDesignerVisible}

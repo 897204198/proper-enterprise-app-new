@@ -22,7 +22,7 @@ const getSocketUrl = ()=>{
 
 const getUserId = ()=>{
   const token = window.localStorage.getItem('proper-auth-login-token');
-  const user = getCurrentUser(token);
+  const user = getCurrentUser(token) || {};
   return user.id
 }
 
