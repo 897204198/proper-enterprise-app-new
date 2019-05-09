@@ -272,9 +272,19 @@ export default class Manager extends React.PureComponent {
         {title: '名称', dataIndex: 'pepProcInst.processDefinitionName'},
         {title: '发起时间', dataIndex: 'pepProcInst.createTime'},
         {title: '发起人', dataIndex: 'pepProcInst.startUserName'},
-        {title: '当前处理情况', dataIndex: 'pepProcInst.stateValue'},
-        {title: '到达时间', dataIndex: 'pepProcInst.stateValue', render: (val, record) => {
+        {title: '到达时间', dataIndex: 'createTime', render: (val, record) => {
           return record.createTime
+        }},
+        {title: '状态', dataIndex: 'pepProcInst', render: (pepProcInst) => {
+          if (pepProcInst) {
+            const {stateValue} = pepProcInst;
+            return (
+              <Badge
+                status="processing"
+                text={stateValue}
+              />
+            );
+          }
         }}
       ],
       design: [
@@ -295,16 +305,44 @@ export default class Manager extends React.PureComponent {
       ],
       process: [
         {title: '名称', dataIndex: 'processDefinitionName'},
-        {title: '发起时间', dataIndex: 'createTime'},
-        {title: '流程状态', dataIndex: 'stateValue'},
+        {title: '发起时间', dataIndex: 'createTime', width: 400},
+        {title: '流程状态', dataIndex: 'stateValue', width: 200, render: (text, record) => {
+          if (text) {
+            const {stateCode} = record;
+            let status = 'success';
+            if (stateCode === 'DOING') {
+              status = 'processing';
+            }
+            return (
+              <Badge
+                status={status}
+                text={text}
+              />
+            );
+          }
+        }},
       ],
       taskAssignee: [
         {title: '名称', dataIndex: 'pepProcInst.processDefinitionName'},
         {title: '发起时间', dataIndex: 'pepProcInst.createTime'},
         {title: '发起人', dataIndex: 'pepProcInst.startUserName'},
-        {title: '当前处理情况', dataIndex: 'pepProcInst.stateValue'},
-        {title: '办理时间', dataIndex: 'pepProcInst.stateValue', render: (val, record) => {
+        {title: '办理时间', dataIndex: 'endTime', render: (val, record) => {
           return record.endTime
+        }},
+        {title: '状态', dataIndex: 'pepProcInst', render: (pepProcInst) => {
+          if (pepProcInst) {
+            const {stateValue, stateCode} = pepProcInst;
+            let status = 'success';
+            if (stateCode === 'DOING') {
+              status = 'processing';
+            }
+            return (
+              <Badge
+                status={status}
+                text={stateValue}
+              />
+            );
+          }
         }},
       ]
     }

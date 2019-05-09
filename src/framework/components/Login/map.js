@@ -9,6 +9,7 @@ const map = {
       size: 'large',
       prefix: <Icon type="user" className={styles.prefixIcon} />,
       placeholder: 'admin',
+      autoComplete: 'username'
     },
     rules: [{
       required: true, message: '请输入账户名！',
@@ -21,6 +22,7 @@ const map = {
       prefix: <Icon type="lock" className={styles.prefixIcon} />,
       type: 'password',
       placeholder: '888888',
+      autoComplete: 'current-password'
     },
     rules: [{
       required: true, message: '请输入密码！',

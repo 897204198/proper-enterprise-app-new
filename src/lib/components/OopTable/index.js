@@ -2,6 +2,9 @@ import React, { PureComponent, Fragment } from 'react';
 import {Table, Button, Divider, Popconfirm, Tooltip, Icon, Dropdown, Menu, message, Alert} from 'antd';
 import styles from './index.less';
 
+const isReactObject = (component)=>{
+  return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
+}
 const downloadContext = (context)=>{
   const url = 'data:text/csv;charset=UTF-8,\uFEFF'.concat(context);
   let a = document.createElement('a');
@@ -182,50 +185,76 @@ export default class OopTable extends PureComponent {
   }
   createRowButtons = (actionColumn, columns, rowButtons)=>{
     const cols = [...columns]
-    rowButtons.length && cols.push({
-      ...actionColumn,
-      title: '操作',
-      width: caculateRowButtonWidth(rowButtons.length),
-      render: (text, record)=>{
-        const actions = [];
-        const renderButtons = ((item)=> {
-          actions.push(<Fragment key={item.name}>
-            {
-              item.confirm ? (
-                <Popconfirm
-                  title={item.confirm}
-                  onConfirm={() => item.onClick(record)}>
-                  {item.icon ?
-                    (
-                      <Tooltip placement="bottom" title={item.text}>
-                        <a>
-                          <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
-                        </a>
-                      </Tooltip>
-) : <a>{item.text}</a>
-                  }
-                </Popconfirm>
-              ) : (
-                item.icon ? (
-                  <Tooltip placement="bottom" title={item.text}>
-                    <a onClick={() => item.onClick(record)}>
-                      <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
-                    </a>
-                  </Tooltip>
-) : <a onClick={() => item.onClick(record)}>{item.text}</a>
-              )
-            }
-          </Fragment>)
-          actions.push(<Divider key={`divider-${item.name}`} type="vertical" />)
-        })
-        rowButtons.map(item=> (
-          item.display ? (item.display(record) ? renderButtons(item) : '') : renderButtons(item)
-        ))
-        actions.pop()
-        return actions;
+    cols.forEach((col)=>{
+      const defaultRender = text => text
+      const oldRender = col.render || defaultRender;
+      col.render = (text, record)=>{
+        // if (text) {
+        if (isReactObject(text)) {
+          return text
+        } else {
+          try {
+            const result = oldRender(text, record);
+            return result;
+          } catch (e) {
+            return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
+          }
+        }
+        // }
       }
     })
-    return cols
+    if (rowButtons.length) {
+      cols.push({
+        ...actionColumn,
+        title: '操作',
+        width: caculateRowButtonWidth(rowButtons.length),
+        render: (text, record)=>{
+          const actions = [];
+          const renderButtons = ((item)=> {
+            actions.push(<Fragment key={item.name}>
+              {
+                item.confirm ? (
+                  <Popconfirm
+                    title={item.confirm}
+                    onConfirm={() => item.onClick(record)}>
+                    {item.icon ?
+                      (
+                        <Tooltip placement="bottom" title={item.text}>
+                          <a>
+                            <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
+                          </a>
+                        </Tooltip>
+                      ) : <a>{item.text}</a>
+                    }
+                  </Popconfirm>
+                ) : (
+                  item.icon ? (
+                    <Tooltip placement="bottom" title={item.text}>
+                      <a onClick={() => item.onClick(record)}>
+                        <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
+                      </a>
+                    </Tooltip>
+                  ) : <a onClick={() => item.onClick(record)}>{item.text}</a>
+                )
+              }
+            </Fragment>)
+            actions.push(<Divider key={`divider-${item.name}`} type="vertical" />)
+          })
+          rowButtons.forEach((item)=>{
+            if (item.display === true) {
+              renderButtons(item)
+            } else if (typeof item.display === 'function') {
+              item.display(record) && renderButtons(item);
+            } else if (item.display === undefined) {
+              renderButtons(item)
+            }
+          });
+          actions.pop();
+          return actions;
+        }
+      });
+    }
+    return cols;
   }
   selectRow = (record) => {
     const selectedRowKeys = [...this.state.selectedRowKeys];

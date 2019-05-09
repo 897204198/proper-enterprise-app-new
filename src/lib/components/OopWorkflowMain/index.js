@@ -105,61 +105,76 @@ export default class OopWorkflowMain extends PureComponent {
   // 根据表单ID获取表单对象
   componentDidMount() {
     if (this.props.businessObj) {
-      const { businessObj: {formKey}, setButtonLoading} = this.props;
+      const { businessObj: {formKey}} = this.props;
       if (!formKey) {
         message.error('表单ID未设置')
         return
       }
-      // formKey包含“.jsx”则代表是表单的相对路径
-      if (formKey.includes('.jsx')) {
-        const businessForm = getWorkflowFormByFormPath(formKey);
-        if (businessForm && businessForm.default) {
-          // eslint-disable-next-line
-          this.setState({
-            businessForm: businessForm.default
-          }, ()=>{
-            this.isComplete = true
-          })
-        }
-        // formKey包含“/”则代表是一个redux 的action 参数用#分割
-      } else if (formKey.includes('/')) {
-        const action = formKey.split('#')[0];
-        const payload = formKey.split('#')[1];
-        this.props.dispatch({
-          type: action,
-          payload,
-          callback: (resp)=>{
-            this.isComplete = true;
-            if (!resp) {
-              setButtonLoading(true);
-              message.error(`表单接口${formKey}获取表单数据失败`);
-            } else {
-              // 让数据走一遍redux
-              this.props.dispatch({
-                type: 'OopWorkflowMain$model/saveFormEntity',
-                payload: {
-                  result: [{formDetails: resp}]
-                }
-              })
-            }
-          }
-        })
-      } else {
-        this.props.dispatch({
-          type: 'OopWorkflowMain$model/fetchByFormCode',
-          payload: formKey,
-          callback: (resp)=>{
-            this.isComplete = true;
-            if (resp.result.length === 0) {
-              setButtonLoading(true);
-              message.error(`表单编码为${formKey}的表单不存在`);
-            }
-          }
-        })
-      }
+      this.getFormConfig(formKey);
       if (this.state.tabActiveKey === 'progress') {
         this.handleTabsChange(this.state.tabActiveKey);
       }
+    }
+  }
+  /**
+   *  一般字符串代表 自定义表单中的公共配置
+   *  以@开头代表是Pupa中的的表单配置
+   *  以.jsx结尾代表是用户自己做的表单页面
+   *  中间带有“/” 表示是自己业务保存的表单配置 并暴露出的redux action 如：basePageCfg/fetchPageCfgByCodeForWf#xiuyibo; 实际上
+   *  以@开头是语法糖 @xiuyibo 会被转换成 basePageCfg/fetchPageCfgByCodeForWf#xiuyib#xiuyibo
+   */
+  getFormConfig = (key)=>{
+    let formKey = key
+    const {setButtonLoading} = this.props;
+    if (formKey.startsWith('@')) {
+      formKey = `basePageCfg/fetchPageCfgByCodeForWf#xiuyib#${formKey.split('@')[1]}`;
+    }
+    // formKey包含“.jsx”则代表是表单的相对路径
+    if (formKey.includes('.jsx')) {
+      const businessForm = getWorkflowFormByFormPath(formKey);
+      if (businessForm && businessForm.default) {
+        // eslint-disable-next-line
+        this.setState({
+          businessForm: businessForm.default
+        }, ()=>{
+          this.isComplete = true
+        })
+      }
+      // formKey包含“/”则代表是一个redux 的action 参数用#分割
+    } else if (formKey.includes('/')) {
+      const action = formKey.split('#')[0];
+      const payload = formKey.split('#')[1];
+      this.props.dispatch({
+        type: action,
+        payload,
+        callback: (resp)=>{
+          this.isComplete = true;
+          if (!resp) {
+            setButtonLoading(true);
+            message.error(`表单接口${formKey}获取表单数据失败`);
+          } else {
+            // 让数据走一遍redux
+            this.props.dispatch({
+              type: 'OopWorkflowMain$model/saveFormEntity',
+              payload: {
+                result: [{formDetails: resp}]
+              }
+            })
+          }
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'OopWorkflowMain$model/fetchByFormCode',
+        payload: formKey,
+        callback: (resp)=>{
+          this.isComplete = true;
+          if (resp.result.length === 0) {
+            setButtonLoading(true);
+            message.error(`表单编码为${formKey}的表单不存在`);
+          }
+        }
+      })
     }
   }
   // 清空表单对象
@@ -342,7 +357,7 @@ export default class OopWorkflowMain extends PureComponent {
   doWorkflow = (callback, type)=>{
     const {taskOrProcDefKey, setButtonLoading, OopWorkflowMain$model: {formEntity: {formTodoDisplayFields = []}}} = this.props;
     if (!this.isComplete) {
-      message.warning('有点卡哦，数据还没返回', ()=>{
+      message.loading('有点卡哦，数据还没返回', ()=>{
         setButtonLoading(false);
       });
       return

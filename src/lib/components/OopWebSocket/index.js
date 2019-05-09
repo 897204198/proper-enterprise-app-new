@@ -1,5 +1,6 @@
 import React from 'react';
 import SockJsClient from 'react-stomp';
+import {notification} from 'antd';
 import { getCurrentUser } from '@framework/utils/utils';
 
 
@@ -42,10 +43,18 @@ export default class OopWebSocket extends React.PureComponent {
     }
   }
   onConnect = ()=>{
-    console.log('ws connected')
+    console.log('ws connected');
+    notification.success({
+      message: '系统提示',
+      description: 'websocket连接成功!',
+    })
   }
   onDisconnect = ()=>{
-    console.log('ws disconnected')
+    console.log('ws disconnected');
+    notification.error({
+      message: '系统提示',
+      description: 'websocket已经断开!',
+    })
     // this.setState({
     //   topics: [],
     //   topicOnMessageMap: {}
