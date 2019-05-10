@@ -1,14 +1,12 @@
 import React from 'react';
 import {connect} from 'dva';
-import { Tabs, Card, Badge, message } from 'antd';
-import classNames from 'classnames';
+import { Tabs, Badge, message } from 'antd';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { inject } from '@framework/common/inject';
 import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import OopWorkflowMainModal from '../../../components/OopWorkflowMainModal';
-import styles from './Manager.less';
 
 const { TabPane } = Tabs;
 
@@ -43,7 +41,6 @@ function getActiveIndex(children, activeKey) {
 export default class Manager extends React.PureComponent {
   state = {
     activeKey: 'task',
-    activeIndex: 0,
     design: {},
     wfVisible: false,
     isLaunch: false,
@@ -130,7 +127,6 @@ export default class Manager extends React.PureComponent {
     }
     this.setState({
       activeKey: key,
-      activeIndex
     }, () => {
       if (key === 'task') {
         self.handleSearchTask({pagination: {pageNo: 1, pageSize: 10}});
@@ -265,7 +261,6 @@ export default class Manager extends React.PureComponent {
     const {
       design,
       activeKey,
-      activeIndex
     } = this.state;
     const column = {
       task: [
@@ -298,8 +293,7 @@ export default class Manager extends React.PureComponent {
           return (
             <Badge
               status={ val ? (val.code === 'UN_DEPLOYED' ? 'default' : (val.code === 'DEPLOYED' ? 'success' : (val.code === '2' ? 'processing' : 'error'))) : 'default' }
-              text={ val ? val.name : '未部署' }
-              className={styles.status} />
+              text={ val ? val.name : '未部署' } />
           );
         }},
       ],
@@ -392,21 +386,8 @@ export default class Manager extends React.PureComponent {
     return (
       <PageHeaderLayout content={
         <Tabs animated={false} defaultActiveKey="task" onChange={this.handleTabsChange} ref={(el)=>{ this.tabs = el }}>
-          <TabPane key="task" tab="待办" />
-          <TabPane key="design" tab="发起" />
-          <TabPane key="process" tab="发起历史" />
-          <TabPane key="taskAssignee" tab="已处理流程" />
-          <TabPane key="5" disabled tab="流程草稿箱" />
-        </Tabs>
-      }>
-        <Card bordered={false}>
-          <div className={classNames(styles.tabsContent, styles.tabsContentAnimated)} style={{marginLeft: `${-activeIndex * 100}%`}}>
-            <div className={classNames(styles.tabsTabpane,
-              {
-                [styles.tabsTabpaneActive]: (activeKey === 'task'),
-                [styles.tabsTabpaneInactive]: (activeKey !== 'task')
-              }
-            )}>
+          <TabPane key="task" tab="待办">
+            <div>
               <OopSearch
                 placeholder="请输入"
                 enterButtonText="搜索"
@@ -424,12 +405,9 @@ export default class Manager extends React.PureComponent {
                 size={size}
               />
             </div>
-            <div className={classNames(styles.tabsTabpane,
-              {
-                [styles.tabsTabpaneActive]: (activeKey === 'design'),
-                [styles.tabsTabpaneInactive]: (activeKey !== 'design')
-              }
-            )}>
+          </TabPane>
+          <TabPane key="design" tab="发起">
+            <div>
               <OopSearch
                 placeholder="请输入"
                 enterButtonText="搜索"
@@ -446,13 +424,9 @@ export default class Manager extends React.PureComponent {
                 pagination={{total: design.total}}
               />
             </div>
-            <div className={classNames(styles.tabsTabpane,
-              {
-                [styles.tabsTabpaneActive]: (activeKey === 'process'),
-                [styles.tabsTabpaneInactive]: (activeKey !== 'process')
-              }
-            )}>
-
+          </TabPane>
+          <TabPane key="process" tab="发起历史">
+            <div>
               <OopSearch
                 placeholder="请输入"
                 enterButtonText="搜索"
@@ -470,12 +444,9 @@ export default class Manager extends React.PureComponent {
                 size={size}
               />
             </div>
-            <div className={classNames(styles.tabsTabpane,
-              {
-                [styles.tabsTabpaneActive]: (activeKey === 'taskAssignee'),
-                [styles.tabsTabpaneInactive]: (activeKey !== 'taskAssignee')
-              }
-            )}>
+          </TabPane>
+          <TabPane key="taskAssignee" tab="已处理流程">
+            <div>
               <OopSearch
                 placeholder="请输入"
                 enterButtonText="搜索"
@@ -493,9 +464,10 @@ export default class Manager extends React.PureComponent {
                 size={size}
               />
             </div>
-          </div>
-        </Card>
-
+          </TabPane>
+          <TabPane key="5" disabled tab="流程草稿箱" />
+        </Tabs>
+      }>
         <OopWorkflowMainModal
           name={this.state.name}
           isLaunch={this.state.isLaunch}
