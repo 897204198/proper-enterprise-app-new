@@ -507,8 +507,8 @@ export default class OopTable extends PureComponent {
                   <Fragment>
                     {
                       selectedRowKeys && selectedRowKeys.length
-                      ? <span>已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;</span>
-                      : <span>{`共${pagination.total || 0}条`}&nbsp;&nbsp;</span>
+                      ? <span>已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;<a onClick={this.clearSelection}>清空</a></span>
+                        : <span>{`共${pagination.total || 0}条`}&nbsp;&nbsp;</span>
                     }
                     {
                       filterFields.length

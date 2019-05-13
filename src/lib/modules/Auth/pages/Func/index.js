@@ -607,6 +607,7 @@ export default class Func extends PureComponent {
             onLoad: this.onLoad,
             topButtons,
             rowButtons,
+            showTableInfo: true,
             oopSearch: {
               moduleName: 'authmenus',
               placeholder: '请输入',

@@ -1,4 +1,5 @@
 import { routerRedux } from 'dva/router';
+import cookie from 'react-cookies';
 import { devMode } from '@/config/config';
 import MongoService from '@framework/utils/MongoService';
 import { login } from '../services/baseS';
@@ -30,6 +31,7 @@ export default {
           url += returnPage;
         }
         sessionStorage.removeItem('proper-route-noAuthPage');
+        cookie.remove('X-PEP-TOKEN', { path: '/' });
         window.location.href = url;
         // document.cookie = `X-PEP-TOKEN=${response.result};path=/`;
         yield put({

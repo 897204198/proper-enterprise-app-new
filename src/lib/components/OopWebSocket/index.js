@@ -1,7 +1,7 @@
 import React from 'react';
 import SockJsClient from 'react-stomp';
 import {notification} from 'antd';
-import { getCurrentUser } from '@framework/utils/utils';
+import { getCurrentUser, getApplicationContextUrl } from '@framework/utils/utils';
 
 
 // 获取socket的路径
@@ -15,7 +15,7 @@ const getSocketUrl = ()=>{
     // url = `${peaDynamicRequestPrefix}${socketContext}?access_token=${token}`; 后台跨域无法 解决 所以只能从前台做代理
     url = `${location.protocol}//${location.host}${socketContext}?access_token=${token}`;
   } else {
-    url = `${peaDynamicRequestPrefix}${socketContext}?access_token=${token}`;
+    url = `${getApplicationContextUrl()}${socketContext}?access_token=${token}`;
   }
   console.log(url)
   return url;

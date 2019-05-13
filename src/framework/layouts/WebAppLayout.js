@@ -78,11 +78,11 @@ const Header = (props)=>{
   const {leftButton, rightButton} = props;
   return (
     <div className={`${styles.header} ${isAndroid() ? styles.android : ''}`}>
-      <Button type="primary" ghost className={styles.backBtn} onClick={leftButton.onClick}>
+      <Button type="default" ghost className={styles.backBtn} onClick={leftButton.onClick}>
         <Icon type={leftButton.icon} style={{fontWeight: 'bold'}} />{leftButton.text}
       </Button>
       <h3 className={styles.title}>{props.title}</h3>
-      <Button type="primary" ghost className={styles.homeBtn} onClick={rightButton.onClick}>
+      <Button type="default" ghost className={styles.homeBtn} onClick={rightButton.onClick}>
         <Icon type={rightButton.icon} style={{fontSize: '24px'}} />{rightButton.text}
       </Button>
     </div>)
