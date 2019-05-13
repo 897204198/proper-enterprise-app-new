@@ -20,8 +20,8 @@ const convertProperties = (props)=>{
   if (formJson.length) {
     formJson.unshift({name: 'id', component: ()=><Input type="hidden" />, wrapper: true})
   }
-  // 为表单添加 是否归档的标识 关联工作流 默认filed的值为0； 否则filed的值为1 TODO 可能为临时的归档解决方案
-  formJson.unshift({name: 'filed', component: ()=><Input type="hidden" />, initialValue: 1, wrapper: true})
+  // 为表单添加 是否归档的标识 关联工作流 默认Pupa__filed的值为0； 否则Pupa__filed的值为1 TODO 可能为临时的归档解决方案
+  formJson.unshift({name: 'Pupa__filed', component: ()=><Input type="hidden" />, initialValue: 1, wrapper: true})
   try {
     if (columns.length) {
       columns.forEach((it)=>{

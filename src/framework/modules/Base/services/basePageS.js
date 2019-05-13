@@ -12,7 +12,7 @@ export default class BasePageService {
   serviceCache = {}
   fetch = async ()=>{
     return this.service.fetch((query)=>{
-      query.equalTo('filed', 1).addDescending('CT');
+      query.equalTo('Pupa__filed', 1).addDescending('CT');
     })
   }
   fetchById = async (param)=>{
@@ -34,7 +34,7 @@ export default class BasePageService {
     const {restPath, param, tableName} = payload;
     return request(restPath, {
       method: 'post',
-      body: JSON.stringify({...param, tableName})
+      body: JSON.stringify({param, tableName})
     });
   }
 }

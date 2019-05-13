@@ -51,7 +51,7 @@ export default {
           const pupaResp = yield service.fetchByEqual({procInstId});
           if (pupaResp.result.length) {
             const pupaEntity = pupaResp.result[0];
-            pupaEntity.filed = 1;
+            pupaEntity.Pupa__filed = 1;
             const saveResp = yield service.saveOrUpdate(pupaEntity);
             callback && callback(saveResp);
           }

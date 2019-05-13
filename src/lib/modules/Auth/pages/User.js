@@ -615,18 +615,21 @@ export default class User extends React.PureComponent {
       type === 'roleUser' ? this.setRolesList(userRolesAll) : this.setGroupsList(userGroupsAll)
     }
   }
-
+  // 表单 变化后通知记录
   handleUserInfoFormChange = (warningField) => {
-    const visible = Object.keys(warningField).length > 0;
-    this.setState((prevState) => {
-      return {
-        closeConfirmConfig: {
-          ...prevState.closeConfirmConfig,
-          visible
-        },
-        warningField
-      }
-    });
+    const newWarningFieldlength = Object.keys(warningField).length;
+    const currentWarningFieldlength = Object.keys(this.state.warningField).length;
+    if (newWarningFieldlength !== currentWarningFieldlength) {
+      this.setState(({closeConfirmConfig}) => {
+        return {
+          closeConfirmConfig: {
+            ...closeConfirmConfig,
+            visible: newWarningFieldlength > 0
+          },
+          warningField
+        }
+      });
+    }
   };
 
   render() {

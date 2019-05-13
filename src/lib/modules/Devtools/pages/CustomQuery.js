@@ -24,7 +24,7 @@ const makeDefaultButtons = (relaWf) => {
     name: 'start',
     position: 'top',
     type: 'primary',
-    icon: 'plus',
+    icon: 'branches',
     enable: true,
     default: true
   }
@@ -306,7 +306,7 @@ export default class CustomQuery extends React.PureComponent {
               disabled: !!formEntity.code
             }
           },
-          initialValue: formEntity.code || '',
+          initialValue: formEntity.code || undefined,
           rules: rule.checkCodeRepeat
         },
         {
@@ -320,6 +320,7 @@ export default class CustomQuery extends React.PureComponent {
               unCheckedChildren: '否'
             }
           },
+          initialValue: formEntity.relaWf || undefined,
           valuePropName: 'checked'
         },
         {
@@ -339,6 +340,7 @@ export default class CustomQuery extends React.PureComponent {
             required: true,
             message: '此项为必填项'
           }],
+          initialValue: formEntity.wfKey || undefined,
           subscribe: [{
             name: 'relaWf',
             publish: [{
@@ -1041,7 +1043,7 @@ export default class CustomQuery extends React.PureComponent {
       {
         text: '设计按钮',
         name: 'designButton',
-        icon: 'bars',
+        icon: 'sliders',
         display: record => (record.formConfig && JSON.parse(record.formConfig).formJson.length > 0),
         onClick: (record) => { this.handleDesignButton(record) },
       },
@@ -1263,16 +1265,16 @@ export default class CustomQuery extends React.PureComponent {
           component: {
             name: 'Select',
             children: [
-              {label: '保存', value: 'submit'},
+              {label: '删除', value: 'delete'},
               {label: '取消', value: 'cancel'},
-              {label: '删除', value: 'delete'}
+              {label: '保存', value: 'submit'}
             ],
             props: {
               placeholder: '请选择按钮',
               mode: 'multiple'
             }
           },
-          initialValue: modalConfig.footer || ['submit', 'cancel'],
+          initialValue: modalConfig.footer || ['cancel', 'submit'],
         },
         {
           label: '保存后是否关闭',

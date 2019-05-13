@@ -1009,16 +1009,19 @@ export default class Role extends PureComponent {
     this.userAddDel(value, typeAdd, typeDel, typeRoles, data, id);
   }
   handleBasicChange = (warningField) => {
-    const visible = Object.keys(warningField).length > 0;
-    this.setState((prevState) => {
-      return {
-        closeConfirmConfig: {
-          ...prevState.closeConfirmConfig,
-          visible
-        },
-        warningField
-      }
-    });
+    const newWarningFieldlength = Object.keys(warningField).length;
+    const currentWarningFieldlength = Object.keys(this.state.warningField).length;
+    if (newWarningFieldlength !== currentWarningFieldlength) {
+      this.setState(({closeConfirmConfig}) => {
+        return {
+          closeConfirmConfig: {
+            ...closeConfirmConfig,
+            visible: newWarningFieldlength > 0
+          },
+          warningField
+        }
+      });
+    }
   };
   typeChange = (val) => {
     this.setState({

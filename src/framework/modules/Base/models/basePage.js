@@ -7,28 +7,9 @@ export default {
     // entity: {},
   },
   effects: {
-    *fetch({ payload = {}, callback, tableName, columns}, { call, put }) {
-      console.log(columns)
-      // const colRenderMap = {};
-      // columns.forEach(col=>{
-      //   const colName = col.dataIndex;
-      //   if (colName.includes('_text')) {
-      //     colRenderMap[colName] = col.render
-      //   }
-      // })
+    *fetch({ payload = {}, callback, tableName}, { call, put }) {
       const service = new BasePageService(tableName);
       const resp = yield call(service.fetch, payload);
-      // console.log(resp, columns, colRenderMap)
-      // if (resp.result && resp.result.length) {
-      //   resp.result.forEach(it=>{
-      //     for (const proper in it) {
-      //       const value = it[proper];
-      //       if (!proper.startsWith('_') && !proper.includes('_text') && (typeof value !== 'string' && typeof value !== 'number')) {
-      //         it[`${proper}_text`] = colRenderMap[`${proper}_text`](it)
-      //       }
-      //     }
-      //   })
-      // }
       yield put({
         type: 'saveList',
         payload: resp,

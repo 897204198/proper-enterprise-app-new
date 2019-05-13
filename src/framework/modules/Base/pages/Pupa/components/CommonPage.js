@@ -11,12 +11,15 @@ import OopWorkflowMainModal from '@pea/components/OopWorkflowMainModal';
 import styles from './CommonPage.less';
 
 const ModalForm = (props) => {
-  const {modalConfig: {title, width, footer: footerKeys = [], maskClosable, saveAfterClosable}, formConfig, loading, visible, onModalCancel, onModalSubmit, formEntity} = props;
+  const {modalConfig: {title, width, footer: footerKeys = [], maskClosable, saveAfterClosable},
+    formConfig, loading, visible, onModalCancel, onModalSubmit, formEntity} = props;
   const submitForm = ()=>{
     const form = this.oopForm.getForm();
     const data = this.oopForm.getFormData();
     form.validateFields((err) => {
       if (err) return;
+      // 直接归档入库
+      data.Pupa__filed = 1;
       onModalSubmit(data, form);
       if (saveAfterClosable) {
         cancelForm()
@@ -105,6 +108,9 @@ export default class CommonPage extends React.PureComponent {
     });
   }
   handleCreate = ()=>{
+    this.setModalFormVisible(true);
+  }
+  handleStart = ()=>{
     const {relaWf} = this.state;
     if (relaWf) {
       // 打开工作流面板
@@ -133,8 +139,6 @@ export default class CommonPage extends React.PureComponent {
           }
         }
       });
-    } else {
-      this.setModalFormVisible(true);
     }
   }
   handleEdit = (record)=>{
@@ -233,6 +237,17 @@ export default class CommonPage extends React.PureComponent {
         onClick: ()=>{ this.handleCreate() }
       })
     }
+    const startBtn = tbCfg.find(it=>it.name === 'start');
+    if (startBtn && startBtn.enable) {
+      topButtons.push({
+        text: '发起',
+        type: 'primary',
+        icon: 'branches',
+        ...startBtn,
+        name: 'start',
+        onClick: ()=>{ this.handleStart() }
+      })
+    }
     const batchDeleteBtn = tbCfg.find(it=>it.name === 'batchDelete');
     if (batchDeleteBtn && batchDeleteBtn.enable) {
       topButtons.push({
@@ -244,7 +259,7 @@ export default class CommonPage extends React.PureComponent {
         onClick: (items)=>{ this.handleBatchRemove(items) }
       })
     }
-    const otherTopBtns = tbCfg.filter(it=>!'create,batchDelete'.includes(it.name));
+    const otherTopBtns = tbCfg.filter(it=>!'create,start,batchDelete'.includes(it.name));
     if (otherTopBtns && otherTopBtns.length) {
       otherTopBtns.forEach((button)=>{
         if (button) {
@@ -340,16 +355,22 @@ export default class CommonPage extends React.PureComponent {
         ...modalWfFormConfig,
         wfVisible: false
       }
-    }))
+    }));
+    setTimeout(()=>{
+      this.props.dispatch({
+        type: 'basePage/clearEntity',
+        tableName: this.props.tableName
+      });
+    }, 200)
   }
   // 流程提交成功的回调
   afterProcessSubmit = (res, formData)=>{
     const data = {
       ...formData,
       procInstId: res.result.procInstId,
-      filed: 0
+      Pupa__filed: 0
     }
-    this.handleModalSubmit(data);
+    this.handleModalSubmit(data, true);
   }
   render() {
     const {list, modalFormVisible, modalWfFormConfig: {
@@ -363,7 +384,7 @@ export default class CommonPage extends React.PureComponent {
       stateCode
     }} = this.state;
     const {basePage, global: {size},
-      loading, gridLoading, gridConfig: {columns: cols, topButtons: tbCfg, rowButtons: rbCfg}, formConfig, modalConfig, tableName } = this.props;
+      loading, gridLoading, gridConfig: {columns: cols = [], topButtons: tbCfg, rowButtons: rbCfg}, formConfig, modalConfig, tableName } = this.props;
     let entity = {};
     if (basePage && basePage[tableName]) {
       entity = basePage[tableName].entity || {};
