@@ -48,7 +48,8 @@ export default {
           ...it,
           label: it[labelPropName],
           value: it[valuePropName],
-          disabled: it[disabledPropName] === undefined ? false : it[disabledPropName],
+          // TODO 约定 如果你用自定义的字段代表disabled 那么必须取反
+          disabled: it[disabledPropName] === undefined ? false : !it[disabledPropName],
         }))
       }
     },

@@ -85,7 +85,6 @@ export default class CommonPage extends React.PureComponent {
       }
     }
   }
-
   componentDidMount() {
     this.onLoad();
   }
@@ -263,13 +262,7 @@ export default class CommonPage extends React.PureComponent {
     if (otherTopBtns && otherTopBtns.length) {
       otherTopBtns.forEach((button)=>{
         if (button) {
-          button.onClick = (items)=>{
-            if (button.restPath.includes('/')) {
-              this.restfulActionButtonHandle(button, items)
-            } else {
-              message.error(`${button.restPath} 不是一个合法的restful接口，请以'/'开头`)
-            }
-          }
+          this.doWitchButtonClickAction(button);
         }
       })
     }
@@ -298,14 +291,8 @@ export default class CommonPage extends React.PureComponent {
     }
     if (otherRowBtns && otherRowBtns.length) {
       otherRowBtns.forEach((button)=>{
-        if (button.restPath) {
-          button.onClick = (items)=>{
-            if (button.restPath.includes('/')) {
-              this.restfulActionButtonHandle(button, items)
-            } else {
-              message.error(`${button.restPath} 不是一个合法的restful接口，请以'/'开头`)
-            }
-          }
+        if (button) {
+          this.doWitchButtonClickAction(button);
         }
       })
     }
@@ -345,6 +332,55 @@ export default class CommonPage extends React.PureComponent {
         });
       } else {
         dofn();
+      }
+    }
+  }
+  // 自定义redux接口
+  reduxActionButtonHandle = (button, param)=>{
+    const { restPath, confirm } = button;
+    if (restPath) {
+      const dofn = ()=>{
+        const path = restPath.split('@')[1]
+        const modelUrl = path.split('/')[0]
+        inject(modelUrl)();
+        this.props.dispatch({
+          type: path,
+          payload: param,
+          tableName: this.props.tableName,
+          callback: (res)=>{
+            oopToast(res, '操作成功');
+            this.oopTable.clearSelection();
+            this.onLoad();
+          }
+        })
+      }
+      if (confirm) {
+        Modal.confirm({
+          title: '提示',
+          content: confirm,
+          okText: '确认',
+          cancelText: '取消',
+          onOk: () => {
+            dofn();
+          }
+        });
+      } else {
+        dofn();
+      }
+    }
+  }
+  // 处理按钮的点击事件 约定：包含斜线并且@开头(与工作流中的reduxAction配置一致) ==》reduxAction  @包含斜线 ==》restful请求
+  doWitchButtonClickAction = (button)=>{
+    button.onClick = (items)=>{
+      const {restPath = ''} = button;
+      if (restPath.includes('/')) {
+        if (restPath.startsWith('@')) {
+          this.reduxActionButtonHandle(button, items)
+        } else {
+          this.restfulActionButtonHandle(button, items)
+        }
+      } else {
+        message.error(`${button.restPath} 不是一个合法的restful接口，请以'/'开头`)
       }
     }
   }

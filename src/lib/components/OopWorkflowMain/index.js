@@ -117,17 +117,19 @@ export default class OopWorkflowMain extends PureComponent {
     }
   }
   /**
-   *  一般字符串代表 自定义表单中的公共配置
-   *  以@开头代表是Pupa中的的表单配置
-   *  以.jsx结尾代表是用户自己做的表单页面
-   *  中间带有“/” 表示是自己业务保存的表单配置 并暴露出的redux action 如：basePageCfg/fetchPageCfgByCodeForWf#xiuyibo; 实际上
-   *  以@开头是语法糖 @xiuyibo 会被转换成 basePageCfg/fetchPageCfgByCodeForWf#xiuyib#xiuyibo
+   *  三种情况
+   *  1. example 自定义表单中的唯一编码
+   *  2. @example 代表是Pupa的配置 example 表示是Pupa中的唯一编码
+   *  3. @basePageCfg/fetchPageCfgByCodeForWf#example 暴露出的redux action 此时example为参数
+   *  4. /module/Interface/pages/Forms/MyBusinessForm.jsx 用户开发的表单组件
+   *  注1: 第二种@example是语法糖 最终会被转换成 @basePageCfg/fetchPageCfgByCodeForWf#example
+   *  注2: 第四种情况需要用户自己处理权限行为
    */
   getFormConfig = (key)=>{
     let formKey = key
     const {setButtonLoading} = this.props;
     if (formKey.startsWith('@')) {
-      formKey = `basePageCfg/fetchPageCfgByCodeForWf#xiuyib#${formKey.split('@')[1]}`;
+      formKey = `@basePageCfg/fetchPageCfgByCodeForWf#${formKey.split('@')[1]}`;
     }
     // formKey包含“.jsx”则代表是表单的相对路径
     if (formKey.includes('.jsx')) {
@@ -145,7 +147,7 @@ export default class OopWorkflowMain extends PureComponent {
       const action = formKey.split('#')[0];
       const payload = formKey.split('#')[1];
       this.props.dispatch({
-        type: action,
+        type: action.split('@')[1],
         payload,
         callback: (resp)=>{
           this.isComplete = true;
