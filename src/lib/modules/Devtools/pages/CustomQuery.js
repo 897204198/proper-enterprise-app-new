@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react';
+import FileSaver from 'file-saver';
 import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tree, Row, Col, Popconfirm } from 'antd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
@@ -17,9 +18,12 @@ const { TreeNode } = Tree
 const tableInputStyle = {
   height: '32px'
 }
+const makeRandomId = () => {
+  return Math.random().toString(36).substring(2)
+}
 const makeDefaultButtons = (relaWf) => {
   const startBtn = {
-    _id: `${Date.now() + Math.random()}`,
+    _id: makeRandomId(),
     text: '发起',
     name: 'start',
     position: 'top',
@@ -30,7 +34,7 @@ const makeDefaultButtons = (relaWf) => {
   }
   const defaultButtons = [
     {
-      _id: `${Date.now() + Math.random()}`,
+      _id: makeRandomId(),
       text: '新建',
       name: 'create',
       position: 'top',
@@ -40,7 +44,7 @@ const makeDefaultButtons = (relaWf) => {
       default: true
     },
     {
-      _id: `${Date.now() + Math.random()}`,
+      _id: makeRandomId(),
       text: '删除',
       name: 'batchDelete',
       position: 'top',
@@ -51,7 +55,27 @@ const makeDefaultButtons = (relaWf) => {
       default: true
     },
     {
-      _id: `${Date.now() + Math.random()}`,
+      _id: makeRandomId(),
+      text: '导入',
+      name: 'upload',
+      position: 'top',
+      type: 'default',
+      icon: 'upload',
+      enable: false,
+      default: true
+    },
+    {
+      _id: makeRandomId(),
+      text: '导出',
+      name: 'export',
+      position: 'top',
+      type: 'default',
+      icon: 'download',
+      enable: false,
+      default: true
+    },
+    {
+      _id: makeRandomId(),
       text: '编辑',
       name: 'edit',
       position: 'row',
@@ -61,7 +85,7 @@ const makeDefaultButtons = (relaWf) => {
       default: true
     },
     {
-      _id: `${Date.now() + Math.random()}`,
+      _id: makeRandomId(),
       text: '删除',
       name: 'delete',
       position: 'row',
@@ -74,9 +98,6 @@ const makeDefaultButtons = (relaWf) => {
   return relaWf ? [startBtn, ...defaultButtons] : defaultButtons
 }
 const defaultBtnArr = makeDefaultButtons(true).map(btn => btn.name)
-const makeRandomId = () => {
-  return Math.random().toString(36).substring(2)
-}
 const filterDefault = (arr) => {
   for (let i = 0; i < defaultBtnArr.length; i++) {
     for (let j = 0; j < arr.length; j++) {
@@ -356,7 +377,8 @@ export default class CustomQuery extends React.PureComponent {
           component: {
             name: 'TextArea',
             props: {
-              placeholder: '请输入备注'
+              placeholder: '请输入备注',
+              autosize: true
             }
           },
           initialValue: formEntity.note || '',
@@ -432,6 +454,19 @@ export default class CustomQuery extends React.PureComponent {
           }]
         },
         {
+          label: '列宽',
+          key: 'width',
+          name: 'width',
+          component: {
+            name: 'Input',
+            props: {
+              placeholder: '请输入字段名',
+              type: 'number'
+            }
+          },
+          initialValue: formEntity.width || '',
+        },
+        {
           label: '排序',
           key: 'sorter',
           name: 'sorter',
@@ -439,6 +474,7 @@ export default class CustomQuery extends React.PureComponent {
             name: 'TextArea',
             props: {
               placeholder: '请输入排序规则',
+              autosize: true
             }
           },
           initialValue: formEntity.sorter || '',
@@ -450,7 +486,8 @@ export default class CustomQuery extends React.PureComponent {
           component: {
             name: 'TextArea',
             props: {
-              placeholder: '请输入筛选规则'
+              placeholder: '请输入筛选规则',
+              autosize: true
             }
           },
           initialValue: formEntity.filter || '',
@@ -462,10 +499,37 @@ export default class CustomQuery extends React.PureComponent {
           component: {
             name: 'TextArea',
             props: {
-              placeholder: '请输入自定义渲染规则'
+              placeholder: '请输入自定义渲染规则',
+              autosize: true
             }
           },
           initialValue: formEntity.render || '',
+        },
+        {
+          label: '列表信息扩展',
+          key: 'tableInfoExtra',
+          name: 'tableInfoExtra',
+          component: {
+            name: 'TextArea',
+            props: {
+              placeholder: '请输入扩展内容',
+              autosize: true
+            }
+          },
+          initialValue: formEntity.tableInfoExtra || '',
+        },
+        {
+          label: '鼠标悬停提示',
+          key: 'hover',
+          name: 'hover',
+          component: {
+            name: 'TextArea',
+            props: {
+              placeholder: '请输入悬停提示规则',
+              autosize: true
+            }
+          },
+          initialValue: formEntity.hover || '',
         },
         {
           label: '启/停用',
@@ -970,6 +1034,21 @@ export default class CustomQuery extends React.PureComponent {
       });
     });
   }
+  handleDownload = (records) => {
+    const record = JSON.parse(JSON.stringify(records));
+    const name = record.functionName
+    delete record.CT
+    delete record.CU
+    delete record.LT
+    delete record.LU
+    delete record.id
+    delete record._ClientVersion
+    delete record._InstallationId
+    delete record._id
+    const data = JSON.stringify(record)
+    const blob = new Blob([data], {type: ''})
+    FileSaver.saveAs(blob, `${name}.json`)
+  }
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
@@ -1059,6 +1138,12 @@ export default class CustomQuery extends React.PureComponent {
         name: 'edit',
         icon: 'edit',
         onClick: (record) => { this.handleEdit(record) },
+      },
+      {
+        text: '导出',
+        name: 'download',
+        icon: 'download',
+        onClick: (record)=>{ this.handleDownload(record) }
       },
       {
         text: '删除',
@@ -1201,7 +1286,6 @@ export default class CustomQuery extends React.PureComponent {
         title: '显示',
         dataIndex: 'display',
         key: 'display',
-        defaultValue: '',
         render: (text, record) => {
           if (record.editable) {
             return (

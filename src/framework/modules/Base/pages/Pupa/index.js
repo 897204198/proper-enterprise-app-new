@@ -48,12 +48,12 @@ const convertProperties = (props)=>{
               // it.dataIndex = `${it.dataIndex}_text`;
               try {
                 const fn = eval(it.render); // eslint-disable-line
-                it.render = (items)=>{
+                it.render = (items, record)=>{
                   if (isReactObject(items)) {
                     return items;
                   }
                   try {
-                    const rr = fn(items);
+                    const rr = fn(items, record);
                     if (rr.includes('<')) {
                       return <span dangerouslySetInnerHTML={{__html: rr}} />;
                     }
