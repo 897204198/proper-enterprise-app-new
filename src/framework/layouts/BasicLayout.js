@@ -105,16 +105,6 @@ export default class BasicLayout extends React.PureComponent {
     this.props.dispatch({
       type: 'baseUser/fetchCurrent',
     });
-    // 注册Pupa归档的ws
-    const subscribe = [
-      {topics: ['/topic/autoArchive'], onMessage: (data)=>{
-        this.props.dispatch({
-          type: 'basePageCfg/filed',
-          payload: data
-        })
-      }}
-    ]
-    this.oopWebSocket.subscribe(subscribe);
   }
   componentWillUnmount() {
     // this.ws.disconnect();

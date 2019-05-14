@@ -12,7 +12,7 @@ export default class BasePageService {
   serviceCache = {}
   fetch = async ()=>{
     return this.service.fetch((query)=>{
-      query.equalTo('Pupa__filed', 1).addDescending('CT');
+      query.addDescending('CT');
     })
   }
   fetchById = async (param)=>{

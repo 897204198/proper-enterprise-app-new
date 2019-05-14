@@ -18,8 +18,6 @@ const ModalForm = (props) => {
     const data = this.oopForm.getFormData();
     form.validateFields((err) => {
       if (err) return;
-      // 直接归档入库
-      data.Pupa__filed = 1;
       onModalSubmit(data, form);
       if (saveAfterClosable) {
         cancelForm()
@@ -400,14 +398,7 @@ export default class CommonPage extends React.PureComponent {
     }, 200)
   }
   // 流程提交成功的回调
-  afterProcessSubmit = (res, formData)=>{
-    const data = {
-      ...formData,
-      procInstId: res.result.procInstId,
-      Pupa__filed: 0
-    }
-    this.handleModalSubmit(data, true);
-  }
+  afterProcessSubmit = ()=>{}
   render() {
     const {list, modalFormVisible, modalWfFormConfig: {
       name,
@@ -439,6 +430,7 @@ export default class CommonPage extends React.PureComponent {
         <Card bordered={false}>
           <OopTable
             showTableInfo={true}
+            showExport={true}
             loading={loading === undefined ? gridLoading : loading}
             grid={{list}}
             columns={columns}

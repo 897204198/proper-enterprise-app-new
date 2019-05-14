@@ -5,17 +5,6 @@ import styles from './index.less';
 const isReactObject = (component)=>{
   return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
 }
-const downloadContext = (context)=>{
-  const url = 'data:text/csv;charset=UTF-8,\uFEFF'.concat(context);
-  let a = document.createElement('a');
-  a.href = url;
-  a.download = 'table.csv';
-  a.click();
-  a = null;
-  setTimeout(()=>{
-    message.success('数据导出成功！')
-  })
-}
 // 计算rowButtons的长度 18:图标的宽度 17:中间竖线的长度+margin 32:td的内边距 5:再加5px的余量 怕有人对icon自定义大小影响长度导致换行
 const caculateRowButtonWidth = (n)=>{
   if (n <= 0) {
@@ -55,7 +44,8 @@ export default class OopTable extends PureComponent {
         pageSizeOptions: ['10', '20', '50', '100'],
         showQuickJumper: true,
         showSizeChanger: true,
-      }
+      },
+      exporting: false
     };
   }
   componentWillReceiveProps(props) {
@@ -174,7 +164,7 @@ export default class OopTable extends PureComponent {
       );
       const exportButton = (
         <Dropdown overlay={menu} key="export">
-          <Button style={{ paddingLeft: 8, paddingRight: 8, float: 'right'}} icon="export">
+          <Button style={{ paddingLeft: 8, paddingRight: 8, float: 'right'}} icon="export" loading={this.state.exporting}>
             导出 <Icon type="down" />
           </Button>
         </Dropdown>
@@ -315,28 +305,53 @@ export default class OopTable extends PureComponent {
     }
   }
   exportTableDataToCSV = (data)=> {
-    const {columns} = this.props;
-    const titles = columns.map(it=>it.title);
-    const titleForKey = columns.map(it=>it.dataIndex);
-    const str = [titles.join(',').concat('\n')];
-    for (let i = 0; i < data.length; i++) {
-      const temp = [];
-      for (let j = 0; j < titleForKey.length; j++) {
-        let value = data[i][titleForKey[j]];
-        if (value) {
-          // console.log(value)
-          value = value.toString();
-          if (value.includes(',')) {
-            // 把英文的,转换成中文的，
-            value = value.replace(new RegExp(',', 'gm'), '，');
+    this.setState({
+      exporting: true
+    }, ()=>{
+      const {columns} = this.props;
+      const titles = columns.map(it=>it.title);
+      // const titleForKey = columns.map(it=>it.dataIndex);
+      const str = [titles.join(',').concat('\n')];
+      for (let i = 0; i < data.length; i++) {
+        const temp = [];
+        const record = data[i];
+        for (let j = 0; j < columns.length; j++) {
+          const column = columns[j];
+          let value = record[column.dataIndex];
+          if (value) {
+            if (column.render) {
+              value = column.render(value, record);
+            }
+            // value = value.toString();
+            if (value.includes(',')) {
+              // 把英文的,转换成中文的， 因为,与最终的字符格式冲突
+              value = value.replace(new RegExp(',', 'gm'), '，');
+            }
           }
+          temp.push(value);
         }
-        temp.push(value);
+        str.push(temp.join(',').concat('\n'));
       }
-      str.push(temp.join(',').concat('\n'));
-    }
-    console.log(str);
-    downloadContext(str);
+      // 把中文的，转换成英文的
+      const context = str.join(' ');
+      this.downloadContext(context);
+    });
+  }
+  downloadContext = (context)=>{
+    const url = 'data:text/csv;charset=UTF-8,\uFEFF'.concat(context);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = 'table.csv';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{
+      a.remove();
+      a = null;
+      message.success('数据导出成功！');
+      this.setState({
+        exporting: false
+      })
+    })
   }
   getTableClassName = ()=>{
     const {onRowSelect, scroll} = this.props;

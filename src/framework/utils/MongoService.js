@@ -133,6 +133,28 @@ export default class MongoService {
       return this.errorFn(e);
     })
   }
+  // 后台 没有实现的方法 有需要循环遍历调用save方法
+  batchSave = (objects = []) =>{
+    const listObj = [];
+    objects.forEach((object)=>{
+      listObj.push(this.tableObj.new(object))
+    })
+    const {saveAll} = this.tableObj;
+    return new Promise((resolve, reject)=>{
+      saveAll(listObj).then((res)=>{
+        // 为了给oopToast提供成功的标识
+        console.log(res)
+        resolve({
+          status: 'ok',
+          result: []
+        });
+      }).catch((e)=>{
+        reject({...e, resolve}); // eslint-disable-line
+      })
+    }).catch((e)=>{
+      return this.errorFn(e);
+    })
+  }
   update = (formValues)=> {
     const id = formValues && formValues.id;
     if (id) {
