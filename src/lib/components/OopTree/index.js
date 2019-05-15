@@ -128,6 +128,20 @@ export default class OopTree extends PureComponent {
           onTreeNodeSelect(treeNode, dataRef);
         }
       });
+    } else {
+      const { inverseSelect = false } = this.props;
+      if (inverseSelect) {
+        this.setState({
+          selectedKeys: [],
+          currentSelectTreeNode: null
+        }, () => {
+          const { onTreeNodeSelect } = this.props;
+          const {dataRef} = event.node.props;
+          if (onTreeNodeSelect) {
+            onTreeNodeSelect(treeNode, dataRef);
+          }
+        })
+      }
     }
   }
   // findParentNode = (dom) =>{
