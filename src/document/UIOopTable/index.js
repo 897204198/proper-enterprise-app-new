@@ -126,6 +126,7 @@ export default class OopTableUIDOC extends React.PureComponent {
               enterButtonText="搜索"
               moduleName="authusers"
               ref={(el2)=>{ this.oopSearch2 = el2 && el2.getWrappedInstance() }}
+              style={{ marginBottom: 20}}
             />
             <OopTable
               grid={{...oopSearchGrid,
@@ -146,6 +147,7 @@ export default class OopTableUIDOC extends React.PureComponent {
             enterButtonText="搜索"
             onInputChange={filterSearch}
             ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
+            style={{ marginBottom: 20}}
           />
           <OopTable
             grid={{list: filterList.map(item=>({...item, disabled: item.superuser === true})) }}
