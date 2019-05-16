@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import FileSaver from 'file-saver';
-import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tree, Row, Col, Popconfirm } from 'antd';
+import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tree, Row, Col, Popconfirm, Tabs } from 'antd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import {inject} from '@framework/common/inject';
@@ -11,8 +11,8 @@ import OopForm from '@pea/components/OopForm';
 import OopTable from '@pea/components/OopTable';
 import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopTableForm from '@pea/components/OopTableForm';
-import styles from './CustomQuery.less'
 
+const { TabPane } = Tabs
 const { Option } = Select
 const { TreeNode } = Tree
 const tableInputStyle = {
@@ -142,7 +142,6 @@ export default class CustomQuery extends React.PureComponent {
   state = {
     modalFormDesignerVisible: false,
     modalTableCfgVisible: false,
-    modalButtonCfgVisible: false,
     modalModalCfgVisible: false,
     curRecord: {},
     curTableRecord: {},
@@ -506,19 +505,6 @@ export default class CustomQuery extends React.PureComponent {
           initialValue: formEntity.render || '',
         },
         {
-          label: '列表信息扩展',
-          key: 'tableInfoExtra',
-          name: 'tableInfoExtra',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入扩展内容',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.tableInfoExtra || '',
-        },
-        {
           label: '鼠标悬停提示',
           key: 'hover',
           name: 'hover',
@@ -556,6 +542,51 @@ export default class CustomQuery extends React.PureComponent {
                   onConfirm={() => remove(formEntity._id)}>
                   <Button type="danger" style={{marginLeft: '10px'}}>删除</Button>
                 </Popconfirm>
+              </div>
+            )
+          },
+          formItemLayout: {
+            wrapperCol: {
+              xs: {span: 24},
+              sm: {span: 20},
+            },
+          }
+        }
+      ]
+    }
+  }
+  makeTableInfoCfgConfig = (formEntity, submit) => {
+    return {
+      formLayoutConfig: {
+        labelCol: {
+          xs: {span: 24},
+          sm: {span: 4},
+        },
+        wrapperCol: {
+          xs: {span: 24},
+          sm: {span: 16},
+        },
+      },
+      formJson: [
+        {
+          label: '列表信息扩展',
+          key: 'tableInfoExtra',
+          name: 'tableInfoExtra',
+          component: {
+            name: 'TextArea',
+            props: {
+              placeholder: '请输入扩展内容',
+              autosize: true
+            }
+          },
+          initialValue: formEntity.tableInfoExtra || '',
+        },
+        {
+          key: 'submitBtn',
+          component: () => {
+            return (
+              <div>
+                <Button type="primary" onClick={submit} style={{marginLeft: '20%'}}>保存</Button>
               </div>
             )
           },
@@ -707,24 +738,16 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleDesignTable = (record) => {
     const { gridConfig } = record;
-    this.setState({
-      curRecord: record,
-      curTableRecord: JSON.parse(gridConfig).columns[0],
-      gridConfig: JSON.parse(gridConfig)
-    })
-    this.currentRowRecordId = record.id;
-    this.setModalVisible('modalTableCfgVisible', true);
-  }
-  handleDesignButton = (record) => {
-    const { gridConfig } = record
     const { topButtons, rowButtons } = JSON.parse(gridConfig)
     const buttons = [...topButtons, ...rowButtons]
     this.setState({
       curRecord: record,
+      curTableRecord: JSON.parse(gridConfig).columns[0],
+      gridConfig: JSON.parse(gridConfig),
       buttons
     })
     this.currentRowRecordId = record.id;
-    this.setModalVisible('modalButtonCfgVisible', true);
+    this.setModalVisible('modalTableCfgVisible', true);
   }
   handleDesignModal = (record) => {
     const { modalConfig = '{}' } = record
@@ -916,6 +939,36 @@ export default class CustomQuery extends React.PureComponent {
       }
     });
   }
+  handleTableInfoCfgSubmit = () => {
+    const { curRecord, gridConfig } = this.state
+    const form = this.oopTableInfoCfgForm.getForm()
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      const obj = {
+        ...gridConfig,
+        props: fieldsValue
+      }
+      const params = {
+        ...curRecord,
+        gridConfig: JSON.stringify(obj),
+        id: this.currentRowRecordId
+      }
+      this.props.dispatch({
+        type: 'devtoolsCustomQuery/saveOrUpdate',
+        payload: params,
+        callback: (res) => {
+          oopToast(res, '保存成功', '保存失败')
+          if (res.status === 'ok') {
+            this.setState({
+              curRecord: params,
+              gridConfig: obj,
+            })
+            this.onLoad()
+          }
+        }
+      })
+    })
+  }
   addTableCol = () => {
     const { gridConfig } = this.state
     const { columns } = gridConfig
@@ -941,14 +994,6 @@ export default class CustomQuery extends React.PureComponent {
       gridConfig: config,
       selectedKeys: [record]
     })
-  }
-  handleButtonCfgCancel = () => {
-    const datas = this.buttonCfgForm.checkStatuAndFormData()
-    if (datas.edit) {
-      message.error('有数据在编辑状态，尚未保存')
-    } else {
-      this.setModalVisible('modalButtonCfgVisible', false)
-    }
   }
   onButtonCfgChange = (type, item) => {
     const { buttons } = this.state
@@ -1003,7 +1048,6 @@ export default class CustomQuery extends React.PureComponent {
         callback: (res) => {
           oopToast(res, '保存成功', '保存失败')
           if (res.status === 'ok') {
-            this.setModalVisible('modalButtonCfgVisible', false)
             this.onLoad()
           }
         }
@@ -1052,9 +1096,9 @@ export default class CustomQuery extends React.PureComponent {
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
-    const { modalCreateVisible, modalButtonCfgVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys, workflowSelection} = this.state;
+    const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys, workflowSelection} = this.state;
     const { formConfig = {formJson: [], formLayout: 'horizontal'} } = curRecord
-    const { columns } = gridConfig
+    const { columns, props } = gridConfig
     const parseFormConfig = typeof formConfig === 'string' ? JSON.parse(formConfig) : formConfig
     const buttonCfgDatas = filterDefault(buttons)
     const formdata = isCreate ? {} : entity
@@ -1118,13 +1162,6 @@ export default class CustomQuery extends React.PureComponent {
         icon: 'table',
         display: record => (record.formConfig && JSON.parse(record.formConfig).formJson.length > 0),
         onClick: (record) => { this.handleDesignTable(record) },
-      },
-      {
-        text: '设计按钮',
-        name: 'designButton',
-        icon: 'sliders',
-        display: record => (record.formConfig && JSON.parse(record.formConfig).formJson.length > 0),
-        onClick: (record) => { this.handleDesignButton(record) },
       },
       {
         text: '设计模态窗口',
@@ -1437,72 +1474,68 @@ export default class CustomQuery extends React.PureComponent {
             ref={(el)=>{ this.oopFormDesigner = el }}
             formDetails={parseFormConfig} />
         </Modal>
-        <div className={styles.tableCfgModal}>
-          <Modal
-            visible={modalTableCfgVisible}
-            width="60%"
-            title="设计列表"
-            wrapClassName={styles.tableCfgModal}
-            onCancel={() => { this.setState({modalTableCfgVisible: false}) }}
-            destroyOnClose={true}
-            maskClosable={false}
-            footer={
-              <Fragment>
-                <Button onClick={this.handleTableCfgCancel}>关闭</Button>
-              </Fragment>
-            }
-          >
-            <Row gutter={16}>
-              <Col span={5}>
-                <Card title="字段列表" bordered={false} extra={<Button type="primary" onClick={this.addTableCol}>新建</Button>}>
-                  {
-                    columns ?
-                    (
-                      <Tree
-                        showLine
-                        selectedKeys={selectedKeys.length ? selectedKeys : [JSON.stringify(columns[0])]}
-                        onSelect={this.onTableCfgSelect}
-                      >
-                        {
-                          columns.map((col) => {
-                            return (
-                              <TreeNode title={col.title} key={JSON.stringify(col)} />
-                            )
-                          })
-                        }
-                      </Tree>
-                    ) : null
-                  }
-                </Card>
-              </Col>
-              <Col span={19}>
-                <Card title="字段编辑" bordered={false}>
-                  <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
-                </Card>
-              </Col>
-            </Row>
-          </Modal>
-        </div>
         <Modal
-          visible={modalButtonCfgVisible}
+          visible={modalTableCfgVisible}
           width="90%"
-          title="设计按钮"
-          onCancel={() => { this.setState({modalButtonCfgVisible: false}) }}
+          title="设计列表"
+          onCancel={() => { this.setState({modalTableCfgVisible: false}) }}
           destroyOnClose={true}
           maskClosable={false}
           footer={
             <Fragment>
-              <Button onClick={this.handleButtonCfgCancel}>关闭</Button>
-              <Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button>
+              <Button onClick={this.handleTableCfgCancel}>关闭</Button>
             </Fragment>
           }
         >
-          <OopTableForm
-            columns={buttonCfgColumns}
-            onChange={this.onButtonCfgChange}
-            value={buttonCfgDatas}
-            ref={(el)=>{ this.buttonCfgForm = el }}
-          />
+          <Tabs defaultActiveKey="1" animated={false}>
+            <TabPane tab="列编辑" key="1">
+              <div style={{backgroundColor: '#f0f2f5', padding: '10px'}}>
+                <Row gutter={16}>
+                  <Col span={5}>
+                    <Card title="字段列表" bordered={false} extra={<Button type="primary" onClick={this.addTableCol}>新建</Button>}>
+                      {
+                        columns ?
+                        (
+                          <Tree
+                            showLine
+                            selectedKeys={selectedKeys.length ? selectedKeys : [JSON.stringify(columns[0])]}
+                            onSelect={this.onTableCfgSelect}
+                          >
+                            {
+                              columns.map((col) => {
+                                return (
+                                  <TreeNode title={col.title} key={JSON.stringify(col)} />
+                                )
+                              })
+                            }
+                          </Tree>
+                        ) : null
+                      }
+                    </Card>
+                  </Col>
+                  <Col span={19}>
+                    <Card title="字段编辑" bordered={false}>
+                      <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
+                    </Card>
+                  </Col>
+                </Row>
+              </div>
+            </TabPane>
+            <TabPane tab="按钮编辑" key="2">
+              <OopTableForm
+                columns={buttonCfgColumns}
+                onChange={this.onButtonCfgChange}
+                value={buttonCfgDatas}
+                ref={(el)=>{ this.buttonCfgForm = el }}
+              />
+              <div style={{textAlign: 'right', marginTop: '10px'}}><Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button></div>
+            </TabPane>
+            <TabPane tab="列表编辑" key="3">
+              <Card bordered={false}>
+                <OopForm {...this.makeTableInfoCfgConfig(curTableRecord, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
+              </Card>
+            </TabPane>
+          </Tabs>
         </Modal>
         <Modal
           visible={modalModalCfgVisible}

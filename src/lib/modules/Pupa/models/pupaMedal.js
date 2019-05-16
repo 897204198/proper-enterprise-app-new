@@ -43,7 +43,7 @@ const mergeMedal = (arr, from, to, num) => {
         date_text: moment().format('YYYY-MM-DD'),
         type: to,
         type_text: medalMap[to],
-        path: '徽章合成',
+        path: '奖章合成',
         detailCollect: spliceArr,
         detail: mergeDetail(spliceArr, false)
       }
