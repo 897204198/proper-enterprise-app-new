@@ -524,7 +524,7 @@ export default class OopFormDesigner extends React.PureComponent {
         // const item = JSON.parse(this.state.currentRowItemJson);
         // eslint-disable-next-line
         const item = new Function('return '.concat(this.state.currentRowItemJson))();
-        if (item.name) {
+        if (item && item.name) {
           this.onRowItemClick(item.name);
         }
       }

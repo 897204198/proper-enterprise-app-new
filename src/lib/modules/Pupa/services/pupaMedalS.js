@@ -4,7 +4,7 @@ const customQueryService = new MongoService('PEP_PUPA_MEDAL');
 const {update, save, deleteById, batchDelete, fetchByEqual} = customQueryService;
 
 export async function fetch() {
-  return customQueryService.fetchByEqual({Pupa__filed: 1})
+  return customQueryService.fetch()
 }
 export async function fetchById(param) {
   return customQueryService.fetchById(param)

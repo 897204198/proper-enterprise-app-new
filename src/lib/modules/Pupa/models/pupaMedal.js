@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { fetch, saveOrUpdate, removeAll } from '../services/pupaMedalS';
 
 const medalMap = {
@@ -16,13 +17,13 @@ const filterMembers = (arr) => {
   }
   return res;
 }
-const mergeDetail = (arr, str = '', indent = false) => {
+const mergeDetail = (arr, indent = false) => {
   if (!arr.length) return ''
-  let paths = str
+  let paths = ''
   arr.map((item) => {
-    paths += `${indent ? '    -' : ''}日期：${item.date_text}   类型：${item.type_text}  来源：${item.path}\r\n`
+    paths += `${indent ? '    -' : ''}日期：${item.date}   类型：${item.type_text}  来源：${item.path}\r\n`
     if (item.detailCollect) {
-      paths += mergeDetail(item.detailCollect, '', true)
+      paths += mergeDetail(item.detailCollect, true)
     }
     return null
   })
@@ -37,15 +38,14 @@ const mergeMedal = (arr, from, to, num) => {
     for (let j = 0; j < times; j++) {
       const spliceArr = fromArr.splice(0, num)
       const obj = {
-        Pupa__filed: 1,
         emp: spliceArr[0].emp,
         date: new Date(),
-        date_text: new Date().toLocaleDateString().replace('/', '-'),
+        date_text: moment().format('YYYY-MM-DD'),
         type: to,
         type_text: medalMap[to],
         path: '徽章合成',
         detailCollect: spliceArr,
-        detail: mergeDetail(spliceArr, '')
+        detail: mergeDetail(spliceArr, false)
       }
       toArr.push(obj)
     }
