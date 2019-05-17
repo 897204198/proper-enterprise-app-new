@@ -4,7 +4,7 @@ import { Form } from 'antd';
 import moment from 'moment';
 import {inject} from '@framework/common/inject';
 import {isApp} from '@framework/utils/utils';
-import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties} from './utils';
+import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties, getValueByFunctionStr} from './utils';
 import styles from './index.less';
 
 let ifRenderByAntdMobile = isApp();
@@ -14,7 +14,7 @@ const FormContainer = Form.create({
 })((props)=>{
   const { OopForm$model, disabled = false, formJson = [], defaultValue = {}, form, self } = props;
   formJson.forEach((item)=>{
-    const {name, initialValue, component, subscribe = []} = item;
+    const {name, initialValue, component, subscribe = [], render} = item;
     // initialValue是数组但是长度为0 或者 没有initialValue;
     const value = defaultValue[name];
     if ((Array.isArray(initialValue) && initialValue.length === 0)
@@ -33,6 +33,10 @@ const FormContainer = Form.create({
           item.initialValue = moment(new Date(item.initialValue), format);
         }
       }
+    }
+    if (component.name === 'Input' || component.name === 'TextArea' || component.name === 'OopSystemCurrent') {
+      const v = getValueByFunctionStr(render, value);
+      item.initialValue = v
     }
     // 如果是表单只读 那么设置组件的props为disabled
     if (disabled) {
@@ -81,11 +85,18 @@ const FormContainer = Form.create({
           publishes.forEach((publish)=>{
             const changeItem = formJson.find(it=>it.name === subscribeName);
             if (changeItem) {
-              const changeValue = form.getFieldValue(changeItem.name);
-              const changeItemValue = changeValue === undefined ? changeItem.initialValue : changeValue;
-              // console.log(item.name, publish.property, isItemShow(changeItemValue, publish.value));
-              // item[publish.property] = isItemShow(currentValue, publish.value); 简单版实现
-              setFormJsonProperties(item, changeItemValue, publish)
+              const changeItemValue = form.getFieldValue(changeItem.name);
+              const changeValue = changeItem.display === false ? undefined : changeItemValue;
+              const currentValue = form.getFieldValue(item.name);
+              // 被依赖的组件还没有 渲染
+              if (changeItem.display !== false && form.getFieldValue(changeItem.name) === undefined) {
+                setTimeout(()=>{
+                  setFormJsonProperties(item, form.getFieldValue(changeItem.name), currentValue, publish);
+                  self.forceUpdate();
+                }, 100)
+              } else {
+                setFormJsonProperties(item, changeValue, currentValue, publish);
+              }
             }
           })
         }

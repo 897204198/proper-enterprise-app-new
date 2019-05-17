@@ -6,6 +6,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
 import { getUuid } from '@framework/common/oopUtils';
 import OopForm from '@pea/components/OopForm';
+import {toString2} from './utils/toString';
 import buildEditPanel from './utils/buildEditPanel';
 import jsBeautify from './utils/jsbeautify';
 import styles from './index.less';
@@ -133,88 +134,109 @@ const componentData = [
 ]
 
 export default class OopFormDesigner extends React.PureComponent {
-  state = {
-    currentRowItem: null,
-    selections: [
-      {label: '输入框', key: 'Input', component: {name: 'Input'}},
-      {label: '文本域', key: 'TextArea', component: {name: 'TextArea'}},
-      {label: '单选框', key: 'RadioGroup', component: {name: 'RadioGroup', children: componentData}},
-      {label: '多选框', key: 'CheckboxGroup', component: {name: 'CheckboxGroup', children: componentData}, initialValue: []},
-      {label: '选择器', key: 'Select', component: {name: 'Select', children: componentData}},
-      {label: '日期选择', key: 'DatePicker', component: {name: 'DatePicker'}},
-      {label: '数字输入框', key: 'InputNumber', component: {name: 'InputNumber'}},
-      {
-        label: '系统当前',
-        key: 'OopSystemCurrent',
-        component: {
-          name: 'OopSystemCurrent',
-          props: {url: '/auth/current/user', showPropName: 'name', code: 'currentLoginUser', label: '当前登录人'}}
-      },
-      {
-        label: '上传图片',
-        key: 'OopUpload',
-        component: {
-          name: 'OopUpload',
-          props: {
-            buttonText: '上传图片',
-            accept: 'image/*',
-            listType: 'picture',
-            type: ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
+  constructor(props) {
+    super(props);
+    const {formDetails: {formJson = [], formLayout, formTitle}} = this.props;
+    formJson.forEach((item)=>{
+      const {subscribe = []} = item;
+      if (subscribe.length) {
+        subscribe.forEach((sb)=>{
+          const {publish = []} = sb;
+          if (publish.length) {
+            publish.forEach((pb)=>{
+              const {value: v} = pb;
+              if (typeof v === 'string' && v.includes('function')) {
+                const fn = new Function(`return ${v}`); // eslint-disable-line
+                pb.value = fn();
+              }
+            })
           }
-        }
-      },
-      {
-        label: '文本组件',
-        key: 'OopText',
-        component: {
-          name: 'OopText',
-          props: {
-            editable: true
+        })
+      }
+    });
+    this.state = {
+      currentRowItem: null,
+      selections: [
+        {label: '输入框', key: 'Input', component: {name: 'Input'}},
+        {label: '文本域', key: 'TextArea', component: {name: 'TextArea'}},
+        {label: '单选框', key: 'RadioGroup', component: {name: 'RadioGroup', children: componentData}},
+        {label: '多选框', key: 'CheckboxGroup', component: {name: 'CheckboxGroup', children: componentData}, initialValue: []},
+        {label: '选择器', key: 'Select', component: {name: 'Select', children: componentData}},
+        {label: '日期选择', key: 'DatePicker', component: {name: 'DatePicker'}},
+        {label: '数字输入框', key: 'InputNumber', component: {name: 'InputNumber'}},
+        {
+          label: '系统当前',
+          key: 'OopSystemCurrent',
+          component: {
+            name: 'OopSystemCurrent',
+            props: {url: '/auth/current/user', showPropName: 'name', code: 'currentLoginUser', label: '当前登录人'}}
+        },
+        {
+          label: '上传图片',
+          key: 'OopUpload',
+          component: {
+            name: 'OopUpload',
+            props: {
+              buttonText: '上传图片',
+              accept: 'image/*',
+              listType: 'picture',
+              type: ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
+            }
+          }
+        },
+        {
+          label: '文本组件',
+          key: 'OopText',
+          component: {
+            name: 'OopText',
+            props: {
+              editable: true
+            },
+          }
+        },
+        {
+          label: '用户选择',
+          key: 'OopGroupUserPicker',
+          component: {
+            name: 'OopGroupUserPicker',
+            props: {
+              placeholder: '请选择'
+            }
+          }
+        },
+        {
+          label: '员工选择',
+          key: 'OopOrgEmpPicker',
+          component: {
+            name: 'OopOrgEmpPicker',
+            props: {
+              placeholder: '请选择'
+            }
+          }
+        },
+        {
+          label: '开关',
+          key: 'Switch',
+          component: {
+            name: 'Switch',
+          },
+          valuePropName: 'checked'
+        },
+        {
+          label: '文本编辑器',
+          key: 'OopTextEditor',
+          component: {
+            name: 'OopTextEditor',
           },
         }
-      },
-      {
-        label: '用户选择',
-        key: 'OopGroupUserPicker',
-        component: {
-          name: 'OopGroupUserPicker',
-          props: {
-            placeholder: '请选择'
-          }
-        }
-      },
-      {
-        label: '员工选择',
-        key: 'OopOrgEmpPicker',
-        component: {
-          name: 'OopOrgEmpPicker',
-          props: {
-            placeholder: '请选择'
-          }
-        }
-      },
-      {
-        label: '开关',
-        key: 'Switch',
-        component: {
-          name: 'Switch',
-        },
-        valuePropName: 'checked'
-      },
-      {
-        label: '文本编辑器',
-        key: 'OopTextEditor',
-        component: {
-          name: 'OopTextEditor',
-        },
-      }
-    ],
-    rowItems: this.props.formDetails.formJson,
-    formLayout: this.props.formDetails.formLayout,
-    formTitle: this.props.formDetails.formTitle,
-    customRules: false,
-    formPattern: 'simple',
-    currentRowItemJson: ''
+      ],
+      rowItems: formJson,
+      formLayout,
+      formTitle,
+      customRules: false,
+      formPattern: 'simple',
+      currentRowItemJson: ''
+    }
   }
   componentWillUnmount() {
     this.renderCenterPanel.cancel();
@@ -238,7 +260,7 @@ export default class OopFormDesigner extends React.PureComponent {
 
         this.setState({
           currentRowItem: aItem,
-          currentRowItemJson: isAdvanced ? jsBeautify(JSON.stringify(jsonItem)) : ''
+          currentRowItemJson: isAdvanced ? jsBeautify(toString2(jsonItem)) : ''
         })
       } else {
         aItem.active = false;
@@ -448,7 +470,7 @@ export default class OopFormDesigner extends React.PureComponent {
     console.log(fieldsValue)
     // 设置默认值
     rowItems.forEach((item)=>{
-      const {name, component} = item;
+      const {name, component, subscribe = []} = item;
       const value = fieldsValue[name];
       item.initialValue = value;
       if (component.dictCatalog || component.dataUrl) {
@@ -457,6 +479,20 @@ export default class OopFormDesigner extends React.PureComponent {
       // “系统当前” 组件 在设置表单的时候 不设置默认值
       if (component.name === 'OopSystemCurrent') {
         item.initialValue = undefined;
+      }
+      // subscribe 中的publish的value可能是函数 那么需要 字符串化
+      if (subscribe.length) {
+        subscribe.forEach((sb)=>{
+          const {publish = []} = sb;
+          if (publish.length) {
+            publish.forEach((pb)=>{
+              const {value: v} = pb;
+              if (typeof v === 'function') {
+                pb.value = v.toString()
+              }
+            })
+          }
+        })
       }
     })
     return {
@@ -516,7 +552,7 @@ export default class OopFormDesigner extends React.PureComponent {
         }
         delete jsonItem.active;
         delete jsonItem.initialValue;
-        const currentRowItemJson = jsBeautify(JSON.stringify(jsonItem))
+        const currentRowItemJson = jsBeautify(toString2(jsonItem))
         this.setState({
           currentRowItemJson
         });

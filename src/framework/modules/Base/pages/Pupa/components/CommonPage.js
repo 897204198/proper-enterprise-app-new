@@ -256,7 +256,7 @@ export default class CommonPage extends React.PureComponent {
         onClick: (items)=>{ this.handleBatchRemove(items) }
       })
     }
-    const otherTopBtns = tbCfg.filter(it=>!'create,start,batchDelete'.includes(it.name));
+    const otherTopBtns = tbCfg.filter(it=>it.enable === true && it.default === undefined);
     if (otherTopBtns && otherTopBtns.length) {
       otherTopBtns.forEach((button)=>{
         if (button) {
@@ -275,7 +275,6 @@ export default class CommonPage extends React.PureComponent {
         onClick: (record)=>{ this.handleEdit(record) },
       })
     }
-    const otherRowBtns = rbCfg.filter(it=>!'delete,edit'.includes(it.name));
     const deleteBtn = rbCfg.find(it=>it.name === 'delete');
     if (deleteBtn && deleteBtn.enable) {
       rowButtons.push({
@@ -287,6 +286,7 @@ export default class CommonPage extends React.PureComponent {
         onClick: (record)=>{ this.handleRemove(record) },
       })
     }
+    const otherRowBtns = rbCfg.filter(it=>it.enable === true && it.default === undefined);
     if (otherRowBtns && otherRowBtns.length) {
       otherRowBtns.forEach((button)=>{
         if (button) {

@@ -282,47 +282,6 @@ export const isItemShow = (itemValue, displayValue)=>{
   return JSON.stringify(itemValue) === JSON.stringify(displayValue);
 }
 
-// 注册订阅者与发布者 deprecated
-export const registerSubscribeAndPublish = (props)=>{
-  const subscribeObj = {};
-  const {formJson} = props;
-  formJson.forEach((item)=>{
-    const {subscribe = [], name: itemName} = item;
-    subscribe.forEach((sbcb)=>{
-      const {name: subscribeName, publish = []} = sbcb;
-      if (publish.length) {
-        // 为publish增加当前formjson的name
-        const newPublish = publish.map(pb=>({...pb, name: itemName}));
-        const publishes = subscribeObj[subscribeName];
-        if (publishes === undefined) {
-          subscribeObj[subscribeName] = newPublish;
-        } else {
-          publishes.push(newPublish);
-        }
-      }
-    })
-  });
-  return Object.keys(subscribeObj).length === 0 ? null : subscribeObj
-}
-
-// 表单改变之后根据subscribe 设置表单属性 deprecated
-export const handleFormFieldChangeBySubscribe = (props, changedValues, allValues, subscribe)=>{
-  if (subscribe) {
-    const {formJson} = props;
-    console.log('current subscribe', subscribe)
-    console.log(props, changedValues, allValues);
-    const changeName = Object.keys(changedValues)[0];
-    const publishes = subscribe[changeName];
-    if (publishes) {
-      publishes.forEach((publish)=>{
-        console.log(publish.property)
-        const currentItem = formJson.find(item=>item.name === publish.name);
-        currentItem[publish.property] = equals(changedValues[changeName], publish.value)
-      })
-    }
-  }
-}
-
 // 表单的值是否相等
 export const equals = (value, value2)=>{
   if (value === value2) {
@@ -333,7 +292,7 @@ export const equals = (value, value2)=>{
 }
 
 // 通知formJson变化
-export const setFormJsonProperties = (item, changedValue, publish)=>{
+export const setFormJsonProperties = (item, changedValue, currentValue, publish)=>{
   const {value, property} = publish;
   if (property) {
     const properties = property.split('.');
@@ -349,12 +308,12 @@ export const setFormJsonProperties = (item, changedValue, publish)=>{
           tempObj = tempObj[proper]
         }
       }
-      const funcStr = `return this.${property} = arguments[0](arguments[1], arguments[2])`;
+      const funcStr = `return this.${property} = arguments[0](arguments[1], arguments[2], arguments[3])`;
       let fn = null;
       try {
         // eslint-disable-next-line
         fn = new Function(funcStr);
-        fn.apply(item, [equals, changedValue, value]);
+        fn.apply(item, [caculateSubscribeResult, changedValue, currentValue, value]);
       } catch (e) {
         console.error(e)
       }
@@ -362,7 +321,44 @@ export const setFormJsonProperties = (item, changedValue, publish)=>{
         fn = null;
       })
     } else {
-      item[property] = equals(changedValue, value)
+      item[property] = caculateSubscribeResult(changedValue, currentValue, value);
+    }
+  }
+}
+
+// 根据subscribe中的设置 来计算结果
+const caculateSubscribeResult = (changedValue, currentValue, value)=>{
+  try {
+    return getValueByFunctionStr(value, changedValue, currentValue);
+  } catch (e) {
+    return equals(changedValue, value)
+  }
+}
+
+/**
+ * 根据一个函数或者字符串的函数
+ * 返回这个函数执行后的结果
+ * @param functionStr
+ * @param value
+ * @returns {*}
+ */
+export const getValueByFunctionStr = (functionStr, ...value)=>{
+  if (functionStr) {
+    if (typeof functionStr === 'function') {
+      try {
+        return functionStr(...value);
+      } catch (e) {
+        return undefined;
+      }
+    } else if (typeof functionStr === 'string' && functionStr.includes('function')) {
+      try {
+        const fn = new Function(`return ${functionStr}`)(); // eslint-disable-line
+        return fn(...value);
+      } catch (e) {
+        return undefined;
+      }
+    } else {
+      throw Error(`${functionStr}不是一个合法的函数或函数字符串`);
     }
   }
 }
