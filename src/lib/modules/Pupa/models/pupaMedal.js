@@ -21,7 +21,7 @@ const mergeDetail = (arr, indent = false) => {
   if (!arr.length) return ''
   let paths = ''
   arr.map((item) => {
-    paths += `${indent ? '    -' : ''}日期：${item.date}   类型：${item.type_text}  来源：${item.path}\r\n`
+    paths += `${indent ? '    -' : ''}日期：${item.date_text}   类型：${item.type_text}  来源：${item.path}\r\n`
     if (item.detailCollect) {
       paths += mergeDetail(item.detailCollect, true)
     }
@@ -37,15 +37,21 @@ const mergeMedal = (arr, from, to, num) => {
   if (times > 0) {
     for (let j = 0; j < times; j++) {
       const spliceArr = fromArr.splice(0, num)
+      const conver = {}
+      if (to === 'A') {
+        conver.convert = false
+        conver.convert_text = '未兑换'
+      }
       const obj = {
         emp: spliceArr[0].emp,
-        date: new Date(),
+        date: moment().format('YYYY-MM-DD'),
         date_text: moment().format('YYYY-MM-DD'),
         type: to,
         type_text: medalMap[to],
         path: '奖章合成',
         detailCollect: spliceArr,
-        detail: mergeDetail(spliceArr, false)
+        detail: mergeDetail(spliceArr, false),
+        ...conver
       }
       toArr.push(obj)
     }
