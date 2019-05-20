@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Layout, Menu, Icon, Spin} from 'antd';
+import { Layout, Menu, Icon, Input, Spin} from 'antd';
 import pathToRegexp from 'path-to-regexp';
+import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import * as properties from '@/config/properties';
 import styles from './index.less';
@@ -8,6 +9,9 @@ import styles from './index.less';
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
+const isReactObject = (component)=>{
+  return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
+}
 // Allow menu.js config icon as string or ReactNode
 //   icon: 'setting',
 //   icon: 'http://demo.com/icon.png',
@@ -49,15 +53,34 @@ const getMenuOpenPath = (nodePath, menuData = []) =>{
   return result;
 }
 
+const Search = (props)=>{
+  const {menuSearchValue, onSearch, collapsed, onSearchIconClick, self} = props;
+  return (<div style={{padding: '4px 20px 4px 24px'}}>
+    {collapsed ? <span className={styles.menuSearchIcon} onClick={onSearchIconClick}><Icon type="search" /></span> :
+      <Input.Search
+        allowClear
+        onChange={onSearch}
+        placeholder="搜索"
+        defaultValue={menuSearchValue}
+        ref={(el) => { self.searchInput = el }}
+      />
+    }
+  </div>)
+}
+
+
 export default class SiderMenu extends PureComponent {
   constructor(props) {
     super(props);
     this.menus = props.menuData;
     this.state = {
       openKeys: this.getDefaultCollapsedSubMenus(props),
-      selectedKeys: []
+      selectedKeys: [],
+      menuSearchValue: undefined
     };
   }
+  filterMenus = [];
+  antMenusNodeCache = [];
   componentWillReceiveProps(nextProps) {
     const {location: {pathname: newPathname, search: newSearch}} = nextProps;
     const {location: {pathname, search}, menuData = []} = this.props;
@@ -103,14 +126,14 @@ export default class SiderMenu extends PureComponent {
     });
   }
   /**
-  * 判断是否是http链接.返回 Link 或 a
-  * Judge whether it is http link.return a or Link
-  * @memberof SiderMenu
-  */
-  getMenuItemPath = (item) => {
+   * 判断是否是http链接.返回 Link 或 a
+   * Judge whether it is http link.return a or Link
+   * @memberof SiderMenu
+   */
+  getMenuItemPath = (item, name) => {
     const itemPath = this.conversionPath(item.path);
     const icon = getIcon(item.icon);
-    const { target, name } = item;
+    const { target } = item;
     // Is it a http link
     if (/^https?:\/\//.test(itemPath)) {
       return (
@@ -134,44 +157,98 @@ export default class SiderMenu extends PureComponent {
    * get SubMenu or Item
    */
   getSubMenuOrItem=(item) => {
+    const {menuSearchValue = ''} = this.state;
+    let {name} = item;
+    item.display = true;
+    if (typeof name === 'string') {
+      // 有值 准备过滤
+      if (menuSearchValue !== '') {
+        const index = name.indexOf(menuSearchValue);
+        if (index > -1) {
+          // 过滤成蓝色的
+          const beforeStr = item.name.substr(0, index);
+          const afterStr = item.name.substr(index + menuSearchValue.length);
+          name = (<span>
+            {beforeStr}
+            <span className={styles.primaryColor}>{menuSearchValue}</span>
+            {afterStr}
+          </span>)
+        } else {
+          item.display = false;
+        }
+      }
+    }
     if (item.children && item.children.some(child => child.name)) {
       return (
         <SubMenu
+          className={isReactObject(name) ? 'filtered' : ''}
           title={
             item.icon ? (
               <span>
                 {getIcon(item.icon)}
-                <span>{item.name}</span>
+                <span>{name}</span>
               </span>
-            ) : item.name
-            }
+            ) : name
+          }
           key={item.path}
         >
           {this.getNavMenuItems(item.children)}
         </SubMenu>
       );
     } else {
+      if (item.display === false) {
+        return null;
+      }
       return (
         <Menu.Item key={item.path} name={item.name}>
-          {this.getMenuItemPath(item)}
+          {this.getMenuItemPath(item, name)}
         </Menu.Item>
       );
     }
   }
   /**
-  * 获得菜单子节点
-  * @memberof SiderMenu
-  */
-  getNavMenuItems = (menusData) => {
+   * 获得菜单子节点
+   * @memberof SiderMenu
+   */
+  getNavMenuItems = (menusData, all) => {
     if (!menusData) {
       return [];
     }
-    return menusData
+    const filterMenus = menusData
       .filter(item => item.name && !item.hideInMenu)
       .map((item) => {
         return this.getSubMenuOrItem(item);
       })
       .filter(item => !!item);
+    // 把菜单缓存起来 为搜索的时候用
+    if (all) {
+      this.filterMenus = filterMenus
+    }
+    setTimeout(()=>{
+      // if (this.antMenusNodeCache.length === 0) {
+      //   if (this.props.menuData.length > 0) {
+      //     // 隐藏没有子节点的菜单
+      //     if (this.state.menuSearchValue) {
+      //       this.antMenusNodeCache = document.querySelectorAll('.ant-menu.ant-menu-sub');
+      //     }
+      //   }
+      // }
+      document.querySelectorAll('.ant-menu.ant-menu-sub').forEach((node)=>{
+        const li = node.parentNode;
+        let show = 'block';
+        if (li) {
+          if (this.state.menuSearchValue) {
+            if (!li.className.includes('filtered')) {
+              if (node.children.length === 0) {
+                show = 'none';
+              }
+            }
+          }
+          li.style.display = show;
+        }
+      })
+    })
+    return filterMenus;
   }
   // conversion Path
   // 转化路径
@@ -196,10 +273,48 @@ export default class SiderMenu extends PureComponent {
       selectedKeys
     })
   }
+  handleOnSearch = (event)=>{
+    const {value} = event.target;
+    this.handleOnSearchDebounce(value)
+  }
+  @Debounce(300)
+  handleOnSearchDebounce(menuSearchValue) {
+    this.setState({
+      menuSearchValue
+    })
+  }
+  handleOnSearchIconClick = ()=>{
+    const { onCollapse } = this.props;
+    onCollapse(false);
+    setTimeout(()=>{
+      this.searchInput.focus();
+    })
+  }
+  getOpenKeys = ()=>{
+    const { openKeys, menuSearchValue } = this.state;
+    const { collapsed } = this.props;
+    if (!menuSearchValue) {
+      return collapsed ? [] : openKeys
+    } else {
+      const menuItemKeys = [];
+      const getKey = (reactNodes)=>{
+        React.Children.forEach(reactNodes, (node)=>{
+          if (node.type.name === 'SubMenu' || node.type.name === 'MenuItem') {
+            menuItemKeys.push(node.key);
+            if (node.props.children) {
+              getKey(node.props.children)
+            }
+          }
+        })
+      }
+      getKey(this.filterMenus);
+      return menuItemKeys;
+    }
+  }
   render() {
     const { logo, collapsed, onCollapse } = this.props;
-    const { openKeys, selectedKeys } = this.state;
-    // Don't show popup menu when it is been collapsed
+    const { selectedKeys, menuSearchValue } = this.state;
+    const openKeys = this.getOpenKeys();
     const menuProps = collapsed ? {} : {
       openKeys,
     };
@@ -219,16 +334,25 @@ export default class SiderMenu extends PureComponent {
             <h1>{properties.basicLayoutTitle}</h1>
           </Link>
         </div>
+        <Search
+          menuSearchValue={menuSearchValue}
+          onSearch={this.handleOnSearch}
+          collapsed={collapsed}
+          onSearchIconClick={this.handleOnSearchIconClick}
+          self={this}
+        />
         <Menu
           key="Menu"
           theme="dark"
           mode="inline"
-          {...menuProps}
+          {
+            ...menuProps
+          }
           onOpenChange={this.handleOpenChange}
           selectedKeys={selectedKeys.length ? selectedKeys : [openKeys[openKeys.length - 1]]}
           onSelect={this.handleOnSelect}
-          style={{ padding: '16px 0', width: '100%', height: 'calc(100vh - 64px)', overflowY: 'auto'}} >
-          {this.getNavMenuItems(this.props.menuData)}
+          style={{ padding: '0 0 16px', width: '100%', height: 'calc(100vh - 104px)', overflowY: 'auto'}} >
+          {this.getNavMenuItems(this.props.menuData, true)}
         </Menu>
         {this.props.showMenusLoading && (
           <div className={styles.menuLoading}>

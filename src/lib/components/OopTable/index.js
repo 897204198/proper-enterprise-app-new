@@ -193,6 +193,18 @@ export default class OopTable extends PureComponent {
         // }
       }
     })
+    const getBtnDisabled = (disabled, record)=>{
+      const type = typeof disabled;
+      if (type === 'boolean') {
+        return type
+      } else if (type === 'function') {
+        return disabled(record);
+      } else if (type === 'undefined') {
+        return false;
+      } else {
+        return undefined;
+      }
+    }
     if (rowButtons.length) {
       cols.push({
         ...actionColumn,
@@ -210,21 +222,21 @@ export default class OopTable extends PureComponent {
                     {item.icon ?
                       (
                         <Tooltip placement="bottom" title={item.text}>
-                          <a>
+                          <a disabled={getBtnDisabled(item.disabled, record)}>
                             <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
                           </a>
                         </Tooltip>
-                      ) : <a>{item.text}</a>
+                      ) : <a disabled={getBtnDisabled(item.disabled, record)}>{item.text}</a>
                     }
                   </Popconfirm>
                 ) : (
                   item.icon ? (
                     <Tooltip placement="bottom" title={item.text}>
-                      <a onClick={() => item.onClick(record)}>
+                      <a disabled={getBtnDisabled(item.disabled, record)} onClick={() => item.onClick(record)}>
                         <Icon type={item.icon} style={(typeof item.style === 'function') ? item.style(record) : item.style} />
                       </a>
                     </Tooltip>
-                  ) : <a onClick={() => item.onClick(record)}>{item.text}</a>
+                  ) : <a disabled={getBtnDisabled(item.disabled, record)} onClick={() => item.onClick(record)}>{item.text}</a>
                 )
               }
             </Fragment>)

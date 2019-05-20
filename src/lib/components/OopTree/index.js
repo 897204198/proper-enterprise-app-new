@@ -101,6 +101,7 @@ export default class OopTree extends PureComponent {
     this.state = {
       currentSelectTreeNode: null,
       expandedKeys: [...defaultExpandedKeys],
+      autoExpandParent: false,
       searchValue: '',
       selectedKeys: [...defaultSelectedKeys],
       defaultKeys: [...defaultSelectedKeys],
@@ -310,12 +311,14 @@ export default class OopTree extends PureComponent {
     }).filter((item, i, self) => item && self.indexOf(item) === i);
     this.setState({
       expandedKeys,
+      autoExpandParent: true,
       searchValue: value
     });
   }
   onExpand = (expandedKeys) => {
     this.setState({
       expandedKeys,
+      autoExpandParent: false,
     });
   }
   getCurrentSelectTreeNode = ()=>{
@@ -350,7 +353,7 @@ export default class OopTree extends PureComponent {
     })
   }
   render() {
-    const { searchValue, expandedKeys, selectedKeys } = this.state;
+    const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
     const { treeData, treeTitle, treeKey, treeRoot, treeLoading, ...treeConfig} = this.props;
     this.setTitle();
     return (
@@ -362,6 +365,7 @@ export default class OopTree extends PureComponent {
             className="getTreeDom"
             onExpand={this.onExpand}
             expandedKeys={[...expandedKeys]}
+            autoExpandParent={autoExpandParent}
             onSelect={this.handleOnSelect}
             selectedKeys={[...selectedKeys]}
             onRightClick={this.handleOnRightClick}

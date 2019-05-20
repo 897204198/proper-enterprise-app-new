@@ -4,7 +4,7 @@ import { Form } from 'antd';
 import moment from 'moment';
 import {inject} from '@framework/common/inject';
 import {isApp} from '@framework/utils/utils';
-import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties, getValueByFunctionStr} from './utils';
+import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties /* getValueByFunctionStr */ } from './utils';
 import styles from './index.less';
 
 let ifRenderByAntdMobile = isApp();
@@ -14,7 +14,7 @@ const FormContainer = Form.create({
 })((props)=>{
   const { OopForm$model, disabled = false, formJson = [], defaultValue = {}, form, self } = props;
   formJson.forEach((item)=>{
-    const {name, initialValue, component, subscribe = [], render} = item;
+    const {name, initialValue, component, subscribe = [], /* render */} = item;
     // initialValue是数组但是长度为0 或者 没有initialValue;
     const value = defaultValue[name];
     if ((Array.isArray(initialValue) && initialValue.length === 0)
@@ -34,9 +34,10 @@ const FormContainer = Form.create({
         }
       }
     }
+    // TODO render
     if (component.name === 'Input' || component.name === 'TextArea' || component.name === 'OopSystemCurrent') {
-      const v = getValueByFunctionStr(render, value);
-      item.initialValue = v
+      // const v = getValueByFunctionStr(render, value);
+      // item.initialValue = v
     }
     // 如果是表单只读 那么设置组件的props为disabled
     if (disabled) {
