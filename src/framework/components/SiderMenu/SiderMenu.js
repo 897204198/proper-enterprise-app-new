@@ -299,7 +299,7 @@ export default class SiderMenu extends PureComponent {
       const menuItemKeys = [];
       const getKey = (reactNodes)=>{
         React.Children.forEach(reactNodes, (node)=>{
-          if (node.type.name === 'SubMenu' || node.type.name === 'MenuItem') {
+          if (node.type.isSubMenu === 1 || node.type.isMenuItem === 1) {
             menuItemKeys.push(node.key);
             if (node.props.children) {
               getKey(node.props.children)
