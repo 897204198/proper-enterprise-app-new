@@ -111,7 +111,7 @@ export default class OopTable extends PureComponent {
           filters[key].forEach((fliter) => {
             for (let i = 0; i < columns.length; i++) {
               if (columns[i].dataIndex === key) {
-                obj.title.push(columns[i].filters.find(it => it.value.toString() === fliter).text)
+                obj.title.push(columns[i].filters.find(it => it.value === fliter).text)
               }
             }
           })

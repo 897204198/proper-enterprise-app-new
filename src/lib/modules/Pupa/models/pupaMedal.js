@@ -21,7 +21,7 @@ const mergeDetail = (arr, indent = false) => {
   if (!arr.length) return ''
   let paths = ''
   arr.map((item) => {
-    paths += `${indent ? '    -' : ''}日期：${item.date_text}   类型：${item.type_text}  来源：${item.path}\r\n`
+    paths += `${indent ? '    -' : ''}${item.date_text}/${item.type_text}/${item.path}\r\n`
     if (item.detailCollect) {
       paths += mergeDetail(item.detailCollect, true)
     }
@@ -70,32 +70,34 @@ export default {
       let c2b = []
       let b2a = []
       const members = filterMembers(result)
+      let saveSuccess = true
       for (let i = 0; i < members.length; i++) {
         const memberArr = result.filter(item => item.emp[0].id === members[i])
         c2b = mergeMedal(memberArr, 'C', 'B', 5)
         b2a = mergeMedal(c2b, 'B', 'A', 3)
-      }
-      let saveSuccess = true
-      for (let j = 0; j < b2a.length; j++) {
-        const res = yield call(saveOrUpdate, b2a[j])
-        if (res.status === 'error') {
-          saveSuccess = false
+        for (let j = 0; j < b2a.length; j++) {
+          const res = yield call(saveOrUpdate, b2a[j])
+          if (res.status === 'error') {
+            saveSuccess = false
+          }
+        }
+        if (!saveSuccess) {
+          if (callback) callback({status: 'error'})
+        } else {
+          const ids = memberArr.map(item => item.id)
+          b2a.map((item) => {
+            if (item.id && ids.indexOf(item.id) !== -1) {
+              const index = ids.findIndex((value) => {
+                return value === item.id
+              })
+              ids.splice(index, 1)
+            }
+            return null
+          })
+          yield call(removeAll, {ids: ids.join(',')})
         }
       }
-      if (!saveSuccess) {
-        if (callback) callback({status: 'error'})
-      } else {
-        const ids = resp.result.map(item => item.id)
-        b2a.map((item) => {
-          if (item.id && ids.indexOf(item.id) !== -1) {
-            const index = ids.findIndex((value) => {
-              return value === item.id
-            })
-            ids.splice(index, 1)
-          }
-          return null
-        })
-        yield call(removeAll, {ids: ids.join(',')})
+      if (saveSuccess) {
         if (callback) callback({status: 'ok'})
       }
     },
