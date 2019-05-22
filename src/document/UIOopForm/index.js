@@ -116,11 +116,10 @@ export default class App extends React.Component {
     const form = oopForm.getForm();
     form.validateFields((error) => {
       if (error) {
-        oopForm.showValidErr(error);
         return
       }
-      const params = form.getFieldsValue()
-      console.log(params)
+      const formData = oopForm.getFormData()
+      console.log(formData)
     })
   }
   render() {
@@ -130,7 +129,7 @@ export default class App extends React.Component {
         formJson={this.formJson}
         formTitle="报销单"
         formLayout="horizontal"
-        ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }}
+        ref={(el)=>{ this.oopForm = el && el.getWrappedInstance() }}
       />
     )
     const option = [

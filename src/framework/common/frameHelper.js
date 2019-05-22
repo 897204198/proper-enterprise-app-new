@@ -192,7 +192,7 @@ function is404Exception(errMsg) {
 function handleError(moduleName, pathName, err) {
   if (is404Exception(err.message)) {
     console.error(`No matching page found named '/${moduleName}/${pathName}'`);
-    window.location.replace('/#/404');
+    window.location.replace(`${location.pathname}#/404`)
   } else {
     console.error(err);
   }

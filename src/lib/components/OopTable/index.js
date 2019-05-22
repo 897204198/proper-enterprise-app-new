@@ -332,7 +332,10 @@ export default class OopTable extends PureComponent {
           let value = record[column.dataIndex];
           if (value) {
             if (column.render) {
-              value = column.render(value, record);
+              const r = column.render(value, record);
+              if (typeof r === 'string') {
+                value = r;
+              }
             }
             // value = value.toString();
             if (value.includes(',')) {

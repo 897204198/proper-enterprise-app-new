@@ -9,20 +9,94 @@ import styles from './index.less';
 
 let ifRenderByAntdMobile = isApp();
 
-const FormContainer = Form.create({
-  wrappedComponentRef: true,
-})((props)=>{
-  const { OopForm$model, disabled = false, formJson = [], defaultValue = {}, form, self } = props;
-  formJson.forEach((item)=>{
-    const {name, initialValue, component, subscribe = [], /* render */} = item;
-    // initialValue是数组但是长度为0 或者 没有initialValue;
-    const value = defaultValue[name];
-    if ((Array.isArray(initialValue) && initialValue.length === 0)
-      || initialValue === undefined) {
-      item.initialValue = value
+// 渲染的时候获取OopForm的值
+const getOopFormValueInRender = (item, form)=>{
+  const {display, initialValue, name} = item;
+  // 组件不显示
+  if (display === false) {
+    const value = form.getFieldValue(name);
+    // 没有渲染 返回 initialValue
+    if (value === undefined) {
+      return initialValue;
     } else {
-      item.initialValue = self.isDictValue(value) ? JSON.stringify(value) : (value || initialValue);
+      // 渲染了 返回undefined
+      return undefined;
     }
+  } else {
+    // 组件显示
+    const value = form.getFieldValue(name);
+    // 没有渲染 返回 initialValue
+    if (value === undefined) {
+      return initialValue;
+    } else {
+      // 渲染了 返回undefined
+      return value;
+    }
+  }
+}
+
+
+const FormContainer = Form.create({
+  mapPropsToFields(props) {
+    const {defaultValue = {}, formJson = [], self} = props;
+    if (Object.keys(defaultValue).length > 0) {
+      const result = {};
+      formJson.forEach((item)=>{
+        const {name, component, subscribe = [], initialValue} = item;
+        // 赋值
+        if (name) {
+          let value = defaultValue[name];
+          if (value !== undefined) {
+            // 数据字典
+            if (self.isDictValue(value)) {
+              value = JSON.stringify(value)
+            }
+            // 时间
+            if (component.name === 'DatePicker') {
+              if (ifRenderByAntdMobile) {
+                value = new Date(value);
+              } else {
+                const format = (component.props && component.props.format) || 'YYYY-MM-DD';
+                value = moment(new Date(value), format);
+              }
+            }
+            result[name] = Form.createFormField({value})
+          }
+        }
+        // 联动
+        if (subscribe.length) {
+          subscribe.forEach((sbcb)=>{
+            const {name: subscribeName, publish: publishes = []} = sbcb;
+            if (publishes.length) {
+              publishes.forEach((publish)=>{
+                const changeItem = formJson.find(it=>it.name === subscribeName);
+                if (changeItem) {
+                  const changeValue = defaultValue[subscribeName];
+                  const currentValue = defaultValue[name] === undefined ? initialValue : defaultValue[name];
+                  // 被依赖的组件还没有 渲染
+                  setFormJsonProperties(item, changeValue, currentValue, publish);
+                }
+              })
+            }
+          })
+        }
+      })
+      console.log(result);
+      return result;
+    }
+  }
+})((props)=>{
+  const { OopForm$model, disabled = false, formJson = [], form, self } = props;
+  formJson.forEach((item)=>{
+    const {name, component, subscribe = [], /* render */} = item;
+    // initialValue是数组但是长度为0 或者 没有initialValue;
+    // const value = defaultValue[name];
+    // if ((Array.isArray(initialValue) && initialValue.length === 0)
+    //   || initialValue === undefined) {
+    //   item.initialValue = value
+    // } else {
+    //   item.initialValue = self.isDictValue(value) ? JSON.stringify(value) : (value || initialValue);
+    // }
     // 处理DatePicker的值 如果是移动端不需要转化成moment对象
     if (component.name === 'DatePicker') {
       if (item.initialValue) {
@@ -78,7 +152,6 @@ const FormContainer = Form.create({
         }
       }
     }
-    // 解析display配置
     if (subscribe.length) {
       subscribe.forEach((sbcb)=>{
         const {name: subscribeName, publish: publishes = []} = sbcb;
@@ -86,18 +159,9 @@ const FormContainer = Form.create({
           publishes.forEach((publish)=>{
             const changeItem = formJson.find(it=>it.name === subscribeName);
             if (changeItem) {
-              const changeItemValue = form.getFieldValue(changeItem.name);
-              const changeValue = changeItem.display === false ? undefined : changeItemValue;
-              const currentValue = form.getFieldValue(item.name);
-              // 被依赖的组件还没有 渲染
-              if (changeItem.display !== false && form.getFieldValue(changeItem.name) === undefined) {
-                setTimeout(()=>{
-                  setFormJsonProperties(item, form.getFieldValue(changeItem.name), currentValue, publish);
-                  self.forceUpdate();
-                }, 100)
-              } else {
-                setFormJsonProperties(item, changeValue, currentValue, publish);
-              }
+              const changeValue = getOopFormValueInRender(changeItem, form);
+              const currentValue = getOopFormValueInRender(item, form);
+              setFormJsonProperties(item, changeValue, currentValue, publish);
             }
           })
         }
@@ -127,6 +191,78 @@ export default class OopForm extends React.PureComponent {
   dataUrlRequestCount = 0;
   componentDidMount() {
     console.log('OopForm componentDidMount');
+    const {formJson} = this.props;
+    const form = this.formContainer.getForm();
+    formJson.forEach((item)=>{
+      const {subscribe = [], /* render */} = item;
+      // 解析subscribe配置
+      if (subscribe.length) {
+        subscribe.forEach((sbcb)=>{
+          const {name: subscribeName, publish: publishes = []} = sbcb;
+          if (publishes.length) {
+            publishes.forEach((publish)=>{
+              const changeItem = formJson.find(it=>it.name === subscribeName);
+              if (changeItem) {
+                // const changeItemValue = form.getFieldValue(changeItem.name);
+                // const changeValue = changeItem.display === false ? undefined : changeItemValue;
+                // const currentValue = (item.display === false && form.getFieldValue(item.name) === undefined) ? item.initialValue :
+                //   form.getFieldValue(item.name);
+                const changeValue = getOopFormValueInRender(changeItem, form);
+                const currentValue = getOopFormValueInRender(item, form);
+                // 被依赖的组件还没有 渲染
+                setFormJsonProperties(item, changeValue, currentValue, publish);
+                // if (changeItem.display !== false && form.getFieldValue(changeItem.name) === undefined) {
+                //   setTimeout(()=>{
+                //     setFormJsonProperties(item, form.getFieldValue(changeItem.name), currentValue, publish);
+                //     self.forceUpdate();
+                //   }, 200)
+                // } else {
+                //   setFormJsonProperties(item, changeValue, currentValue, publish);
+                // }
+              }
+            })
+          }
+        })
+      }
+    })
+    this.forceUpdate();
+  }
+  liandongForm = ()=>{
+    const {formJson} = this.props;
+    const form = this.formContainer.getForm();
+    formJson.forEach((item)=>{
+      const {subscribe = [], /* render */} = item;
+      // 解析subscribe配置
+      if (subscribe.length) {
+        subscribe.forEach((sbcb)=>{
+          const {name: subscribeName, publish: publishes = []} = sbcb;
+          if (publishes.length) {
+            publishes.forEach((publish)=>{
+              const changeItem = formJson.find(it=>it.name === subscribeName);
+              if (changeItem) {
+                // const changeItemValue = form.getFieldValue(changeItem.name);
+                // const changeValue = changeItem.display === false ? undefined : changeItemValue;
+                // const currentValue = (item.display === false && form.getFieldValue(item.name) === undefined) ? item.initialValue :
+                //   form.getFieldValue(item.name);
+                const changeValue = getOopFormValueInRender(changeItem, form);
+                const currentValue = getOopFormValueInRender(item, form);
+                // 被依赖的组件还没有 渲染
+                setFormJsonProperties(item, changeValue, currentValue, publish);
+                // if (changeItem.display !== false && form.getFieldValue(changeItem.name) === undefined) {
+                //   setTimeout(()=>{
+                //     setFormJsonProperties(item, form.getFieldValue(changeItem.name), currentValue, publish);
+                //     self.forceUpdate();
+                //   }, 200)
+                // } else {
+                //   setFormJsonProperties(item, changeValue, currentValue, publish);
+                // }
+              }
+            })
+          }
+        })
+      }
+    })
+    this.forceUpdate();
   }
   componentWillUnmount() {
     this.props.dispatch({

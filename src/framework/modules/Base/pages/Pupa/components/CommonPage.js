@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Card, Spin, Button, message } from 'antd';
 import {connect} from 'dva';
+import cloneDeep from 'lodash/cloneDeep';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { inject } from '@framework/common/inject';
 import { oopToast } from '@framework/common/oopUtils';
@@ -70,6 +71,7 @@ const ModalForm = (props) => {
 export default class CommonPage extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.formJson = cloneDeep(props.formConfig.formJson);
     this.state = {
       modalFormVisible: false,
       list: [],
@@ -187,11 +189,11 @@ export default class CommonPage extends React.PureComponent {
         type: 'basePage/clearEntity',
         tableName: this.props.tableName
       });
-      this.props.formConfig.formJson.forEach(
-        (item)=>{
-          item.initialValue = undefined
-        }
-      );
+      // this.props.formConfig.formJson.forEach(
+      //   (item)=>{
+      //     item.initialValue = undefined
+      //   }
+      // );
     }, 300)
   }
   // 点击modal窗口保存按钮
@@ -208,6 +210,10 @@ export default class CommonPage extends React.PureComponent {
   }
   // modal开启 关闭
   setModalFormVisible = (flag) =>{
+    // 重置formConfig的formJson
+    if (flag === true) {
+      this.props.formConfig.formJson = cloneDeep(this.formJson);
+    }
     this.setState({modalFormVisible: flag})
   }
   // 顶部搜索监听

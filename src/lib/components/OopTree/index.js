@@ -359,7 +359,7 @@ export default class OopTree extends PureComponent {
     return (
       <Spin spinning={treeLoading}>
         <div className={styles.OopTree}>
-          <Search style={{ marginBottom: 8}} placeholder="搜索" onChange={this.handleOnChange} />
+          <Search style={{ marginBottom: 8}} placeholder="搜索" onChange={this.handleOnChange} allowClear={true} />
           <DirectoryTree
             expandAction="doubleClick"
             className="getTreeDom"

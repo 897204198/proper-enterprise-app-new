@@ -19,7 +19,6 @@ const getOopFormChildrenRef = (el, oopForm)=>{
     }
   }
 }
-
 export const formGenerator = (formConfig)=>{
   const {children: Component, loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
     rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1, mode} = formConfig;
@@ -101,7 +100,7 @@ export const formGenerator = (formConfig)=>{
     ) : (
       <Spin spinning={loading}>
         <div className={className}><h3>{formTitle}</h3>
-          <Form layout={formLayout} style={{display: 'flex', flexWrap: 'wrap'}}>{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
+          <Form layout={formLayout} style={{display: 'flex', flexWrap: 'wrap'}} >{Component ? <Component {...formConfig} ref={(el)=>{ getOopFormChildrenRef(el, formConfig.oopForm) }} /> : null}{formItemList}</Form>
         </div>
       </Spin>
     ));
@@ -352,8 +351,10 @@ export const getValueByFunctionStr = (functionStr, ...value)=>{
       }
     } else if (typeof functionStr === 'string' && functionStr.includes('function')) {
       try {
-        const fn = new Function(`return ${functionStr}`)(); // eslint-disable-line
-        return fn(...value);
+        let fn = new Function(`return ${functionStr}`)(); // eslint-disable-line
+        const result = fn(...value);
+        fn = null;
+        return result;
       } catch (e) {
         return undefined;
       }
