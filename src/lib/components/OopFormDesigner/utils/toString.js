@@ -25,6 +25,7 @@ export const toString2 = (object)=>{
       r += `${k}:${value},`
     }
   }
-  r = r.substring(0, r.length - 1); r += '}';
+  r = r.length > 1 ? r.substring(0, r.length - 1) : r;
+  r += '}';
   return r;
 }

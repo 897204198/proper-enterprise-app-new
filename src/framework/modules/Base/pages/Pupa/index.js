@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import {connect} from 'dva';
-import {Input, Spin, Tooltip, message} from 'antd';
+import {Input, Spin, Tooltip, Popover, message} from 'antd';
 import {getParamObj} from '@framework/utils/utils';
 import styles from '@framework/index/index.less';
 import CommonPage from './components/CommonPage';
@@ -74,7 +74,19 @@ const convertProperties = (props)=>{
                 if (isReactObject(text)) {
                   return text;
                 } else {
-                  return text.toString()
+                  const string = text.toString();
+                  if (it.hover) {
+                    const style = {
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      width: `${it.width}px`
+                    }
+                    return (<Popover content={<div style={{whiteSpace: 'pre'}}>{string}</div>} trigger="hover">
+                      <div style={style}>{string}</div>
+                    </Popover>);
+                  }
+                  return string
                 }
               }
             }

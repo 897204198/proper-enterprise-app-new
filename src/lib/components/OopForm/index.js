@@ -12,15 +12,12 @@ let ifRenderByAntdMobile = isApp();
 const FormContainer = Form.create({
   mapPropsToFields(props) {
     const {fields = {}, formJson = [], self} = props;
-    // if (Object.keys(defaultValue).length > 0) {
-    //
-    // }
     const result = {};
     formJson.forEach((item)=>{
       const {name, component, subscribe = [], initialValue} = item;
       // 赋值
       if (name) {
-        let {value} = fields[name];
+        let {value} = fields[name] || {};
         if (value !== undefined) {
           // 数据字典
           if (self.isDictValue(value)) {
@@ -45,7 +42,8 @@ const FormContainer = Form.create({
               publishes.forEach((publish)=>{
                 const changeItem = formJson.find(it=>it.name === subscribeName);
                 if (changeItem) {
-                  const changeValue = fields[subscribeName].value;
+                  const changeField = fields[subscribeName];
+                  const changeValue = changeField === undefined ? undefined : changeField.value;
                   const currentValue = value === undefined ? initialValue : value;
                   // 被依赖的组件还没有 渲染
                   setFormJsonProperties(item, changeValue, currentValue, publish);
