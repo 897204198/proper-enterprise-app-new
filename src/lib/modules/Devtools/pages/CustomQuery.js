@@ -644,6 +644,16 @@ export default class CustomQuery extends React.PureComponent {
   setModalVisible = (field, flag) => {
     this.setState({[field]: flag})
   }
+  clearState = () => {
+    this.setState({
+      curRecord: {},
+      curTableRecord: {},
+      gridConfig: {},
+      buttons: [],
+      workflowSelection: [],
+      selectedKeys: [],
+    })
+  }
   handleToggleEnable = (checked, record) => {
     const me = this
     this.props.dispatch({
@@ -768,6 +778,17 @@ export default class CustomQuery extends React.PureComponent {
           this.onLoad();
         }
       });
+      this.props.dispatch({
+        type: 'devtoolsCustomQuery/clearEntity',
+      });
+    });
+  }
+  handleCancel = () => {
+    this.setState({
+      modalCreateVisible: false
+    })
+    this.props.dispatch({
+      type: 'devtoolsCustomQuery/clearEntity',
     });
   }
   handleDesignForm = (record) => {
@@ -815,6 +836,7 @@ export default class CustomQuery extends React.PureComponent {
       const { gridConfig, modalConfig, relaWf } = curRecord;
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item) => {
+        if (!item.syncTag) item.syncTag = makeRandomId()
         if (item.initialValue && typeof item.initialValue === 'object') {
           if (item.initialValue.constructor.name === 'Moment') {
             const format = (item.component.props && item.component.props.format) || 'YYYY-MM-DD';
@@ -826,7 +848,7 @@ export default class CustomQuery extends React.PureComponent {
         ...otherProps,
         formJson: formJson.map(fj=>({...fj, active: false})),
       }
-      const columns = []
+      let columns = []
       let topButtons = []
       let rowButtons = []
       let gridObj = {}
@@ -836,7 +858,8 @@ export default class CustomQuery extends React.PureComponent {
           const obj = {
             _id: makeRandomId(),
             title: formJson[i].label,
-            dataIndex: formJson[i].name
+            dataIndex: formJson[i].name,
+            syncTag: formJson[i].syncTag
           }
           columns.push(obj)
         }
@@ -844,7 +867,28 @@ export default class CustomQuery extends React.PureComponent {
         rowButtons = makeDefaultButtons(relaWf).filter(item => item.position === 'row')
         gridObj = JSON.stringify({columns, topButtons, rowButtons})
       } else {
-        gridObj = gridConfig
+        const { columns: cols } = JSON.parse(gridConfig)
+        const colsSyncTags = cols.map(col => col.syncTag)
+        for (let i = 0; i < formJson.length; i++) {
+          const index = colsSyncTags.indexOf(formJson[i].syncTag)
+          if (index >= 0) {
+            cols[index].title = formJson[i].label
+            cols[index].dataIndex = formJson[i].name
+            columns = [...cols]
+          } else {
+            const obj = {
+              _id: makeRandomId(),
+              title: formJson[i].label,
+              dataIndex: formJson[i].name,
+              syncTag: formJson[i].syncTag
+            }
+            columns = [...cols, obj]
+          }
+        }
+        gridObj = JSON.stringify({
+          ...JSON.parse(gridConfig),
+          columns
+        })
       }
       if (!modalConfig) {
         modalObj = JSON.stringify({
@@ -870,7 +914,8 @@ export default class CustomQuery extends React.PureComponent {
           oopToast(res, '保存成功', '保存失败');
           if (res.status === 'ok') {
             this.setModalVisible('modalFormDesignerVisible', false)
-            this.onLoad();
+            this.clearState()
+            this.onLoad()
           }
         }
       });
@@ -1011,6 +1056,53 @@ export default class CustomQuery extends React.PureComponent {
       })
     })
   }
+  // syncColConfirm = () => {
+  //   confirm({
+  //     content: '同步表单字段的label和name属性，确定同步？',
+  //     onOk: () => {
+  //       this.syncColumns()
+  //     }
+  //   });
+  // }
+  // syncColumns = () => {
+  //   const { curRecord, gridConfig } = this.state
+  //   const { formConfig } = curRecord
+  //   const { formJson } = JSON.parse(formConfig)
+  //   const { columns: cols } = gridConfig
+  //   let columns = []
+  //   const colsSyncTags = cols.map(col => col.syncTag)
+  //   for (let i = 0; i < formJson.length; i++) {
+  //     const index = colsSyncTags.indexOf(formJson[i].syncTag)
+  //     if (index >= 0) {
+  //       cols[index].title = formJson[i].label
+  //       cols[index].dataIndex = formJson[i].name
+  //       columns = [...cols]
+  //     } else {
+  //       const obj = {
+  //         _id: makeRandomId(),
+  //         title: formJson[i].label,
+  //         dataIndex: formJson[i].name,
+  //         syncTag: formJson[i].syncTag
+  //       }
+  //       columns = [...cols, obj]
+  //     }
+  //   }
+  //   const obj = {
+  //     ...gridConfig,
+  //     columns
+  //   }
+  //   const params = {
+  //     ...curRecord,
+  //     gridConfig: JSON.stringify(obj),
+  //     id: this.currentRowRecordId
+  //   }
+  //   this.setState({
+  //     curRecord: params,
+  //     gridConfig: obj,
+  //     curTableRecord: columns[0],
+  //     selectedKeys: [JSON.stringify(columns[0])]
+  //   })
+  // }
   addTableCol = () => {
     const { gridConfig } = this.state
     const { columns } = gridConfig
@@ -1494,7 +1586,7 @@ export default class CustomQuery extends React.PureComponent {
           visible={modalCreateVisible}
           // width={800}
           title={renderTitle(`${isCreate ? '新建' : '查看'}`)}
-          onCancel={() => { this.setState({modalCreateVisible: false}) }}
+          onCancel={this.handleCancel}
           onOk={this.handleSubmit}
           destroyOnClose={true}
           maskClosable={false}
@@ -1537,7 +1629,11 @@ export default class CustomQuery extends React.PureComponent {
                 <div style={{backgroundColor: '#f0f2f5', padding: '10px'}}>
                   <Row gutter={16}>
                     <Col span={5}>
-                      <Card title="字段列表" bordered={false} extra={<Button type="primary" onClick={this.addTableCol}>新建</Button>}>
+                      <Card
+                        title="字段列表"
+                        bordered={false}
+                        extra={<Button type="primary" onClick={this.addTableCol}>新建</Button>}
+                        >
                         {
                           columns ?
                           (
