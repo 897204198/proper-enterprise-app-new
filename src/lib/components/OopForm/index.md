@@ -19,7 +19,7 @@ Components | Data Entry | OopForm  | 表单设计 |
 | --- | --- | --- | --- |
 | formJson |  表单模板 | object | - |
 | formTitle |  表单标题 | string | - |
-| defaultValue |  表单域初始值(formJson中定义initialValue时,defaultValue优先级更高，以defaultValue的值为准) | object | - |
+| defaultValue |  表单域初始值(formJson中定义initialValue时,initialValue优先级更高，以initialValue的值为准) | object | - |
 | disabled |  组件禁用 | boolean | false |
 | formLayout | 表单布局类型 `horizontal`（横向）和 `vertical`(纵向) | string | `horizontal` |
 | formItemLayout | formJson中每个的布局配置 | object | - |

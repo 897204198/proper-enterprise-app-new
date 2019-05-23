@@ -18,6 +18,20 @@ const { TreeNode } = Tree
 const tableInputStyle = {
   height: '32px'
 }
+const isJson = (str) => {
+  if (typeof str === 'string') {
+    try {
+      const strObj = JSON.parse(str);
+      if (typeof strObj === 'object' && strObj) {
+        return true
+      } else {
+        return false
+      }
+    } catch (e) {
+      return false
+    }
+  }
+}
 const makeRandomId = () => {
   return Math.random().toString(36).substring(2)
 }
@@ -596,7 +610,7 @@ export default class CustomQuery extends React.PureComponent {
       ]
     }
   }
-  makeTableInfoCfgConfig = (formEntity, submit) => {
+  makeTableInfoCfgConfig = (entity = {}, submit) => {
     return {
       formLayoutConfig: {
         labelCol: {
@@ -618,9 +632,9 @@ export default class CustomQuery extends React.PureComponent {
             props: {
               placeholder: '请输入扩展内容',
               autosize: true
-            }
+            },
           },
-          initialValue: formEntity.tableInfoExtra || '',
+          initialValue: entity.tableInfoExtra || ''
         },
         {
           key: 'submitBtn',
@@ -1212,6 +1226,18 @@ export default class CustomQuery extends React.PureComponent {
       });
     });
   }
+  checkUpload = (successNum, JSONObj) => {
+    if (successNum === 2) {
+      this.props.dispatch({
+        type: 'devtoolsCustomQuery/saveOrUpdate',
+        payload: JSONObj,
+        callback: (res) => {
+          this.onLoad();
+          oopToast(res, '文件导入成功')
+        }
+      })
+    }
+  }
   handleDownload = (records) => {
     const record = JSON.parse(JSON.stringify(records));
     const name = record.functionName
@@ -1226,6 +1252,65 @@ export default class CustomQuery extends React.PureComponent {
     const data = JSON.stringify(record)
     const blob = new Blob([data], {type: ''})
     FileSaver.saveAs(blob, `${name}.json`)
+  }
+  handleUpload = () => {
+    const fileBox = document.getElementById('file')
+    const file = fileBox.files[0]
+    const filename = file.name
+    const ext = filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
+    if (ext !== 'json') {
+      message.error('请上传json文件')
+      return false
+    }
+    const reader = new FileReader()
+    reader.readAsText(file)
+    reader.onload = () => {
+      if (isJson(reader.result)) {
+        // this.ImportJSON = JSON.parse(reader.result)
+        const JSONObj = JSON.parse(reader.result)
+        if (!JSONObj.code || JSONObj.code === '' || !JSONObj.tableName || JSONObj.tableName === '') {
+          message.error('文件内容缺少关键信息')
+          fileBox.value = ''
+          return false
+        }
+        let successNum = 0
+        this.props.dispatch({
+          type: 'devtoolsCustomQuery/checkCodeRepeat',
+          payload: JSONObj.code,
+          callback: (cb)=>{
+            if (cb.result.length) {
+              message.error('表单编码已存在');
+            } else {
+              successNum++
+              this.checkUpload(successNum, JSONObj)
+            }
+            fileBox.value = ''
+          }
+        });
+        this.props.dispatch({
+          type: 'devtoolsCustomQuery/checkTableNameRepeat',
+          payload: JSONObj.tableName,
+          callback: (cb)=>{
+            if (cb.result.length) {
+              message.error('表单表名已存在');
+            } else {
+              successNum++
+              this.checkUpload(successNum, JSONObj)
+            }
+            fileBox.value = ''
+          }
+        })
+      } else {
+        message.error('文件内容不是JSON格式')
+        fileBox.value = ''
+      }
+    }
+    reader.onerror = () => {
+      message.error('文件上传失败')
+    }
+  }
+  handleOpenfile = () => {
+    document.getElementById('file').click()
   }
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
@@ -1282,6 +1367,16 @@ export default class CustomQuery extends React.PureComponent {
         display: items => (items.length > 0),
         onClick: (items) => { this.handleBatchRemove(items) }
       },
+      {
+        text: '导入',
+        name: 'upload',
+        type: 'default',
+        icon: 'upload',
+        style: {
+          float: 'right'
+        },
+        onClick: ()=>{ this.handleOpenfile() }
+      }
     ];
     const rowButtons = [
       {
@@ -1571,6 +1666,7 @@ export default class CustomQuery extends React.PureComponent {
         />
       }>
         <Card bordered={false}>
+          <input type="file" id="file" hidden onChange={this.handleUpload} />
           <OopTable
             loading={loading === undefined ? gridLoading : loading}
             grid={{list} || oopSearchGrid}
@@ -1673,7 +1769,7 @@ export default class CustomQuery extends React.PureComponent {
               </TabPane>
               <TabPane tab="列表编辑" key="3">
                 <Card bordered={false}>
-                  <OopForm {...this.makeTableInfoCfgConfig(curTableRecord, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
+                  <OopForm {...this.makeTableInfoCfgConfig(props, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
                 </Card>
               </TabPane>
             </Tabs>
