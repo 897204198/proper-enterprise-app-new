@@ -87,7 +87,7 @@ const AddPanel = (props) => {
     }</ul></Card></div>);
 };
 const EditPanel = (props) => {
-  const { currentRowItem, currentRowItemJson, self,
+  const { loading, currentRowItem, currentRowItemJson, self,
     updateCenterPanel, onRowItemIconCopy, onRowItemIconDelete, onPlusClick, onRowItemDrag,
     customRules = false, setCustomRules, formPattern, onFormPatternChange} = props;
   const toggleFormPatternButtons = (
@@ -122,7 +122,7 @@ const EditPanel = (props) => {
             updateCenterPanel,
             customRules,
             setCustomRules
-          })
+          }, loading)
         }
       </Card></div>);
 }
@@ -240,33 +240,39 @@ export default class OopFormDesigner extends React.PureComponent {
   }
   componentWillUnmount() {
     this.renderCenterPanel.cancel();
+    this.handleCodeMirrorChange.cancel();
   }
   componentDidMount() {
     console.log(this.state.currentRowItem, this.state.rowItems)
   }
   onRowItemClick = (name)=>{
-    this.setCustomRules(false);
-    const {rowItems, formPattern} = this.state;
-    rowItems.forEach((item)=>{
-      const aItem = item;
-      if (aItem.name === name) {
-        aItem.active = true;
-        const isAdvanced = formPattern === 'advanced';
-        const jsonItem = {
-          ...aItem
-        }
-        delete jsonItem.active;
-        delete jsonItem.initialValue;
+    this.setState({
+      editPanelLoading: true
+    }, ()=>{
+      this.setCustomRules(false);
+      const {rowItems, formPattern} = this.state;
+      rowItems.forEach((item)=>{
+        const aItem = item;
+        if (aItem.name === name) {
+          aItem.active = true;
+          const isAdvanced = formPattern === 'advanced';
+          const jsonItem = {
+            ...aItem
+          }
+          delete jsonItem.active;
+          delete jsonItem.initialValue;
 
-        this.setState({
-          currentRowItem: aItem,
-          currentRowItemJson: isAdvanced ? jsBeautify(toString2(jsonItem)) : ''
-        })
-      } else {
-        aItem.active = false;
-      }
+          this.setState({
+            currentRowItem: aItem,
+            currentRowItemJson: isAdvanced ? jsBeautify(toString2(jsonItem)) : '',
+            editPanelLoading: false
+          })
+        } else {
+          aItem.active = false;
+        }
+      })
+      this.forceUpdate()
     })
-    this.forceUpdate()
   }
   /**
    * 如果传了name那么是“EditPanel”中的复制
@@ -579,7 +585,7 @@ export default class OopFormDesigner extends React.PureComponent {
       return false;
     }
   }
-  renderEditPanel = (formPattern, currentRowItem, currentRowItemJson, config)=>{
+  renderEditPanel = (formPattern, currentRowItem, currentRowItemJson, config, loading)=>{
     if (formPattern === 'advanced') {
       return (
         <CodeMirror
@@ -600,7 +606,7 @@ export default class OopFormDesigner extends React.PureComponent {
           }}
         />);
     }
-    return buildEditPanel(currentRowItem, config);
+    return buildEditPanel(currentRowItem, config, loading);
   }
   @Debounce(300)
   handleCodeMirrorChange(editor, value) {
@@ -645,6 +651,7 @@ export default class OopFormDesigner extends React.PureComponent {
           </Col>
           <Col span={isAdvanced ? 12 : 6} >
             <EditPanel
+              loading={this.state.editPanelLoading}
               currentRowItem={this.state.currentRowItem}
               currentRowItemJson={this.state.currentRowItemJson}
               updateCenterPanel={this.onUpdateCenterPanel}

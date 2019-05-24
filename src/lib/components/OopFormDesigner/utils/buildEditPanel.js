@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Popover, Button, message} from 'antd';
+import { Radio, Popover, Button, Spin, message} from 'antd';
 import OopForm from '@pea/components/OopForm';
 import styles from '../index.less';
 
@@ -7,7 +7,7 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const prefix = '_edit';
 const createCustomRulesContent = (name, rules = [], setCustomRules, updateCenterPanel)=>{
-  const divValue = rules === [] ? null : rules.map(item=>Object.keys(item)[0].concat(',').concat(Object.values(item).join(','))).join(';');
+  const divValue = rules === [] ? null : rules.map(item=>Object.keys(item)[0].concat(',').concat(Object.values(item).join(','))).join(';'); //eslint-disable-line
   const getRulesValueByStr = (str)=>{
     const numReg = new RegExp('^[0-9]*$');
     if (numReg.test(str)) {
@@ -78,7 +78,7 @@ const getDataDictItem = (item, onChange)=>{
     initialValue: component.dictCatalog ? 'dict' : (component.dataUrl ? 'outer' : 'changeless')
   };
 }
-export default (item, eventsCollection)=>{
+export default (item, eventsCollection, loading)=>{
   const { rowItemIconCopy, rowItemIconDelete, rowItemDrag, rowItemSetValue, onPlusClick, updateCenterPanel,
     customRules = false, setCustomRules} = eventsCollection;
   console.log(item)
@@ -531,5 +531,5 @@ export default (item, eventsCollection)=>{
     initialValue: getRulesValue(rules)
   }]
   formConfig.formJson = formConfig.formJson.concat(rulesArr);
-  return (<OopForm {...formConfig} showSetValueIcon={true} />);
+  return loading ? <Spin /> : (<OopForm {...formConfig} showSetValueIcon={true} />);
 }
