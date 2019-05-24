@@ -53,25 +53,14 @@ export default class OopTable extends PureComponent {
     if (props.dataDefaultSelectedRowKeys) {
       state.selectedRowKeys = props.dataDefaultSelectedRowKeys
     }
-    // if (props.grid.pagination && props.grid.pagination.total !== this.state.pagination.total) {
-    //   state.pagination = {
-    //     ...this.state.pagination,
-    //     total: props.grid.pagination.total
-    //   }
-    // }
-    if (props.grid.pagination === undefined) {
-      state.pagination = {
-        current: 1,
-        pageSize: 10,
-      }
-    } else {
+    if (props.grid.pagination) {
       state.pagination = props.grid.pagination === false ? false : {
         ...props.grid.pagination,
       }
     }
     if (Object.keys(state).length > 0) {
       this.setState({
-        ...this.state,
+        // ...this.state,
         ...state
       })
     }
