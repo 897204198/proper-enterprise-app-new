@@ -775,6 +775,7 @@ export default class CustomQuery extends React.PureComponent {
           }
         } else if (startBtnArr.length) {
           config.topButtons = config.topButtons.filter(btn => btn.name !== 'start')
+          params.wfKey = ''
         }
         params.gridConfig = JSON.stringify(config)
       }
