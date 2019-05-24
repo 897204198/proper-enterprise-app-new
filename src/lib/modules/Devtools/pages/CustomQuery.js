@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import FileSaver from 'file-saver';
-import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tree, Row, Col, Popconfirm, Tabs } from 'antd';
+import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tree, Row, Col, Popconfirm, Tabs, Spin} from 'antd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import {inject} from '@framework/common/inject';
@@ -295,7 +295,7 @@ export default class CustomQuery extends React.PureComponent {
             name: 'Input',
             props: {type: 'hidden'}
           },
-          initialValue: formEntity.id || '',
+          initialValue: formEntity.id || undefined,
           wrapper: true
         },
         {
@@ -1688,7 +1688,10 @@ export default class CustomQuery extends React.PureComponent {
           maskClosable={false}
           // footer={<Button type="primary" onClick={() => { this.setState({modalAssignmentCollectVisible: false}) }}>关闭</Button>}
         >
-          <OopForm {...this.makeCreateFormConfig(formdata, this.checkCode, this.checkTableName)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} />
+          {isCreate || Object.keys(formdata).length > 0 ?
+            <OopForm {...this.makeCreateFormConfig(formdata, this.checkCode, this.checkTableName)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} />
+            : <div style={{textAlign: 'center'}}><Spin /></div>
+          }
         </Modal>
         <Modal
           visible={this.state.modalFormDesignerVisible}

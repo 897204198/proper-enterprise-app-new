@@ -15,7 +15,7 @@ const isReactObject = (component)=>{
   return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
 }
 const convertProperties = (props)=>{
-  const {gridConfig: {columns = [], rowButtons = [], topButtons = []}, formConfig: {formJson = []}} = props;
+  const {gridConfig: {columns = [], rowButtons = [], topButtons = [], props: tableProps = {}}, formConfig: {formJson = []}} = props;
   // 为表单 添加 ID
   if (formJson.length) {
     if (formJson.find(it=>it.name === 'id') === undefined) {
@@ -107,6 +107,12 @@ const convertProperties = (props)=>{
           it.display = eval(it.display); // eslint-disable-line
         }
       })
+    }
+    const {tableInfoExtra} = tableProps;
+    if (tableInfoExtra) {
+      if (typeof tableInfoExtra === 'string') {
+        tableProps.tableInfoExtra = eval(tableInfoExtra); // eslint-disable-line
+      }
     }
   } catch (e) {
     console.log(e)

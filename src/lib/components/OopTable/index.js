@@ -424,7 +424,8 @@ export default class OopTable extends PureComponent {
     const { grid: {list = [] },
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
-      _onSelect, _onSelectAll, multiple = true, selectedDisabled = [], showTableInfo, ...otherProps } = this.props;
+      _onSelect, _onSelectAll, multiple = true, selectedDisabled = [],
+      showTableInfo, tableInfoExtra, ...otherProps } = this.props;
     const { selectedRowKeys, pagination, filters, sorter } = this.state;
     const hasFilters = filters && Object.keys(filters).length > 0;
     const hasSorter = sorter && Object.keys(sorter).length > 0;
@@ -549,6 +550,9 @@ export default class OopTable extends PureComponent {
                       sorter && Object.keys(sorter).length
                       ? <span>已按 <a>{sorter.column.title}</a> {`${sorter.order === 'ascend' ? '升序' : '降序'}排序`} <a onClick={this.clearSorter}>重置</a></span>
                       : null
+                    }
+                    {
+                      tableInfoExtra ? <span>&nbsp;&nbsp;{tableInfoExtra}</span> : null
                     }
                   </Fragment>
                 }

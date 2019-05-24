@@ -139,15 +139,27 @@ const FormContainer = Form.create({
 export default class OopForm extends React.PureComponent {
   constructor(props) {
     super(props);
-    const {ifRenderByAntdMobile: irbam, formJson = []} = this.props;
+    const {ifRenderByAntdMobile: irbam, formJson = [], defaultValue = {}} = this.props;
     if (irbam !== undefined) {
       ifRenderByAntdMobile = irbam;
     }
     const fields = {};
+    // 初始化表单值的时候 1.formJson配置的initialValue 2.defaultValue中改name的值 3. undefined
     formJson.forEach((item)=>{
       const {name, initialValue} = item;
-      fields[name] = {
-        value: initialValue
+      const {prototype: {hasOwnProperty}} = Object;
+      if (hasOwnProperty.call(item, 'initialValue')) {
+        fields[name] = {
+          value: initialValue
+        }
+      } else if (hasOwnProperty.call(defaultValue, name)) {
+        fields[name] = {
+          value: defaultValue[name]
+        }
+      } else {
+        fields[name] = {
+          value: undefined
+        }
       }
     })
     this.state = {

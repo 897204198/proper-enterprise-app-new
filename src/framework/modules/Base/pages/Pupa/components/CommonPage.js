@@ -1,8 +1,9 @@
 import React from 'react';
-import { Modal, Card, Spin, Button, message } from 'antd';
+import {Modal, Card, Spin, Button, message, Tooltip} from 'antd';
 import {connect} from 'dva';
 import cloneDeep from 'lodash/cloneDeep';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
+import DescriptionList from '@framework/components/DescriptionList';
 import { inject } from '@framework/common/inject';
 import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '@pea/components/OopSearch';
@@ -10,6 +11,8 @@ import OopForm from '@pea/components/OopForm';
 import OopTable from '@pea/components/OopTable';
 import OopWorkflowMainModal from '@pea/components/OopWorkflowMainModal';
 import styles from './CommonPage.less';
+
+const {Description} = DescriptionList;
 
 const ModalForm = (props) => {
   const {modalConfig: {title, width, footer: footerKeys = [], maskClosable, saveAfterClosable},
@@ -61,6 +64,41 @@ const ModalForm = (props) => {
     </Modal>
   )
 }
+const ViewModal = (props) => {
+  const {onModalCancel, loading, visible, formEntity = {}, columns = []} = props;
+  return (
+    <Modal
+      title="查看详情"
+      visible={visible}
+      onCancel={onModalCancel}
+      destroyOnClose={true}
+      width={1000}
+      maskClosable={true}
+      className={styles.commonPageModalContainer}
+      footer={<Button type="primary" onClick={onModalCancel}>确定</Button>}
+      style={{
+        top: 20,
+        height: 'calc(100vh - 32px)',
+        overflow: 'hidden'
+      }}
+    >
+      <Spin spinning={loading}>
+        <DescriptionList col="2">
+          {
+            columns.map((col)=>{
+              const {title, dataIndex, render} = col;
+              let value = formEntity[dataIndex];
+              if (value && render) {
+                value = render(value, formEntity);
+              }
+              return <Description term={title} key={dataIndex}>{value}</Description>
+            })
+          }
+        </DescriptionList>
+      </Spin>
+    </Modal>
+  )
+}
 
 @inject('workflowDesigner')
 @connect(({ basePage, global, loading}) => ({
@@ -74,6 +112,7 @@ export default class CommonPage extends React.PureComponent {
     this.formJson = cloneDeep(props.formConfig.formJson);
     this.state = {
       modalFormVisible: false,
+      viewModalVisible: false,
       list: [],
       relaWf: props.relaWf,
       modalWfFormConfig: {
@@ -405,8 +444,43 @@ export default class CommonPage extends React.PureComponent {
   }
   // 流程提交成功的回调
   afterProcessSubmit = ()=>{}
+  getTableInfoExtra = (list)=>{
+    const { gridConfig: {props = {}}} = this.props;
+    let extra;
+    if (props.tableInfoExtra && list.length) {
+      try {
+        extra = props.tableInfoExtra(list);
+      } catch (e) {
+        console.log(e);
+        extra = (<Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>)
+      }
+    }
+    return extra
+  }
+  handleViewModalVisible = (flag)=>{
+    this.setState({
+      viewModalVisible: flag
+    })
+  }
+  onView = ({id})=>{
+    this.props.dispatch({
+      type: 'basePage/fetchById',
+      payload: id,
+      tableName: this.props.tableName
+    });
+    this.handleViewModalVisible(true)
+  }
+  createColumns = (cols)=>{
+    const firstCol = cols[0];
+    const {render: oldRender} = firstCol;
+    firstCol.render = (text, record)=>{
+      const value = oldRender ? oldRender(text, record) : text;
+      return <div onClick={() => this.onView(record)} style={{textDecoration: 'underline', cursor: 'pointer'}}>{value}</div>;
+    }
+    return cols.filter(it=>it.enable !== false);
+  }
   render() {
-    const {list, modalFormVisible, modalWfFormConfig: {
+    const {list, modalFormVisible, viewModalVisible, modalWfFormConfig: {
       name,
       isLaunch,
       wfVisible,
@@ -417,13 +491,15 @@ export default class CommonPage extends React.PureComponent {
       stateCode
     }} = this.state;
     const {basePage, global: {size},
-      loading, gridLoading, gridConfig: {columns: cols = [], topButtons: tbCfg, rowButtons: rbCfg}, formConfig, modalConfig, tableName } = this.props;
+      loading, gridLoading, gridConfig: {columns: cols = [], topButtons: tbCfg, rowButtons: rbCfg},
+      formConfig, modalConfig, tableName } = this.props;
     let entity = {};
     if (basePage && basePage[tableName]) {
       entity = basePage[tableName].entity || {};
     }
+    const tableInfoExtra = this.getTableInfoExtra(list);
     const {topButtons, rowButtons} = this.constructGridButtons(tbCfg, rbCfg);
-    const columns = cols.filter(it=>it.enable !== false);
+    const columns = this.createColumns(cols);
     return (
       <PageHeaderLayout content={
         <OopSearch
@@ -436,6 +512,7 @@ export default class CommonPage extends React.PureComponent {
         <Card bordered={false}>
           <OopTable
             showTableInfo={true}
+            tableInfoExtra={tableInfoExtra}
             showExport={true}
             loading={loading === undefined ? gridLoading : loading}
             grid={{list}}
@@ -467,6 +544,13 @@ export default class CommonPage extends React.PureComponent {
           closeModal={this.closeProcessModal}
           afterProcessSubmit={this.afterProcessSubmit}
          />
+        <ViewModal
+          columns={columns}
+          formEntity={entity}
+          visible={viewModalVisible}
+          onModalCancel={()=>this.handleViewModalVisible(false)}
+          loading={loading}
+        />
       </PageHeaderLayout>
     )
   }
