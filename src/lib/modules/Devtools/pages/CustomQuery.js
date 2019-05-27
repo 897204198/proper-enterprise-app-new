@@ -435,6 +435,16 @@ export default class CustomQuery extends React.PureComponent {
           wrapper: true
         },
         {
+          name: 'syncTag',
+          component: {
+            name: 'Input',
+            props: {
+              type: 'hidden',
+            }
+          },
+          wrapper: true
+        },
+        {
           label: '列名',
           key: 'title',
           name: 'title',
@@ -883,21 +893,29 @@ export default class CustomQuery extends React.PureComponent {
         gridObj = JSON.stringify({columns, topButtons, rowButtons})
       } else {
         const { columns: cols } = JSON.parse(gridConfig)
-        const colsSyncTags = cols.map(col => col.syncTag)
-        for (let i = 0; i < formJson.length; i++) {
-          const index = colsSyncTags.indexOf(formJson[i].syncTag)
-          if (index >= 0) {
-            cols[index].title = formJson[i].label
-            cols[index].dataIndex = formJson[i].name
-            columns = [...cols]
-          } else {
-            const obj = {
-              _id: makeRandomId(),
-              title: formJson[i].label,
-              dataIndex: formJson[i].name,
-              syncTag: formJson[i].syncTag
+        columns = [...cols]
+        for (let k = 0; k < formJson.length; k++) {
+          for (let j = 0; j < columns.length; j++) {
+            // 同步title和dataIndex
+            if (columns[j].syncTag === formJson[k].syncTag) {
+              columns[j].title = formJson[k].label
+              columns[j].dataIndex = formJson[k].name
             }
-            columns = [...cols, obj]
+            // 如果列信息没有syncTag字段，加上该字段
+            if (columns[j].dataIndex === formJson[k].name && !columns[j].syncTag) {
+              columns[j].syncTag = formJson[k].syncTag
+            }
+          }
+          // 判断是否为新增字段
+          const filterArr = cols.filter(col => col.syncTag === formJson[k].syncTag)
+          if (!filterArr.length) {
+            const newCol = {
+              _id: makeRandomId(),
+              title: formJson[k].label,
+              dataIndex: formJson[k].name,
+              syncTag: formJson[k].syncTag
+            }
+            columns.push(newCol)
           }
         }
         gridObj = JSON.stringify({
@@ -950,6 +968,7 @@ export default class CustomQuery extends React.PureComponent {
         selectedKeys: [record[0]]
       })
       const form = this.oopTableCfgForm.getForm()
+      form.resetFields()
       for (const key in JSON.parse(record)) {
         form.setFieldsValue({[key]: JSON.parse(record)[key]})
       }

@@ -30,7 +30,18 @@ const mergeDetail = (arr, indent = false) => {
   return paths
 }
 const mergeMedal = (arr, from, to, num) => {
-  const fromArr = arr.filter(item => item.type === from)
+  let fromArr = arr.filter(item => item.type === from)
+  for (let i = 0; i < fromArr.length; i++) {
+    if (fromArr[i].medalNumber > 1) {
+      const obj = {...fromArr[i]}
+      const { medalNumber } = fromArr[i]
+      obj.medalNumber = 1
+      delete obj.id
+      delete obj._id
+      fromArr.splice(i, 1)
+      fromArr = [...fromArr, ...new Array(medalNumber).fill(obj)]
+    }
+  }
   const elseArr = arr.filter(item => item.type !== from)
   const times = parseInt(fromArr.length / num, 10)
   const toArr = []
@@ -49,14 +60,16 @@ const mergeMedal = (arr, from, to, num) => {
         type: to,
         type_text: medalMap[to],
         path: '奖章合成',
+        medalNumber: 1,
         detailCollect: spliceArr,
         detail: mergeDetail(spliceArr, false),
         ...conver
       }
       toArr.push(obj)
     }
+    return [...toArr, ...fromArr, ...elseArr]
   }
-  return [...toArr, ...fromArr, ...elseArr]
+  return arr
 }
 export default {
   namespace: 'pupaMedal',
