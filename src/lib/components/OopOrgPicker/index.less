@@ -1,0 +1,52 @@
+@import "~antd/lib/style/themes/default.less";
+.assignModal {
+  :global(.ant-modal-body) {
+    background: #f0f2f5;
+  }
+  .tableInfo {
+    display: flex;
+    max-height: 86px;
+    overflow: auto;
+    margin-bottom: 12px;
+  }
+
+  .tree {
+    overflow: auto;
+  }
+}
+.btn {
+  padding-left: 8px;
+  max-width: 208px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.disabledBtn {
+  padding-left: 0;
+  max-width: 208px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-flex !important;
+  :global {
+    .ant-btn {
+      padding-left: 8px;
+      max-width: 208px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}
+.oopTabContainer {
+  min-height: ~"calc(100vh - 168px)";
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+}
+.ellipsis {
+  min-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.primaryColor {
+  color: @primary-color;
+}

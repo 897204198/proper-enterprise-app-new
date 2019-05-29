@@ -10,6 +10,7 @@ import OopText from '../OopText';
 import CheckBoxPop from './components/CheckBoxPop';
 import OopGroupUserPicker from '../OopGroupUserPicker';
 import OopOrgEmpPicker from '../OopOrgEmpPicker';
+import OopOrgPicker from '../OopOrgPicker';
 import OopTextEditor from '../OopTextEditor';
 import styles from './index.less';
 
@@ -92,6 +93,9 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
     case 'OopOrgEmpPicker':
       component = <OopOrgEmpPicker {...props} />
       break;
+    case 'OopOrgPicker':
+      component = <OopOrgPicker {...props} />
+      break;
     case 'Switch':
       component = <List.Item arrow="horizontal" extra={<Switch {...props} />}>{label}</List.Item>
       break;
@@ -150,6 +154,9 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       break;
     case 'OopOrgEmpPicker':
       component = <OopOrgEmpPicker {...props} />
+      break;
+    case 'OopOrgPicker':
+      component = <OopOrgPicker {...props} />
       break;
     case 'Switch':
       component = <Switch {...props} />

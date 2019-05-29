@@ -215,6 +215,16 @@ export default class OopFormDesigner extends React.PureComponent {
           }
         },
         {
+          label: '部门选择',
+          key: 'OopOrgPicker',
+          component: {
+            name: 'OopOrgPicker',
+            props: {
+              placeholder: '请选择'
+            }
+          }
+        },
+        {
           label: '开关',
           key: 'Switch',
           component: {
