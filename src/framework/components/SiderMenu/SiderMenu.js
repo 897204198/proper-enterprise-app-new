@@ -241,6 +241,8 @@ export default class SiderMenu extends PureComponent {
             if (!li.className.includes('filtered')) {
               if (node.children.length === 0) {
                 show = 'none';
+              } else {
+                show = Array.from(node.children).every(it=>it.style.display === 'none') ? 'none' : 'block'
               }
             }
           }

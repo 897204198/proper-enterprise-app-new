@@ -1,6 +1,6 @@
 {
   "name": "@proper/pea-lib",
-  "version": "0.6.3-rc.07",
+  "version": "0.6.3-rc.08",
   "dependencies":{
     "braft-editor": "^2.2.9",
     "codemirror": "^5.43.0",

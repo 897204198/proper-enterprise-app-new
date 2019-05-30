@@ -8,6 +8,18 @@ import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJso
 import styles from './index.less';
 
 let ifRenderByAntdMobile = isApp();
+const isAntdMobliePicker = (item)=>{
+  if (ifRenderByAntdMobile) {
+    const {component: {name}, initialValue} = item;
+    // antd-mobile Picker的默认值为数组
+    if (name === 'Select' || name === 'RadioGroup') {
+      if ((typeof (initialValue) === 'string' || typeof (initialValue) === 'number')) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
 
 const FormContainer = Form.create({
   mapPropsToFields(props) {
@@ -150,7 +162,7 @@ export default class OopForm extends React.PureComponent {
       const {prototype: {hasOwnProperty}} = Object;
       if (hasOwnProperty.call(item, 'initialValue')) {
         fields[name] = {
-          value: initialValue
+          value: isAntdMobliePicker(item) ? [initialValue] : initialValue
         }
       } else if (hasOwnProperty.call(defaultValue, name)) {
         fields[name] = {

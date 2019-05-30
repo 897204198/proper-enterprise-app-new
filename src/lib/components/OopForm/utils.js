@@ -189,12 +189,6 @@ export const appFormGenerator = (formConfig)=>{
             _rules = transformRules(rules);
           }
           const obj = {initialValue, rules: _rules};
-          // antd-mobile Picker的默认值为数组
-          if (component.name === 'Select' || component.name === 'RadioGroup') {
-            if (obj.initialValue && (typeof (obj.initialValue) === 'string' || typeof (obj.initialValue) === 'number')) {
-              obj.initialValue = [initialValue];
-            }
-          }
           const formItemInner = getFieldDecorator(name, obj)(
             createComponent({...component, label, rules, valuePropName, form}, true)
           );
