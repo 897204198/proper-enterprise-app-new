@@ -658,8 +658,8 @@ export default class User extends React.PureComponent {
           </Fragment>
         ),
         filters: [
-          { text: '停用', value: false },
-          { text: '启用', value: true }
+          { text: '停用', value: 'false' },
+          { text: '启用', value: 'true' }
         ],
         filterMultiple: false,
       }
