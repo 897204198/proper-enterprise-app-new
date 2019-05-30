@@ -109,6 +109,9 @@ export default class OopTable extends PureComponent {
         }
       }
     }
+    if (!pagination.current) {
+      pagination.current = pagination.pageNo
+    }
     this.setState({
       filters: filterObj,
       pagination,
