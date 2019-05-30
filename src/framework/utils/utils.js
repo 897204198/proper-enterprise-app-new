@@ -303,3 +303,40 @@ export const getCurrentUser = (token)=>{
   };
   return user;
 }
+
+export const isObject = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Object]';
+}
+export const isArray = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Array]';
+}
+export const isFunction = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Function]';
+}
+export const isString = (object)=>{
+  return Object.prototype.toString.call(object) === '[object String]';
+}
+export const isNumber = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Number]';
+}
+export const isBoolean = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Boolean]';
+}
+export const isDate = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Date]';
+}
+export const isRegExp = (object)=>{
+  return Object.prototype.toString.call(object) === '[object RegExp]';
+}
+export const isSymbol = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Symbol]';
+}
+export const isReactObject = (object)=>{
+  return isSymbol(object) && object.$$typeof !== undefined;
+}
+export const isEmptyObject = (object)=>{
+  for (const name in object) {
+    return false;
+  }
+  return true;
+}

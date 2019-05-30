@@ -12,6 +12,7 @@ import OopGroupUserPicker from '../OopGroupUserPicker';
 import OopOrgEmpPicker from '../OopOrgEmpPicker';
 import OopOrgPicker from '../OopOrgPicker';
 import OopTextEditor from '../OopTextEditor';
+import OopEnum from '../OopEnum';
 import styles from './index.less';
 
 const CheckboxGroup = Checkbox.Group;
@@ -102,6 +103,9 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
     case 'OopTextEditor':
       component = <OopTextEditor {...props} />
       break;
+    case 'OopEnum':
+      component = <OopEnum {...props} />
+      break;
     default: null
   }
   return component;
@@ -163,6 +167,9 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       break;
     case 'OopTextEditor':
       component = <OopTextEditor {...props} />
+      break;
+    case 'OopEnum':
+      component = <OopEnum {...props} />
       break;
     default: null
   }

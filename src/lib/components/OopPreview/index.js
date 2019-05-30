@@ -49,14 +49,6 @@ export default class OopPreview extends PureComponent {
       wrap.style.display = 'flex';
       wrap.style.justifyContent = 'center';
       wrap.style.alignItems = 'center';
-      // modalWrap.style.width = `${horWidth}px`;
-      // modalWrap.style.minWidth = '330px';
-      // modalWrap.style.maxWidth = `${innerWith}px`;
-      // modalContent.style.width = `${horWidth}px`;
-      // modalContent.style.minWidth = '330px';
-      // modalBody.style.height = `${horHeight}px`;
-      // modalBody.style.maxHeight = `${innerHeight - 100}px`;
-      // modalBody.style.minHeight = '200px';
     });
   }
 

@@ -82,7 +82,7 @@ const ModalFormBasic = Form.create()((props) => {
   //   }
   // }
   return (
-    <Modal title={title} visible={visible} onOk={submitForm} onCancel={cancelForm} maskClosable={false}>
+    <Modal title={title} visible={visible} onOk={submitForm} onCancel={cancelForm} maskClosable={false} destroyOnClose={true}>
       <Spin spinning={loading}>
         <Form>
           <div>
@@ -326,6 +326,7 @@ export default class Template extends React.PureComponent {
       }
       values.formTodoDisplayFields = formTodoDisplayFields
     }
+    console.log(values)
     this.props.dispatch({
       type: 'formTemplate/saveOrUpdate',
       payload: values,

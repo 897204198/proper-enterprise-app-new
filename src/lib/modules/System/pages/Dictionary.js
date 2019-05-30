@@ -536,7 +536,7 @@ export default class Dictionary extends React.PureComponent {
         </Popover>)
       }
       },
-      { title: '字典编码', dataIndex: 'code', width: 140, render: (text)=> {
+      { title: '字典编码', dataIndex: 'code', render: (text)=> {
         return (
         <Popover content={text}>
           <div style={{width: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
@@ -544,21 +544,21 @@ export default class Dictionary extends React.PureComponent {
           </div>
         </Popover>)
       }},
-      { title: '字典值', dataIndex: 'name', width: 140, render: (text)=> {
+      { title: '字典值', dataIndex: 'name', render: (text)=> {
         return (
         <Popover content={text}>
-          <div style={{width: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+          <div style={{width: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
               {text}
           </div>
         </Popover>)
       } },
       { title: '排序', dataIndex: 'order', width: 60 },
-      { title: '是否默认', dataIndex: 'deft', width: 80, render: text => (
+      { title: '是否默认', dataIndex: 'deft', width: 100, render: text => (
         <Fragment>
           {text === true ? '是' : '否'}
         </Fragment>
       ) },
-      { title: '系统字典', dataIndex: 'dataDicType', width: 80, render: text => (
+      { title: '系统字典', dataIndex: 'dataDicType', width: 100, render: text => (
           <Fragment>
             {text === 'SYSTEM' ? '是' : '否'}
           </Fragment>
