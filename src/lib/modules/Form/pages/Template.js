@@ -1,6 +1,6 @@
 import React from 'react';
 import FileSaver from 'file-saver'
-import { Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message } from 'antd';
+import {Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message, DatePicker} from 'antd';
 import {connect} from 'dva';
 import Debounce from 'lodash-decorators/debounce';
 import { inject } from '@framework/common/inject';
@@ -181,6 +181,16 @@ const ModalFormBasic = Form.create()((props) => {
               </RadioGroup>
             )}
           </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="时间"
+          >
+            {form.getFieldDecorator('date', {
+              initialValue: formBasic.date
+            })(
+              <DatePicker />
+            )}
+          </FormItem>
           <div style={{display: 'none'}}>
             {form.getFieldDecorator('formDetails', {
               initialValue: formBasic.formDetails
@@ -344,18 +354,8 @@ export default class Template extends React.PureComponent {
     const formDetails = this.oopFormDesigner.getFormConfig();
     if (formDetails === undefined) {
       console.log('有语法错误');
-    } else if (formDetails.formJson && formDetails.formJson.length === 0) {
-      message.warning('请设计表单');
     } else {
       const { formJson, ...otherProps } = formDetails;
-      formJson.forEach((item)=>{
-        if (item.initialValue && typeof item.initialValue === 'object') {
-          if (item.initialValue.constructor.name === 'Moment') {
-            const format = (item.component.props && item.component.props.format) || 'YYYY-MM-DD';
-            item.initialValue = item.initialValue.format(format);
-          }
-        }
-      });
       this.props.dispatch({
         type: 'formTemplate/updateFormDetails',
         payload: {

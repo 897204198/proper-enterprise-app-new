@@ -41,7 +41,7 @@ const FormContainer = Form.create({
               value = new Date(value);
             } else {
               const format = (component.props && component.props.format) || 'YYYY-MM-DD';
-              value = moment(new Date(value), format);
+              value = (value === null ? undefined : moment(new Date(value), format));
             }
           }
         }

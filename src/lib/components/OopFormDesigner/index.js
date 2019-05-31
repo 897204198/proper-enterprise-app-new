@@ -496,6 +496,11 @@ export default class OopFormDesigner extends React.PureComponent {
       if (component.name === 'OopSystemCurrent') {
         item.initialValue = undefined;
       }
+      // antd日期格式取出来的是Moment对象 这里做一个转换成字符串的操作
+      if (item.initialValue && typeof item.initialValue === 'object' && item.initialValue.format) {
+        const format = (component.props && component.props.format) || 'YYYY-MM-DD';
+        item.initialValue = item.initialValue.format(format);
+      }
       // subscribe 中的publish的value可能是函数 那么需要 字符串化
       if (subscribe.length) {
         subscribe.forEach((sb)=>{
