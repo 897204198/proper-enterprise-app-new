@@ -10,14 +10,18 @@ export const toString2 = (object)=>{
     if (typeof value === 'string') {
       r += `${k}:'${value}',`
     } else if (Array.isArray(value)) {
-      let ar = '';
-      value.forEach((v)=>{
+      let ar = `${k}:[`;
+      for (let i = 0; i < value.length; i++) {
+        const v = value[i];
         if (v && v.toString() === '[object Object]') {
-          ar += `${k}:[${toString2(v)}],`
+          ar += `${toString2(v)},`;
+        } else if (typeof v === 'string') {
+          ar += `'${v}',`;
         } else {
-          ar += `${k}:[${value}],`
+          ar += `${v},`;
         }
-      })
+      }
+      ar += '],'
       r += ar;
     } else if (value && value.toString() === '[object Object]') {
       r += `${k}:${toString2(value)},`

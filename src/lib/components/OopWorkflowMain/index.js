@@ -216,7 +216,7 @@ export default class OopWorkflowMain extends PureComponent {
     if ((formEntity === undefined || formEntity.formDetails === undefined) && this.state.businessForm === undefined) {
       return null;
     }
-    console.log('formLoading', formLoading)
+    // console.log('formLoading', formLoading)
     const { formDetails } = formEntity;
     const formConfig = formDetails ? JSON.parse(formDetails) : {};
     const title = (<h2 style={{paddingLeft: 16}}>{name}</h2>);

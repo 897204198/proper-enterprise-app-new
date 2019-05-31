@@ -1326,6 +1326,10 @@ export default class CustomQuery extends React.PureComponent {
   handleOpenfile = () => {
     document.getElementById('file').click()
   }
+  handleOnAddItem = ()=>{
+    // 默认设置新添加的组件关联按钮为‘新建和编辑’
+    // item.relateBtn = ['create', 'edit'];
+  }
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
@@ -1719,6 +1723,7 @@ export default class CustomQuery extends React.PureComponent {
           destroyOnClose={true}
           >
           <OopFormDesigner
+            onAddItem={this.handleOnAddItem}
             ref={(el)=>{ this.oopFormDesigner = el }}
             formDetails={parseFormConfig} />
         </Modal>

@@ -129,7 +129,7 @@ export default class WorkflowMainPop extends PureComponent {
           // 移动端手机 发起流程之后跳转到历史页
           setTimeout(()=>{
             const {param} = this.state;
-            this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}`));
+            this.props.dispatch(routerRedux.push(`/webapp/workflow/history?param=${param}&delta=-2`));
           }, 500);
         } else {
           message.error(res.result);

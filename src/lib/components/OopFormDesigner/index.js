@@ -271,6 +271,7 @@ export default class OopFormDesigner extends React.PureComponent {
           }
           delete jsonItem.active;
           delete jsonItem.initialValue;
+          delete jsonItem.syncTag;
 
           this.setState({
             currentRowItem: aItem,
@@ -344,8 +345,9 @@ export default class OopFormDesigner extends React.PureComponent {
     const copy = cloneDeep(item);
     const newItem = {
       ...copy,
-      name: getUuid(10)
+      name: getUuid(10),
     }
+    newItem.key = `${newItem.key}_${newItem.name}`;
     // 系统当前组件的Name给默认值 不随机生成
     if (newItem.component.name === 'OopSystemCurrent') {
       newItem.name = item.component.props.code;
@@ -353,7 +355,10 @@ export default class OopFormDesigner extends React.PureComponent {
       delete newItem.component.props.label;
     }
     this.state.rowItems.push(newItem);
-    this.forceUpdate()
+    if (this.props.onAddItem) {
+      this.props.onAddItem(newItem);
+    }
+    this.forceUpdate();
   }
   onPlusClick = ()=>{
     this.state.currentRowItem.component.children = [
@@ -573,6 +578,7 @@ export default class OopFormDesigner extends React.PureComponent {
         }
         delete jsonItem.active;
         delete jsonItem.initialValue;
+        delete jsonItem.syncTag;
         const currentRowItemJson = jsBeautify(toString2(jsonItem))
         this.setState({
           currentRowItemJson

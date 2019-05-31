@@ -4,7 +4,6 @@ import routersConfig from '@/config/sysRouters';
 import {dependencies} from '@/config/config';
 import pathToRegexp from 'path-to-regexp/index';
 
-
 function firstUpperCase(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -192,9 +191,11 @@ function is404Exception(errMsg) {
 function handleError(moduleName, pathName, err) {
   if (is404Exception(err.message)) {
     console.error(`No matching page found named '/${moduleName}/${pathName}'`);
-    window.location.replace(`${location.pathname}#/404`)
+    // window.location.replace(`${location.pathname}#/404`);
+    return require('../components/Exception/404');
   } else {
     console.error(err);
+    return require('../components/Exception/500');
   }
 }
 
@@ -211,7 +212,7 @@ function getPageEntryByDependencies(des = [], moduleName, pathName) {
     } catch (e) {
       if (is404Exception(e.message)) {
         if (length === 0) {
-          handleError(moduleName, pathName, e);
+          route = handleError(moduleName, pathName, e);
         } else {
           for (let i = length - 1; i >= 0; i--) {
             try {
@@ -220,14 +221,14 @@ function getPageEntryByDependencies(des = [], moduleName, pathName) {
               break;
             } catch (err) {
               if (!is404Exception(err.message)) {
-                handleError(moduleName, pathName, err);
+                route = handleError(moduleName, pathName, err);
                 break;
               }
             }
           }
         }
       } else {
-        handleError(moduleName, pathName, e)
+        route = handleError(moduleName, pathName, e)
       }
     }
     return route;

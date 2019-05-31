@@ -184,14 +184,15 @@ export default class OopForm extends React.PureComponent {
     console.log('OopForm componentDidMount');
   }
   componentWillReceiveProps(nextProps) {
-    const {defaultValue = {}} = nextProps;
+    const {defaultValue = {}, formJson = []} = nextProps;
     if (Object.keys(defaultValue).length > 0) {
       this.setState(({ fields }) => {
         for (const k in fields) {
           if (Object.prototype.hasOwnProperty.call(defaultValue, k)) {
+            const item = formJson.find(it=>it.name === k);
             fields[k] = {
               ...fields[k],
-              value: defaultValue[k]
+              value: isAntdMobliePicker(item) ? [defaultValue[k]] : defaultValue[k]
             }
           }
         }
