@@ -860,6 +860,9 @@ export default class CustomQuery extends React.PureComponent {
       const { curRecord } = this.state
       const { gridConfig, modalConfig, relaWf } = curRecord;
       const { formJson, ...otherProps } = formDetails;
+      formJson.forEach((item) => {
+        if (!item.syncTag) item.syncTag = makeRandomId()
+      });
       const FormObj = {
         ...otherProps,
         formJson: formJson.map(fj=>({...fj, active: false})),
