@@ -101,8 +101,12 @@ export default class OopOrgPicker extends React.PureComponent {
   // }
   handleSelect = (value, event) => {
     const { dataRef } = event.node.props
+    const obj = {...dataRef}
+    if (obj.children) {
+      delete obj.children
+    }
     this.setState({
-      selected: [dataRef],
+      selected: [obj],
       selectedKeys: value
     })
   }
