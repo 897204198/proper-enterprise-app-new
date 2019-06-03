@@ -83,12 +83,12 @@ const renderMenu = (divDom, that)=>{
     divDom
   );
 }
-const creatDiv = (renderDom, y)=>{
+const creatDiv = (renderDom, y, top = 184)=>{
   const divDom = document.createElement('div');
   renderDom.style.position = 'relative';
   divDom.style.position = 'absolute';
   divDom.style.zIndex = 9999;
-  divDom.style.top = `${y - 184}px`
+  divDom.style.top = `${y - top}px`
   divDom.style.left = '120px'
   divDom.style.zIndex = '9999'
   renderDom.appendChild(divDom)
@@ -101,8 +101,8 @@ export default class OopTree extends PureComponent {
     this.state = {
       currentSelectTreeNode: null,
       expandedKeys: [...defaultExpandedKeys],
+      autoExpandParent: false,
       searchValue: '',
-      autoExpandParent: true,
       selectedKeys: [...defaultSelectedKeys],
       defaultKeys: [...defaultSelectedKeys],
       popoverConfig: {
@@ -112,6 +112,7 @@ export default class OopTree extends PureComponent {
       },
     }
   }
+
   // 缓存树节点的所有数据
   treeNodeDataListCache = []
   handleOnSelect = (treeNode, event)=>{
@@ -120,17 +121,28 @@ export default class OopTree extends PureComponent {
       const id = dataRef.id || dataRef.key;
       this.setState({
         selectedKeys: [id],
-        defaultKeys: [id]
-      });
-      const currentSelectTreeNode = treeNode.length ? {...event.node.props.dataRef} : null;
-      this.setState({
-        currentSelectTreeNode
+        defaultKeys: [id],
+        currentSelectTreeNode: treeNode.length ? {...event.node.props.dataRef} : null
       }, ()=>{
         const { onTreeNodeSelect } = this.props;
         if (onTreeNodeSelect) {
           onTreeNodeSelect(treeNode, dataRef);
         }
       });
+    } else {
+      const { inverseSelect = false } = this.props;
+      if (inverseSelect) {
+        this.setState({
+          selectedKeys: [],
+          currentSelectTreeNode: null
+        }, () => {
+          const { onTreeNodeSelect } = this.props;
+          const {dataRef} = event.node.props;
+          if (onTreeNodeSelect) {
+            onTreeNodeSelect(treeNode, dataRef);
+          }
+        })
+      }
     }
   }
   // findParentNode = (dom) =>{
@@ -146,8 +158,9 @@ export default class OopTree extends PureComponent {
     if (this.props.onRightClickConfig) {
       this.props.onRightClickConfig.rightClick(node.props.dataRef);
       this.handleClosePopover();
-      const y = document.documentElement.scrollTop + event.clientY
-      const divDom = creatDiv(document.querySelector('.getTreeDom').parentNode, y)
+      const {top} = this.props.onRightClickConfig;
+      const y = document.documentElement.scrollTop + event.clientY;
+      const divDom = creatDiv(document.querySelector('.getTreeDom').parentNode, y, top)
       const data = {
         popoverInfo: node,
         treeMenuState: 'button',
@@ -163,8 +176,9 @@ export default class OopTree extends PureComponent {
   confirm = (item) => {
     this.handleClosePopover()
     const {props} = this.state.popoverConfig.popoverInfo;
+    const {treeTitle} = this.props;
     const { onClick } = item;
-    const txt = props.dataRef.catalogName || props.dataRef.typeName
+    const txt = props.dataRef[treeTitle] || props.dataRef.name;
     confirm({
       title: `'${txt}'-${item.confirm}`,
       onOk() {
@@ -310,7 +324,7 @@ export default class OopTree extends PureComponent {
   getCurrentSelectTreeNode = ()=>{
     return {...this.state.currentSelectTreeNode}
   }
-  generateList = (data, props) => {
+  generateList = (data = [], props) => {
     const key = props.treeKey || 'key';
     const title = props.treeTitle || 'title';
     const parentId = props.treeParentKey || 'parentId';
@@ -340,21 +354,20 @@ export default class OopTree extends PureComponent {
   }
   render() {
     const { searchValue, expandedKeys, autoExpandParent, selectedKeys } = this.state;
-    const { treeData, treeTitle, treeKey, treeRoot, treeLoading, defaultSelectedKeys, defaultExpandedKeys, ...treeConfig} = this.props;
+    const { treeData, treeTitle, treeKey, treeRoot, treeLoading, ...treeConfig} = this.props;
     this.setTitle();
     return (
       <Spin spinning={treeLoading}>
         <div className={styles.OopTree}>
-          <Search style={{ marginBottom: 8}} placeholder="搜索" onChange={this.handleOnChange} />
+          <Search style={{ marginBottom: 8}} placeholder="搜索" onChange={this.handleOnChange} allowClear={true} />
           <DirectoryTree
             expandAction="doubleClick"
             className="getTreeDom"
-            defaultExpandAll={true}
             onExpand={this.onExpand}
-            expandedKeys={expandedKeys}
+            expandedKeys={[...expandedKeys]}
             autoExpandParent={autoExpandParent}
             onSelect={this.handleOnSelect}
-            selectedKeys={selectedKeys}
+            selectedKeys={[...selectedKeys]}
             onRightClick={this.handleOnRightClick}
             ref={(el)=>{ this.tree = el }}
             {...treeConfig}

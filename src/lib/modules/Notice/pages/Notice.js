@@ -194,7 +194,7 @@ export default class Notice extends PureComponent {
     formInfo: {},
     nowInfoType: null,
     list: [],
-    pagination: null
+    pagination: undefined
   }
   componentDidMount() {
     this.infoType();
@@ -241,7 +241,7 @@ export default class Notice extends PureComponent {
       pagination: { pageNo: 1 }
     }, () => {
       this.setState({
-        pagination: null
+        pagination: undefined
       })
       this.refresh();
     })
@@ -408,8 +408,9 @@ export default class Notice extends PureComponent {
       <PageHeaderLayout >
         <Row gutter={16}>
           <Col span={18} push={6}>
-            <Card bordered={false} style={{ marginBottom: 16 }}>
+            <Card bordered={false} title="通知列表">
               <OopSearch
+                style={{marginBottom: 16}}
                 placeholder="请输入"
                 enterButtonText="搜索"
                 onInputChange={this.filterTable}
@@ -423,7 +424,7 @@ export default class Notice extends PureComponent {
                 size={size}
                 topButtons={topButtons}
                 rowButtons={rowButtons}
-                pagination={pagination || null}
+                pagination={pagination || undefined}
                 ref={(el) => { this.oopTable = el }}
               />
             </Card>

@@ -7,8 +7,10 @@ import { Route, Redirect, Switch, routerRedux } from 'dva/router';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import { enquireScreen } from 'enquire-js';
+import OopWebSocket from '@pea/components/OopWebSocket';
 import logo from '@/assets/logo.svg';
 import {webImUrl} from '@/config/config';
+import { getMenuData } from '@framework/common/frameHelper';
 import * as properties from '@/config/properties';
 import GlobalHeader from '../components/GlobalHeader';
 import GlobalFooter from '../components/GlobalFooter';
@@ -21,9 +23,7 @@ import styles from './BasicLayout.less';
 
 const { Content } = Layout;
 let redirectData = [];
-/**
- * 根据菜单取得重定向地址.
- */
+const specialPaths = ['/outerIframe', '/pupa'];
 const query = {
   'screen-xs': {
     maxWidth: 575,
@@ -62,6 +62,7 @@ export default class BasicLayout extends React.PureComponent {
   static childContextTypes = {
     location: PropTypes.object,
     breadcrumbNameMap: PropTypes.object,
+    oopWebSocket: PropTypes.object
   }
   state = {
     isMobile,
@@ -74,6 +75,7 @@ export default class BasicLayout extends React.PureComponent {
     return {
       location,
       breadcrumbNameMap: routerData,
+      oopWebSocket: this.oopWebSocket
     };
   }
   componentDidMount() {
@@ -83,7 +85,8 @@ export default class BasicLayout extends React.PureComponent {
       });
     });
     // 从localStorage里查看是否有token
-    if (!window.localStorage.getItem('proper-auth-login-token')) {
+    const token = window.localStorage.getItem('proper-auth-login-token');
+    if (!token) {
       this.props.dispatch({
         type: 'baseLogin/logout'
       })
@@ -103,12 +106,24 @@ export default class BasicLayout extends React.PureComponent {
       type: 'baseUser/fetchCurrent',
     });
   }
+  componentWillUnmount() {
+    // this.ws.disconnect();
+  }
   getPageTitle() {
-    const { routerData, location } = this.props;
-    const { pathname } = location;
+    const { location, routerData } = this.props;
+    const menuData = getMenuData();
+    const { pathname, search } = location;
+    let path = pathname;
+    if (specialPaths.includes(path)) {
+      path = `${path}${search}`;
+    }
     let title = properties.appName;
-    if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - ${properties.appName}`;
+    const item = menuData.find(it=>it.route === path);
+    if (item !== undefined) {
+      title = `${item.name} - ${properties.appName}`;
+    } else {
+      const router = routerData[path];
+      title = (router && router.name) ? router.name : title
     }
     return title;
   }
@@ -213,8 +228,7 @@ export default class BasicLayout extends React.PureComponent {
       })
       return redirectData
     }
-  };
-
+  }
   render() {
     const {
       currentUser, collapsed, fetchingNotices, notices, routerData, match, location, menus
@@ -256,6 +270,8 @@ export default class BasicLayout extends React.PureComponent {
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
             onMainClick={this.handleMainClick}
             onMsgClick={this.handleMsgClick}
+            location={location}
+            menuData={menus} // just for render <GlobalHeader/>
           />
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>
@@ -284,22 +300,6 @@ export default class BasicLayout extends React.PureComponent {
             </Switch>
           </Content>
           <GlobalFooter
-            // links={[{
-            //   key: 'Pro 首页',
-            //   title: 'Pro 首页',
-            //   href: 'http://pro.ant.design',
-            //   blankTarget: true,
-            // }, {
-            //   key: 'github',
-            //   title: <Icon type="github" />,
-            //   href: 'https://github.com/ant-design/ant-design-pro',
-            //   blankTarget: true,
-            // }, {
-            //   key: 'Ant Design',
-            //   title: 'Ant Design',
-            //   href: 'http://ant.design',
-            //   blankTarget: true,
-            // }]}
             copyright={
               <div>
                 Copyright <Icon type="copyright" /> {properties.footerTitle}
@@ -309,13 +309,15 @@ export default class BasicLayout extends React.PureComponent {
         </Layout>
       </Layout>
     );
-
     return (
-      <DocumentTitle title={this.getPageTitle()}>
-        <ContainerQuery query={query}>
-          {params => <div className={classNames(params)}>{layout}</div>}
-        </ContainerQuery>
-      </DocumentTitle>
+      <div>
+        <DocumentTitle title={this.getPageTitle()}>
+          <ContainerQuery query={query}>
+            {params => <div className={classNames(params)}>{layout}</div>}
+          </ContainerQuery>
+        </DocumentTitle>
+        <OopWebSocket ref={ (ws) => { this.oopWebSocket = ws }} />
+      </div>
     );
   }
 }

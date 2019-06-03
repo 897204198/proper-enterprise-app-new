@@ -20,27 +20,27 @@ export default class OopWorkflowMainModal extends PureComponent {
   }
   submitWorkflow = ()=>{
     this.setButtonLoading(true);
-    this.oopWorkflowMain.submitWorkflow((res)=>{
+    this.oopWorkflowMain.submitWorkflow((res, formData)=>{
       if (res.status === 'ok') {
         this.props.closeModal();
         this.setButtonLoading(false)
         message.success('流程提交成功');
-        this.props.afterProcessSubmit();
+        this.props.afterProcessSubmit(res, formData);
       } else {
-        message.error(`流程提交失败,${res.result}`);
+        message.error(res.result);
       }
     })
   }
   launchWorkflow = ()=>{
     this.setButtonLoading(true)
-    this.oopWorkflowMain.launchWorkflow((res)=>{
+    this.oopWorkflowMain.launchWorkflow((res, formData)=>{
       if (res.status === 'ok') {
         this.props.closeModal();
         this.setButtonLoading(false)
         message.success('流程提交成功');
-        this.props.afterProcessSubmit();
+        this.props.afterProcessSubmit(res, formData);
       } else {
-        message.error(`流程提交失败,${res.result}`);
+        message.error(res.result);
       }
     })
   }
@@ -80,7 +80,6 @@ export default class OopWorkflowMainModal extends PureComponent {
   render() {
     const {visible, ...otherProps} = this.props;
     const {taskOrProcDefKey} = this.props;
-    console.log('buttonLoading', this.state.buttonLoading)
     const footer = (
       <Fragment>
         <Popover

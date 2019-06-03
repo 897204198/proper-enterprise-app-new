@@ -88,7 +88,7 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
   const { getFieldDecorator, getFieldValue } = form;
   const handleConfirmJson = (rule, value, callback) => {
     try {
-      if (value !== '') {
+      if (value !== '' && value && value != null) {
         JSON.parse(getFieldValue('data'))
       }
     } catch (err) {
@@ -613,6 +613,7 @@ export default class AppConfig extends PureComponent {
               rightClick: (data)=>{
                 this.rightClick(data)
               },
+              top: 150
             },
             title: '应用管理',
             treeLoading: loading,

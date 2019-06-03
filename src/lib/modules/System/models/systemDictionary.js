@@ -1,3 +1,4 @@
+import { controlMenu } from '@framework/utils/utils';
 import { fetchById, remove, saveOrUpdate, getTreeData, treeListDelete, treeListEdit, treeListAdd, getTableData, getTableValue } from '../services/systemDictionaryS';
 
 export default {
@@ -19,14 +20,15 @@ export default {
     },
     *getTreeData({ payload, callback }, { call, put }) {
       const resp = yield call(getTreeData, payload);
-      resp.result.data.forEach((item)=>{
-        item.parentId = null;
-      })
+      // resp.result.data.forEach((item)=>{
+      //   item.parentId = null;
+      // })
+      const treeData = controlMenu(resp.result.data);
       yield put({
         type: 'treeList',
-        payload: resp
+        payload: treeData
       })
-      if (callback) callback(resp)
+      if (callback) callback(treeData)
     },
     *saveOrUpdate({payload, callback}, {call, put}) {
       const resp = yield call(saveOrUpdate, payload);
@@ -84,7 +86,7 @@ export default {
     treeList(state, action) {
       return {
         ...state,
-        treeData: action.payload.result.data
+        treeData: action.payload
       }
     },
     clearEntity(state) {

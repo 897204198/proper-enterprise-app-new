@@ -24,19 +24,21 @@ Components | Data Entry | OopSearch | 多功能搜索
 
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
+| moduleName | 使用该组件统一配置的global搜索方式时配置该属性，反之不用配置 | string | - |
 | placeholder | 输入框提示信息 | string | - |
 | enterButtonText | 搜索按钮显示文字 | string\|ReactNode | - |
 | onInputChange | 点击单行选中改行并包括所有的子节点元素 | (inputValue: any, filter: any) => void | - |
+| onLoadCallback | API中load方法的回调函数 | () => void | - |
+| onLoad | 配置自定义的接口调用 | () => void | - |
 | extra | 对搜索组件的扩展 | string\|ReactNode | - |
 
-##### OopSearch.onInputChage
+##### OopSearch.onInputChange
 
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | inputValue | 输入框中输入的值 | string | - |
 | filter | 组件内置的过滤方法```filterTableList``` |  (searchValue: any, tableList: any, columns: any) => any | - |
 | columns | 自定义的字段配置 | object | - |
-| extra | 对搜索组件的扩展 | string\|ReactNode | - |
 
 其余属性与[Input.Search](https://ant.design/components/input-cn/#Input.Search)   一致。
 

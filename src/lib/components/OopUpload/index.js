@@ -19,7 +19,6 @@ export default class OopUpload extends React.PureComponent {
     }
   }
   assemblingFileList = (arr)=>{
-    const me = this
     if (!arr || !arr.length) {
       return [];
     }
@@ -33,29 +32,31 @@ export default class OopUpload extends React.PureComponent {
           id: item
         }
       }
-      const {id, url, uid} = item;
+      const {id, uid} = item;
       if (!uid) {
         item.uid = -(++index);
-      }
-      // hack 图片上传后带有token url看不到的bug
-      if (url && url.includes('access_token')) {
-        item.url = '';
       }
       if (!item.url && id) {
         // 兼容http模式 base64模式 proper自己的服务器模式（即一个ID）
         item.url = (id.includes('http') || id.includes('data:image/')) ?
-          id : me.getFileDownloadUrl(id);
-        item.thumbUrl = item.url;
+          id : this.getFileUrl(id);
+        item.thumbUrl = this.getFileDownloadUrl(id);
       }
       return item;
     }).filter(it=>it !== undefined);
   }
   getFileDownloadUrl = (id)=>{
-    const sUrl = this.props.downloadUrl
+    const sUrl = this.props.downloadUrl;
+    if (sUrl) {
+      return sUrl;
+    }
     if (id) {
       const token = this.props.downloadToken || window.localStorage.getItem('proper-auth-login-token');
-      return `${sUrl || getApplicationContextUrl()}/file/${id}?access_token=${token}`;
+      return this.getFileUrl(id).concat(`?access_token=${token}`);
     }
+  }
+  getFileUrl = (id) =>{
+    return `${getApplicationContextUrl()}/file/${id}`;
   }
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
@@ -132,7 +133,7 @@ export default class OopUpload extends React.PureComponent {
         const fileNameSuffix = file.name && file.name.split('.').pop();
         if (imgSuffix.includes(fileNameSuffix) || 'picture,picture-card'.includes(listType)) {
           this.setState({
-            previewUrl: file.url
+            previewUrl: this.getFileDownloadUrl(file.id)
           }, ()=>{
             setTimeout(()=>{
               this.setState({
@@ -176,9 +177,9 @@ export default class OopUpload extends React.PureComponent {
         if (!lastFile.id) {
           lastFile.id = response;
         }
-        if (!lastFile.url) {
-          lastFile.url = this.getFileDownloadUrl(response);
-        }
+        // if (!lastFile.url) {
+        //   lastFile.url = this.getFileUrl(response);
+        // }
         this.setState(() => ({
           fileList: [...fileList],
           uploading: false

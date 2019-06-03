@@ -3,7 +3,7 @@ category | type | title | subtitle
 | :--------: | :-----: | :----:|  :----: |
 Components | Data Entry | OopForm  | 表单设计 |
 
-我们为 OopFormDesigner 提供了以下两种排列方式：
+我们为 OopForm 提供了以下两种排列方式：
 
 -  横向排列：标签和表单控件水平排列；
 -  纵向排列：标签和表单控件上下垂直排列；
@@ -18,10 +18,11 @@ Components | Data Entry | OopForm  | 表单设计 |
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | formJson |  表单模板 | object | - |
-| dragable | 是否可以拖动 | boolean | - |
-| formLayout | 表单布局类型 `horizontal`（横向）和 `vertical`(纵向) | string | - |
-| rowItemClick | 点击单行回调函数 | (name: any) => void | - |
-| rowItemIconCopy | 点击图标对组件进行复制的回调函数 |  (event: any, name: any) => void | - |
-| rowItemIconDelete | 点击图标执行删除操作的回调函数 |  (event: any, name: any) => void | - |
+| formTitle |  表单标题 | string | - |
+| defaultValue |  表单域初始值(formJson中定义initialValue时,initialValue优先级更高，以initialValue的值为准) | object | - |
+| disabled |  组件禁用 | boolean | false |
+| formLayout | 表单布局类型 `horizontal`（横向）和 `vertical`(纵向) | string | `horizontal` |
+| formItemLayout | formJson中每个的布局配置 | object | - |
+| columnsNum | 表单布局列数 | number | 1 |
 
 其他属性参见[form](https://ant.design/components/form-cn/)

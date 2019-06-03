@@ -1,0 +1,59 @@
+.container {
+  position: relative;
+  .tools {
+    border: 1px solid #ddd;
+    padding: 24px 16px 0 32px;
+    position: relative;
+    padding-bottom: 8px;
+  }
+  .title {
+    position: absolute;
+    top: -12px;
+    background: #fff;
+    left: 12px;
+    padding: 0 6px;
+  }
+  .toggleCode {
+    position: absolute;
+    right: 32px;
+    top: 24px;
+    cursor: pointer;
+  }
+  .wrapper {
+    border: 1px dashed #ddd;
+    padding: 16px;
+  }
+  .componentwrapper {
+    padding: 20px;
+  }
+  .codeOption {
+    position: absolute;
+    top: 8px;
+    padding: 0 2px;
+    right: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .collapse {
+    font-size: 12px;
+    position: absolute;
+    top: -18px;
+    right: 36px;
+    padding: 8px;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  :global {
+    .CodeMirror {
+      height: 100%;
+    }
+  }
+}
+.container + .container {
+  margin-top: 24px;
+}

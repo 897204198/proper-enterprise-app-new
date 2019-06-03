@@ -4,7 +4,6 @@ import routersConfig from '@/config/sysRouters';
 import {dependencies} from '@/config/config';
 import pathToRegexp from 'path-to-regexp/index';
 
-
 function firstUpperCase(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -24,6 +23,11 @@ function getFlatMenuData(menus) {
   });
   return keys;
 }
+// 把带url参数的path去掉 列如：a/b?c=1 => a/b
+function clearPathParam(path) {
+  const index = path.indexOf('?');
+  return index > 0 ? path.substr(0, index) : path;
+}
 // 通过modelUrl解析出modelName
 // 如通过authUser解析出Auth
 function exchangePath2Router(path) {
@@ -35,16 +39,20 @@ function exchangePath2Router(path) {
     paths.shift();
   }
   paths.forEach((item) => {
-    if (item.indexOf('-') > 0) {
+    let it = item;
+    if (item.indexOf('?') > 0) {
+      it = clearPathParam(item);
+    }
+    if (it.indexOf('-') > 0) {
       let arr = '';
-      item.split('-').forEach((sItem) => {
+      it.split('-').forEach((sItem) => {
         arr += firstUpperCase(sItem);
       });
       if (arr) {
         result.push(arr);
       }
     } else {
-      result.push(firstUpperCase(item));
+      result.push(firstUpperCase(it));
     }
   });
   // const routePath = result.join('/');
@@ -84,12 +92,16 @@ const dynamicWrapper = (component) => {
 };
 
 // 初始化路由数据
-const initRouter = (routerConfig)=>{
+export const initRouter = (routerConfig)=>{
   const router = {};
   for (const path in routerConfig) {
     const com = routerConfig[path]
     if (com && com.component) {
-      router[path] = {component: dynamicWrapper(com.component)};
+      const component = {component: dynamicWrapper(com.component)};
+      if (com.name) {
+        component.name = com.name
+      }
+      router[path] = component;
     }
   }
   return router
@@ -132,18 +144,19 @@ export const getRouterDataFromMenuData = (res)=>{
   const menuData = getFlatMenuData(res);
   for (const k of Object.keys(menuData)) {
     const menu = menuData[k];
+    const pathname = clearPathParam(k);
     if (!menu.hideInMenu && (!menu.children || menu.subRoute)) {
       const { moduleName, pathName } = exchangePath2Router(k);
       if (moduleName) {
-        if (pathName) {
-          const originRouter = getRouterData();
-          if (originRouter[`${k}`] === undefined) {
-            routerConfig[`${k}`] = getPageEntryByDependencies(dependencies, moduleName, pathName)
+        const originRouter = getRouterData();
+        if (originRouter[`${pathname}`] === undefined) {
+          if (pathName) {
+            routerConfig[`${pathname}`] = getPageEntryByDependencies(dependencies, moduleName, pathName)
+          } else {
+            routerConfig[`${pathname}`] = {
+              component: dynamicWrapper(()=> import(`@/lib/modules/${moduleName}/pages`))
+            };
           }
-        } else {
-          routerConfig[`${k}`] = {
-            component: dynamicWrapper(()=> import(`@/lib/modules/${moduleName}/pages`))
-          };
         }
       }
     }
@@ -172,11 +185,20 @@ export const getRouterDataFromMenuData = (res)=>{
   return routerData;
 }
 
-function handleError(moduleName, pathName, err) {
-  console.error(`No matching page found named '/${moduleName}/${pathName}'`);
-  console.error(err);
-  window.location.hash = '#/404';
+function is404Exception(errMsg) {
+  return errMsg.includes('Cannot find module');
 }
+function handleError(moduleName, pathName, err) {
+  if (is404Exception(err.message)) {
+    console.error(`No matching page found named '/${moduleName}/${pathName}'`);
+    // window.location.replace(`${location.pathname}#/404`);
+    return require('../components/Exception/404');
+  } else {
+    console.error(err);
+    return require('../components/Exception/500');
+  }
+}
+
 // 通过依赖获取页面的入口
 function getPageEntryByDependencies(des = [], moduleName, pathName) {
   if (!Array.isArray(des)) {
@@ -188,20 +210,25 @@ function getPageEntryByDependencies(des = [], moduleName, pathName) {
     try {
       route = require(`@/lib/modules/${moduleName}/pages/${pathName}`);
     } catch (e) {
-      if (length === 0) {
-        handleError(moduleName, pathName, e);
-      } else {
-        for (let i = 0; i < length; i++) {
-          try {
-            const root = des[i];
-            route = require(`@proper/${root}-lib/modules/${moduleName}/pages/${pathName}`);
-            break;
-          } catch (err) {
-            if (length === (i + 1)) {
-              handleError(moduleName, pathName, e);
+      if (is404Exception(e.message)) {
+        if (length === 0) {
+          route = handleError(moduleName, pathName, e);
+        } else {
+          for (let i = length - 1; i >= 0; i--) {
+            try {
+              const root = des[i];
+              route = require(`@proper/${root}-lib/modules/${moduleName}/pages/${pathName}`);
+              break;
+            } catch (err) {
+              if (!is404Exception(err.message)) {
+                route = handleError(moduleName, pathName, err);
+                break;
+              }
             }
           }
         }
+      } else {
+        route = handleError(moduleName, pathName, e)
       }
     }
     return route;

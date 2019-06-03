@@ -5,29 +5,61 @@ import AV from 'av-core';
 import { prefix, devMode } from '@/config/config';
 import {getCurrentUser} from './utils';
 
+// av-core 会把从mongo里的数据加一些奇怪的封装 这里做下清理 和 处理mongo本身的$id 等
+const retrievalData = (data)=>{
+  if (Array.isArray(data)) {
+    return data.map((item)=>{
+      const r = {
+        ...item._serverData,
+        id: item._serverData._id.$oid
+      }
+      for (const k in r) {
+        if (r[k] && r[k].$numberLong) {
+          r[k] = Number(r[k].$numberLong)
+        }
+      }
+      return r
+    })
+  } else if (Object.prototype.toString.call(data) === '[object Object]') {
+    const r = {
+      ...data._serverData,
+      id: data._serverData._id.$oid
+    }
+    for (const k in r) {
+      if (r[k] && r[k].$numberLong) {
+        r[k] = Number(r[k].$numberLong)
+      }
+    }
+    return r
+  }
+}
 
 export default class MongoService {
+  static setToken = (token)=>{
+    if (token) {
+      AV.setToken(token);
+    }
+  }
   constructor(tableName, url, ctx) {
     const token = window.localStorage.getItem('proper-auth-login-token');
     // const serviceKey = window.localStorage.getItem('proper-auth-service-key');
-    if (!token) {
-      throw Error('the token cannot be empty when you instantiate an \'MongoService\' object ');
+    if (token) {
+      this.currentUser = getCurrentUser(token);
+      this.tableName = tableName;
+      this.tableObj = AV.Object.extend(this.tableName);
+      // const {protocol, host, pathname} = window.location;
+      const serverURL = url || (devMode === 'development' && window.localStorage.getItem('pea_dynamic_request_prefix')) || `${prefix}`;
+      const context = ctx || '/avdemo';
+      AV.initialize(serverURL, context);
+      AV.setToken(token);
     }
-    this.currentUser = getCurrentUser(token);
-    this.tableName = tableName;
-    this.tableObj = AV.Object.extend(this.tableName);
-    // const {protocol, host, pathname} = window.location;
-    const serverURL = url || (devMode === 'development' && window.localStorage.getItem('pea_dynamic_request_prefix')) || `${prefix}`;
-    const context = ctx || '/avdemo';
-    AV.initialize(serverURL, context);
-    AV.setToken(token);
     // AV.setServiceKey(serviceKey);
   }
-  errorFn = (resolve, err)=>{
+  errorFn = (err)=>{
     if (err.status === 401) {
-      throw err
+      throw (err);
     }
-    resolve({
+    return err.resolve({
       status: 'error',
       result: []
     });
@@ -35,31 +67,38 @@ export default class MongoService {
   fetch =(callback) =>{
     const query = new AV.Query(this.tableObj);
     const callbackReturn = callback && callback(query);
-    return new Promise((resolve)=>{
+    return new Promise((resolve, reject)=>{
       if (callbackReturn) {
         callbackReturn.then((callbackReturnValue)=>{
           query.find().then((res)=>{
             resolve({
-              result: res.map(item=> ({...item._serverData, id: item._serverData._id.$oid})),
+              result: retrievalData(res),
               extra: callbackReturnValue
             });
-          }, (err)=>{ this.errorFn(resolve, err) });
-        }, (err)=>{ this.errorFn(resolve, err) })
+          }).catch((e)=>{
+            reject({...e, resolve}); // eslint-disable-line
+          });
+        }).catch((e)=>{
+          reject({...e, resolve}); // eslint-disable-line
+        })
         return
       }
       query.find().then((res)=>{
         resolve({
-          result: res.map(item=>
-            ({...item._serverData, id: item._serverData._id.$oid}))
+          result: retrievalData(res)
         });
-      }, (err)=>{ this.errorFn(resolve, err) })
+      }).catch((e)=>{
+        reject({...e, resolve}); // eslint-disable-line
+      })
+    }).catch((e)=>{
+      this.errorFn(e);
     })
   }
   fetchPagable = (params = {}) =>{
     const {pagination = {}, ...queryCondition } = params;
     const {pageNo = 1, pageSize = 10, sorter} = pagination;
     console.log(queryCondition, sorter)
-    return new Promise((resolve)=>{
+    return new Promise((resolve, reject)=>{
       this.fetch((query)=>{
         query.skip((pageNo - 1) * pageSize).limit(pageSize);
         return query.count();
@@ -71,26 +110,56 @@ export default class MongoService {
             count: res.extra
           }
         })
+      }).catch((e)=>{
+        reject({...e, resolve}); // eslint-disable-line
       })
+    }).catch((e)=>{
+      this.errorFn(e);
     })
   }
   save = (formValues) => {
     const insertObj = this.tableObj.new(formValues);
-    return new Promise((resolve)=>{
+    return new Promise((resolve, reject)=>{
       insertObj.save().then((res)=>{
         // 为了给oopToast提供成功的标识
         resolve({
           status: 'ok',
           result: {...res._serverData, id: res.id}
         });
-      }, (err)=>{ this.errorFn(resolve, err) })
+      }).catch((e)=>{
+        reject({...e, resolve}); // eslint-disable-line
+      })
+    }).catch((e)=>{
+      return this.errorFn(e);
+    })
+  }
+  // 后台 没有实现的方法 有需要循环遍历调用save方法
+  batchSave = (objects = []) =>{
+    const listObj = [];
+    objects.forEach((object)=>{
+      listObj.push(this.tableObj.new(object))
+    })
+    const {saveAll} = this.tableObj;
+    return new Promise((resolve, reject)=>{
+      saveAll(listObj).then((res)=>{
+        // 为了给oopToast提供成功的标识
+        console.log(res)
+        resolve({
+          status: 'ok',
+          result: []
+        });
+      }).catch((e)=>{
+        reject({...e, resolve}); // eslint-disable-line
+      })
+    }).catch((e)=>{
+      return this.errorFn(e);
     })
   }
   update = (formValues)=> {
     const id = formValues && formValues.id;
     if (id) {
       const query = new AV.Query(this.tableObj);
-      return new Promise((resolve)=>{
+      return new Promise((resolve, reject)=>{
         query.get(id).then((entity)=>{
           for (const k in formValues) {
             entity.set(k, formValues[k]);
@@ -99,10 +168,16 @@ export default class MongoService {
             // 为了给oopToast提供成功的标识
             resolve({
               status: 'ok',
-              result: {...res._serverData, id: res._serverData._id.$oid}
+              result: retrievalData(res)
             });
-          }, (err)=>{ this.errorFn(resolve, err) })
-        }, (err)=>{ this.errorFn(resolve, err) })
+          }).catch((e)=>{
+            reject({...e, resolve}); // eslint-disable-line
+          })
+        }).catch((e)=>{
+          reject({...e, resolve}); // eslint-disable-line
+        })
+      }).catch((e)=>{
+        this.errorFn(e);
       })
     } else {
       console.error('\'id\' cannot be null when update operation ')
@@ -111,20 +186,24 @@ export default class MongoService {
   fetchById = (id) =>{
     if (id) {
       const query = new AV.Query(this.tableObj);
-      return new Promise((resolve)=>{
-        query.get(id).then((res)=>{
+      return new Promise((resolve, reject)=>{
+        return query.get(id).then((res)=>{
           resolve({
             status: 'ok',
-            result: {...res._serverData, id: res._serverData._id.$oid}
+            result: retrievalData(res)
           });
-        }, (err)=>{ this.errorFn(resolve, err) })
+        }).catch((e)=>{
+          reject({...e, resolve}); // eslint-disable-line
+        })
+      }).catch((e)=>{
+        this.errorFn(e)
       })
     }
   }
   deleteById = (id) =>{
     if (id) {
       const query = new AV.Query(this.tableObj);
-      return new Promise((resolve)=>{
+      return new Promise((resolve, reject)=>{
         query.get(id).then((res)=>{
           res.id = res._serverData._id.$oid;
           res.destroy().then((msg)=>{
@@ -132,8 +211,14 @@ export default class MongoService {
               status: 'ok',
               result: msg
             });
-          }, (err)=>{ this.errorFn(resolve, err) });
-        }, (err)=>{ this.errorFn(resolve, err) })
+          }).catch((e)=>{
+            reject({...e, resolve}); // eslint-disable-line
+          })
+        }).catch((e)=>{
+          reject({...e, resolve}); // eslint-disable-line
+        })
+      }).catch((e)=>{
+        this.errorFn(e);
       })
     }
   }
@@ -141,7 +226,7 @@ export default class MongoService {
     if (param.ids) {
       const query = new AV.Query(this.tableObj);
       query.containedIn('_id', param.ids.split(','));
-      return new Promise((resolve)=>{
+      return new Promise((resolve, reject)=>{
         query.find().then((res)=>{
           if (res.length) {
             res.forEach((re)=>{
@@ -153,14 +238,20 @@ export default class MongoService {
                 status: 'ok',
                 result: msg
               });
-            }, (err)=>{ this.errorFn(resolve, err) });
+            }).catch((e)=>{
+              reject({...e, resolve}); // eslint-disable-line
+            })
           } else {
             resolve({
               status: 'error',
               result: 'the record no exit'
             });
           }
-        }, (err)=>{ this.errorFn(resolve, err) })
+        }).catch((e)=>{
+          reject({...e, resolve}); // eslint-disable-line
+        })
+      }).catch((e)=>{
+        this.errorFn(e);
       })
     }
   }

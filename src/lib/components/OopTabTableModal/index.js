@@ -7,13 +7,15 @@ import styles from './index.less';
 export default class OopTabTableModal extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { defaultSelected = [] } = props;
+    const { defaultSelected = [], multiple } = props;
     this.state = {
       modalVisible: false,
+      multiple,
       tableCfg: {
         data: [],
         title: '',
       },
+      firstTime: true,
       selectedRecord: [...defaultSelected],
     };
   }
@@ -27,8 +29,12 @@ export default class OopTabTableModal extends React.PureComponent {
         data: tableCfg.data,
       }
     }
-    if (nextProps.defaultSelected.length) {
+    // 避免重复赋值
+    if (nextProps.defaultSelected.length && this.state.firstTime) {
       state.selectedRecord = [...nextProps.defaultSelected];
+      this.setState({
+        firstTime: false
+      })
     }
     this.setState({
       ...state
@@ -87,12 +93,18 @@ export default class OopTabTableModal extends React.PureComponent {
     });
   }
 
-  handleTableSelect = (record, selected) => {
+  handleTableSelect = (record, selected, selectedRows, nativeEvent, multiple = true) => {
     const { selectedRecord } = this.state;
     if (selected) {
-      this.setState({
-        selectedRecord: [...selectedRecord, record]
-      });
+      if (multiple) {
+        this.setState({
+          selectedRecord: [...selectedRecord, record]
+        });
+      } else {
+        this.setState({
+          selectedRecord: [record]
+        });
+      }
     } else {
       this.setState({
         selectedRecord: selectedRecord.filter((item) => {
@@ -161,12 +173,14 @@ export default class OopTabTableModal extends React.PureComponent {
   clearAll = ()=>{
     Modal.confirm({
       title: '提示',
-      content: `确定删除选中的${this.state.selectedRecord.length}条数据吗`,
+      content: `确定删除选中的${this.state.selectedRecord.filter(record => !record.disabled).length}条数据吗`,
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
+        const { selectedRecord } = this.state
+        const records = selectedRecord.filter(record => record.disabled)
         this.setState({
-          selectedRecord: []
+          selectedRecord: [...records]
         })
       }
     });
@@ -175,7 +189,9 @@ export default class OopTabTableModal extends React.PureComponent {
     const {
       buttonCfg = {
         icon: 'user',
+        showIcon: true,
         text: '',
+        styleCfg: {}
       },
       treeCfg = {
         dataSource: [],
@@ -185,7 +201,7 @@ export default class OopTabTableModal extends React.PureComponent {
       tableCfg = {
         data: [],
         title: '',
-        total: 0,
+        total: 0
       },
       modalTitle = '',
     } = this.props;
@@ -193,20 +209,21 @@ export default class OopTabTableModal extends React.PureComponent {
       modalVisible,
       tableCfg: tableCfgState,
       selectedRecord,
+      multiple
     } = this.state;
     const selectedRowKeys = selectedRecord.map((item) => { return item.id });
+    const selectedDisabled = selectedRecord.map((item) => { return {id: item.id, disabled: 'disabled' in item ? item.disabled : false} })
     const selectedRowNames = selectedRecord.map((item) => { return item.name }).join(',');
-
     const tableTitle = tableCfgState.title ? tableCfgState.title : tableCfg.title;
-
     return (
       <Fragment>
         <Tooltip title={selectedRowNames.length ? selectedRowNames : '点击选择'}>
           <Button
-            icon={buttonCfg.icon}
+            icon={buttonCfg.showIcon ? buttonCfg.icon : ''}
             disabled={buttonCfg.disabled}
             onClick={this.handleButtonClick}
-            className={styles.btn}
+            className={buttonCfg.disabled ? styles.disabledBtn : styles.btn}
+            style={{...buttonCfg.styleCfg}}
             ref={(el)=>{ this.btn = el }}>{selectedRowNames.length ? selectedRowNames : buttonCfg.text}
           </Button>
         </Tooltip>
@@ -227,16 +244,21 @@ export default class OopTabTableModal extends React.PureComponent {
               <div style={{minWidth: 80}}>已选择(<span className={styles.primaryColor}>{this.state.selectedRecord.length}</span>):</div>
               <div style={{lineHeight: 2, minHeight: 28}}>
                 {selectedRecord.map((item) => {
-                  return (
+                  return ('disabled' in item && item.disabled) ? (
+                    <Tag
+                      key={item.id}
+                      closable={false}
+                      >{item.name}</Tag>
+                  ) : (
                     <Tag
                       key={item.id}
                       closable
                       onClose={(e) => {
                         this.handleTagClose(item, e);
-                      }}>{item.name}</Tag>
+                    }}>{item.name}</Tag>
                   )
                 })}
-                {selectedRecord.length ? (<Tag onClick={this.clearAll}>清空选择</Tag>) : null}
+                {selectedRecord.length ? (<Tag color="red" onClick={this.clearAll}>清空选择</Tag>) : null}
               </div>
             </div>
             <OopTreeTable
@@ -244,6 +266,7 @@ export default class OopTabTableModal extends React.PureComponent {
               table={{
                 columns: tableCfg.columns,
                 dataDefaultSelectedRowKeys: selectedRowKeys,
+                selectedDisabled,
                 grid: {list: tableCfgState.data},
                 gridLoading: tableCfg.loading,
                 onLoad: f=>f,
@@ -255,7 +278,8 @@ export default class OopTabTableModal extends React.PureComponent {
                 _onSelect: this.handleTableSelect,
                 _onSelectAll: this.handleTableSelectAll,
                 size: 'small',
-                title: tableTitle
+                title: tableTitle,
+                multiple
               }}
               tree={{
                 className: styles.tree,

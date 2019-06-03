@@ -35,16 +35,28 @@ const routers = {
     component: ()=>import('@pea/components/WebApp/Workflow/WorkflowMainPop')
   },
   '/main': {
-    component: ()=>import('@framework/modules/Base/pages/Main')
+    component: ()=>import('@framework/modules/Base/pages/NewMain'),
+    name: '首页'
   },
   '/personal-center': {
-    component: ()=>import('@framework/modules/Base/pages/PersonalCenter')
+    component: ()=>import('@framework/modules/Base/pages/PersonalCenter'),
+    name: '个人设置'
   },
   '/webapp/antd-mobile': {
     component: ()=>import('@pea/components/WebApp/AntdMobile')
   },
   '/webapp/other/reset-pwd': {
     component: ()=>import('@pea/components/WebApp/Other/ResetPwd')
+  },
+  '/document': {
+    component: ()=>import('@/document'),
+    name: '组件文档'
+  },
+  '/outerIframe': {
+    component: ()=>import('@framework/modules/Base/pages/OuterIframe')
+  },
+  '/pupa': {
+    component: ()=>import('@framework/modules/Base/pages/Pupa')
   },
 };
 export default routers

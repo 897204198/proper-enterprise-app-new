@@ -526,16 +526,19 @@ export default class Func extends PureComponent {
   }
 
   handleBasicChange = (warningField) => {
-    const visible = Object.keys(warningField).length > 0;
-    this.setState((prevState) => {
-      return {
-        closeConfirmConfig: {
-          ...prevState.closeConfirmConfig,
-          visible
-        },
-        warningField
-      }
-    });
+    const newWarningFieldlength = Object.keys(warningField).length;
+    const currentWarningFieldlength = Object.keys(this.state.warningField).length;
+    if (newWarningFieldlength !== currentWarningFieldlength) {
+      this.setState(({closeConfirmConfig}) => {
+        return {
+          closeConfirmConfig: {
+            ...closeConfirmConfig,
+            visible: newWarningFieldlength > 0
+          },
+          warningField
+        }
+      });
+    }
   };
 
   render() {
@@ -604,6 +607,7 @@ export default class Func extends PureComponent {
             onLoad: this.onLoad,
             topButtons,
             rowButtons,
+            showTableInfo: true,
             oopSearch: {
               moduleName: 'authmenus',
               placeholder: '请输入',

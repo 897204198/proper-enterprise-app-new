@@ -1,17 +1,34 @@
-import React, { PureComponent } from 'react';
-import { Layout, Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider, Tooltip } from 'antd';
+import React, {createElement, PureComponent} from 'react';
+import {Layout, Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider, Tooltip, Breadcrumb} from 'antd';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import groupBy from 'lodash/groupBy';
 import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import { getApplicationContextUrl } from '@framework/utils/utils';
+import { getMenuData } from '@framework/common/frameHelper';
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 
 const { Header } = Layout;
+const specialPaths = ['/outerIframe', '/pupa'];
 
 export default class GlobalHeader extends PureComponent {
+  static contextTypes = {
+    routes: PropTypes.array,
+    params: PropTypes.object,
+    location: PropTypes.object,
+    breadcrumbNameMap: PropTypes.object,
+  };
+  getBreadcrumbProps = () => {
+    return {
+      routes: this.props.routes || this.context.routes,
+      params: this.props.params || this.context.params,
+      routerLocation: this.props.location || this.context.location,
+      breadcrumbNameMap: this.props.breadcrumbNameMap || this.context.breadcrumbNameMap,
+    };
+  };
   componentWillUnmount() {
     this.triggerResizeEvent.cancel();
   }
@@ -48,18 +65,94 @@ export default class GlobalHeader extends PureComponent {
     this.triggerResizeEvent();
   }
   getAvatar = (avatar) => {
-    const tokenFix = window.localStorage.getItem('proper-auth-login-token');
     if (!avatar) {
-      avatar = 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
+      return <Avatar size="small" className={styles.avatar} icon="user" />
     }
-    return (avatar.indexOf('http') === 0 || avatar.indexOf('data:image/') === 0) ?
+    const tokenFix = window.localStorage.getItem('proper-auth-login-token');
+    const src = (avatar.indexOf('http') === 0 || avatar.indexOf('data:image/') === 0) ?
       avatar : `${getApplicationContextUrl()}/file/${avatar}?access_token=${tokenFix}`;
+    return <Avatar size="small" className={styles.avatar} src={src} />;
   }
   @Debounce(600)
   triggerResizeEvent() { // eslint-disable-line
     const event = document.createEvent('HTMLEvents');
     event.initEvent('resize', true, false);
     window.dispatchEvent(event);
+  }
+  /**
+   * 用menuData实现的Breadcrumb
+   * @param routerLocation
+   * @param breadcrumbNameMap
+   * @returns {*}
+   */
+  conversionFromLocation = (routerLocation, breadcrumbNameMap) => {
+    if (!routerLocation && !breadcrumbNameMap) {
+      return null;
+    }
+    const extraBreadcrumbItems = [];
+    const { linkElement = 'a' } = this.props;
+    // Add crumbs from the first order menu
+    const menuData = getMenuData();
+    if (menuData.length) {
+      const {pathname, search} = routerLocation;
+      let path = pathname;
+      if (specialPaths.includes(path)) {
+        path = `${path}${search}`;
+      }
+      const menu = menuData.find((item) => {
+        if (item.route === path) {
+          return item;
+        }
+        return null;
+      })
+      if (menu) {
+        // 最后一级
+        extraBreadcrumbItems.unshift(
+          <Breadcrumb.Item key="parent">
+            {createElement('span', {to: '/' }, menu.name)}
+          </Breadcrumb.Item>
+        );
+        let {parentId} = menu;
+        while (parentId) {
+          const menuParent = menuData.find((item) => { // eslint-disable-line
+            if (item.id === parentId) {
+              return item
+            }
+            return null;
+          });
+          if (menuParent) {
+            // 倒数第二级
+            extraBreadcrumbItems.unshift(
+              <Breadcrumb.Item key="parent">
+                {createElement('span', {to: '/' }, menuParent.name)}
+              </Breadcrumb.Item>
+            );
+            const {parentId: pid} = menuParent;
+            parentId = pid;
+          } else {
+            parentId = null;
+          }
+        }
+      }
+    }
+    // 第一级根节点
+    extraBreadcrumbItems.unshift(
+      <Breadcrumb.Item key="home">
+        {createElement(linkElement, {
+          href: '#/' }, '首页')}
+      </Breadcrumb.Item>
+    );
+    return (
+      <Breadcrumb className={styles.breadcrumb}>
+        {extraBreadcrumbItems}
+      </Breadcrumb>
+    );
+  }
+  renderBreadcrumb = ()=>{
+    const { routerLocation, breadcrumbNameMap } = this.getBreadcrumbProps();
+    if (routerLocation && routerLocation.pathname) {
+      return this.conversionFromLocation(routerLocation, breadcrumbNameMap);
+    }
   }
   render() {
     const {
@@ -93,6 +186,11 @@ export default class GlobalHeader extends PureComponent {
           type={collapsed ? 'menu-unfold' : 'menu-fold'}
           onClick={this.toggle}
         />
+        <div style={{display: 'inline-block'}}>
+          {
+            this.renderBreadcrumb()
+          }
+        </div>
         <div className={styles.right}>
           <HeaderSearch
             style={{display: 'none'}}
@@ -147,7 +245,7 @@ export default class GlobalHeader extends PureComponent {
           {currentUser ? (currentUser.name ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <Avatar size="small" className={styles.avatar} src={this.getAvatar(currentUser.avatar)} />
+                {this.getAvatar(currentUser.avatar)}
                 <span className={styles.name}>{currentUser.name}</span>
               </span>
             </Dropdown>

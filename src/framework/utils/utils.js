@@ -207,11 +207,12 @@ function culMenu(oldMenu, newMenu) {
   return newMenuTemp;
 }
 
+
 // 删除children长度为0的字段
-function delInvalidMenu(oldMenu) {
+function delInvalidMenu(oldMenu = []) {
   const temp = oldMenu;
   for (let i = 0; i < temp.length; i++) {
-    if (temp[i].children.length === 0) {
+    if (temp[i].children && temp[i].children.length === 0) {
       delete temp[i].children;
     } else {
       temp[i].children = delInvalidMenu(temp[i].children);
@@ -301,4 +302,41 @@ export const getCurrentUser = (token)=>{
     username: u.name
   };
   return user;
+}
+
+export const isObject = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Object]';
+}
+export const isArray = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Array]';
+}
+export const isFunction = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Function]';
+}
+export const isString = (object)=>{
+  return Object.prototype.toString.call(object) === '[object String]';
+}
+export const isNumber = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Number]';
+}
+export const isBoolean = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Boolean]';
+}
+export const isDate = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Date]';
+}
+export const isRegExp = (object)=>{
+  return Object.prototype.toString.call(object) === '[object RegExp]';
+}
+export const isSymbol = (object)=>{
+  return Object.prototype.toString.call(object) === '[object Symbol]';
+}
+export const isReactObject = (object)=>{
+  return isSymbol(object) && object.$$typeof !== undefined;
+}
+export const isEmptyObject = (object)=>{
+  for (const name in object) {
+    return false;
+  }
+  return true;
 }

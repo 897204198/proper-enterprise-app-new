@@ -1,5 +1,5 @@
-import { formatDate, getApplicationContextUrl } from '@framework/utils/utils';
-import { queryWorkflowList, removeWorkflowList, createWorkflow, repositoryWorkflow, queryByProcDefKey } from '../services/workflowDesignerS';
+import { formatDate, getApplicationContextUrl, formatter, controlMenu } from '@framework/utils/utils';
+import { queryWorkflowList, removeWorkflowList, createWorkflow, repositoryWorkflow, queryByProcDefKey, getTreeData, treeListDel, treeListEdit, treeListAdd, changeType } from '../services/workflowDesignerS';
 
 const token = window.localStorage.getItem('proper-auth-login-token');
 
@@ -11,6 +11,7 @@ export default {
     newId: null,
     changeList: [],
     deployData: {},
+    treeData: [],
     entity: {}
   },
 
@@ -23,6 +24,10 @@ export default {
       });
       if (callback) callback();
     },
+    *fetchList({ payload, callback }, { call }) {
+      const response = yield call(queryWorkflowList, payload);
+      if (callback) callback(response.result.data);
+    },
     *remove({ payload, callback }, { call }) {
       const response = yield call(removeWorkflowList, payload);
       if (callback) callback(response);
@@ -32,13 +37,6 @@ export default {
       yield put({
         type: 'getCreateId',
         payload: response.result,
-      });
-      if (callback) callback();
-    },
-    *checkAll({ payload, callback }, { put }) {
-      yield put({
-        type: 'getCheckList',
-        payload
       });
       if (callback) callback();
     },
@@ -64,6 +62,33 @@ export default {
         payload: response.result,
       });
       if (callback) callback(response);
+    },
+    // 获取分类列表
+    *fetchTreeData({ payload, callback }, { call, put }) {
+      const response = yield call(getTreeData, payload);
+      const treeData = formatter(controlMenu(response.result.data));
+      yield put({
+        type: 'getTreeData',
+        payload: treeData,
+      });
+      if (callback) callback();
+    },
+    // 删除分类节点
+    *removeTreeById({ payload, callback }, { call }) {
+      const response = yield call(treeListDel, payload);
+      if (callback) callback(response);
+    },
+    *editTree({payload, callback}, {call}) {
+      const resp = yield call(treeListEdit, payload);
+      if (callback) callback(resp)
+    },
+    *addTree({payload, callback}, {call}) {
+      const resp = yield call(treeListAdd, payload);
+      if (callback) callback(resp)
+    },
+    *changeWorkType({payload, callback}, {call}) {
+      const resp = yield call(changeType, payload);
+      if (callback) callback(resp)
     },
   },
 
@@ -103,6 +128,12 @@ export default {
       return {
         ...state,
         entity: action.payload
+      };
+    },
+    getTreeData(state, action) {
+      return {
+        ...state,
+        treeData: action.payload
       };
     },
   }

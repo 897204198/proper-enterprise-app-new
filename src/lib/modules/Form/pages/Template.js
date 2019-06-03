@@ -1,12 +1,12 @@
 import React from 'react';
 import FileSaver from 'file-saver'
-import { Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message } from 'antd';
+import {Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message, DatePicker} from 'antd';
 import {connect} from 'dva';
 import Debounce from 'lodash-decorators/debounce';
 import { inject } from '@framework/common/inject';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { oopToast } from '@framework/common/oopUtils';
-import OopFormDesigner from '../../../components/OopFormDesigner';
+import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 
@@ -82,7 +82,7 @@ const ModalFormBasic = Form.create()((props) => {
   //   }
   // }
   return (
-    <Modal title={title} visible={visible} onOk={submitForm} onCancel={cancelForm} maskClosable={false}>
+    <Modal title={title} visible={visible} onOk={submitForm} onCancel={cancelForm} maskClosable={false} destroyOnClose={true}>
       <Spin spinning={loading}>
         <Form>
           <div>
@@ -179,6 +179,16 @@ const ModalFormBasic = Form.create()((props) => {
                 <Radio value={true}>启用</Radio>
                 <Radio value={false}>停用</Radio>
               </RadioGroup>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="时间"
+          >
+            {form.getFieldDecorator('date', {
+              initialValue: formBasic.date
+            })(
+              <DatePicker />
             )}
           </FormItem>
           <div style={{display: 'none'}}>
@@ -326,6 +336,7 @@ export default class Template extends React.PureComponent {
       }
       values.formTodoDisplayFields = formTodoDisplayFields
     }
+    console.log(values)
     this.props.dispatch({
       type: 'formTemplate/saveOrUpdate',
       payload: values,
@@ -341,16 +352,10 @@ export default class Template extends React.PureComponent {
   }
   handleFormDesignerModalSubmit = ()=>{
     const formDetails = this.oopFormDesigner.getFormConfig();
-    if (formDetails.formJson.length) {
+    if (formDetails === undefined) {
+      console.log('有语法错误');
+    } else {
       const { formJson, ...otherProps } = formDetails;
-      formJson.forEach((item)=>{
-        if (item.initialValue && typeof item.initialValue === 'object') {
-          if (item.initialValue.constructor.name === 'Moment') {
-            const format = (item.component.props && item.component.props.format) || 'YYYY-MM-DD';
-            item.initialValue = item.initialValue.format(format);
-          }
-        }
-      });
       this.props.dispatch({
         type: 'formTemplate/updateFormDetails',
         payload: {
@@ -365,8 +370,6 @@ export default class Template extends React.PureComponent {
           this.onLoad();
         }
       });
-    } else {
-      message.warning('请设计表单')
     }
   }
   handleFormDesignerModalCancel = ()=>{

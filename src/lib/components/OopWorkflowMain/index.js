@@ -10,35 +10,13 @@ import {inject} from '@framework/common/inject';
 import {isApp, getApplicationContextUrl} from '@framework/utils/utils';
 import OopForm from '../OopForm';
 import OopPreview from '../OopPreview';
+import {authorityFormField, getWorkflowFormByFormPath} from './utils';
 import styles from './index.less';
 
-// 根据表单的权限设置 过滤掉不显示的字段 或者 设置某些字段为只读
-const authorityFormField = (formConfig)=>{
-  const {formJson, formProperties} = formConfig;
-  if (formProperties) {
-    const filter = (it)=>{
-      if (formProperties[it.name]) {
-        const {props = {}} = it.component;
-        props.disabled = !formProperties[it.name].writable;
-        it.component.props = {
-          ...it.component.props,
-          ...props
-        }
-        if (!it.rules) {
-          it.rules = [];
-        }
-        it.rules = [...it.rules];
-        it.rules.push({required: formProperties[it.name].require, message: '此项为必填项'})
-        return it
-      }
-    }
-    formConfig.formJson = formJson.map(filter).filter(it=>it !== undefined);
-  }
-};
 
 const { TabPane } = Tabs;
 const BusinessPanel = (props)=>{
-  const {self, formConfig = {}, defaultValue = {}, formLoading, isLaunch, taskOrProcDefKey, approvalRemarksRequire = false} = props;
+  const {children, self, formConfig = {}, defaultValue = {}, formLoading, isLaunch, taskOrProcDefKey, approvalRemarksRequire = false} = props;
   // 清空approvalRemarks审批说明字段
   defaultValue.approvalRemarks = null;
   // { *如果审批节点 包含 审批意见 表单为只读*}  以前的逻辑
@@ -55,7 +33,7 @@ const BusinessPanel = (props)=>{
   if (!isLaunch) {
     // 如果是历史节点 没有taskOrProcDefKey 没有审批意见 否则有审批意见
     if (taskOrProcDefKey) {
-      const children = [
+      const radioGroupChildren = [
         {label: '同意', value: 1},
         {label: '不同意', value: 0},
       ];
@@ -64,7 +42,7 @@ const BusinessPanel = (props)=>{
         name: 'passOrNot',
         component: {
           name: 'RadioGroup',
-          children,
+          children: radioGroupChildren,
           props: {
             onChange: (e)=>{
               // ad与am不同的组件 e代表不同的值 ad: e为ad的事件对象 am：e为picker data的索引 切为数组 如：[0]--代表第一项;
@@ -73,7 +51,7 @@ const BusinessPanel = (props)=>{
                 approvalRemarksRequire: value === 0
               }, ()=>{
                 if (value === 1) {
-                  const form = self.oopForm.wrappedInstance.getForm();
+                  const form = self.oopForm.getForm();
                   form.validateFields(['approvalRemarks'], { force: true });
                 }
               })
@@ -100,8 +78,10 @@ const BusinessPanel = (props)=>{
     }
   }
   return (
-    <Spin spinning={formLoading}>
-      <OopForm {...formConfig} defaultValue={defaultValue} wrappedComponentRef={(el)=>{ if (el) { self.oopForm = el } }} />
+    <Spin spinning={!!formLoading}>
+      <OopForm {...formConfig} defaultValue={defaultValue} ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }}>
+        {children}
+      </OopForm>
     </Spin>);
 }
 
@@ -117,18 +97,75 @@ export default class OopWorkflowMain extends PureComponent {
     isApp: isApp(),
     approvalRemarksRequire: false,
     imageLoading: true,
-    tabActiveKey: this.props.tabActiveKey ? this.props.tabActiveKey : 'handle'
+    tabActiveKey: this.props.tabActiveKey ? this.props.tabActiveKey : 'handle',
+    businessForm: undefined
   }
   // 表单是否加载完成
   isComplete = false;
   // 根据表单ID获取表单对象
   componentDidMount() {
     if (this.props.businessObj) {
-      const { businessObj: {formKey}, setButtonLoading} = this.props;
+      const { businessObj: {formKey}} = this.props;
       if (!formKey) {
         message.error('表单ID未设置')
         return
       }
+      this.getFormConfig(formKey);
+      if (this.state.tabActiveKey === 'progress') {
+        this.handleTabsChange(this.state.tabActiveKey);
+      }
+    }
+  }
+  /**
+   *  三种情况
+   *  1. example 自定义表单中的唯一编码
+   *  2. @example 代表是Pupa的配置 example 表示是Pupa中的唯一编码
+   *  3. @basePageCfg/fetchPageCfgByCodeForWf#example 暴露出的redux action 此时example为参数
+   *  4. /module/Interface/pages/Forms/MyBusinessForm.jsx 用户开发的表单组件
+   *  注1: 第二种@example是语法糖 最终会被转换成 @basePageCfg/fetchPageCfgByCodeForWf#example
+   *  注2: 第四种情况需要用户自己处理权限行为
+   */
+  getFormConfig = (key)=>{
+    let formKey = key
+    const {setButtonLoading} = this.props;
+    if (formKey.startsWith('@')) {
+      formKey = `@basePageCfg/fetchPageCfgByCodeForWf#${formKey.split('@')[1]}`;
+    }
+    // formKey包含“.jsx”则代表是表单的相对路径
+    if (formKey.includes('.jsx')) {
+      const businessForm = getWorkflowFormByFormPath(formKey);
+      if (businessForm && businessForm.default) {
+        // eslint-disable-next-line
+        this.setState({
+          businessForm: businessForm.default
+        }, ()=>{
+          this.isComplete = true
+        })
+      }
+      // formKey包含“/”则代表是一个redux 的action 参数用#分割
+    } else if (formKey.includes('/')) {
+      const action = formKey.split('#')[0];
+      const payload = formKey.split('#')[1];
+      this.props.dispatch({
+        type: action.split('@')[1],
+        payload,
+        callback: (resp)=>{
+          this.isComplete = true;
+          if (!resp) {
+            setButtonLoading(true);
+            message.error(`表单接口${formKey}获取表单数据失败`);
+          } else {
+            // 让数据走一遍redux
+            this.props.dispatch({
+              type: 'OopWorkflowMain$model/saveFormEntity',
+              payload: {
+                result: [{formDetails: resp}]
+              }
+            })
+          }
+        }
+      })
+    } else {
       this.props.dispatch({
         type: 'OopWorkflowMain$model/fetchByFormCode',
         payload: formKey,
@@ -140,9 +177,6 @@ export default class OopWorkflowMain extends PureComponent {
           }
         }
       })
-      if (this.state.tabActiveKey === 'progress') {
-        this.handleTabsChange(this.state.tabActiveKey);
-      }
     }
   }
   // 清空表单对象
@@ -179,9 +213,10 @@ export default class OopWorkflowMain extends PureComponent {
   // 获取流程处理tab
   getHandleTabComponent = ()=>{
     const { name = null, OopWorkflowMain$model: {formEntity}, businessObj: {formData, formTitle, formProperties}, formLoading, isLaunch, taskOrProcDefKey} = this.props;
-    if (formEntity === undefined || formEntity.formDetails === undefined) {
+    if ((formEntity === undefined || formEntity.formDetails === undefined) && this.state.businessForm === undefined) {
       return null;
     }
+    // console.log('formLoading', formLoading)
     const { formDetails } = formEntity;
     const formConfig = formDetails ? JSON.parse(formDetails) : {};
     const title = (<h2 style={{paddingLeft: 16}}>{name}</h2>);
@@ -192,10 +227,12 @@ export default class OopWorkflowMain extends PureComponent {
           self={this}
           isLaunch={isLaunch}
           taskOrProcDefKey={taskOrProcDefKey}
-          formLoading={formLoading}
+          formLoading={this.state.businessForm !== undefined ? false : formLoading}
           defaultValue={formData}
           formConfig={{...formConfig, formTitle, formProperties}}
-          approvalRemarksRequire={this.state.approvalRemarksRequire} />
+          approvalRemarksRequire={this.state.approvalRemarksRequire}>
+          { this.state.businessForm }
+        </BusinessPanel>
       </div>
     )
   }
@@ -311,65 +348,50 @@ export default class OopWorkflowMain extends PureComponent {
   // 提交工作流的方法
   submitWorkflow = (callback)=>{
     console.log('submitWorkflow...');
-    const {taskOrProcDefKey, setButtonLoading} = this.props;
-    if (!this.isComplete) {
-      message.warning('有点卡哦，数据还没返回', ()=>{
-        setButtonLoading(false);
-      });
-      return
-    }
-    const oopForm = this.oopForm.wrappedInstance;
-    const form = oopForm.getForm();
-    form.validateFields({force: true}, (err)=>{
-      if (err) {
-        setButtonLoading(false);
-        oopForm.showValidErr(err);
-        return
-      }
-      const formData = oopForm.getFormData();
-      console.log(formData);
-      oopForm.showPageLoading(true);
-      this.props.dispatch({
-        type: 'OopWorkflowMain$model/submitWorkflow',
-        payload: {taskOrProcDefKey, formData},
-        callback: (res)=>{
-          oopForm.showPageLoading(false);
-          callback && callback(res)
-        }
-      })
-    });
+    this.doWorkflow(callback, 'submitWorkflow');
   }
   // 发起工作流的方法
   launchWorkflow = (callback)=>{
     console.log('launchWorkflow...');
+    this.doWorkflow(callback, 'launchWorkflow');
+  }
+  // 工作流具体业务
+  doWorkflow = (callback, type)=>{
     const {taskOrProcDefKey, setButtonLoading, OopWorkflowMain$model: {formEntity: {formTodoDisplayFields = []}}} = this.props;
     if (!this.isComplete) {
-      message.warning('有点卡哦，数据还没返回', ()=>{
+      message.loading('有点卡哦，数据还没返回', ()=>{
         setButtonLoading(false);
       });
       return
     }
-    if (!this.oopForm.wrappedInstance) {
-      message.error('有点卡哦，数据还没返回');
-      return
-    }
-    const oopForm = this.oopForm.wrappedInstance;
+    const {oopForm} = this;
     const form = oopForm.getForm();
-    form.validateFields((err)=>{
+    const oopFormChildrenRef = oopForm.childrenRef;
+    form.validateFields({force: true}, (err)=>{
       if (err) {
-        setButtonLoading(false);
+        setTimeout(()=>{
+          setButtonLoading(false);
+        }, 200)
         oopForm.showValidErr(err);
         return
       }
       const formData = oopForm.getFormData();
-      console.log(formData);
+      if (oopFormChildrenRef && oopFormChildrenRef.validateOopForm) {
+        if (!oopFormChildrenRef.validateOopForm(formData)) {
+          setTimeout(()=>{
+            setButtonLoading(false);
+          }, 200)
+          return
+        }
+      }
+      console.log('formData before commit', formData);
       oopForm.showPageLoading(true);
       this.props.dispatch({
-        type: 'OopWorkflowMain$model/launchWorkflow',
-        payload: {taskOrProcDefKey, formData: {...formData, formTodoDisplayFields}},
+        type: `OopWorkflowMain$model/${type}`,
+        payload: {taskOrProcDefKey, formData: type === 'launchWorkflow' ? {...formData, formTodoDisplayFields} : formData},
         callback: (res)=>{
           oopForm.showPageLoading(false);
-          callback && callback(res)
+          callback && callback(res, formData)
         }
       })
     });

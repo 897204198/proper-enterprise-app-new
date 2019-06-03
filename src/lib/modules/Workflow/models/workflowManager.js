@@ -46,7 +46,7 @@ export default {
         type: 'saveDesign',
         payload: response.result,
       });
-      if (callback) callback();
+      if (callback) callback(response.result);
     },
     *findProcess({ payload, callback }, { call, put }) {
       const response = yield call(managerService.findProcess, payload);
@@ -54,7 +54,7 @@ export default {
         type: 'saveProcess',
         payload: response.result,
       });
-      if (callback) callback();
+      if (callback) callback(response.result);
     },
     *findBusinessObjByTaskId({ payload, callback }, { call }) {
       const response = yield call(managerService.findBusinessObjByTaskId, payload);

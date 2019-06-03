@@ -74,7 +74,7 @@ const filterTableList = (searchValue, tableList, columns)=>{
     }
     const itemName = Object.keys(item)[index];
     // 不对数据中的id、key、_开头 做过滤
-    if (itemName === 'id' || itemName === 'key' || itemName.indexOf('_') > -1) {
+    if (itemName === 'id' || itemName === 'key' || itemName.indexOf('_') === 0) {
       return false;
     }
     // 不对未在columns中设置的列过滤
@@ -98,7 +98,7 @@ const filterTableList = (searchValue, tableList, columns)=>{
   }
   const data = copyList.filter(item=>
     (
-      Object.values(item).filter((value, index)=>{ return filter(value, index, item) })
+      Object.values(item).filter((value, index)=>{ return filter(value, index, item) }) // eslint-disable-line
     ).length > 0)
   return data;
 }
@@ -152,19 +152,24 @@ export default class OopSearch extends React.Component {
   }
   // 根据input框触发最终查询
   handleButtonClick = ()=>{
-    if (this.props.moduleName === undefined) {
+    if (this.props.moduleName === undefined && this.props.onLoad === undefined) {
       return
     }
     // 如果显示下拉 那么不请求
     if (this.state.showDropMenu) {
       return
     }
-    this.load({
-      pagination: {
-        pageNo: 1,
-        pageSize: 10
-      }
-    })
+    const pagination = {
+      pageNo: 1,
+      pageSize: 10
+    }
+    if (this.props.onLoad) {
+      this.props.onLoad({
+        pagination
+      })
+    } else {
+      this.load({pagination})
+    }
   }
   // 下拉框点击事件
   handleOptionSelect = (event, option)=>{
@@ -376,20 +381,22 @@ export default class OopSearch extends React.Component {
   }
   load = (param = {})=>{
     const { dispatch, moduleName } = this.props;
-    const pagination = param.pagination ||
-      { pageNo: 1, pageSize: 10, ...this.props.global.oopSearchGrid.pagination};
-    const params = {
-      ...pagination,
-      ...param,
-      req: JSON.stringify(this.getRepParam()),
-      restPath: JSON.stringify(this.getRestPathParam()),
-      moduleName
-    }
-    dispatch({type: 'global/oopSearchResult', payload: params, callback: (resp)=>{
-      if (this.props.onLoadCallback) {
-        this.props.onLoadCallback(resp)
+    if (moduleName) {
+      const pagination = param.pagination ||
+        { pageNo: 1, pageSize: 10, ...this.props.global.oopSearchGrid.pagination};
+      const params = {
+        ...pagination,
+        ...param,
+        req: JSON.stringify(this.getRepParam()),
+        restPath: JSON.stringify(this.getRestPathParam()),
+        moduleName
       }
-    }});
+      dispatch({type: 'global/oopSearchResult', payload: params, callback: (resp)=>{
+        if (this.props.onLoadCallback) {
+          this.props.onLoadCallback(resp)
+        }
+      }});
+    }
   }
 
   staticRetrievalData(inputValue) {
@@ -476,10 +483,13 @@ export default class OopSearch extends React.Component {
       );
     });
   }
+  getInputValue = () =>{
+    return this.state.inputValue;
+  }
   render() {
-    const {global: {searchOptions}} = this.props;
+    const {global: {searchOptions}, style} = this.props;
     return (
-      <div className={styles.globalSearchWrapper}>
+      <div className={styles.globalSearchWrapper} style={style}>
         <div className={styles.searchContainer}>
           <div className={styles.searchTips}>
             <ul>
@@ -503,7 +513,8 @@ export default class OopSearch extends React.Component {
               <ul className="ant-menu ant-menu-light ant-menu-root ant-menu-vertical">
                 {this.renderSuggestOption(searchOptions)}
               </ul>
-            </div>)}
+            </div>)
+          }
         </div>
         {this.state.showDropMenu &&
         (

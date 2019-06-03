@@ -1,5 +1,7 @@
 import { routerRedux } from 'dva/router';
+import cookie from 'react-cookies';
 import { devMode } from '@/config/config';
+import MongoService from '@framework/utils/MongoService';
 import { login } from '../services/baseS';
 
 export default {
@@ -16,20 +18,20 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(login, payload);
-      console.log(response)
+      // console.log(response)
       // Login successfully
       if (response && response.status === 'ok') {
         const {localStorage, sessionStorage, location} = window;
         const {origin, pathname} = location;
         let url = `${origin}${pathname}`;
         localStorage.setItem('proper-auth-login-token', response.result);
-        // TODO the way to get x-service-key is ???
-        // localStorage.setItem('proper-auth-service-key', response.headers.get('x-service-key'));
+        MongoService.setToken(response.result)
         const returnPage = sessionStorage.getItem('proper-route-noAuthPage');
         if (returnPage) {
           url += returnPage;
         }
         sessionStorage.removeItem('proper-route-noAuthPage');
+        cookie.remove('X-PEP-TOKEN', { path: '/' });
         window.location.href = url;
         // document.cookie = `X-PEP-TOKEN=${response.result};path=/`;
         yield put({
@@ -48,10 +50,11 @@ export default {
       yield put(routerRedux.push('/base/login'));
     },
     *setAddressCache({ payload, callback }, { put }) {
-      window.localStorage.setItem('pea_dynamic_request_prefix_cache', JSON.stringify(Object.values(payload)));
+      const arr = Object.values(payload); //eslint-disable-line
+      window.localStorage.setItem('pea_dynamic_request_prefix_cache', JSON.stringify(arr));
       yield put({
         type: 'saveAddressCache',
-        payload: Object.values(payload)
+        payload: arr
       });
       setTimeout(()=>{
         callback && callback()

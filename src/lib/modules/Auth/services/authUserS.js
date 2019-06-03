@@ -15,7 +15,8 @@ export async function deleteUsers(params) {
 }
 export async function queryUserRoles(params) {
   const p = {
-    roleEnable: 'ALL'
+    roleEnable: 'ALL',
+    origin: 'ALLOTMENT'
   }
   return request(`/auth/users/${params}/roles?${stringify(p)}`);
 }

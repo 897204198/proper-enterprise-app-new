@@ -200,7 +200,7 @@ export default class ToDo extends React.PureComponent {
               Toast.success('流程提交成功', 2);
               this.fetchData();
             } else {
-              Toast.fail(`流程提交失败,${res.result}`, 4);
+              Toast.fail(res.result);
             }
           }
         })
@@ -319,7 +319,7 @@ export default class ToDo extends React.PureComponent {
                   initialLoad={false}
                   pageStart={1}
                   loadMore={this.fetchData}
-                  hasMore={!gridLoading && task.data.length < task.pagination.count}
+                  hasMore={!gridLoading && task.data.length < task.pagination.total}
                   useWindow={false}
                 >
                   <List
@@ -349,7 +349,7 @@ export default class ToDo extends React.PureComponent {
                     )}
                   />
                 </InfiniteScroll>
-                {gridLoading && task.data.length < task.pagination.count && (
+                {gridLoading && task.data.length < task.pagination.total && (
                   <div className={styles.loadingContainer}>
                     <Spin />
                   </div>
@@ -368,7 +368,7 @@ export default class ToDo extends React.PureComponent {
                   initialLoad={false}
                   pageStart={1}
                   loadMore={this.fetchData}
-                  hasMore={!gridLoading && taskAssignee.data.length < taskAssignee.pagination.count}
+                  hasMore={!gridLoading && taskAssignee.data.length < taskAssignee.pagination.total}
                   useWindow={false}
                 >
                   <List
@@ -397,7 +397,7 @@ export default class ToDo extends React.PureComponent {
                     )}
                   />
                 </InfiniteScroll>
-                {gridLoading && taskAssignee.data.length < taskAssignee.pagination.count && (
+                {gridLoading && taskAssignee.data.length < taskAssignee.pagination.total && (
                   <div className={styles.loadingContainer}>
                     <Spin />
                   </div>

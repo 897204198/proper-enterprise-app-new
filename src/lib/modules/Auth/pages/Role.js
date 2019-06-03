@@ -10,7 +10,8 @@ import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '../../../components/OopSearch';
 import OopTable from '../../../components/OopTable';
 import OopModal from '../../../components/OopModal';
-import OopAuthMenu from '../../../components/OopAuthMenu'
+import OopAuthMenu from '../../../components/OopAuthMenu';
+// import OopOrgEmpPicker from '../../../components/OopOrgEmpPicker';
 import { dataFilter, commonSearch } from './utils';
 import styles from './Role.less';
 
@@ -50,8 +51,24 @@ function onValuesChange(props, changedValues, allValues) {
 }
 
 const BasicInfoForm = Form.create({onValuesChange})((props) => {
-  const { form, roleInfo, roleList, loading, warningField, warningWrapper } = props;
-
+  const { form, roleInfo, roleList, loading, warningField, warningWrapper, ruleList = [], typeChange, userGroups, ruleType, userList } = props;
+  const ruleChange = (val) => {
+    form.setFieldsValue({
+      ruleValue: []
+    })
+    // const type = option.props.code;
+    if (val && val.substring(val.length - 3) !== 'All') {
+      if (val === 'group') {
+        typeChange('group');
+      } else if (val === 'user') {
+        typeChange('user');
+      } else {
+        typeChange('');
+      }
+    } else {
+      typeChange('');
+    }
+  }
   return (
     <Spin spinning={loading}>
       <Form className={classNames({[styles.warningWrapper]: warningWrapper})}>
@@ -104,6 +121,101 @@ const BasicInfoForm = Form.create({onValuesChange})((props) => {
             </Select>
           )}
         </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="规则"
+          className={warningField && warningField.parentId && styles.hasWarning}
+        >
+          {form.getFieldDecorator('ruleCode', {
+            initialValue: roleInfo.ruleCode,
+          })(<Select
+              showSearch
+              placeholder="请选择"
+              // optionFilterProp="children"
+              allowClear={true}
+              onChange={ruleChange}
+              // filterOption={(input, option) =>
+              //   option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
+            >
+              {
+                ruleList.length > 0 ? ruleList.map(item => (
+                  (
+                    <Option key={item.id} value={item.code} code={item.type.code}>
+                        {item.name}
+                    </Option>)
+                )) : null
+              }
+            </Select>
+          )}
+        </FormItem>
+        {
+          ruleType === 'user' ? (
+            <FormItem
+              {...formItemLayout}
+              label="用户"
+              className={warningField && warningField.description && styles.hasWarning}
+            >
+              {/* <OopOrgEmpPicker /> */}
+              {form.getFieldDecorator('ruleValue', {
+                initialValue: roleInfo.ruleValue && roleInfo.ruleCode === 'user' ? roleInfo.ruleValue.split(',') : [],
+              })(<Select
+                  showSearch
+                  placeholder="请选择"
+                  mode="multiple"
+                  optionFilterProp="children"
+                  allowClear={true}
+                  // onChange={ruleChange}
+                  filterOption={(input, option) =>
+                  option.props.children.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
+                >
+                  {
+                    userList.length > 0 ? userList.map(item => (
+                      (
+                        <Option key={item.id} value={item.id}>
+                          <span className={item.enable ? '' : styles.optionBox}>
+                            {`${item.name}(${item.username})`}
+                          </span>
+                          {/* {item.name} */}
+                        </Option>)
+                    )) : null
+                  }
+                </Select>
+              )}
+            </FormItem>
+          ) : null
+        }
+        {
+          ruleType === 'group' ? (
+            <FormItem
+              {...formItemLayout}
+              label="用户组"
+              className={warningField && warningField.description && styles.hasWarning}
+             >
+              {form.getFieldDecorator('ruleValue', {
+                initialValue: roleInfo.ruleValue && roleInfo.ruleCode === 'group' ? roleInfo.ruleValue.split(',') : [],
+              })(<Select
+                  showSearch
+                  placeholder="请选择"
+                  mode="multiple"
+                  optionFilterProp="children"
+                  allowClear={true}
+                  // onChange={ruleChange}
+                  filterOption={(input, option) =>
+                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 }
+                >
+                  {
+                    userGroups.length > 0 ? userGroups.map(item => (
+                      (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>)
+                    )) : null
+                  }
+                </Select>
+              )}
+             </FormItem>
+          ) : null
+        }
         <FormItem
           {...formItemLayout}
           label="描述"
@@ -175,7 +287,7 @@ const UserInfoForm = (props) => {
   const { loading, columns, roleUsers,
     handleUserChange, roleUsersList,
     rolesSearchType, userRolesAll, setRolesSearchType, setRolesList,
-    filterColumns, rolesCheckedData, setRoleCheckedTypeData, groupSelf } = props;
+    filterColumns, rolesCheckedData, setRoleCheckedTypeData, groupSelf, getPaganation, userPagination } = props;
   const handleChange = (record, selectedRowKeys) => {
     handleUserChange(selectedRowKeys, record.id)
   }
@@ -216,10 +328,10 @@ const UserInfoForm = (props) => {
           ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
         />
         <OopTable
-          onLoad={this.onLoad}
+          onLoad={getPaganation}
           loading={loading}
           size="small"
-          grid={{ list: roleUsersList }}
+          grid={{ list: roleUsersList, pagination: userPagination }}
           columns={columns}
           onRowSelect={handleChange}
           selectTriggerOnRowClick={true}
@@ -325,11 +437,16 @@ export default class Role extends PureComponent {
     // 当前角色用户组的搜索类型
     groupsSearchType: 'all',
     rolesCheckedData: [],
-    groupsCheckedData: []
+    groupsCheckedData: [],
+    // 规则类型
+    ruleType: ''
   };
 
   componentDidMount() {
     this.onLoad();
+    this.fetchRule();
+    this.fetchUserGroup();
+    this.fetchUserList();
   }
 
   // 刷新角色列表
@@ -349,9 +466,15 @@ export default class Role extends PureComponent {
       viewVisible: flag
     });
   }
-
+  // 过去规则项
+  fetchRule = () => {
+    this.props.dispatch({
+      type: 'authRole/fetchRule',
+    })
+  }
   // 查看基本信息
   handleView = (record) => {
+    const { ruleList, userList, userGroups } = this.props.authRole;
     const self = this;
     this.props.dispatch({
       type: 'authRole/fetchById',
@@ -360,6 +483,54 @@ export default class Role extends PureComponent {
         const text = res.enable;
         res.enableLabel = text === true ? '已启用' : '已停用';
         res.badge = text === true ? 'processing' : 'default';
+        if (res.ruleCode) {
+          for (let i = 0; i < ruleList.length; i++) {
+            if (res.ruleCode === ruleList[i].code) {
+              if (res.ruleCode === 'user') {
+                res.ruleCode = ruleList[i].name;
+                res.ruleTitle = '用户'
+                if (res.ruleValue) {
+                  let names = '';
+                  res.ruleValue = res.ruleValue.split(',');
+                  for (let j = 0; j < userList.length; j++) {
+                    for (let k = 0; k < res.ruleValue.length; k++) {
+                      if (res.ruleValue[k] === userList[j].id) {
+                        if (names === '') {
+                          names += `${userList[j].name}(${userList[j].username})`
+                        } else {
+                          names += `, ${userList[j].name}(${userList[j].username})`
+                        }
+                      }
+                    }
+                  }
+                  res.ruleValue = names
+                }
+              } else if (res.ruleCode === 'group') {
+                res.ruleCode = ruleList[i].name;
+                res.ruleTitle = '用户组'
+                if (res.ruleValue) {
+                  let goups = '';
+                  res.ruleValue = res.ruleValue.split(',');
+                  for (let b = 0; b < userGroups.length; b++) {
+                    for (let a = 0; a < res.ruleValue.length; a++) {
+                      if (res.ruleValue[a] === userGroups[b].id) {
+                        if (goups === '') {
+                          goups += `${userGroups[b].name}`
+                        } else {
+                          goups += `, ${userGroups[b].name}`
+                        }
+                      }
+                    }
+                  }
+                  res.ruleValue = goups
+                }
+              } else {
+                res.ruleCode = ruleList[i].name;
+                res.ruleValue = ''
+              }
+            }
+          }
+        }
         this.setState({
           viewVisible: true,
         });
@@ -398,7 +569,7 @@ export default class Role extends PureComponent {
             oopToast(res, '删除成功');
             if (me.oopTable) {
               me.oopTable.clearSelection();
-              me.refresh();
+              me.onLoad();
             }
           }
         });
@@ -466,15 +637,23 @@ export default class Role extends PureComponent {
     this.props.dispatch({
       type: 'authRole/fetchById',
       payload: record.id,
-      callback(res) {
+      callback: (res) => {
         self.props.dispatch({
           type: 'authRole/saveRoleInfo',
           payload: res
         });
+        const { ruleValue, ruleCode } = res;
+        let ruleType = '';
+        if (ruleValue) {
+          if (ruleValue.substring(ruleValue.length - 3) !== 'All') {
+            ruleType = ruleCode
+          }
+        }
         self.setState({
           addOrEditModalTitle: '编辑',
           modalVisible: true,
-          isCreate: !res.id
+          isCreate: !res.id,
+          ruleType
         });
       }
     });
@@ -629,7 +808,6 @@ export default class Role extends PureComponent {
       });
     }
   }
-
   onSubmitForm = () => {
     const self = this;
     const basicUserForm = this.basic.getForm();
@@ -640,6 +818,14 @@ export default class Role extends PureComponent {
         const params = data;
         if (data.parentId === 'role_no_select') {
           params.parentId = null;
+        }
+        if (data.ruleValue) {
+          params.ruleValue = data.ruleValue.join(',');
+        } else {
+          params.ruleValue = ''
+        }
+        if (!data.ruleCode) {
+          params.ruleCode = ''
         }
         this.props.dispatch({
           type: 'authRole/createOrUpdate',
@@ -823,27 +1009,50 @@ export default class Role extends PureComponent {
     this.userAddDel(value, typeAdd, typeDel, typeRoles, data, id);
   }
   handleBasicChange = (warningField) => {
-    const visible = Object.keys(warningField).length > 0;
-    this.setState((prevState) => {
-      return {
-        closeConfirmConfig: {
-          ...prevState.closeConfirmConfig,
-          visible
-        },
-        warningField
-      }
-    });
+    const newWarningFieldlength = Object.keys(warningField).length;
+    const currentWarningFieldlength = Object.keys(this.state.warningField).length;
+    if (newWarningFieldlength !== currentWarningFieldlength) {
+      this.setState(({closeConfirmConfig}) => {
+        return {
+          closeConfirmConfig: {
+            ...closeConfirmConfig,
+            visible: newWarningFieldlength > 0
+          },
+          warningField
+        }
+      });
+    }
   };
-
+  typeChange = (val) => {
+    this.setState({
+      ruleType: val
+    })
+  }
+  fetchUserGroup = () => {
+    this.props.dispatch({
+      type: 'authRole/fetchUserGroup',
+    })
+  }
+  fetchUserList = () => {
+    this.props.dispatch({
+      type: 'authRole/fetchUserList',
+    })
+  }
+  getPaganation = (param = {}) => {
+    const { pagination } = param;
+    this.setState({
+      userPagination: pagination
+    })
+  }
   render() {
     const { loading, gridLoading,
       global: { size, oopSearchGrid },
       authRole: { roleInfo, roleUsers, roleGroups,
-        roleList, roleMenus, allUsers, allGroups } } = this.props;
+        roleList, roleMenus, allUsers, allGroups, ruleList, userGroups, userList } } = this.props;
     const { viewVisible, checkedMenuKeys, checkedResourceKeys,
       roleUsersList, groupUsersList, addOrEditModalTitle,
       closeConfirmConfig, warningField, warningWrapper, rolesSearchType,
-      groupsSearchType, rolesCheckedData, groupsCheckedData } = this.state;
+      groupsSearchType, rolesCheckedData, groupsCheckedData, ruleType, userPagination } = this.state;
     const columns = [
       { title: '名称', dataIndex: 'name', key: 'name',
         render: (text, record) => (
@@ -965,7 +1174,12 @@ export default class Role extends PureComponent {
                 roleInfo = {roleInfo}
                 roleList = {roleList}
                 loading = {loading}
+                ruleList = {ruleList}
                 warningField={warningField}
+                typeChange = {this.typeChange}
+                ruleType={ruleType}
+                userGroups={userGroups}
+                userList={userList}
                 conductValuesChange={this.handleBasicChange}
               />
             },
@@ -994,6 +1208,8 @@ export default class Role extends PureComponent {
                 rolesSearchType={rolesSearchType}
                 userRolesAll={allUsers}
                 dataFilter={dataFilter}
+                getPaganation={this.getPaganation}
+                userPagination={userPagination}
                 setRolesList={this.setRolesList}
                 setRolesSearchType={this.setRolesSearchType}
                 filterColumns={['name', 'username', 'email', 'enableStatus', 'phone']}
@@ -1052,6 +1268,12 @@ export default class Role extends PureComponent {
             <Description term="继承">
               {roleInfo.parentName}
             </Description>
+            <Description term="规则">
+              {roleInfo.ruleCode ? roleInfo.ruleCode : ''}
+            </Description>
+            {
+              roleInfo.ruleValue ? <Description term={roleInfo.ruleTitle}>{roleInfo.ruleValue}</Description> : <div />
+            }
             <Description term="权限">
               <ManagerInfoForm
                 roleInfo = {roleInfo}

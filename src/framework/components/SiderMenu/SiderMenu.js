@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Layout, Menu, Icon, Spin} from 'antd';
+import { Layout, Menu, Icon, Input, Spin} from 'antd';
 import pathToRegexp from 'path-to-regexp';
+import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import * as properties from '@/config/properties';
 import styles from './index.less';
@@ -8,6 +9,9 @@ import styles from './index.less';
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
+const isReactObject = (component)=>{
+  return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
+}
 // Allow menu.js config icon as string or ReactNode
 //   icon: 'setting',
 //   icon: 'http://demo.com/icon.png',
@@ -22,56 +26,77 @@ const getIcon = (icon) => {
   return icon;
 };
 
+/* 根据pathname + search 查询出 最末级的菜单 menuData
+ * 再记录出从root->leaf 之间的路径path
+ */
+const getMenuOpenPath = (nodePath, menuData = []) =>{
+  let result = [];
+  for (let i = 0; i < menuData.length; i++) {
+    const menu = menuData[i];
+    const ifExist = menu.path === nodePath;
+    if (!ifExist) {
+      if (menu.children) {
+        result.push(menu.path);
+        const r = getMenuOpenPath(nodePath, menu.children);
+        if (r.length) {
+          result = result.concat(r);
+          break;
+        } else {
+          result.pop();
+        }
+      }
+    } else {
+      result.push(menu.path);
+      break;
+    }
+  }
+  return result;
+}
+
+const Search = (props)=>{
+  const {menuSearchValue, onSearch, collapsed, onSearchIconClick, self} = props;
+  return (<div style={{padding: '4px 20px 4px 24px'}}>
+    {collapsed ? <span className={styles.menuSearchIcon} onClick={onSearchIconClick}><Icon type="search" /></span> :
+      <Input.Search
+        allowClear
+        onChange={onSearch}
+        placeholder="搜索"
+        defaultValue={menuSearchValue}
+        ref={(el) => { self.searchInput = el }}
+      />
+    }
+  </div>)
+}
+
+
 export default class SiderMenu extends PureComponent {
   constructor(props) {
     super(props);
     this.menus = props.menuData;
     this.state = {
       openKeys: this.getDefaultCollapsedSubMenus(props),
+      selectedKeys: [],
+      menuSearchValue: undefined
     };
   }
+  filterMenus = [];
+  antMenusNodeCache = [];
   componentWillReceiveProps(nextProps) {
-    if (nextProps.location.pathname !== this.props.location.pathname) {
+    const {location: {pathname: newPathname, search: newSearch}} = nextProps;
+    const {location: {pathname, search}, menuData = []} = this.props;
+    const newPath = `${newPathname}${newSearch}`;
+    if (`${pathname}${search}` !== newPath || menuData.length > 0) {
       this.setState({
         openKeys: this.getDefaultCollapsedSubMenus(nextProps),
+        selectedKeys: newPath === '/' ? [] : [newPath]
       });
     }
   }
-  /**
-   * Convert pathname to openKeys
-   * /list/search/articles = > ['list','/list/search']
-   * @param  props
-   */
   getDefaultCollapsedSubMenus(props) {
-    const { location: { pathname } } = props || this.props;
-    // eg. /list/search/articles = > ['','list','search','articles']
-    let snippets = pathname.split('/');
-    // Delete the end
-    // eg.  delete 'articles'
-    snippets.pop();
-    // Delete the head
-    // eg. delete ''
-    snippets.shift();
-    // eg. After the operation is completed, the array should be ['list','search']
-    // eg. Forward the array as ['list','list/search']
-    if (this.props.menuData.length === 0) {
-      // return snippets when the menuData in fetching
-      return ['/'.concat(...snippets)]
-    }
-    snippets = snippets.map((item, index) => {
-      // If the array length > 1
-      if (index > 0) {
-        // eg. search => ['list','search'].join('/')
-        return snippets.slice(0, index + 1).join('/');
-      }
-      // index 0 to not do anything
-      return item;
-    });
-    snippets = snippets.map((item) => {
-      return this.getSelectedMenuKeys(`/${item}`)[0];
-    });
-    // eg. ['list','list/search']
-    return snippets;
+    const { location: { pathname, search }, menuData = [] } = props || this.props;
+    const openMenuParentPath = getMenuOpenPath(`${pathname}${search}`, menuData);
+    // console.log(openMenuParentPath);
+    return openMenuParentPath;
   }
   /**
    * Recursively flatten the data
@@ -101,14 +126,14 @@ export default class SiderMenu extends PureComponent {
     });
   }
   /**
-  * 判断是否是http链接.返回 Link 或 a
-  * Judge whether it is http link.return a or Link
-  * @memberof SiderMenu
-  */
-  getMenuItemPath = (item) => {
+   * 判断是否是http链接.返回 Link 或 a
+   * Judge whether it is http link.return a or Link
+   * @memberof SiderMenu
+   */
+  getMenuItemPath = (item, name) => {
     const itemPath = this.conversionPath(item.path);
     const icon = getIcon(item.icon);
-    const { target, name } = item;
+    const { target } = item;
     // Is it a http link
     if (/^https?:\/\//.test(itemPath)) {
       return (
@@ -132,45 +157,100 @@ export default class SiderMenu extends PureComponent {
    * get SubMenu or Item
    */
   getSubMenuOrItem=(item) => {
+    const {menuSearchValue = ''} = this.state;
+    let {name} = item;
+    item.display = true;
+    if (typeof name === 'string') {
+      // 有值 准备过滤
+      if (menuSearchValue !== '') {
+        const index = name.indexOf(menuSearchValue);
+        if (index > -1) {
+          // 过滤成蓝色的
+          const beforeStr = item.name.substr(0, index);
+          const afterStr = item.name.substr(index + menuSearchValue.length);
+          name = (<span>
+            {beforeStr}
+            <span className={styles.primaryColor}>{menuSearchValue}</span>
+            {afterStr}
+          </span>)
+        } else {
+          item.display = false;
+        }
+      }
+    }
     if (item.children && item.children.some(child => child.name)) {
       return (
         <SubMenu
+          className={isReactObject(name) ? 'filtered' : ''}
           title={
             item.icon ? (
               <span>
                 {getIcon(item.icon)}
-                <span>{item.name}</span>
+                <span>{name}</span>
               </span>
-            ) : item.name
-            }
+            ) : name
+          }
           key={item.path}
         >
           {this.getNavMenuItems(item.children)}
         </SubMenu>
       );
     } else {
+      if (item.display === false) {
+        return null;
+      }
       return (
-        <Menu.Item key={item.path}>
-          {this.getMenuItemPath(item)}
+        <Menu.Item key={item.path} name={item.name}>
+          {this.getMenuItemPath(item, name)}
         </Menu.Item>
       );
     }
   }
   /**
-  * 获得菜单子节点
-  * @memberof SiderMenu
-  */
-  getNavMenuItems = (menusData) => {
+   * 获得菜单子节点
+   * @memberof SiderMenu
+   */
+  getNavMenuItems = (menusData, all) => {
     if (!menusData) {
       return [];
     }
-    return menusData
+    const filterMenus = menusData
       .filter(item => item.name && !item.hideInMenu)
       .map((item) => {
-        const ItemDom = this.getSubMenuOrItem(item);
-        return this.checkPermissionItem(item.authority, ItemDom);
+        return this.getSubMenuOrItem(item);
       })
       .filter(item => !!item);
+    // 把菜单缓存起来 为搜索的时候用
+    if (all) {
+      this.filterMenus = filterMenus
+    }
+    setTimeout(()=>{
+      // if (this.antMenusNodeCache.length === 0) {
+      //   if (this.props.menuData.length > 0) {
+      //     // 隐藏没有子节点的菜单
+      //     if (this.state.menuSearchValue) {
+      //       this.antMenusNodeCache = document.querySelectorAll('.ant-menu.ant-menu-sub');
+      //     }
+      //   }
+      // }
+      document.querySelectorAll('.ant-menu.ant-menu-sub').forEach((node)=>{
+        const li = node.parentNode;
+        let show = 'block';
+        if (li) {
+          if (this.state.menuSearchValue) {
+            if (!li.className.includes('filtered')) {
+              if (node.children.length === 0) {
+                show = 'none';
+              } else {
+                show = Array.from(node.children).every(it=>it.style.display === 'none') ? 'none' : 'block'
+              }
+            }
+          }
+          li.style.display = show;
+        }
+      })
+    })
+    return filterMenus;
   }
   // conversion Path
   // 转化路径
@@ -181,17 +261,6 @@ export default class SiderMenu extends PureComponent {
       return `/${path || ''}`.replace(/\/+/g, '/');
     }
   }
-  // permission to check
-  checkPermissionItem = (authority, ItemDom) => {
-    if (this.props.Authorized && this.props.Authorized.check) {
-      const { check } = this.props.Authorized;
-      return check(
-        authority,
-        ItemDom
-      );
-    }
-    return ItemDom;
-  }
   handleOpenChange = (openKeys) => {
     const lastOpenKey = openKeys[openKeys.length - 1];
     const isMainMenu = this.props.menuData.some(
@@ -201,18 +270,56 @@ export default class SiderMenu extends PureComponent {
       openKeys: isMainMenu ? [lastOpenKey] : [...openKeys],
     });
   }
+  handleOnSelect = ({ selectedKeys })=>{
+    this.setState({
+      selectedKeys
+    })
+  }
+  handleOnSearch = (event)=>{
+    const {value} = event.target;
+    this.handleOnSearchDebounce(value)
+  }
+  @Debounce(300)
+  handleOnSearchDebounce(menuSearchValue) {
+    this.setState({
+      menuSearchValue
+    })
+  }
+  handleOnSearchIconClick = ()=>{
+    const { onCollapse } = this.props;
+    onCollapse(false);
+    setTimeout(()=>{
+      this.searchInput.focus();
+    })
+  }
+  getOpenKeys = ()=>{
+    const { openKeys, menuSearchValue } = this.state;
+    const { collapsed } = this.props;
+    if (!menuSearchValue) {
+      return collapsed ? [] : openKeys
+    } else {
+      const menuItemKeys = [];
+      const getKey = (reactNodes)=>{
+        React.Children.forEach(reactNodes, (node)=>{
+          if (node.type.isSubMenu === 1 || node.type.isMenuItem === 1) {
+            menuItemKeys.push(node.key);
+            if (node.props.children) {
+              getKey(node.props.children)
+            }
+          }
+        })
+      }
+      getKey(this.filterMenus);
+      return menuItemKeys;
+    }
+  }
   render() {
-    const { logo, collapsed, location: { pathname }, onCollapse } = this.props;
-    const { openKeys } = this.state;
-    // Don't show popup menu when it is been collapsed
+    const { logo, collapsed, onCollapse } = this.props;
+    const { selectedKeys, menuSearchValue } = this.state;
+    const openKeys = this.getOpenKeys();
     const menuProps = collapsed ? {} : {
       openKeys,
     };
-    // if pathname can't match, use the nearest parent's key
-    let selectedKeys = this.getSelectedMenuKeys(pathname);
-    if (!selectedKeys.length) {
-      selectedKeys = [openKeys[openKeys.length - 1]];
-    }
     return (
       <Sider
         trigger={null}
@@ -229,15 +336,25 @@ export default class SiderMenu extends PureComponent {
             <h1>{properties.basicLayoutTitle}</h1>
           </Link>
         </div>
+        <Search
+          menuSearchValue={menuSearchValue}
+          onSearch={this.handleOnSearch}
+          collapsed={collapsed}
+          onSearchIconClick={this.handleOnSearchIconClick}
+          self={this}
+        />
         <Menu
           key="Menu"
           theme="dark"
           mode="inline"
-          {...menuProps}
+          {
+            ...menuProps
+          }
           onOpenChange={this.handleOpenChange}
-          selectedKeys={selectedKeys}
-          style={{ padding: '16px 0', width: '100%', height: 'calc(100vh - 64px)', overflowY: 'auto'}} >
-          {this.getNavMenuItems(this.props.menuData)}
+          selectedKeys={selectedKeys.length ? selectedKeys : [openKeys[openKeys.length - 1]]}
+          onSelect={this.handleOnSelect}
+          style={{ padding: '0 0 16px', width: '100%', height: 'calc(100vh - 104px)', overflowY: 'auto'}} >
+          {this.getNavMenuItems(this.props.menuData, true)}
         </Menu>
         {this.props.showMenusLoading && (
           <div className={styles.menuLoading}>

@@ -134,7 +134,9 @@ export default class TomcatLog extends React.Component {
     if (!this.state.overflowLock) {
       setTimeout(() => {
         const div = document.querySelector('.tomcatCardContent');
-        div.scrollTop = div.scrollHeight;
+        if (div) {
+          div.scrollTop = div.scrollHeight;
+        }
       }, 50);
     }
   }
@@ -195,7 +197,7 @@ export default class TomcatLog extends React.Component {
             placeholder={['请选择开始时间', '请选择结束时间']}
             onChange={this.datePickerChange} />
           <Input.Search
-            style={{marginBottom: '16px', width: '48%'}}
+            style={{width: '48%'}}
             onSearch={value => this.handleSearch(value)}
             enterButton="搜索"
             size={size} />

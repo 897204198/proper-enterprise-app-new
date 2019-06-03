@@ -41,3 +41,35 @@ export async function queryByProcDefKey(params) {
   }
   return request(`/repository/process-definitions/${arg}/latest`);
 }
+
+// 获取分类列表
+export async function getTreeData() {
+  return request('/repository/wfCategory');
+}
+
+export async function treeListAdd(params) {
+  return request('/repository/wfCategory', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function treeListEdit(params) {
+  return request(`/repository/wfCategory/${params.id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
+export async function treeListDel(params) {
+  return request(`/repository/wfCategory?ids=${params}`, {
+    method: 'DELETE'
+  });
+}
+
+export async function changeType(params) {
+  return request(`/repository/models/${params.modelId}/wfCategory?workflowCategoryCode=${params.workflowCategory}`, {
+    method: 'PUT',
+  });
+}
+

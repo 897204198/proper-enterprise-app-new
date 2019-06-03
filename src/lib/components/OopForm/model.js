@@ -26,7 +26,7 @@ export default {
     saveDictData(state, action) {
       return {
         ...state,
-        [action.payload.catalog]: action.payload.response.result.map(it=>({
+        [action.payload.catalog]: action.payload.response.result.data.map(it=>({
           label: it.name,
           value: JSON.stringify({catalog: it.catalog, code: it.code}),
           disabled: !it.enable
@@ -34,15 +34,22 @@ export default {
       }
     },
     saveUrlData(state, action) {
-      const {dataUrl} = action.payload;
+      const {dataUrl, response: {result = []}} = action.payload;
       const {value, labelPropName, valuePropName, disabledPropName} = dataUrl;
+      let list = [];
+      if (result.length) {
+        list = result;
+      } else {
+        list = (result.data && result.data.length) ? result.data : [];
+      }
       return {
         ...state,
-        [value]: action.payload.response.result.map(it=>({
+        [value]: list.map(it=>({
           ...it,
           label: it[labelPropName],
           value: it[valuePropName],
-          disabled: it[disabledPropName] === undefined ? false : it[disabledPropName],
+          // TODO 约定 如果你用自定义的字段代表disabled 那么必须取反
+          disabled: it[disabledPropName] === undefined ? false : !it[disabledPropName],
         }))
       }
     },

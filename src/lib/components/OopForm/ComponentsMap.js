@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button} from 'antd';
+import { DatePicker, InputNumber, Input, Radio, Checkbox, Select, Button, Switch} from 'antd';
 import {List, TextareaItem, Picker, DatePicker as DatePickerM, InputItem, Button as ButtonM} from 'antd-mobile';
 import zhCN2 from 'antd-mobile/lib/date-picker/locale/zh_CN';
 import { getUuid } from '@framework/common/oopUtils';
@@ -10,6 +10,9 @@ import OopText from '../OopText';
 import CheckBoxPop from './components/CheckBoxPop';
 import OopGroupUserPicker from '../OopGroupUserPicker';
 import OopOrgEmpPicker from '../OopOrgEmpPicker';
+import OopOrgPicker from '../OopOrgPicker';
+import OopTextEditor from '../OopTextEditor';
+import OopEnum from '../OopEnum';
 import styles from './index.less';
 
 const CheckboxGroup = Checkbox.Group;
@@ -51,7 +54,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <ButtonM { ...props} />;
       break;
     case 'TextArea':
-      component = <TextareaItem { ...props} title={label} rows={3} onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }} />;
+      component = <TextareaItem autoHeight { ...props} title={label} onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }} />;
       break;
     case 'Select':
       // pickerData = children.map(it=>({...it, value: [it.value]})); arrow="horizontal"
@@ -78,7 +81,7 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
     case 'OopUpload':
       component =
       (
-      <OopUpload
+        <OopUpload
         {...props}
       >{ p => <List.Item arrow="horizontal" extra={p.extra}>{label}</List.Item>}</OopUpload>)
       break;
@@ -90,6 +93,18 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       break;
     case 'OopOrgEmpPicker':
       component = <OopOrgEmpPicker {...props} />
+      break;
+    case 'OopOrgPicker':
+      component = <OopOrgPicker {...props} />
+      break;
+    case 'Switch':
+      component = <List.Item arrow="horizontal" extra={<Switch {...props} />}>{label}</List.Item>
+      break;
+    case 'OopTextEditor':
+      component = <OopTextEditor {...props} />
+      break;
+    case 'OopEnum':
+      component = <OopEnum {...props} />
       break;
     default: null
   }
@@ -110,9 +125,9 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       break;
     case 'Select':
       component = (
-        <Select style={{ width: '100%' }} {...props} getPopupContainer={ triggerNode=>triggerNode.parentNode }>
+        <Select allowClear={true} style={{ width: '100%' }} {...props} getPopupContainer={ triggerNode=>triggerNode.parentNode }>
           {
-            children.map(item=>(<Option key={getUuid(5)} value={item.value}>{item.label}</Option>))
+            children.map(item=>(<Option key={getUuid(5)} value={item.value} disabled={item.disabled || false}>{item.label}</Option>))
           }
         </Select>
       );
@@ -127,7 +142,7 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       component = <InputNumber {...props} />;
       break;
     case 'DatePicker':
-      component = <DatePicker format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} />;
+      component = <DatePicker placeholder="" format={dateFormat} {...props} onFocus={(e) => { hackDatePickerIOSFocus(e) }} />;
       break;
     case 'OopText':
       component = <OopText {...props} />;
@@ -136,13 +151,25 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       component = <OopUpload {...props} />
       break;
     case 'OopSystemCurrent':
-      component = <OopSystemCurrent {...props} label={componentLabel} />
+      component = <OopSystemCurrent {...props} />
       break;
     case 'OopGroupUserPicker':
       component = <OopGroupUserPicker {...props} />
       break;
     case 'OopOrgEmpPicker':
       component = <OopOrgEmpPicker {...props} />
+      break;
+    case 'OopOrgPicker':
+      component = <OopOrgPicker {...props} />
+      break;
+    case 'Switch':
+      component = <Switch {...props} />
+      break;
+    case 'OopTextEditor':
+      component = <OopTextEditor {...props} />
+      break;
+    case 'OopEnum':
+      component = <OopEnum {...props} />
       break;
     default: null
   }
@@ -152,8 +179,8 @@ export default (name, label, props, children, rules, isApp)=> {
   const isWeb = !isApp;
   const component = isWeb ? getAntdComponent(name, label, props, children) : getAntdMobileComponent(name, label, props, children, rules);
   if (!component) {
-    console.error(`warning: cannot find component named ${name}`)
-    return
+    console.error(`Error: cannot find component named ${name}`)
+    return null;
   }
   return component;
 }
