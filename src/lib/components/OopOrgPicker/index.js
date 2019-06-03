@@ -196,7 +196,7 @@ export default class OopOrgPicker extends React.PureComponent {
         title: '人员',
         dataIndex: 'employees',
         render: (text) => {
-          const name = text ? text.map(item => item.id).join(',') : ''
+          const name = text ? text.map(item => item.name).filter(item => item !== undefined).join(',') : ''
           return <Popover content={name}>
                     <div className={styles.ellipsis}>{name}</div>
                   </Popover>
@@ -213,7 +213,7 @@ export default class OopOrgPicker extends React.PureComponent {
     return (
       <div>
         <Tooltip title={btnText}>
-          <Button onClick={this.handleButtonClick} style={{maxWidth: 300, ...btnCfg}}>{btnText}</Button>
+          <Button onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
         </Tooltip>
         <Modal
           style={{top: 20}}
