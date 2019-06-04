@@ -1,9 +1,10 @@
 import React from 'react';
-import { Modal, Card, Button, Tag, Row, Col, Tree, Switch, Tooltip, Input, Popover } from 'antd';
+import { Card, Button, Tag, Row, Col, Tree, Switch, Tooltip, Input } from 'antd';
 import {connect} from 'dva';
 import {inject} from '@framework/common/inject';
 import styles from './index.less';
 import OopTable from '../OopTable';
+import OopModal from '../OopModal';
 
 const { TreeNode } = Tree;
 const { Search } = Input;
@@ -110,9 +111,14 @@ export default class OopOrgPicker extends React.PureComponent {
       selectedKeys: value
     })
   }
-  handleCheck = (value) => {
-    const { strictly } = this.state
-    const keys = value.checked || value
+  handleCheck = (value, e) => {
+    const { strictly, checkedKeys } = this.state
+    let keys = []
+    if (e && e.checked) {
+      keys = [...new Set((value.checked || value).concat(checkedKeys.checked || checkedKeys))]
+    } else {
+      keys = value.checked || value
+    }
     const { OopOrgPicker$model: {orgTreeData = []}} = this.props
     let orgs = keys.length ? keys.map(val => [...findOrg(orgTreeData, val)]).reduce((arr1, arr2) => arr1.concat(arr2)) : []
     let keysArr = []
@@ -176,6 +182,9 @@ export default class OopOrgPicker extends React.PureComponent {
       orgList: val ? result : orgTreeData
     })
   }
+  handleModalCancel = () => {
+    this.setState({visible: false})
+  }
   renderTreeNodes = data =>
     data.map((item) => {
       if (item.children) {
@@ -189,19 +198,24 @@ export default class OopOrgPicker extends React.PureComponent {
     });
   render() {
     const { value = [], btnCfg = {} } = this.props
+    const { selected } = this.state
     const btnText = value.length ? value.map(item => item.name).join(',') : '请选择'
+    const gridList = selected.length ? (selected[0].employees !== null ? selected[0].employees : []) : []
     const columns = [
-      {title: '名称', dataIndex: 'name'},
-      {
-        title: '人员',
-        dataIndex: 'employees',
-        render: (text) => {
-          const name = text ? text.map(item => item.name).filter(item => item !== undefined).join(',') : ''
-          return <Popover content={name}>
-                    <div className={styles.ellipsis}>{name}</div>
-                  </Popover>
-        }
-      },
+      {title: '工号', dataIndex: 'account'},
+      {title: '姓名', dataIndex: 'name'},
+      {title: '部门', dataIndex: 'orgName'},
+      {title: '手机号码', dataIndex: 'mobilePhone'},
+      // {
+      //   title: '人员',
+      //   dataIndex: 'employees',
+      //   render: (text) => {
+      //     const name = text ? text.map(item => item.name).filter(item => item !== undefined).join(',') : ''
+      //     return <Popover content={name}>
+      //               <div className={styles.ellipsis}>{name}</div>
+      //             </Popover>
+      //   }
+      // },
     ]
     const footer = (
       <div>
@@ -215,75 +229,84 @@ export default class OopOrgPicker extends React.PureComponent {
         <Tooltip title={btnText}>
           <Button onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
         </Tooltip>
-        <Modal
+        <OopModal
+          title="请选择"
           style={{top: 20}}
           width={1200}
           maskClosable={false}
           wrapClassName={styles.assignModal}
           visible={this.state.visible}
-          onCancel={() => this.setState({visible: false})}
+          onCancel={this.handleModalCancel}
           destroyOnClose={true}
+          closeConfirm={{
+            visible: false
+          }}
           footer={footer}
-        >
-          <div className={styles.oopTabContainer}>
-            <div className={styles.tableInfo}>
-              <div style={{minWidth: 80}}>已选择(<span className={styles.primaryColor}>{this.state.checkedOrgs.length}</span>):</div>
-              <div style={{lineHeight: 2, minHeight: 28}}>
-                {this.state.checkedOrgs.map((item) => {
-                  return this.state.strictly ? (
-                    <Tag
-                      key={item.id}
-                      closable
-                      onClose={(e) => {
-                        this.handleTagClose(item, e);
-                    }}>{item.name}</Tag>
-                  ) : (
-                    <Tag
-                      key={item.id}
-                      closable={false}
-                      >{item.name}</Tag>
-                  )
-                })}
-                {this.state.checkedOrgs.length ? (<Tag color="red" onClick={this.clearAll}>清空选择</Tag>) : null}
+          tabs={[{
+            key: 'basic',
+            main: true,
+            content: (
+              <div className={styles.oopTabContainer}>
+                <div className={styles.tableInfo}>
+                  <div style={{minWidth: 80}}>已选择(<span className={styles.primaryColor}>{this.state.checkedOrgs.length}</span>):</div>
+                  <div style={{lineHeight: 2, minHeight: 28}}>
+                    {this.state.checkedOrgs.map((item) => {
+                      return this.state.strictly ? (
+                        <Tag
+                          key={item.id}
+                          closable
+                          onClose={(e) => {
+                            this.handleTagClose(item, e);
+                        }}>{item.name}</Tag>
+                      ) : (
+                        <Tag
+                          key={item.id}
+                          closable={false}
+                          >{item.name}</Tag>
+                      )
+                    })}
+                    {this.state.checkedOrgs.length ? (<Tag color="red" onClick={this.clearAll}>清空选择</Tag>) : null}
+                  </div>
+                </div>
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Card>
+                      <Search
+                        placeholder="查找部门"
+                        onChange={this.handleSearch}
+                        // style={{ width: 200 }}
+                      />
+                      <Tree
+                        checkable
+                        onExpand={this.handleExpand}
+                        expandedKeys={this.state.expand}
+                        onCheck={this.handleCheck}
+                        checkedKeys={this.state.checkedKeys}
+                        selectedKeys={this.state.selectedKeys}
+                        onSelect={this.handleSelect}
+                        checkStrictly={this.state.strictly}
+                        ref={(el) => { this.tree = el }}
+                      >
+                        {
+                          this.state.orgList.length ? this.renderTreeNodes(this.state.orgList) : null
+                        }
+                      </Tree>
+                    </Card>
+                  </Col>
+                  <Col span={16}>
+                    <Card>
+                      <OopTable
+                        grid={{list: gridList}}
+                        columns={columns}
+                        checkable={false}
+                      />
+                    </Card>
+                  </Col>
+                </Row>
               </div>
-            </div>
-            <Row gutter={16}>
-              <Col span={8}>
-                <Card>
-                  <Search
-                    placeholder="查找部门"
-                    onChange={this.handleSearch}
-                    // style={{ width: 200 }}
-                  />
-                  <Tree
-                    checkable
-                    onExpand={this.handleExpand}
-                    expandedKeys={this.state.expand}
-                    onCheck={this.handleCheck}
-                    checkedKeys={this.state.checkedKeys}
-                    selectedKeys={this.state.selectedKeys}
-                    onSelect={this.handleSelect}
-                    checkStrictly={this.state.strictly}
-                    ref={(el) => { this.tree = el }}
-                  >
-                    {
-                      this.state.orgList.length ? this.renderTreeNodes(this.state.orgList) : null
-                    }
-                  </Tree>
-                </Card>
-              </Col>
-              <Col span={16}>
-                <Card>
-                  <OopTable
-                    grid={{list: this.state.selected}}
-                    columns={columns}
-                    checkable={false}
-                  />
-                </Card>
-              </Col>
-            </Row>
-          </div>
-        </Modal>
+            )
+          }]}
+        />
       </div>
     );
   }
