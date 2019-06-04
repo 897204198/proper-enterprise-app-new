@@ -878,7 +878,9 @@ export default class CustomQuery extends React.PureComponent {
             _id: makeRandomId(),
             title: formJson[i].label,
             dataIndex: formJson[i].name,
-            syncTag: formJson[i].syncTag
+            syncTag: formJson[i].syncTag,
+            colIndex: `${i + 1}`,
+            enable: true
           }
           columns.push(obj)
         }
@@ -907,7 +909,8 @@ export default class CustomQuery extends React.PureComponent {
               _id: makeRandomId(),
               title: formJson[k].label,
               dataIndex: formJson[k].name,
-              syncTag: formJson[k].syncTag
+              syncTag: formJson[k].syncTag,
+              enable: true
             }
             columns.push(newCol)
           }
