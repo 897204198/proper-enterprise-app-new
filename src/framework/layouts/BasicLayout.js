@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { enquireScreen } from 'enquire-js';
 import OopWebSocket from '@pea/components/OopWebSocket';
 import logo from '@/assets/logo.svg';
-import {webImUrl} from '@/config/config';
+import {webImUrl, websocket} from '@/config/config';
 import { getMenuData } from '@framework/common/frameHelper';
 import * as properties from '@/config/properties';
 import GlobalHeader from '../components/GlobalHeader';
@@ -107,7 +107,7 @@ export default class BasicLayout extends React.PureComponent {
     });
   }
   componentWillUnmount() {
-    // this.ws.disconnect();
+    this.oopWebSocket.disconnect();
   }
   getPageTitle() {
     const { location, routerData } = this.props;
@@ -316,7 +316,7 @@ export default class BasicLayout extends React.PureComponent {
             {params => <div className={classNames(params)}>{layout}</div>}
           </ContainerQuery>
         </DocumentTitle>
-        <OopWebSocket ref={ (ws) => { this.oopWebSocket = ws }} />
+        { websocket === true ? <OopWebSocket ref={ (ws) => { this.oopWebSocket = ws }} /> : null}
       </div>
     );
   }

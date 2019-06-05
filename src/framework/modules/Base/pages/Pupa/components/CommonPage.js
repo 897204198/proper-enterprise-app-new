@@ -16,10 +16,10 @@ const {Description} = DescriptionList;
 
 const ModalForm = (props) => {
   const {modalConfig: {title, width, footer: footerKeys = [], maskClosable, saveAfterClosable},
-    formConfig, loading, visible, onModalCancel, onModalSubmit, formEntity} = props;
+    formConfig, loading, visible, onModalCancel, onModalSubmit, formEntity, self} = props;
   const submitForm = ()=>{
-    const form = this.oopForm.getForm();
-    const data = this.oopForm.getFormData();
+    const form = self.oopForm.getForm();
+    const data = self.oopForm.getFormData();
     form.validateFields((err) => {
       if (err) return;
       onModalSubmit(data, form);
@@ -29,7 +29,7 @@ const ModalForm = (props) => {
     });
   }
   const cancelForm = ()=>{
-    const form = this.oopForm.getForm()
+    const form = self.oopForm.getForm()
     onModalCancel(form)
   }
   const footer = [];
@@ -59,7 +59,7 @@ const ModalForm = (props) => {
       }}
     >
       <Spin spinning={loading}>
-        <OopForm {...formConfig} ref={(el)=>{ this.oopForm = el && el.getWrappedInstance() }} defaultValue={formEntity} />
+        <OopForm {...formConfig} ref={(el)=>{ self.oopForm = el && el.getWrappedInstance() }} defaultValue={formEntity} />
       </Spin>
     </Modal>
   )
@@ -121,7 +121,8 @@ export default class CommonPage extends React.PureComponent {
         taskOrProcDefKey: null,
         businessObj: null,
         procInstId: null,
-      }
+      },
+      onModalSubmit: this.handleModalSubmit
     }
   }
   componentDidMount() {
@@ -247,12 +248,18 @@ export default class CommonPage extends React.PureComponent {
       }
     });
   }
+  filterFormJson = (formJson, btnName)=>{
+    if (btnName) {
+      return formJson.filter(it=>it.relateBtn === undefined || it.relateBtn.includes(btnName));
+    }
+    return formJson;
+  }
   // modal开启 关闭
   setModalFormVisible = (flag) =>{
-    // 重置formConfig的formJson
-    if (flag === true) {
-      this.props.formConfig.formJson = cloneDeep(this.formJson);
-    }
+    // // 重置formConfig的formJson
+    // if (flag === true) {
+    //   this.props.formConfig.formJson = this.filterFormJson(cloneDeep(this.formJson),);
+    // }
     this.setState({modalFormVisible: flag})
   }
   // 顶部搜索监听
@@ -265,83 +272,130 @@ export default class CommonPage extends React.PureComponent {
       list: filterList
     })
   }
+  bingBtnClickEvent = (btn)=> {
+    btn.onClick = (item)=>{
+      console.log(btn);
+      const {name, restPath, position} = btn;
+      // 根据btn的name过滤出formJson
+      const formJson = this.filterFormJson(cloneDeep(this.formJson), name);
+      // 需要弹出modal
+      if (formJson.length > 1) {
+        this.props.formConfig.formJson = formJson;
+        if (position === 'row') {
+          this.handleEdit(item)
+        }
+        if (position === 'top') {
+          this.setModalFormVisible(true);
+        }
+        if (restPath) {
+          this.setState({
+            onModalSubmit: ()=>{
+              const formData = this.oopForm.getFormData();
+              this.doWitchButtonClickAction(btn, formData);
+            }
+          })
+        }
+      } else {
+        if (name === 'delete') {  // eslint-disable-line
+          this.handleRemove(item);
+        } else if (name === 'batchDelete') {
+          this.handleBatchRemove(item);
+        } else {
+          this.doWitchButtonClickAction(btn, item);
+        }
+      }
+    }
+  }
   // 构建列表按钮
   constructGridButtons = (tbCfg = [], rbCfg = [])=>{
     const topButtons = [];
-    const createBtn = tbCfg.find(it=>it.name === 'create');
-    if (createBtn && createBtn.enable) {
-      topButtons.push({
-        text: '新建',
-        type: 'primary',
-        icon: 'plus',
-        ...createBtn,
-        name: 'create',
-        onClick: ()=>{ this.handleCreate() }
-      })
-    }
-    const startBtn = tbCfg.find(it=>it.name === 'start');
-    if (startBtn && startBtn.enable) {
-      topButtons.push({
-        text: '发起',
-        type: 'primary',
-        icon: 'branches',
-        ...startBtn,
-        name: 'start',
-        onClick: ()=>{ this.handleStart() }
-      })
-    }
-    const batchDeleteBtn = tbCfg.find(it=>it.name === 'batchDelete');
-    if (batchDeleteBtn && batchDeleteBtn.enable) {
-      topButtons.push({
-        text: '删除',
-        icon: 'delete',
-        ...batchDeleteBtn,
-        display: items=>(items.length > 0),
-        name: 'batchDelete',
-        onClick: (items)=>{ this.handleBatchRemove(items) }
-      })
-    }
-    const otherTopBtns = tbCfg.filter(it=>it.enable === true && it.default === undefined);
-    if (otherTopBtns && otherTopBtns.length) {
-      otherTopBtns.forEach((button)=>{
-        if (button) {
-          this.doWitchButtonClickAction(button);
-        }
-      })
-    }
+    tbCfg.forEach((tb)=>{
+      if (tb.enable) {
+        this.bingBtnClickEvent(tb)
+        topButtons.push(tb);
+      }
+    })
     const rowButtons = [];
-    const editBtn = rbCfg.find(it=>it.name === 'edit');
-    if (editBtn && editBtn.enable) {
-      rowButtons.push({
-        text: '编辑',
-        icon: 'edit',
-        ...editBtn,
-        name: 'edit',
-        onClick: (record)=>{ this.handleEdit(record) },
-      })
-    }
-    const deleteBtn = rbCfg.find(it=>it.name === 'delete');
-    if (deleteBtn && deleteBtn.enable) {
-      rowButtons.push({
-        text: '删除',
-        icon: 'delete',
-        confirm: '是否要删除此条信息',
-        ...deleteBtn,
-        name: 'delete',
-        onClick: (record)=>{ this.handleRemove(record) },
-      })
-    }
-    const otherRowBtns = rbCfg.filter(it=>it.enable === true && it.default === undefined);
-    if (otherRowBtns && otherRowBtns.length) {
-      otherRowBtns.forEach((button)=>{
-        if (button) {
-          this.doWitchButtonClickAction(button);
-        }
-      })
-    }
+    rbCfg.forEach((rb)=>{
+      if (rb.enable) {
+        this.bingBtnClickEvent(rb)
+        rowButtons.push(rb);
+      }
+    })
+    // const createBtn = tbCfg.find(it=>it.name === 'create');
+    // if (createBtn && createBtn.enable) {
+    //   topButtons.push({
+    //     text: '新建',
+    //     type: 'primary',
+    //     icon: 'plus',
+    //     ...createBtn,
+    //     name: 'create',
+    //     onClick: ()=>{ this.handleCreate() }
+    //   })
+    // }
+    // const startBtn = tbCfg.find(it=>it.name === 'start');
+    // if (startBtn && startBtn.enable) {
+    //   topButtons.push({
+    //     text: '发起',
+    //     type: 'primary',
+    //     icon: 'branches',
+    //     ...startBtn,
+    //     name: 'start',
+    //     onClick: ()=>{ this.handleStart() }
+    //   })
+    // }
+    // const batchDeleteBtn = tbCfg.find(it=>it.name === 'batchDelete');
+    // if (batchDeleteBtn && batchDeleteBtn.enable) {
+    //   topButtons.push({
+    //     text: '删除',
+    //     icon: 'delete',
+    //     ...batchDeleteBtn,
+    //     display: items=>(items.length > 0),
+    //     name: 'batchDelete',
+    //     onClick: (items)=>{ this.handleBatchRemove(items) }
+    //   })
+    // }
+    // const otherTopBtns = tbCfg.filter(it=>it.enable === true && it.default === undefined);
+    // if (otherTopBtns && otherTopBtns.length) {
+    //   otherTopBtns.forEach((button)=>{
+    //     if (button) {
+    //       this.doWitchButtonClickAction(button);
+    //     }
+    //   })
+    // }
+    // const rowButtons = [];
+    // const editBtn = rbCfg.find(it=>it.name === 'edit');
+    // if (editBtn && editBtn.enable) {
+    //   rowButtons.push({
+    //     text: '编辑',
+    //     icon: 'edit',
+    //     ...editBtn,
+    //     name: 'edit',
+    //     onClick: (record)=>{ this.handleEdit(record) },
+    //   })
+    // }
+    // const deleteBtn = rbCfg.find(it=>it.name === 'delete');
+    // if (deleteBtn && deleteBtn.enable) {
+    //   rowButtons.push({
+    //     text: '删除',
+    //     icon: 'delete',
+    //     confirm: '是否要删除此条信息',
+    //     ...deleteBtn,
+    //     name: 'delete',
+    //     onClick: (record)=>{ this.handleRemove(record) },
+    //   })
+    // }
+    // const otherRowBtns = rbCfg.filter(it=>it.enable === true && it.default === undefined);
+    // if (otherRowBtns && otherRowBtns.length) {
+    //   otherRowBtns.forEach((button)=>{
+    //     if (button) {
+    //       this.doWitchButtonClickAction(button);
+    //     }
+    //   })
+    // }
     return {
-      topButtons: topButtons.concat(otherTopBtns),
-      rowButtons: otherRowBtns.concat(rowButtons)
+      topButtons,
+      rowButtons
     }
   }
   // 自定义restful接口
@@ -413,18 +467,16 @@ export default class CommonPage extends React.PureComponent {
     }
   }
   // 处理按钮的点击事件 约定：包含斜线并且@开头(与工作流中的reduxAction配置一致) ==》reduxAction  @包含斜线 ==》restful请求
-  doWitchButtonClickAction = (button)=>{
-    button.onClick = (items)=>{
-      const {restPath = ''} = button;
-      if (restPath.includes('/')) {
-        if (restPath.startsWith('@')) {
-          this.reduxActionButtonHandle(button, items)
-        } else {
-          this.restfulActionButtonHandle(button, items)
-        }
+  doWitchButtonClickAction = (button, items)=>{
+    const {restPath = ''} = button;
+    if (restPath.includes('/')) {
+      if (restPath.startsWith('@')) {
+        this.reduxActionButtonHandle(button, items)
       } else {
-        message.error(`${button.restPath} 不是一个合法的restful接口，请以'/'开头`)
+        this.restfulActionButtonHandle(button, items)
       }
+    } else {
+      message.error(`${button.restPath} 不是一个合法的restful接口，请以'/'开头`)
     }
   }
   // 点击流程modal关闭按钮的组件
@@ -479,6 +531,16 @@ export default class CommonPage extends React.PureComponent {
     }
     return cols.filter(it=>it.enable !== false);
   }
+  getHandleFunctionByBtnName = (btnName)=> {
+    const map = {
+      start: this.handleStart,
+      create: this.handleModalSubmit,
+      edit: this.handleModalSubmit,
+      delete: this.handleRemove,
+      batchDelete: this.handleBatchRemove
+    }
+    return map[btnName];
+  }
   render() {
     const {list, modalFormVisible, viewModalVisible, modalWfFormConfig: {
       name,
@@ -489,7 +551,7 @@ export default class CommonPage extends React.PureComponent {
       procInstId,
       processDefinitionId,
       stateCode
-    }} = this.state;
+    }, onModalSubmit} = this.state;
     const {basePage, global: {size},
       loading, gridLoading, gridConfig: {columns: cols = [], topButtons: tbCfg, rowButtons: rbCfg},
       formConfig, modalConfig, tableName } = this.props;
@@ -528,9 +590,10 @@ export default class CommonPage extends React.PureComponent {
           modalConfig={modalConfig}
           visible={modalFormVisible}
           onModalCancel={this.handleModalCancel}
-          onModalSubmit={this.handleModalSubmit}
+          onModalSubmit={onModalSubmit}
           formEntity={entity}
           loading={!!loading}
+          self={this}
         />
         <OopWorkflowMainModal
           name={name}

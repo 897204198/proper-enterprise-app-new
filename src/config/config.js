@@ -11,3 +11,4 @@ export const proxy = {
     pathRewrite: {'^/stomp': '/stomp'},
   },
 }
+export const websocket = false;

@@ -71,7 +71,7 @@ const getDataDictItem = (item, onChange)=>{
     component: {
       name: 'Select',
       children: [{label: '固定选项', value: 'changeless'}, {label: '字典数据源', value: 'dict'}, {label: '外部数据源', value: 'outer'}],
-      props: {onChange: (v)=>{
+      props: {allowClear: false, onChange: (v)=>{
         onChange(componentName, v);
       }}
     },
@@ -414,7 +414,7 @@ export default (item, eventsCollection, loading)=>{
           valuePropName: 'code',
           disabledPropName: 'enable'
         },
-        props: {onChange: (value)=>{
+        props: {allowClear: false, onChange: (value)=>{
           const optionProps = currentSysArgsComp.component.children.find(it=>it.code === value);
           const props = {
             code: value,

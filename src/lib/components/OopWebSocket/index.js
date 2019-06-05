@@ -105,6 +105,11 @@ export default class OopWebSocket extends React.PureComponent {
       })
     }
   }
+  disconnect = ()=>{
+    if (this.sockJsClientRef.state.connected === true) {
+      this.sockJsClientRef.disconnect()
+    }
+  }
   renderPage = ()=>{
     const {topics} = this.state;
     return (

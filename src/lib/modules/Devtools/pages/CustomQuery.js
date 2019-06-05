@@ -1329,9 +1329,9 @@ export default class CustomQuery extends React.PureComponent {
   handleOpenfile = () => {
     document.getElementById('file').click()
   }
-  handleOnAddItem = ()=>{
+  handleOnAddItem = (item)=>{
     // 默认设置新添加的组件关联按钮为‘新建和编辑’
-    // item.relateBtn = ['create', 'edit'];
+    item.relateBtn = ['create', 'edit'];
   }
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
@@ -1537,7 +1537,6 @@ export default class CustomQuery extends React.PureComponent {
         dataIndex: 'restPath',
         key: 'restPath',
         defaultValue: '',
-        required: true,
         render: (text, record) => {
           if (record.editable && !record.default) {
             return (
