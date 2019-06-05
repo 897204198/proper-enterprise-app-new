@@ -107,7 +107,7 @@ export default class BasicLayout extends React.PureComponent {
     });
   }
   componentWillUnmount() {
-    this.oopWebSocket.disconnect();
+    this.oopWebSocket && this.oopWebSocket.disconnect();
   }
   getPageTitle() {
     const { location, routerData } = this.props;

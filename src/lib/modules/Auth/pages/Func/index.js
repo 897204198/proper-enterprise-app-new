@@ -118,7 +118,7 @@ const FuncBasicInfoForm = Form.create({onValuesChange})((props) => {
           className={warningField && warningField.icon && styles.hasWarning}
         >
           {getFieldDecorator('icon', {
-            initialValue: funcBasicInfo.icon,
+            initialValue: funcBasicInfo.icon || 'file',
             rules: [{
               required: true, message: '图标',
             }],

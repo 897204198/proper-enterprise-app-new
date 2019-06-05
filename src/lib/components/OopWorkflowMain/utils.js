@@ -25,6 +25,14 @@ export const authorityFormField = (formConfig)=>{
   }
 };
 
+// 由于Pupa的 表单带有relateBtn 获取只获取 create和edit
+export const filterRelateBtn = (formConfig)=>{
+  let {formJson} = formConfig;
+  formJson = formJson.filter((it)=>{
+    return it.relateBtn === undefined || (it.relateBtn.includes('create') && it.relateBtn.includes('edit'))
+  })
+  formConfig.formJson = formJson;
+}
 // 根据工作流中配置的表单相对路径获取真实表单的方法
 export const getWorkflowFormByFormPath = (formPath)=>{
   let route = null;

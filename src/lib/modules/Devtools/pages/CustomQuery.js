@@ -777,7 +777,7 @@ export default class CustomQuery extends React.PureComponent {
               name: 'start',
               position: 'top',
               type: 'primary',
-              icon: 'plus',
+              icon: 'branches',
               enable: true,
               default: true
             }
@@ -924,7 +924,7 @@ export default class CustomQuery extends React.PureComponent {
         modalObj = JSON.stringify({
           title: '',
           width: 1000,
-          footer: ['submit', 'cancel'],
+          footer: ['cancel', 'submit'],
           saveAfterClosable: true,
           maskClosable: false
         })

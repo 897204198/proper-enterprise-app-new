@@ -10,13 +10,14 @@ import {inject} from '@framework/common/inject';
 import {isApp, getApplicationContextUrl} from '@framework/utils/utils';
 import OopForm from '../OopForm';
 import OopPreview from '../OopPreview';
-import {authorityFormField, getWorkflowFormByFormPath} from './utils';
+import {authorityFormField, filterRelateBtn, getWorkflowFormByFormPath} from './utils';
 import styles from './index.less';
 
 
 const { TabPane } = Tabs;
 const BusinessPanel = (props)=>{
   const {children, self, formConfig = {}, defaultValue = {}, formLoading, isLaunch, taskOrProcDefKey, approvalRemarksRequire = false} = props;
+  filterRelateBtn(formConfig);
   // 清空approvalRemarks审批说明字段
   defaultValue.approvalRemarks = null;
   // { *如果审批节点 包含 审批意见 表单为只读*}  以前的逻辑
@@ -128,7 +129,7 @@ export default class OopWorkflowMain extends PureComponent {
   getFormConfig = (key)=>{
     let formKey = key
     const {setButtonLoading} = this.props;
-    if (formKey.startsWith('@')) {
+    if (formKey.startsWith('@') && !formKey.includes('/')) {
       formKey = `@basePageCfg/fetchPageCfgByCodeForWf#${formKey.split('@')[1]}`;
     }
     // formKey包含“.jsx”则代表是表单的相对路径
@@ -146,8 +147,13 @@ export default class OopWorkflowMain extends PureComponent {
     } else if (formKey.includes('/')) {
       const action = formKey.split('#')[0];
       const payload = formKey.split('#')[1];
+      const type = action.split('@')[1];
+      if (type === undefined) {
+        message.error(`formkey${formKey}配置错误`);
+        return
+      }
       this.props.dispatch({
-        type: action.split('@')[1],
+        type,
         payload,
         callback: (resp)=>{
           this.isComplete = true;

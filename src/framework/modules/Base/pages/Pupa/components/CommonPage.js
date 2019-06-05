@@ -300,6 +300,8 @@ export default class CommonPage extends React.PureComponent {
           this.handleRemove(item);
         } else if (name === 'batchDelete') {
           this.handleBatchRemove(item);
+        } else if (name === 'start') {
+          this.handleStart();
         } else {
           this.doWitchButtonClickAction(btn, item);
         }
@@ -322,77 +324,6 @@ export default class CommonPage extends React.PureComponent {
         rowButtons.push(rb);
       }
     })
-    // const createBtn = tbCfg.find(it=>it.name === 'create');
-    // if (createBtn && createBtn.enable) {
-    //   topButtons.push({
-    //     text: '新建',
-    //     type: 'primary',
-    //     icon: 'plus',
-    //     ...createBtn,
-    //     name: 'create',
-    //     onClick: ()=>{ this.handleCreate() }
-    //   })
-    // }
-    // const startBtn = tbCfg.find(it=>it.name === 'start');
-    // if (startBtn && startBtn.enable) {
-    //   topButtons.push({
-    //     text: '发起',
-    //     type: 'primary',
-    //     icon: 'branches',
-    //     ...startBtn,
-    //     name: 'start',
-    //     onClick: ()=>{ this.handleStart() }
-    //   })
-    // }
-    // const batchDeleteBtn = tbCfg.find(it=>it.name === 'batchDelete');
-    // if (batchDeleteBtn && batchDeleteBtn.enable) {
-    //   topButtons.push({
-    //     text: '删除',
-    //     icon: 'delete',
-    //     ...batchDeleteBtn,
-    //     display: items=>(items.length > 0),
-    //     name: 'batchDelete',
-    //     onClick: (items)=>{ this.handleBatchRemove(items) }
-    //   })
-    // }
-    // const otherTopBtns = tbCfg.filter(it=>it.enable === true && it.default === undefined);
-    // if (otherTopBtns && otherTopBtns.length) {
-    //   otherTopBtns.forEach((button)=>{
-    //     if (button) {
-    //       this.doWitchButtonClickAction(button);
-    //     }
-    //   })
-    // }
-    // const rowButtons = [];
-    // const editBtn = rbCfg.find(it=>it.name === 'edit');
-    // if (editBtn && editBtn.enable) {
-    //   rowButtons.push({
-    //     text: '编辑',
-    //     icon: 'edit',
-    //     ...editBtn,
-    //     name: 'edit',
-    //     onClick: (record)=>{ this.handleEdit(record) },
-    //   })
-    // }
-    // const deleteBtn = rbCfg.find(it=>it.name === 'delete');
-    // if (deleteBtn && deleteBtn.enable) {
-    //   rowButtons.push({
-    //     text: '删除',
-    //     icon: 'delete',
-    //     confirm: '是否要删除此条信息',
-    //     ...deleteBtn,
-    //     name: 'delete',
-    //     onClick: (record)=>{ this.handleRemove(record) },
-    //   })
-    // }
-    // const otherRowBtns = rbCfg.filter(it=>it.enable === true && it.default === undefined);
-    // if (otherRowBtns && otherRowBtns.length) {
-    //   otherRowBtns.forEach((button)=>{
-    //     if (button) {
-    //       this.doWitchButtonClickAction(button);
-    //     }
-    //   })
-    // }
     return {
       topButtons,
       rowButtons

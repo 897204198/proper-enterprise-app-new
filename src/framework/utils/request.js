@@ -164,7 +164,7 @@ export default function request(url, options) {
     })
     .catch((e) => {
       console.log(e);
-      if (e === 'TypeError: Failed to fetch') {
+      if (e.message === 'Failed to fetch') {
         notification.error({
           message: '请求失败',
           description: '由于未知的原因，请求失败，可能是服务器开小差了-_-!',
