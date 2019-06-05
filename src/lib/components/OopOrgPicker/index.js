@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button, Tag, Row, Col, Tree, Switch, Tooltip, Input } from 'antd';
+import { Card, Button, Tag, Row, Col, Tree, Switch, Tooltip, Input, Popconfirm, Spin } from 'antd';
 import {connect} from 'dva';
 import {inject} from '@framework/common/inject';
 import styles from './index.less';
@@ -125,11 +125,7 @@ export default class OopOrgPicker extends React.PureComponent {
     let arr = []
     // 级联时，自动关联下级
     if (!strictly) {
-      for (let i = 0; i < orgs.length; i++) {
-        if (orgs[i].children) {
-          arr = [...arr, ...orgs[i].children]
-        }
-      }
+      arr = splitMenu(orgs)
       keysArr = [...new Set(arr.map(item => item.id).concat(keys))]
       if (keysArr.length) {
         orgs = keysArr.map(val => [...findOrg(orgTreeData, val)]).reduce((arr1, arr2) => arr1.concat(arr2))
@@ -183,7 +179,14 @@ export default class OopOrgPicker extends React.PureComponent {
     })
   }
   handleModalCancel = () => {
-    this.setState({visible: false})
+    this.setState({
+      visible: false,
+      selected: [],
+      expand: [],
+      checkedKeys: [],
+      selectedKeys: [],
+      checkedOrgs: [],
+    })
   }
   renderTreeNodes = data =>
     data.map((item) => {
@@ -197,9 +200,9 @@ export default class OopOrgPicker extends React.PureComponent {
       return <TreeNode title={item.title} key={item.key} dataRef={item} />;
     });
   render() {
-    const { value = [], btnCfg = {} } = this.props
+    const { value = [], btnCfg = {}, listLoading, placeholder = '请选择' } = this.props
     const { selected } = this.state
-    const btnText = value.length ? value.map(item => item.name).join(',') : '请选择'
+    const btnText = value.length ? value.map(item => item.name).join(',') : placeholder
     const gridList = selected.length ? (selected[0].employees !== null ? selected[0].employees : []) : []
     const columns = [
       {title: '工号', dataIndex: 'account'},
@@ -219,7 +222,7 @@ export default class OopOrgPicker extends React.PureComponent {
     ]
     const footer = (
       <div>
-        <Button onClick={() => this.setState({visible: false})}>取消</Button>
+        <Button onClick={this.handleModalCancel}>取消</Button>
         <Button type="primary" onClick={this.handleModalOk}>保存</Button>
         <span style={{float: 'left'}}>级联：<Switch checkedChildren="是" unCheckedChildren="否" checked={!this.state.strictly} onChange={this.changeStrictly} /></span>
       </div>
@@ -230,7 +233,7 @@ export default class OopOrgPicker extends React.PureComponent {
           <Button onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
         </Tooltip>
         <OopModal
-          title="请选择"
+          title={placeholder}
           style={{top: 20}}
           width={1200}
           maskClosable={false}
@@ -265,32 +268,44 @@ export default class OopOrgPicker extends React.PureComponent {
                           >{item.name}</Tag>
                       )
                     })}
-                    {this.state.checkedOrgs.length ? (<Tag color="red" onClick={this.clearAll}>清空选择</Tag>) : null}
+                    {
+                      this.state.checkedOrgs.length ?
+                      <Popconfirm
+                        title={`确认清空${this.state.checkedOrgs.length}条数据？`}
+                        onConfirm={this.clearAll}
+                      >
+                        <Tag color="red">清空选择</Tag>
+                      </Popconfirm> :
+                      null
+                    }
                   </div>
                 </div>
                 <Row gutter={16}>
                   <Col span={8}>
                     <Card>
-                      <Search
-                        placeholder="查找部门"
-                        onChange={this.handleSearch}
-                        // style={{ width: 200 }}
-                      />
-                      <Tree
-                        checkable
-                        onExpand={this.handleExpand}
-                        expandedKeys={this.state.expand}
-                        onCheck={this.handleCheck}
-                        checkedKeys={this.state.checkedKeys}
-                        selectedKeys={this.state.selectedKeys}
-                        onSelect={this.handleSelect}
-                        checkStrictly={this.state.strictly}
-                        ref={(el) => { this.tree = el }}
-                      >
-                        {
-                          this.state.orgList.length ? this.renderTreeNodes(this.state.orgList) : null
-                        }
-                      </Tree>
+                      <div style={{paddingBottom: '10px'}}>部门列表</div>
+                      <Spin spinning={listLoading}>
+                        <Search
+                          placeholder="查找部门"
+                          onChange={this.handleSearch}
+                          // style={{ width: 200 }}
+                        />
+                        <Tree
+                          checkable
+                          onExpand={this.handleExpand}
+                          expandedKeys={this.state.expand}
+                          onCheck={this.handleCheck}
+                          checkedKeys={this.state.checkedKeys}
+                          selectedKeys={this.state.selectedKeys}
+                          onSelect={this.handleSelect}
+                          checkStrictly={this.state.strictly}
+                          ref={(el) => { this.tree = el }}
+                        >
+                          {
+                            this.state.orgList.length ? this.renderTreeNodes(this.state.orgList) : null
+                          }
+                        </Tree>
+                      </Spin>
                     </Card>
                   </Col>
                   <Col span={16}>

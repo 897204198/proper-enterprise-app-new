@@ -3,13 +3,19 @@
   :global(.ant-modal-body) {
     background: #f0f2f5;
   }
+  :global {
+    .ant-tree {
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: ~"calc(100vh - 358px)";
+    }
+  }
   .tableInfo {
     display: flex;
     max-height: 86px;
     overflow: auto;
     margin-bottom: 12px;
   }
-
   .tree {
     overflow: auto;
   }
