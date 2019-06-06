@@ -87,12 +87,12 @@ export default class OopOrgEmpPicker extends React.PureComponent {
     const columns = [
       {title: '工号', dataIndex: 'account'},
       {title: '姓名', dataIndex: 'name'},
-      {title: '部门', dataIndex: 'organizationName'},
-      {title: '手机号码', dataIndex: 'phone'},
+      {title: '部门', dataIndex: 'orgName'},
+      {title: '手机号码', dataIndex: 'telephone'},
     ]
 
     const filterColums = [
-      'account', 'name', 'organizationName', 'phone'
+      'account', 'name', 'orgName', 'telephone'
     ]
 
     const treeCfg = {
