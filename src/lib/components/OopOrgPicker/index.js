@@ -202,23 +202,13 @@ export default class OopOrgPicker extends React.PureComponent {
   render() {
     const { value = [], btnCfg = {}, listLoading, placeholder = '请选择' } = this.props
     const { selected } = this.state
-    const btnText = value.length ? value.map(item => item.name).join(',') : placeholder
+    const btnText = value.length ? value.map(item => item.name).join(', ') : placeholder
     const gridList = selected.length ? (selected[0].employees !== null ? selected[0].employees : []) : []
     const columns = [
       {title: '工号', dataIndex: 'account'},
       {title: '姓名', dataIndex: 'name'},
       {title: '部门', dataIndex: 'orgName'},
-      {title: '手机号码', dataIndex: 'mobilePhone'},
-      // {
-      //   title: '人员',
-      //   dataIndex: 'employees',
-      //   render: (text) => {
-      //     const name = text ? text.map(item => item.name).filter(item => item !== undefined).join(',') : ''
-      //     return <Popover content={name}>
-      //               <div className={styles.ellipsis}>{name}</div>
-      //             </Popover>
-      //   }
-      // },
+      {title: '手机号码', dataIndex: 'mobilePhone'}
     ]
     const footer = (
       <div>
@@ -259,7 +249,7 @@ export default class OopOrgPicker extends React.PureComponent {
                           key={item.id}
                           closable
                           onClose={(e) => {
-                            this.handleTagClose(item, e);
+                            this.handleTagClose(item, e)
                         }}>{item.name}</Tag>
                       ) : (
                         <Tag
