@@ -185,22 +185,43 @@ export default class OopForm extends React.PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     const {defaultValue = {}, formJson = []} = nextProps;
-    if (Object.keys(defaultValue).length > 0) {
-      this.setState(({ fields }) => {
-        for (const k in fields) {
-          if (Object.prototype.hasOwnProperty.call(defaultValue, k)) {
-            const item = formJson.find(it=>it.name === k);
-            fields[k] = {
-              ...fields[k],
-              value: isAntdMobliePicker(item) ? [defaultValue[k]] : defaultValue[k]
-            }
+    const {fields} = this.state;
+    const {prototype: {hasOwnProperty}} = Object;
+    const newFields = {};
+    formJson.forEach((item) => {
+      const {name, initialValue} = item;
+      // 正常赋值
+      if (hasOwnProperty.call(fields, name)) {
+        if (hasOwnProperty.call(defaultValue, name)) {
+          newFields[name] = {
+            ...fields[name],
+            value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
+          }
+        } else if (hasOwnProperty.call(item, 'initialValue')) {
+          newFields[name] = {
+            ...fields[name],
+            value: isAntdMobliePicker(item) ? [initialValue] : initialValue
           }
         }
-        return {
-          ...fields
+      } else {
+        // formJson中比fields中多的配置
+        // eslint-disable-next-line
+        if (hasOwnProperty.call(defaultValue, name)) {
+          newFields[name] = {
+            value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
+          }
+        } else {
+          newFields[name] = {
+            value: isAntdMobliePicker(item) ? [initialValue] : initialValue
+          }
         }
-      });
-    }
+      }
+    })
+    this.setState({
+      fields: {
+        ...newFields
+      }
+    })
   }
   componentWillUnmount() {
     this.props.dispatch({
