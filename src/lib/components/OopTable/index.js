@@ -299,11 +299,14 @@ export default class OopTable extends PureComponent {
     } else if (key === 'all') {
       // 导出全部的情况 需要看是否是前端分页还是后台分页
       const {list, pagination} = this.props.grid;
-      if (pagination === undefined && list.length) {
-        // 前端分页 静态数据导出
-        this.exportTableDataToCSV(list);
-      }
-      if (pagination) {
+      if (pagination === undefined) {
+        if (list.length) {
+          // 前端分页 静态数据导出
+          this.exportTableDataToCSV(list);
+        } else {
+          message.warning('没有可以导出的数据哦')
+        }
+      } else {
         console.log('调用后台导出接口');
       }
     }

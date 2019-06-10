@@ -1,9 +1,10 @@
 import React from 'react';
-import { Modal, Card, Button, Tag, Row, Col, Tree, Switch, Tooltip, Input, Popover } from 'antd';
+import { Card, Button, Tag, Row, Col, Tree, Switch, Tooltip, Input, Popconfirm, Spin } from 'antd';
 import {connect} from 'dva';
 import {inject} from '@framework/common/inject';
 import styles from './index.less';
 import OopTable from '../OopTable';
+import OopModal from '../OopModal';
 
 const { TreeNode } = Tree;
 const { Search } = Input;
@@ -101,25 +102,30 @@ export default class OopOrgPicker extends React.PureComponent {
   // }
   handleSelect = (value, event) => {
     const { dataRef } = event.node.props
+    const obj = {...dataRef}
+    if (obj.children) {
+      delete obj.children
+    }
     this.setState({
-      selected: [dataRef],
+      selected: [obj],
       selectedKeys: value
     })
   }
-  handleCheck = (value) => {
-    const { strictly } = this.state
-    const keys = value.checked || value
+  handleCheck = (value, e) => {
+    const { strictly, checkedKeys } = this.state
+    let keys = []
+    if (e && e.checked) {
+      keys = [...new Set((value.checked || value).concat(checkedKeys.checked || checkedKeys))]
+    } else {
+      keys = value.checked || value
+    }
     const { OopOrgPicker$model: {orgTreeData = []}} = this.props
     let orgs = keys.length ? keys.map(val => [...findOrg(orgTreeData, val)]).reduce((arr1, arr2) => arr1.concat(arr2)) : []
     let keysArr = []
     let arr = []
     // 级联时，自动关联下级
     if (!strictly) {
-      for (let i = 0; i < orgs.length; i++) {
-        if (orgs[i].children) {
-          arr = [...arr, ...orgs[i].children]
-        }
-      }
+      arr = splitMenu(orgs)
       keysArr = [...new Set(arr.map(item => item.id).concat(keys))]
       if (keysArr.length) {
         orgs = keysArr.map(val => [...findOrg(orgTreeData, val)]).reduce((arr1, arr2) => arr1.concat(arr2))
@@ -172,6 +178,16 @@ export default class OopOrgPicker extends React.PureComponent {
       orgList: val ? result : orgTreeData
     })
   }
+  handleModalCancel = () => {
+    this.setState({
+      visible: false,
+      selected: [],
+      expand: [],
+      checkedKeys: [],
+      selectedKeys: [],
+      checkedOrgs: [],
+    })
+  }
   renderTreeNodes = data =>
     data.map((item) => {
       if (item.children) {
@@ -184,24 +200,19 @@ export default class OopOrgPicker extends React.PureComponent {
       return <TreeNode title={item.title} key={item.key} dataRef={item} />;
     });
   render() {
-    const { value = [], btnCfg = {} } = this.props
-    const btnText = value.length ? value.map(item => item.name).join(',') : '请选择'
+    const { value = [], btnCfg = {}, listLoading, placeholder = '请选择' } = this.props
+    const { selected } = this.state
+    const btnText = value.length ? value.map(item => item.name).join(', ') : placeholder
+    const gridList = selected.length ? (selected[0].employees !== null ? selected[0].employees : []) : []
     const columns = [
-      {title: '名称', dataIndex: 'name'},
-      {
-        title: '人员',
-        dataIndex: 'employees',
-        render: (text) => {
-          const name = text ? text.map(item => item.id).join(',') : ''
-          return <Popover content={name}>
-                    <div className={styles.ellipsis}>{name}</div>
-                  </Popover>
-        }
-      },
+      {title: '工号', dataIndex: 'account'},
+      {title: '姓名', dataIndex: 'name'},
+      {title: '部门', dataIndex: 'orgName'},
+      {title: '手机号码', dataIndex: 'mobilePhone'}
     ]
     const footer = (
       <div>
-        <Button onClick={() => this.setState({visible: false})}>取消</Button>
+        <Button onClick={this.handleModalCancel}>取消</Button>
         <Button type="primary" onClick={this.handleModalOk}>保存</Button>
         <span style={{float: 'left'}}>级联：<Switch checkedChildren="是" unCheckedChildren="否" checked={!this.state.strictly} onChange={this.changeStrictly} /></span>
       </div>
@@ -209,77 +220,98 @@ export default class OopOrgPicker extends React.PureComponent {
     return (
       <div>
         <Tooltip title={btnText}>
-          <Button onClick={this.handleButtonClick} style={{maxWidth: 300, ...btnCfg}}>{btnText}</Button>
+          <Button onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
         </Tooltip>
-        <Modal
+        <OopModal
+          title={placeholder}
           style={{top: 20}}
           width={1200}
           maskClosable={false}
           wrapClassName={styles.assignModal}
           visible={this.state.visible}
-          onCancel={() => this.setState({visible: false})}
+          onCancel={this.handleModalCancel}
           destroyOnClose={true}
+          closeConfirm={{
+            visible: false
+          }}
           footer={footer}
-        >
-          <div className={styles.oopTabContainer}>
-            <div className={styles.tableInfo}>
-              <div style={{minWidth: 80}}>已选择(<span className={styles.primaryColor}>{this.state.checkedOrgs.length}</span>):</div>
-              <div style={{lineHeight: 2, minHeight: 28}}>
-                {this.state.checkedOrgs.map((item) => {
-                  return this.state.strictly ? (
-                    <Tag
-                      key={item.id}
-                      closable
-                      onClose={(e) => {
-                        this.handleTagClose(item, e);
-                    }}>{item.name}</Tag>
-                  ) : (
-                    <Tag
-                      key={item.id}
-                      closable={false}
-                      >{item.name}</Tag>
-                  )
-                })}
-                {this.state.checkedOrgs.length ? (<Tag color="red" onClick={this.clearAll}>清空选择</Tag>) : null}
-              </div>
-            </div>
-            <Row gutter={16}>
-              <Col span={8}>
-                <Card>
-                  <Search
-                    placeholder="查找部门"
-                    onChange={this.handleSearch}
-                    // style={{ width: 200 }}
-                  />
-                  <Tree
-                    checkable
-                    onExpand={this.handleExpand}
-                    expandedKeys={this.state.expand}
-                    onCheck={this.handleCheck}
-                    checkedKeys={this.state.checkedKeys}
-                    selectedKeys={this.state.selectedKeys}
-                    onSelect={this.handleSelect}
-                    checkStrictly={this.state.strictly}
-                    ref={(el) => { this.tree = el }}
-                  >
+          tabs={[{
+            key: 'basic',
+            main: true,
+            content: (
+              <div className={styles.oopTabContainer}>
+                <div className={styles.tableInfo}>
+                  <div style={{minWidth: 80}}>已选择(<span className={styles.primaryColor}>{this.state.checkedOrgs.length}</span>):</div>
+                  <div style={{lineHeight: 2, minHeight: 28}}>
+                    {this.state.checkedOrgs.map((item) => {
+                      return this.state.strictly ? (
+                        <Tag
+                          key={item.id}
+                          closable
+                          onClose={(e) => {
+                            this.handleTagClose(item, e)
+                        }}>{item.name}</Tag>
+                      ) : (
+                        <Tag
+                          key={item.id}
+                          closable={false}
+                          >{item.name}</Tag>
+                      )
+                    })}
                     {
-                      this.state.orgList.length ? this.renderTreeNodes(this.state.orgList) : null
+                      this.state.checkedOrgs.length ?
+                      <Popconfirm
+                        title={`确认清空${this.state.checkedOrgs.length}条数据？`}
+                        onConfirm={this.clearAll}
+                      >
+                        <Tag color="red">清空选择</Tag>
+                      </Popconfirm> :
+                      null
                     }
-                  </Tree>
-                </Card>
-              </Col>
-              <Col span={16}>
-                <Card>
-                  <OopTable
-                    grid={{list: this.state.selected}}
-                    columns={columns}
-                    checkable={false}
-                  />
-                </Card>
-              </Col>
-            </Row>
-          </div>
-        </Modal>
+                  </div>
+                </div>
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Card>
+                      <div style={{paddingBottom: '10px'}}>部门列表</div>
+                      <Spin spinning={listLoading}>
+                        <Search
+                          placeholder="查找部门"
+                          onChange={this.handleSearch}
+                          // style={{ width: 200 }}
+                        />
+                        <Tree
+                          checkable
+                          onExpand={this.handleExpand}
+                          expandedKeys={this.state.expand}
+                          onCheck={this.handleCheck}
+                          checkedKeys={this.state.checkedKeys}
+                          selectedKeys={this.state.selectedKeys}
+                          onSelect={this.handleSelect}
+                          checkStrictly={this.state.strictly}
+                          ref={(el) => { this.tree = el }}
+                        >
+                          {
+                            this.state.orgList.length ? this.renderTreeNodes(this.state.orgList) : null
+                          }
+                        </Tree>
+                      </Spin>
+                    </Card>
+                  </Col>
+                  <Col span={16}>
+                    <Card>
+                      <OopTable
+                        grid={{list: gridList}}
+                        columns={columns}
+                        checkable={false}
+                      />
+                    </Card>
+                  </Col>
+                </Row>
+              </div>
+            )
+          }]}
+        />
       </div>
     );
   }

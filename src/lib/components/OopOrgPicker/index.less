@@ -3,20 +3,26 @@
   :global(.ant-modal-body) {
     background: #f0f2f5;
   }
+  :global {
+    .ant-tree {
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: ~"calc(100vh - 358px)";
+    }
+  }
   .tableInfo {
     display: flex;
     max-height: 86px;
     overflow: auto;
     margin-bottom: 12px;
   }
-
   .tree {
     overflow: auto;
   }
 }
 .btn {
-  padding-left: 8px;
-  max-width: 208px;
+  // padding-left: 8px;
+  max-width: 300px;
   text-overflow: ellipsis;
   overflow: hidden;
 }
@@ -42,7 +48,8 @@
   width: 100%;
 }
 .ellipsis {
-  min-width: 300px;
+  min-width: 200px;
+  max-width: 600px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

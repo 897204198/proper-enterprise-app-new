@@ -71,7 +71,7 @@ const getDataDictItem = (item, onChange)=>{
     component: {
       name: 'Select',
       children: [{label: '固定选项', value: 'changeless'}, {label: '字典数据源', value: 'dict'}, {label: '外部数据源', value: 'outer'}],
-      props: {onChange: (v)=>{
+      props: {allowClear: false, onChange: (v)=>{
         onChange(componentName, v);
       }}
     },
@@ -115,7 +115,7 @@ export default (item, eventsCollection, loading)=>{
     formJson: []
   }
   // 输入框 文本域 数字输入框
-  if ('Input,TextArea,InputNumber,DatePicker,OopGroupUserPicker,OopOrgEmpPicker'.includes(cName)) {
+  if ('Input,TextArea,InputNumber,DatePicker,OopGroupUserPicker,OopOrgEmpPicker, OopOrgPicker, OopTextEditor, Switch'.includes(cName)) {
     formConfig.formJson = [{
       name: `${name}${prefix}_label`,
       label: '标题',
@@ -414,7 +414,7 @@ export default (item, eventsCollection, loading)=>{
           valuePropName: 'code',
           disabledPropName: 'enable'
         },
-        props: {onChange: (value)=>{
+        props: {allowClear: false, onChange: (value)=>{
           const optionProps = currentSysArgsComp.component.children.find(it=>it.code === value);
           const props = {
             code: value,

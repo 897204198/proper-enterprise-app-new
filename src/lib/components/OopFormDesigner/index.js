@@ -113,7 +113,8 @@ const EditPanel = (props) => {
     <div className={styles.editPanel}>
       <Card title="编辑组件详情" bordered={false} extra={toggleFormPatternButtons}>
         {
-          self.renderEditPanel(formPattern, currentRowItem, currentRowItemJson, {
+          loading ? null :
+            (self.renderEditPanel(formPattern, currentRowItem, currentRowItemJson, {
             rowItemIconCopy,
             rowItemIconDelete,
             rowItemDrag,
@@ -122,7 +123,7 @@ const EditPanel = (props) => {
             updateCenterPanel,
             customRules,
             setCustomRules
-          }, loading)
+          }, loading))
         }
       </Card></div>);
 }
@@ -255,7 +256,7 @@ export default class OopFormDesigner extends React.PureComponent {
   componentDidMount() {
     console.log(this.state.currentRowItem, this.state.rowItems)
   }
-  onRowItemClick = (name)=>{
+  onRowItemClick = (key)=>{
     this.setState({
       editPanelLoading: true
     }, ()=>{
@@ -263,7 +264,7 @@ export default class OopFormDesigner extends React.PureComponent {
       const {rowItems, formPattern} = this.state;
       rowItems.forEach((item)=>{
         const aItem = item;
-        if (aItem.name === name) {
+        if (aItem.key === key) {
           aItem.active = true;
           const isAdvanced = formPattern === 'advanced';
           const jsonItem = {
@@ -313,6 +314,7 @@ export default class OopFormDesigner extends React.PureComponent {
         name: getUuid(10),
         active: false
       }
+      newItem.key = `${newItem.key}_${newItem.name}`;
       this.state.rowItems.push(newItem);
     }
   }
@@ -566,7 +568,7 @@ export default class OopFormDesigner extends React.PureComponent {
     })
   }
   handleFormPatternChange = (event)=>{
-    console.log(event);
+    // console.log(event);
     const { value: formPattern } = event.target;
     this.setState({
       formPattern
@@ -586,10 +588,10 @@ export default class OopFormDesigner extends React.PureComponent {
       } else {
         // const item = JSON.parse(this.state.currentRowItemJson);
         // eslint-disable-next-line
-        const item = new Function('return '.concat(this.state.currentRowItemJson))();
-        if (item && item.name) {
-          this.onRowItemClick(item.name);
-        }
+        // const item = new Function('return '.concat(this.state.currentRowItemJson))();
+        // if (item && item.name) {
+        //   this.onRowItemClick(item.name);
+        // }
       }
     })
   }

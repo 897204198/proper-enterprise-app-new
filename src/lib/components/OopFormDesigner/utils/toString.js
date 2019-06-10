@@ -14,11 +14,14 @@ export const toString2 = (object)=>{
       for (let i = 0; i < value.length; i++) {
         const v = value[i];
         if (v && v.toString() === '[object Object]') {
-          ar += `${toString2(v)},`;
+          ar += `${toString2(v)}`;
         } else if (typeof v === 'string') {
-          ar += `'${v}',`;
+          ar += `'${v}'`;
         } else {
-          ar += `${v},`;
+          ar += `${v}`;
+        }
+        if ((i + 1) !== value.length) {
+          ar += ',';
         }
       }
       ar += '],'

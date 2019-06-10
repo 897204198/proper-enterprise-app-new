@@ -26,13 +26,17 @@ export default class OopSystemCurrent extends PureComponent {
     };
   }
   componentWillReceiveProps(nextProps) {
+    // console.log('state', this.state);
     // Should be a controlled component.
-    if (nextProps.code !== this.state.code) {
-      if (nextProps.url && nextProps.OopSystemCurrent$model[nextProps.url]) {
-        const value = nextProps.OopSystemCurrent$model[nextProps.url];
-        const state = this.getValue(value, nextProps.showPropName, nextProps.code);
-        this.setState({...state});
-      }
+    // if (nextProps.code !== this.state.code) {
+    //   if (nextProps.url && nextProps.OopSystemCurrent$model[nextProps.url]) {
+    //     const value = nextProps.OopSystemCurrent$model[nextProps.url];
+    //     const state = this.getValue(value, nextProps.showPropName, nextProps.code);
+    //     this.setState({...state});
+    //   }
+    // }
+    if (nextProps.value) {
+      this.setState({...nextProps.value});
     }
   }
   componentDidMount() {
@@ -43,8 +47,11 @@ export default class OopSystemCurrent extends PureComponent {
         type: 'OopSystemCurrent$model/fetch',
         payload: url,
         callback: (resp)=>{
-          const state = this.getValue(resp.result, this.props.showPropName, this.props.code);
-          this.triggerChange(state);
+          const {id, code, text} = this.state;
+          if (id === null && code === null && text === null) {
+            const state = this.getValue(resp.result, this.props.showPropName, this.props.code);
+            this.triggerChange(state);
+          }
         }
       })
     }

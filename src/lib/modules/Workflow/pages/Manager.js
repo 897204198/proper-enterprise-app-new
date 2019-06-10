@@ -421,7 +421,7 @@ export default class Manager extends React.PureComponent {
                 size={size}
                 rowButtons={actionLaunchColumn}
                 checkable={false}
-                pagination={{total: design.total}}
+                // pagination={{total: design.total}}
               />
             </div>
           </TabPane>

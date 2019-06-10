@@ -777,7 +777,7 @@ export default class CustomQuery extends React.PureComponent {
               name: 'start',
               position: 'top',
               type: 'primary',
-              icon: 'plus',
+              icon: 'branches',
               enable: true,
               default: true
             }
@@ -878,7 +878,9 @@ export default class CustomQuery extends React.PureComponent {
             _id: makeRandomId(),
             title: formJson[i].label,
             dataIndex: formJson[i].name,
-            syncTag: formJson[i].syncTag
+            syncTag: formJson[i].syncTag,
+            colIndex: `${i + 1}`,
+            enable: true
           }
           columns.push(obj)
         }
@@ -907,7 +909,8 @@ export default class CustomQuery extends React.PureComponent {
               _id: makeRandomId(),
               title: formJson[k].label,
               dataIndex: formJson[k].name,
-              syncTag: formJson[k].syncTag
+              syncTag: formJson[k].syncTag,
+              enable: true
             }
             columns.push(newCol)
           }
@@ -921,7 +924,7 @@ export default class CustomQuery extends React.PureComponent {
         modalObj = JSON.stringify({
           title: '',
           width: 1000,
-          footer: ['submit', 'cancel'],
+          footer: ['cancel', 'submit'],
           saveAfterClosable: true,
           maskClosable: false
         })
@@ -1326,9 +1329,9 @@ export default class CustomQuery extends React.PureComponent {
   handleOpenfile = () => {
     document.getElementById('file').click()
   }
-  handleOnAddItem = ()=>{
+  handleOnAddItem = (item)=>{
     // 默认设置新添加的组件关联按钮为‘新建和编辑’
-    // item.relateBtn = ['create', 'edit'];
+    item.relateBtn = ['create', 'edit'];
   }
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
@@ -1534,7 +1537,6 @@ export default class CustomQuery extends React.PureComponent {
         dataIndex: 'restPath',
         key: 'restPath',
         defaultValue: '',
-        required: true,
         render: (text, record) => {
           if (record.editable && !record.default) {
             return (

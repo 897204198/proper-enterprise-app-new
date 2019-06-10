@@ -149,16 +149,7 @@ export default class Pupa extends React.PureComponent {
     }
   }
   init = (code)=>{
-    // 注释掉缓存代码 因为缓存配置以后组件没有销毁。。。
-    // const {basePageCfg} = this.props;
     if (code) {
-      // const config = basePageCfg[code];
-      // if (config) {
-      //   this.setState({
-      //     code,
-      //     pageConfig: config
-      //   })
-      // } else {
       if (this.isFetching === false) {
         this.isFetching = true;
         this.props.dispatch({
@@ -185,7 +176,6 @@ export default class Pupa extends React.PureComponent {
           }
         })
       }
-      // }
     }
   }
   renderPage = ()=>{

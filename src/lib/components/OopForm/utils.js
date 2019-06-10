@@ -122,7 +122,7 @@ const getFormItem = (formItemInner, formItemConfig)=>{
       <div
         className={active ? 'rowItemWrapper active' : 'rowItemWrapper'}
         style={style}
-        onClick={(event)=>{ rowItemClick(name, event) }}
+        onClick={(event)=>{ rowItemClick(key || name, event) }}
       >
         <FormItem
           key={key || name}
