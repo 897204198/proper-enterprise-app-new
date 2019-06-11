@@ -1360,7 +1360,8 @@ export default class CustomQuery extends React.PureComponent {
         dataIndex: 'wfKey',
         render: (text, record) => {
           if (record.relaWf && workflowSelection.length) {
-            return workflowSelection.filter(item => item.value === text)[0].label
+            const wf = workflowSelection.filter(item => item.value === text)
+            return wf.length ? wf[0].label : '流程不存在'
           }
           return null
         }
