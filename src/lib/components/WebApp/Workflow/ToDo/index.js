@@ -255,33 +255,9 @@ export default class ToDo extends React.PureComponent {
   }
   renderImage = (item)=>{
     const {globalData: {workflow_icon: workflowIcon}} = item;
-    let img = null;
-    switch (workflowIcon) {
-      case 'ccsq.png': img = require('./assets/ccsq.png');
-        break
-      case 'lz.png': img = require('./assets/lz.png');
-        break
-      case 'rz.png': img = require('./assets/rz.png');
-        break
-      case 'githubstore_icon.png': img = require('./assets/githubstore_icon.png');
-        break
-      case 'gitlabstor_icon.png': img = require('./assets/gitlabstor_icon.png');
-        break
-      case 'send_query.png': img = require('./assets/send_query.png');
-        break
-      case 'overtime_icon.png': img = require('./assets/overtime_icon.png');
-        break
-      case 'perload_icon.png': img = require('./assets/perload_icon.png');
-        break
-      case 'reimbursement_icon.png': img = require('./assets/reimbursement_icon.png');
-        break
-      case 'qj.png': img = require('./assets/qj.png');
-        break
-      case 'yfzx.png': img = require('./assets/yfzx.png');
-        break
-      case 'youtrack_icon.png': img = require('./assets/youtrack_icon.png');
-        break
-      default: img = require('./assets/default.png');
+    let img = require('./assets/default.png');;
+    if (workflowIcon) {
+      img = require(`./assets/${workflowIcon}`);
     }
     return img;
   }
