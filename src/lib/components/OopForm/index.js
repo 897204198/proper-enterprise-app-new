@@ -186,42 +186,27 @@ export default class OopForm extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     const {defaultValue = {}, formJson = []} = nextProps;
     const {fields} = this.state;
-    const {prototype: {hasOwnProperty}} = Object;
-    const newFields = {};
-    formJson.forEach((item) => {
+    // 比对当前的formJson与fields的差别 把formJson多的内容添加进来
+    formJson.forEach((item)=>{
       const {name, initialValue} = item;
-      // 正常赋值
-      if (hasOwnProperty.call(fields, name)) {
-        if (hasOwnProperty.call(defaultValue, name)) {
-          newFields[name] = {
+      if (!Object.prototype.hasOwnProperty.call(fields, name)) {
+        fields[name] = Form.createFormField({value: initialValue})
+      }
+    })
+    // 把fields多的内容删除 存在的看看是否需要赋值
+    for (const name in fields) {
+      const item = formJson.find(it=>it.name === name);
+      if (item) {
+        if (Object.prototype.hasOwnProperty.call(defaultValue, name)) {
+          fields[name] = {
             ...fields[name],
             value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
-          }
-        } else if (hasOwnProperty.call(item, 'initialValue')) {
-          newFields[name] = {
-            ...fields[name],
-            value: isAntdMobliePicker(item) ? [initialValue] : initialValue
           }
         }
       } else {
-        // formJson中比fields中多的配置
-        // eslint-disable-next-line
-        if (hasOwnProperty.call(defaultValue, name)) {
-          newFields[name] = {
-            value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
-          }
-        } else {
-          newFields[name] = {
-            value: isAntdMobliePicker(item) ? [initialValue] : initialValue
-          }
-        }
+        delete fields[name];
       }
-    })
-    this.setState({
-      fields: {
-        ...newFields
-      }
-    })
+    }
   }
   componentWillUnmount() {
     this.props.dispatch({
@@ -337,9 +322,12 @@ export default class OopForm extends React.PureComponent {
     }
   }
   handleFormChange = (changedFields)=>{
-    this.setState(({ fields }) => ({
-      fields: { ...fields, ...changedFields },
-    }));
+    // this.setState(({ fields }) => ({
+    //   fields: { ...fields, ...changedFields },
+    // }));
+    this.setState({
+      fields: { ...this.state.fields, ...changedFields }
+    })
   }
   render() {
     const {fields} = this.state;
