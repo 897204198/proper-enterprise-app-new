@@ -22,8 +22,8 @@ const CenterPanel = (props) => {
   const {rowItems, onFormTitleClick,
     onRowItemClick, onRowItemIconCopy, onRowItemIconDelete, onRowItemDrag,
     onFormSubmit, onFormLayoutChange, formLayout, formTitle, self} = props;
-  const rowItemClick = (name)=>{
-    onRowItemClick(name)
+  const rowItemClick = (name, event)=>{
+    onRowItemClick(name, event)
   }
   const rowItemIconCopy = ()=>{
     onRowItemIconCopy()
@@ -254,9 +254,14 @@ export default class OopFormDesigner extends React.PureComponent {
     this.handleCodeMirrorChange.cancel();
   }
   componentDidMount() {
-    console.log(this.state.currentRowItem, this.state.rowItems)
+    console.log(this.state.rowItems);
+    console.log('OopFormDesigner componentDidMount');
   }
   onRowItemClick = (key)=>{
+    if (this.state.currentRowItem !== null && this.state.currentRowItem.key === key) {
+      console.log('click the same one!')
+      return
+    }
     this.setState({
       editPanelLoading: true
     }, ()=>{
@@ -639,11 +644,15 @@ export default class OopFormDesigner extends React.PureComponent {
       if (item) {
         const index = this.state.rowItems.findIndex(it=>it.active === true);
         const oldItem = this.state.rowItems[index];
-        this.state.rowItems[index] = {
+        const newItem = {
           ...item,
           initialValue: oldItem.initialValue,
-          active: oldItem.active,
+          active: oldItem.active
         }
+        if (oldItem.syncTag) {
+          newItem.syncTag = oldItem.syncTag
+        }
+        this.state.rowItems[index] = newItem;
         this.forceUpdate();
       }
     }

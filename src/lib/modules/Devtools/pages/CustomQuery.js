@@ -184,7 +184,7 @@ export default class CustomQuery extends React.PureComponent {
       callback: (res) => {
         if (res.status === 'ok') {
           this.setState({
-            list: res.result.data
+            list: res.result
           })
         }
       }
@@ -810,7 +810,8 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleCancel = () => {
     this.setState({
-      modalCreateVisible: false
+      modalCreateVisible: false,
+      curRecord: {}
     })
     this.props.dispatch({
       type: 'devtoolsCustomQuery/clearEntity',
@@ -1360,7 +1361,8 @@ export default class CustomQuery extends React.PureComponent {
         dataIndex: 'wfKey',
         render: (text, record) => {
           if (record.relaWf && workflowSelection.length) {
-            return workflowSelection.filter(item => item.value === text)[0].label
+            const wf = workflowSelection.filter(item => item.value === text)
+            return wf.length ? wf[0].label : '流程不存在'
           }
           return null
         }
@@ -1450,12 +1452,12 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable) {
             return (
-            <Input
-              size="small"
-              style={tableInputStyle}
-              value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'text', record._id)}
-              placeholder="请输入" />
+              <Input
+                size="small"
+                style={tableInputStyle}
+                value={text}
+                onChange={e => this.buttonCfgForm.handleFieldChange(e, 'text', record._id)}
+                placeholder="请输入" />
             )
           }
           return text;
@@ -1469,12 +1471,12 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable && !record.default) {
             return (
-            <Input
-              size="small"
-              style={tableInputStyle}
-              value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'name', record._id)}
-              placeholder="唯一标识不可有重复" />
+              <Input
+                size="small"
+                style={tableInputStyle}
+                value={text}
+                onChange={e => this.buttonCfgForm.handleFieldChange(e, 'name', record._id)}
+                placeholder="唯一标识不可有重复" />
             )
           }
           return text;
@@ -1522,12 +1524,12 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable) {
             return (
-            <Input
-              size="small"
-              style={tableInputStyle}
-              value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'icon', record._id)}
-              placeholder="请输入" />
+              <Input
+                size="small"
+                style={tableInputStyle}
+                value={text}
+                onChange={e => this.buttonCfgForm.handleFieldChange(e, 'icon', record._id)}
+                placeholder="请输入" />
             )
           }
           return text;
@@ -1540,12 +1542,12 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable && !record.default) {
             return (
-            <Input
-              size="small"
-              style={tableInputStyle}
-              value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'restPath', record._id)}
-              placeholder="请输入" />
+              <Input
+                size="small"
+                style={tableInputStyle}
+                value={text}
+                onChange={e => this.buttonCfgForm.handleFieldChange(e, 'restPath', record._id)}
+                placeholder="请输入" />
             )
           }
           return text;
@@ -1558,12 +1560,12 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable) {
             return (
-            <Input
-              size="small"
-              style={tableInputStyle}
-              value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'confirm', record._id)}
-              placeholder="请输入" />
+              <Input
+                size="small"
+                style={tableInputStyle}
+                value={text}
+                onChange={e => this.buttonCfgForm.handleFieldChange(e, 'confirm', record._id)}
+                placeholder="请输入" />
             )
           }
           return text;
@@ -1575,12 +1577,12 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.editable) {
             return (
-            <Input
-              size="small"
-              style={tableInputStyle}
-              value={text}
-              onChange={e => this.buttonCfgForm.handleFieldChange(e, 'display', record._id)}
-              placeholder="请输入" />
+              <Input
+                size="small"
+                style={tableInputStyle}
+                value={text}
+                onChange={e => this.buttonCfgForm.handleFieldChange(e, 'display', record._id)}
+                placeholder="请输入" />
             )
           }
           return text;
@@ -1689,8 +1691,9 @@ export default class CustomQuery extends React.PureComponent {
           <input type="file" id="file" hidden onChange={this.handleUpload} />
           <OopTable
             loading={loading === undefined ? gridLoading : loading}
-            grid={{list} || oopSearchGrid}
+            grid={{list: list.data, pagination: {total: list.count}} || oopSearchGrid}
             columns={oopTablecolumns}
+            onLoad={this.onLoad}
             rowButtons={rowButtons}
             topButtons={topButtons}
             size={size}
@@ -1723,7 +1726,7 @@ export default class CustomQuery extends React.PureComponent {
           okText="保存"
           maskClosable={false}
           destroyOnClose={true}
-          >
+        >
           <OopFormDesigner
             onAddItem={this.handleOnAddItem}
             ref={(el)=>{ this.oopFormDesigner = el }}
@@ -1753,24 +1756,24 @@ export default class CustomQuery extends React.PureComponent {
                         title="字段列表"
                         bordered={false}
                         extra={<Button type="primary" onClick={this.addTableCol}>新建</Button>}
-                        >
+                      >
                         {
                           columns ?
-                          (
-                            <Tree
-                              showLine
-                              selectedKeys={selectedKeys.length ? selectedKeys : [JSON.stringify(columns[0])]}
-                              onSelect={this.onTableCfgSelect}
-                            >
-                              {
-                                columns.map((col) => {
-                                  return (
-                                    <TreeNode title={col.title} key={JSON.stringify(col)} />
-                                  )
-                                })
-                              }
-                            </Tree>
-                          ) : null
+                            (
+                              <Tree
+                                showLine
+                                selectedKeys={selectedKeys.length ? selectedKeys : [JSON.stringify(columns[0])]}
+                                onSelect={this.onTableCfgSelect}
+                              >
+                                {
+                                  columns.map((col) => {
+                                    return (
+                                      <TreeNode title={col.title} key={JSON.stringify(col)} />
+                                    )
+                                  })
+                                }
+                              </Tree>
+                            ) : null
                         }
                       </Card>
                     </Col>

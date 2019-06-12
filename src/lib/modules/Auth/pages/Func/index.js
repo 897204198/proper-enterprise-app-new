@@ -11,6 +11,7 @@ import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { oopToast } from '@framework/common/oopUtils';
 import OopTreeTable from '../../../../components/OopTreeTable';
 import OopModal from '../../../../components/OopModal';
+import OopTableForm from '../../../../components/OopTableForm';
 import TableForm from './TableForm';
 import styles from './index.less';
 
@@ -29,7 +30,65 @@ const formItemLayout = {
     sm: {span: 16},
   },
 };
-
+const tableInputStyle = {
+  height: '32px'
+}
+const btnInfoColumns = [
+  {
+    title: '名称',
+    dataIndex: 'text',
+    key: 'text',
+    defaultValue: '',
+    required: true,
+    render: (text, record) => {
+      if (record.editable) {
+        return (
+        <Input
+          size="small"
+          style={tableInputStyle}
+          value={text}
+          onChange={e => this.btnInfoForm.handleFieldChange(e, 'text', record._id)}
+          placeholder="请输入" />
+        )
+      }
+      return text;
+    }
+  }, {
+    title: '唯一标识',
+    dataIndex: 'name',
+    key: 'name',
+    defaultValue: '',
+    required: true,
+    render: (text, record) => {
+      if (record.editable && !record.default) {
+        return (
+        <Input
+          size="small"
+          style={tableInputStyle}
+          value={text}
+          onChange={e => this.btnInfoForm.handleFieldChange(e, 'name', record._id)}
+          placeholder="唯一标识不可有重复" />
+        )
+      }
+      return text;
+    }
+  },
+  // {
+  //   title: '启/停用',
+  //   dataIndex: 'enable',
+  //   key: 'enable',
+  //   defaultValue: true,
+  //   width: 100,
+  //   render: (text, record) => {
+  //     if (record.editable) {
+  //       return (
+  //         <Switch checkedChildren="启" unCheckedChildren="停" checked={text} onChange={e => this.btnInfoForm.handleFieldChange(e, 'enable', record._id)} />
+  //       )
+  //     }
+  //     return text === true ? '启用' : '停用';
+  //   }
+  // }
+]
 const formatter = (data, id) => {
   return data.map((item) => {
     let { disabled } = item;
@@ -232,6 +291,21 @@ const ResourceInfoForm = (props) => {
       size="small"
   />)
 };
+const BtnLInfoForm = (props) => {
+  const {btnList, loading, handleBtnInfoChange} = props;
+  const onChange = (type, item)=>{
+    handleBtnInfoChange(type, item)
+  }
+  return (
+    <OopTableForm
+      columns={btnInfoColumns}
+      value={btnList}
+      onChange={onChange}
+      loading={loading}
+      size="small"
+      ref={(el)=>{ this.btnInfoForm = el }}
+  />)
+};
 
 @inject(['authFunc', 'global', 'baseUser'])
 @connect(({authFunc, global, loading}) => ({
@@ -411,6 +485,70 @@ export default class Func extends PureComponent {
       })
     }
   }
+  handleBtnInfoChange = (type, item)=>{
+    console.log(item)
+    // const {dispatch, authFunc: {funcBasicInfo} } = this.props
+    // if (type === 'post') {
+    //   if (item.id) {
+    //     let enableBool = item.enable;
+    //     if (item.enable === 'true') {
+    //       enableBool = true;
+    //     }
+    //     if (item.enable === 'false') {
+    //       enableBool = false;
+    //     }
+    //     const data = {
+    //       id: item.id,
+    //       name: item.name,
+    //       url: item.url,
+    //       method: item.method,
+    //       identifier: item.identifier,
+    //       enable: enableBool,
+    //     }
+    //     dispatch({
+    //       type: 'authFunc/updateResource',
+    //       payload: data,
+    //       callback(res) {
+    //         oopToast(res, '更新成功', '更新失败');
+    //         dispatch({
+    //           type: 'authFunc/fetchResourceList',
+    //           payload: funcBasicInfo.id
+    //         })
+    //       }
+    //     })
+    //   } else {
+    //     dispatch({
+    //       type: 'authFunc/saveResource',
+    //       payload: {
+    //         funcId: funcBasicInfo.id,
+    //         resources: item,
+    //       },
+    //       callback(res) {
+    //         oopToast(res, '保存成功', '保存失败');
+    //         dispatch({
+    //           type: 'authFunc/fetchResourceList',
+    //           payload: funcBasicInfo.id
+    //         })
+    //       }
+    //     })
+    //   }
+    // } else {
+    //   dispatch({
+    //     type: 'authFunc/deleteResource',
+    //     payload: {
+    //       resourceId: item.id,
+    //       menuId: this.state.curEditMenuId
+    //     },
+    //     callback(res) {
+    //       oopToast(res, '删除成功', '删除失败');
+    //       dispatch({
+    //         type: 'authFunc/fetchResourceList',
+    //         payload: funcBasicInfo.id
+    //       })
+    //     }
+    //   })
+    // }
+  }
   onLoad = (param = {})=>{
     const currentSelectTreeNode = this.oopTreeTable.getCurrentSelectTreeNode();
     const parentId = (currentSelectTreeNode && currentSelectTreeNode.key);
@@ -544,7 +682,7 @@ export default class Func extends PureComponent {
   render() {
     const {
       loading,
-      authFunc: { treeData, funcBasicInfo, parentTreeData, resourceList },
+      authFunc: { treeData, funcBasicInfo, parentTreeData, resourceList, btnList = [] },
       gridLoading,
       global: { size, oopSearchGrid }
     } = this.props;
@@ -669,7 +807,16 @@ export default class Func extends PureComponent {
                 loading={loading}
                 resourceList={resourceList}
                 handleResourceListChange={this.handleResourceListChange} />
-            }]}
+            },
+            {
+              key: 'btnInfo',
+              title: '按钮信息',
+              content: <BtnLInfoForm
+                loading={loading}
+                btnList={btnList}
+                handleBtnInfoChange={this.handleBtnInfoChange} />
+            }
+          ]}
         />
         {/* <ModalForm
           resourceList={resourceList}
