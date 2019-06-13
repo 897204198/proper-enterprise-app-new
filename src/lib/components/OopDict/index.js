@@ -12,8 +12,8 @@ import OopEnum from '../OopEnum';
 }))
 export default class OopDict extends React.PureComponent {
   componentDidMount() {
-    const { catalog } = this.props;
-    if (catalog) {
+    const { catalog, listData = [] } = this.props;
+    if (catalog && listData.length === 0) {
       this.findDictData(catalog)
     }
   }
@@ -27,7 +27,7 @@ export default class OopDict extends React.PureComponent {
   }
   handleOnChange = (value)=>{
     const {onChange} = this.props;
-    const { catalog, OopDict$model: { [catalog]: listData }} = this.props;
+    const listData = this.getListData();
     let result;
     if (isArray(value)) {
       result = [];
@@ -53,6 +53,12 @@ export default class OopDict extends React.PureComponent {
         } else {
           return `${JSON.stringify({catalog: value.catalog, code: value.code})}`;
         }
+      } else if (isString(value)) {
+        const listData = this.getListData();
+        const dict = listData.find(it=>it.code === value);
+        if (dict) {
+          return `${JSON.stringify({catalog: dict.catalog, code: dict.code})}`;
+        }
       } else {
         return undefined;
       }
@@ -60,10 +66,27 @@ export default class OopDict extends React.PureComponent {
       return undefined;
     }
   }
+  getListData = ()=>{
+    const { catalog, OopDict$model, listData} = this.props;
+    if (listData) {
+      if (listData.length) {
+        listData.forEach((it)=>{
+          if (!it.value) {
+            it.value = `${JSON.stringify({catalog: it.catalog, code: it.code})}`;
+          }
+        });
+      }
+      return listData
+    }
+    if (OopDict$model[catalog]) {
+      return OopDict$model[catalog]
+    }
+    return []
+  }
   render() {
-    const { catalog, OopDict$model: { [catalog]: listData }, multiple = false, disabled = false, ...otherProps} = this.props;
+    const { multiple = false, disabled = false, ...otherProps } = this.props;
     let {value} = this.props;
-    if (catalog && (isObject(value) || isArray(value))) {
+    if ((isObject(value) || isArray(value) || isString(value))) {
       value = this.getDictTypeValue(value);
     }
     return (
@@ -72,9 +95,8 @@ export default class OopDict extends React.PureComponent {
           ...otherProps
         }
         value={value}
-        catalog={catalog}
         valuePropName="value"
-        listData={listData}
+        listData={this.getListData()}
         multiple={multiple}
         disabled={disabled}
         onChange={this.handleOnChange}
