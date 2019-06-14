@@ -239,6 +239,13 @@ export default class OopFormDesigner extends React.PureComponent {
           component: {
             name: 'OopTextEditor',
           },
+        },
+        {
+          label: '数据字典',
+          key: 'OopDict',
+          component: {
+            name: 'OopDict',
+          },
         }
       ],
       rowItems: formJson,

@@ -1,9 +1,10 @@
 import React from 'react';
 import {connect} from 'dva';
 import {inject} from '@framework/common/inject';
-import {isArray, isObject, isString} from '@framework/utils/utils';
+import {isApp, isArray, isObject, isString} from '@framework/utils/utils';
 import OopEnum from '../OopEnum';
 
+const ifRenderByAntdMobile = isApp();
 
 @inject(['OopDict$model', 'global'])
 @connect(({ OopDict$model, global }) => ({
@@ -14,15 +15,53 @@ export default class OopDict extends React.PureComponent {
   componentDidMount() {
     const { catalog, listData = [] } = this.props;
     if (catalog && listData.length === 0) {
-      this.findDictData(catalog)
+      this.findDictData(catalog, (ld)=>{
+        // 初始化之后通知propchange
+        this.notifyPropsOnChange(ld)
+      })
+    } else {
+      // 初始化之后通知propchange
+      this.notifyPropsOnChange(listData)
     }
   }
-  findDictData = (value) => {
+  componentWillReceiveProps(nextProps) {
+    const {catalog, OopDict$model} = nextProps;
+    if (OopDict$model[catalog] === undefined) {
+      this.findDictData(catalog);
+    }
+  }
+
+  notifyPropsOnChange = (listData)=>{
+    let result;
+    const {value, onChange} = this.props;
+    // const { props: {listData = []} } = component;
+    if (isString(value)) {
+      result = listData.find(it=>it.code === value);
+      if (ifRenderByAntdMobile) {
+        result = [result];
+      }
+    }
+    if (isArray(value)) {
+      if (value.every(it=>isString(it))) {
+        result = listData.filter(it=>value.includes(it.code))
+      }
+    }
+    if (isObject(value) && ifRenderByAntdMobile) {
+      result = [result];
+    }
+    if (result) {
+      onChange && onChange(result)
+    }
+  }
+  findDictData = (value, callback) => {
     this.props.dispatch({
       type: 'OopDict$model/findDictData',
       payload: {
         catalog: value
       },
+      callback: (listData)=>{
+        callback && callback(listData);
+      }
     })
   }
   handleOnChange = (value)=>{
@@ -43,10 +82,23 @@ export default class OopDict extends React.PureComponent {
       onChange(result);
     }
   }
+  // 在OopDict中为OopEnum拼装value值格式例如为: `{catalog: "RULE", code: "USER"}`
   getDictTypeValue = (value)=>{
     if (value) {
       if (isArray(value)) {
-        return value.map(it=>(`${JSON.stringify({catalog: it.catalog, code: it.code})}`));
+        const result = [];
+        value.forEach((it)=>{
+          if (isObject(it)) {
+            result.push(`${JSON.stringify({catalog: it.catalog, code: it.code})}`)
+          } else if (isString(it)) {
+            const listData = this.getListData();
+            const dict = listData.find(ld=>ld.code === it);
+            if (dict) {
+              result.push(`${JSON.stringify({catalog: dict.catalog, code: dict.code})}`);
+            }
+          }
+        })
+        return result;
       } else if (isObject(value)) {
         if (value.value) {
           return value.value

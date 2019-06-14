@@ -13,6 +13,7 @@ import OopOrgEmpPicker from '../OopOrgEmpPicker';
 import OopOrgPicker from '../OopOrgPicker';
 import OopTextEditor from '../OopTextEditor';
 import OopEnum from '../OopEnum';
+import OopDict from '../OopDict';
 import OopFormSelectUser from '../OopFormSelectUser';
 import styles from './index.less';
 
@@ -111,7 +112,10 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = <OopTextEditor {...props} />
       break;
     case 'OopEnum':
-      component = <OopEnum {...props} />
+      component = <OopEnum {...props} label={label} />
+      break;
+    case 'OopDict':
+      component = <OopDict {...props} label={label} />
       break;
     default: null
   }
@@ -177,6 +181,9 @@ const getAntdComponent = (componentName, componentLabel, props, children)=>{
       break;
     case 'OopEnum':
       component = <OopEnum {...props} />
+      break;
+    case 'OopDict':
+      component = <OopDict {...props} />
       break;
     default: null
   }
