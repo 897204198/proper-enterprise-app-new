@@ -181,16 +181,6 @@ const ModalFormBasic = Form.create()((props) => {
               </RadioGroup>
             )}
           </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="时间"
-          >
-            {form.getFieldDecorator('date', {
-              initialValue: formBasic.date
-            })(
-              <DatePicker />
-            )}
-          </FormItem>
           <div style={{display: 'none'}}>
             {form.getFieldDecorator('formDetails', {
               initialValue: formBasic.formDetails
