@@ -73,7 +73,6 @@ export default class CheckBoxPop extends PureComponent {
     </div>);
   }
   renderContent = (props)=>{
-    console.log(props);
     const { disabled, data } = props;
     const { selected, searchStr } = this.state;
     const selectedKeys = selected.map(i=>i.value);
@@ -122,11 +121,12 @@ export default class CheckBoxPop extends PureComponent {
     })
   }
   render() {
-    const { children, ...otherProps } = this.props;
+    const { children, placeholder = '请选择', ...otherProps } = this.props;
+    const { visible, selected = []} = this.state;
     return (
       <div className={styles.container}>
         <Drawer
-          visible={this.state.visible}
+          visible={visible}
           placement="bottom"
           title={this.renderHeader()}
           closable={false}
@@ -135,7 +135,7 @@ export default class CheckBoxPop extends PureComponent {
         >
           {this.renderContent(otherProps)}
         </Drawer>
-        {children({onClick: ()=>this.openDrawer(), extra: this.state.selected.map(it=>it.label).join(',')})}
+        {children({onClick: ()=>this.openDrawer(), extra: selected.length ? selected.map(it=>it.label).join(',') : placeholder})}
       </div>);
   }
 }

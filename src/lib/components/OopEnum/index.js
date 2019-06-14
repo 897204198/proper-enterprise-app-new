@@ -1,12 +1,21 @@
 import React from 'react';
 import { Select, Radio, Checkbox } from 'antd';
-import {isArray, isObject} from '@framework/utils/utils';
+import {isArray, isObject, isApp} from '@framework/utils/utils';
+import {Picker, List} from 'antd-mobile';
+import CheckBoxPop from '../OopForm/components/CheckBoxPop';
 
 const { Option } = Select;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 const SelectNode = (props) => {
-  const {value, valuePropName, labelPropName, onChange, multiple, listData, disabled, ...otherProps} = props;
+  const {value, valuePropName, labelPropName, onChange, multiple, listData, disabled, ifRenderByAntdMobile, ...otherProps} = props;
+  if (ifRenderByAntdMobile) {
+    if (multiple === true) {
+      return <CheckBoxPop { ...props} data={listData} componentLabel={props.label}>{p => (<List.Item arrow="horizontal" {...p}>{props.label}</List.Item>)}</CheckBoxPop>;
+    } else {
+      return <Picker { ...props} data={listData} cols={1}><List.Item arrow="horizontal">{props.label}</List.Item></Picker>;
+    }
+  }
   return (
     <Select
       showSearch
@@ -33,7 +42,10 @@ const SelectNode = (props) => {
   )
 }
 const RadioNode = (props) => {
-  const {value, valuePropName, labelPropName, onChange, listData, disabled = false, ...otherProps} = props;
+  const {value, valuePropName, labelPropName, onChange, listData, disabled = false, ifRenderByAntdMobile, ...otherProps} = props;
+  if (ifRenderByAntdMobile) {
+    return <Picker { ...props} data={listData} cols={1}><List.Item arrow="horizontal">{props.label}</List.Item></Picker>;
+  }
   return (
     <RadioGroup
       {
@@ -55,7 +67,10 @@ const RadioNode = (props) => {
   )
 }
 const CheckboxNode = (props) => {
-  const {value, valuePropName, labelPropName, onChange, listData, disabled = false, ...otherProps} = props;
+  const {value, valuePropName, labelPropName, onChange, listData, disabled = false, ifRenderByAntdMobile, ...otherProps} = props;
+  if (ifRenderByAntdMobile) {
+    return <CheckBoxPop { ...props} data={listData} componentLabel={props.label}>{p => (<List.Item arrow="horizontal" {...p}>{props.label}</List.Item>)}</CheckBoxPop>;
+  }
   const options = [];
   for (const item of listData) {
     const obj = {
@@ -80,10 +95,11 @@ const CheckboxNode = (props) => {
 export default class OopEnum extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { value = [] } = props;
+    const { value, ifRenderByAntdMobile: irbam } = props;
     this.state = {
-      selectedValue: [...value]
+      selectedValue: value
     }
+    this.ifRenderByAntdMobile = irbam === undefined ? isApp() : !!irbam
   }
   componentDidMount() {
   }
@@ -122,27 +138,6 @@ export default class OopEnum extends React.PureComponent {
       }
     })
   }
-  filterArrayData = (value, listData = [])=>{
-    const {valuePropName} = this.props;
-    const selectedResult = [];
-    for (let i = 0; i < value.length; i++) {
-      const child = listData.find((item) => {
-        const v = value[i];
-        return (item.id === v || item.value === v)
-      });
-      if (child) {
-        selectedResult.push(child[valuePropName] || child.value || child.id)
-      }
-    }
-    return selectedResult;
-  }
-  filterObjectData = (value, listData = [])=>{
-    const {valuePropName} = this.props;
-    const obj = listData.find((item) => {
-      return (item.id === value || item.value === value)
-    }) || {};
-    return obj[valuePropName] || obj.value || obj.id;
-  }
   getValue = ()=>{
     return {
       ...this.state.selectedValue
@@ -162,6 +157,7 @@ export default class OopEnum extends React.PureComponent {
         listData={listData}
         onChange={this.selectChange}
         multiple={multiple}
+        ifRenderByAntdMobile={this.ifRenderByAntdMobile}
       />
     } else { // radio or checkbox
       if (multiple) { // eslint-disable-line
@@ -173,6 +169,7 @@ export default class OopEnum extends React.PureComponent {
           valuePropName={valuePropName}
           listData={listData}
           onChange={this.checkboxChange}
+          ifRenderByAntdMobile={this.ifRenderByAntdMobile}
         />
       } else {
         return <RadioNode
@@ -183,6 +180,7 @@ export default class OopEnum extends React.PureComponent {
           valuePropName={valuePropName}
           listData={listData}
           onChange={this.radioChange}
+          ifRenderByAntdMobile={this.ifRenderByAntdMobile}
         />
       }
     }

@@ -23,7 +23,7 @@ const isAntdMobliePicker = (item)=>{
 
 const FormContainer = Form.create({
   mapPropsToFields(props) {
-    const {fields = {}, formJson = [], self} = props;
+    const {fields = {}, formJson = []} = props;
     const result = {};
     formJson.forEach((item)=>{
       const {name, component, subscribe = [], initialValue} = item;
@@ -31,10 +31,9 @@ const FormContainer = Form.create({
       if (name) {
         let {value} = fields[name] || {};
         if (value !== undefined) {
-          // 数据字典
-          if (self.isDictValue(value)) {
-            value = JSON.stringify(value)
-          }
+          // 数据字典 数据字典值啥code的时候 （默认值）做下转换
+          // if (component.name === 'OopDict') {
+          // }
           // 时间
           if (component.name === 'DatePicker') {
             if (ifRenderByAntdMobile) {
@@ -236,9 +235,6 @@ export default class OopForm extends React.PureComponent {
     })
   }
   // 是否是数据字典值
-  isDictValue = (value)=>{
-    return value && typeof value === 'object' && value.catalog !== undefined && value.code !== undefined
-  }
   getForm = ()=> {
     return this.formContainer.getForm();
   }
@@ -250,52 +246,23 @@ export default class OopForm extends React.PureComponent {
     const { formJson = []} = this.props;
     const form = this.getForm();
     const formData = form.getFieldsValue();
-    console.log(formData);
-    formJson.forEach((it)=>{
-      const {name, component: {name: cName, children, props = {}}} = it;
-      const value = formData[name];
-      if (value !== null && value !== undefined && value !== '') {
-        if ('Select,RadioGroup,CheckboxGroup'.includes(cName)) {
-          if (!formData[`${name}_text`]) {
-            // am的Picker组件为value为数组
-            const child = children.map(c=>(value.toString().includes(c.value) ? c : null)).filter(i=>i !== null);
-            if (child) {
-              formData[`${name}_text`] = child.map(c=>c.label).join(',');
-            }
-          }
-        } else if ('OopSystemCurrent'.includes(cName)) {
-          if (!formData[`${name}_text`]) {
-            formData[`${name}_text`] = value.text
-          }
-        } else if ('DatePicker'.includes(cName)) {
-          if (!formData[`${name}_text`]) {
-            let dateLong = value;
-            let dateStr = '';
-            if (value.constructor.name === 'Date') {
-              dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
-              dateLong = value.getTime();
-            } else {
-              dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
-              dateLong = value.toDate().getTime();
-            }
-            formData[`${name}`] = dateLong;
-            formData[`${name}_text`] = dateStr;
-          }
-        } else if (cName === 'InputNumber') {
-          // 数字型转换
-          const {Number} = window;
-          if (value !== +value) {
-            formData[`${name}`] = Number(value)
-          }
-        }
-      }
-    })
+    const data = {
+      ...formData
+    };
+    console.log(data);
     if (ifRenderByAntdMobile) {
       // app的am组件中 Select、RadioGroup 所 对应的组件是 Picker， 此组件的值类型为[]; 所以这里处理一下
-      const data = {
-        ...formData
-      }
-      const selectComs = formJson.filter(it=>'Select,RadioGroup'.includes(it.component.name));
+      // const selectComs = formJson.filter(it=>'Select,RadioGroup'.includes(it.component.name));
+      const selectComs = formJson.filter((it)=>{
+        const {component: {name, props}} = it;
+        if ('Select,RadioGroup'.includes(name)) {
+          return true
+        }
+        if ('OopEnum,OopDict'.includes(name) && props.multiple !== true) {
+          return true
+        }
+        return false
+      });
       if (selectComs && selectComs.length) {
         selectComs.forEach((selectCom)=>{
           const {name} = selectCom;
@@ -305,9 +272,61 @@ export default class OopForm extends React.PureComponent {
           }
         })
       }
-      return data;
     }
-    return formData;
+    // 给数据增加快照文本信息
+    formJson.forEach((it)=>{
+      const {name, component: {name: cName, children = [], props = {}}} = it;
+      const value = data[name];
+      if (value !== null && value !== undefined && value !== '') {
+        const textKey = `${name}_text`;
+        if ('Select,RadioGroup,CheckboxGroup,OopEnum'.includes(cName)) {
+          if (!data[textKey]) {
+            let list = children;
+            if (cName === 'OopEnum') {
+              list = props.listData
+            }
+            // am的Picker组件为value为数组
+            const child = list.map(c=>(value.toString().includes(c.value) ? c : null)).filter(i=>i !== null);
+            if (child) {
+              data[textKey] = child.map(c=>c.label).join(',');
+            }
+          }
+        } else if ('OopDict'.includes(cName)) {
+          if (!data[textKey]) {
+            if (props.multiple === true) {
+              data[textKey] = value.map(v=>v.name || v.label || v.title).join(',')
+            } else {
+              data[textKey] = value.name || value.label || value.title;
+            }
+          }
+        } else if ('OopSystemCurrent'.includes(cName)) {
+          if (!data[textKey]) {
+            data[textKey] = value.text
+          }
+        } else if ('DatePicker'.includes(cName)) {
+          if (!data[textKey]) {
+            let dateLong = value;
+            let dateStr = '';
+            if (value.constructor.name === 'Date') {
+              dateStr = moment(value).format(props.format ? props.format : 'YYYY-MM-DD');
+              dateLong = value.getTime();
+            } else {
+              dateStr = value.format(props.format ? props.format : 'YYYY-MM-DD');
+              dateLong = value.toDate().getTime();
+            }
+            data[`${name}`] = dateLong;
+            data[textKey] = dateStr;
+          }
+        } else if (cName === 'InputNumber') {
+          // 数字型转换
+          const {Number} = window;
+          if (value !== +value) {
+            data[`${name}`] = Number(value)
+          }
+        }
+      }
+    })
+    return data;
   }
   // 移动端才提示
   showValidErr = (err)=>{

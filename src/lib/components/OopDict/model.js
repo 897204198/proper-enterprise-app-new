@@ -13,6 +13,7 @@ export default {
       if (result && result.data && result.data.length) {
         const data = result.data.map(it=>({
           ...it,
+          label: it.name,
           value: `${JSON.stringify({catalog: it.catalog, code: it.code})}`,
         }));
         yield put({
