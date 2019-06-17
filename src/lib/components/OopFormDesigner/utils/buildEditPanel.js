@@ -86,7 +86,7 @@ export default (item, eventsCollection, loading)=>{
     return
   }
   // console.log(item)
-  const { name, label, component, rules} = item;
+  const { key, name, label, component, rules} = item;
   const cName = component.name;
   if (!cName) {
     return
@@ -103,10 +103,10 @@ export default (item, eventsCollection, loading)=>{
   const onNameChange = (e)=>{
     const element = e.currentTarget;
     updateCenterPanel(element.id, element.value);
-    setTimeout(()=>{
-      const el = document.getElementById(`${element.value}_edit_name`);
-      el && el.focus();
-    }, 1000)
+    // setTimeout(()=>{
+    //   const el = document.getElementById(`${element.value}_edit_name`);
+    //   el && el.focus();
+    // }, 1000)
   }
   const plusClick = ()=>{
     onPlusClick(name)
@@ -117,6 +117,7 @@ export default (item, eventsCollection, loading)=>{
   // 输入框 文本域 数字输入框
   if ('Input,TextArea,InputNumber,DatePicker,OopGroupUserPicker,OopOrgEmpPicker, OopOrgPicker, OopTextEditor, Switch'.includes(cName)) {
     formConfig.formJson = [{
+      key: `${key}${prefix}_label`,
       name: `${name}${prefix}_label`,
       label: '标题',
       component: {
@@ -125,6 +126,7 @@ export default (item, eventsCollection, loading)=>{
       },
       initialValue: label
     }, {
+      key: `${key}${prefix}_props_placeholder`,
       name: `${name}${prefix}_props_placeholder`,
       label: '占位符',
       component: {
@@ -134,6 +136,7 @@ export default (item, eventsCollection, loading)=>{
       initialValue: component.props ? component.props.placeholder : null
     },
     {
+      key: `${key}${prefix}_name`,
       name: `${name}${prefix}_name`,
       label: 'name',
       component: {
@@ -161,6 +164,7 @@ export default (item, eventsCollection, loading)=>{
           <RadioButton value={true}>显示时间</RadioButton>
         </RadioGroup>)
       formConfig.formJson.push({
+        key: `${key}${prefix}_props_showTime`,
         name: `${name}${prefix}_props_showTime`,
         label: '是否显示时间',
         component: toggleShowTime,
@@ -172,6 +176,7 @@ export default (item, eventsCollection, loading)=>{
     // 增加数据源 数据字典
     const dataDictItem = getDataDictItem(item, onSelectChange);
     formConfig.formJson = [{
+      key: `${key}${prefix}_label`,
       name: `${name}${prefix}_label`,
       label: '标题',
       component: {
@@ -182,6 +187,7 @@ export default (item, eventsCollection, loading)=>{
     },
     dataDictItem,
     {
+      key: `${key}${prefix}_children`,
       name: `${name}${prefix}_children`,
       label: '固定选项',
       component: children.length === 0 ? {
@@ -201,6 +207,7 @@ export default (item, eventsCollection, loading)=>{
       }],
     },
     {
+      key: `${key}${prefix}_dataUrl`,
       name: `${name}${prefix}_dataUrl`,
       label: '外部数据源配置',
       component: {
@@ -216,6 +223,7 @@ export default (item, eventsCollection, loading)=>{
       }],
     },
     {
+      key: `${key}${prefix}_dataUrl_value`,
       name: `${name}${prefix}_dataUrl_value`,
       component: {
         name: 'Input',
@@ -236,6 +244,7 @@ export default (item, eventsCollection, loading)=>{
       }],
     },
     {
+      key: `${key}${prefix}_dataUrl_labelPropName`,
       name: `${name}${prefix}_dataUrl_labelPropName`,
       component: {
         name: 'Input',
@@ -256,6 +265,7 @@ export default (item, eventsCollection, loading)=>{
       }],
     },
     {
+      key: `${key}${prefix}_dataUrl_valuePropName`,
       name: `${name}${prefix}_dataUrl_valuePropName`,
       component: {
         name: 'Input',
@@ -276,6 +286,7 @@ export default (item, eventsCollection, loading)=>{
       }],
     },
     {
+      key: `${key}${prefix}_dataUrl_button`,
       name: `${name}${prefix}_dataUrl_button`,
       component: (
       <Button
@@ -306,6 +317,7 @@ export default (item, eventsCollection, loading)=>{
     }];
     const childrenArr = children.map((cld, i)=>(
       {
+        key: `${key}${prefix}_children_label_${i}`,
         name: `${name}${prefix}_children_label_${i}`,
         label: '',
         component: {
@@ -326,6 +338,7 @@ export default (item, eventsCollection, loading)=>{
       }
     ))
     childrenArr.push({
+      key: `${key}${prefix}_dict`,
       name: `${name}${prefix}_dict`,
       label: '字典数据源',
       component: {
@@ -351,6 +364,7 @@ export default (item, eventsCollection, loading)=>{
       }],
     })
     childrenArr.push({
+      key: `${key}${prefix}_name`,
       name: `${name}${prefix}_name`,
       label: 'name',
       component: {
@@ -385,6 +399,7 @@ export default (item, eventsCollection, loading)=>{
     formConfig = {...formConfig, formLayout: 'vertical', rowItemIconCopy, rowItemIconDelete, rowItemDrag, rowItemSetValue}
   } else if ('OopSystemCurrent'.includes(cName)) {
     formConfig.formJson = [{
+      key: `${key}${prefix}_label`,
       name: `${name}${prefix}_label`,
       label: '标题',
       component: {
@@ -394,6 +409,7 @@ export default (item, eventsCollection, loading)=>{
       initialValue: label
     },
     {
+      key: `${key}${prefix}_name`,
       name: `${name}${prefix}_name`,
       label: 'name',
       component: {
@@ -403,6 +419,7 @@ export default (item, eventsCollection, loading)=>{
       initialValue: name
     }];
     const currentSysArgsComp = {
+      key: `${key}${prefix}_dict`,
       name: `${name}${prefix}_dict`,
       label: '当前系统参数',
       component: {
@@ -438,6 +455,7 @@ export default (item, eventsCollection, loading)=>{
     formConfig = {...formConfig, formLayout: 'vertical'};
   } else if ('OopUpload'.includes(cName)) {
     formConfig.formJson = [{
+      key: `${key}${prefix}_label`,
       name: `${name}${prefix}_label`,
       label: '标题',
       component: {
@@ -447,6 +465,7 @@ export default (item, eventsCollection, loading)=>{
       initialValue: label
     },
     {
+      key: `${key}${prefix}_name`,
       name: `${name}${prefix}_name`,
       label: 'name',
       component: {
@@ -458,6 +477,7 @@ export default (item, eventsCollection, loading)=>{
     formConfig = {...formConfig, formLayout: 'vertical'};
   } else if ('OopText'.includes(cName)) {
     formConfig.formJson = [{
+      key: `${key}${prefix}_label`,
       name: `${name}${prefix}_label`,
       label: '标题',
       component: {
@@ -467,6 +487,7 @@ export default (item, eventsCollection, loading)=>{
       initialValue: label
     },
     {
+      key: `${key}${prefix}_name`,
       name: `${name}${prefix}_name`,
       label: 'name',
       component: {
@@ -476,6 +497,7 @@ export default (item, eventsCollection, loading)=>{
       initialValue: name
     },
     {
+      key: `${key}${prefix}_props_text`,
       name: `${name}${prefix}_props_text`,
       label: '请输入内容',
       component: {
@@ -525,6 +547,7 @@ export default (item, eventsCollection, loading)=>{
     </RadioGroup>);
   // 增加规则判断
   const rulesArr = [{
+    key: `${key}${prefix}_rules`,
     name: `${name}${prefix}_rules`,
     label: '规则',
     component: requireRulesRadio,
