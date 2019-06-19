@@ -328,6 +328,7 @@ export default class OopFormDesigner extends React.PureComponent {
       }
       newItem.key = `${newItem.key}_${newItem.name}`;
       this.state.rowItems.push(newItem);
+      this.forceUpdate()
     }
   }
   onRowItemIconDelete = (name)=>{

@@ -6,3 +6,6 @@ moment.locale('zh-cn');
 import 'dva-loading';
 import 'dva';
 import 'av-core';
+import 'braft-editor';
+import 'lodash';
+import 'codemirror';

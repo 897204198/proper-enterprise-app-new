@@ -205,7 +205,8 @@ export default class Group extends PureComponent {
     warningField: {}, // from 字段变化
     userSearchType: 'all',
     userList: [],
-    groupsCheckedData: []
+    groupsCheckedData: [],
+    userGroupEnable: 'ALL'
   };
 
   componentDidMount() {
@@ -217,7 +218,6 @@ export default class Group extends PureComponent {
     const params = {
       pagination,
       ...param,
-      userGroupEnable: 'ALL'
     }
     this.oopSearch.load(params);
   }
@@ -574,7 +574,7 @@ export default class Group extends PureComponent {
     const { currentTabKey, userTargetKeys, viewVisible, userInfoView,
       groupUsers, userGroups, isCreate, addOrEditModalTitle, userList,
       closeConfirmConfig, warningField, warningWrapper, userSearchType,
-      groupsCheckedData} = this.state;
+      groupsCheckedData, userGroupEnable} = this.state;
     const parentMethods = {
       handleFormSubmit: this.handleFormSubmit,
       closeForm: this.closeForm,
@@ -663,6 +663,7 @@ export default class Group extends PureComponent {
           placeholder="请输入"
           enterButtonText="搜索"
           moduleName="authusergroups"
+          param={{userGroupEnable}}
           ref={(el)=>{ this.oopSearch = el && el.getWrappedInstance() }}
         />
       }>

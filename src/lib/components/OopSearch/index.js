@@ -380,7 +380,7 @@ export default class OopSearch extends React.Component {
     return restPath
   }
   load = (param = {})=>{
-    const { dispatch, moduleName } = this.props;
+    const { dispatch, moduleName, param: p } = this.props;
     if (moduleName) {
       const pagination = param.pagination ||
         { pageNo: 1, pageSize: 10, ...this.props.global.oopSearchGrid.pagination};
@@ -389,7 +389,8 @@ export default class OopSearch extends React.Component {
         ...param,
         req: JSON.stringify(this.getRepParam()),
         restPath: JSON.stringify(this.getRestPathParam()),
-        moduleName
+        moduleName,
+        ...p
       }
       dispatch({type: 'global/oopSearchResult', payload: params, callback: (resp)=>{
         if (this.props.onLoadCallback) {
