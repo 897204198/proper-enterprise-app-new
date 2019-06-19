@@ -36,7 +36,7 @@ export default class OopModal extends PureComponent {
           naviTabsVisible: true
         })
       }
-    }, 300);
+    }, 500);
     if (!this.state.activeKey && props.tabs.length > 0) {
       const defaultTab = props.tabs.find(it => 'main' in it);
       this.setState({

@@ -325,7 +325,8 @@ export default class User extends React.PureComponent {
     // 当前角色用户组的搜索类型
     groupsSearchType: 'all',
     rolesCheckedData: [],
-    groupsCheckedData: []
+    groupsCheckedData: [],
+    userEnable: 'all'
   }
 
   componentDidMount() {
@@ -501,13 +502,15 @@ export default class User extends React.PureComponent {
     } else if (enable === 'false') {
       userEnable = 'DISABLE'
     }
-    const params = {
-      pagination,
-      ...param,
+    this.setState({
       userEnable
-    }
-    // console.log(this)
-    this.oopSearch.load(params)
+    }, ()=>{
+      const params = {
+        pagination,
+        ...param
+      }
+      this.oopSearch.load(params)
+    })
   }
   addUserRoles = (typeAdd, id, typeRoles) => {
     this.props.dispatch({
@@ -639,7 +642,7 @@ export default class User extends React.PureComponent {
     } = this.props;
     const { isCreate, modalVisible, viewModalVisible, userRolesList,
       userGroupsList, addOrEditModalTitle, closeConfirmConfig, rolesSearchType,
-      groupsCheckedData, groupsSearchType, rolesCheckedData, warningField, warningWrapper } = this.state;
+      groupsCheckedData, groupsSearchType, rolesCheckedData, warningField, warningWrapper, userEnable } = this.state;
     const column = [
       {
         title: '用户名', dataIndex: 'username', render: (text, record) => {
@@ -726,6 +729,7 @@ export default class User extends React.PureComponent {
           placeholder="请输入"
           enterButtonText="搜索"
           moduleName="authusers"
+          param={{userEnable}}
           ref={(el)=>{ this.oopSearch = el && el.getWrappedInstance() }}
         />
       }>
