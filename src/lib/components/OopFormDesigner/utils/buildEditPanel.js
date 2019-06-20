@@ -115,7 +115,7 @@ export default (item, eventsCollection, loading)=>{
     formJson: []
   }
   // 输入框 文本域 数字输入框
-  if ('Input,TextArea,InputNumber,DatePicker,OopGroupUserPicker,OopOrgEmpPicker, OopOrgPicker, OopTextEditor, Switch'.includes(cName)) {
+  if ('Input,TextArea,InputNumber,DatePicker,OopGroupUserPicker,OopOrgEmpPicker,OopOrgPicker,OopTextEditor,Switch,'.includes(`${cName},`)) {
     formConfig.formJson = [{
       key: `${key}${prefix}_label`,
       name: `${name}${prefix}_label`,
@@ -185,110 +185,121 @@ export default (item, eventsCollection, loading)=>{
       },
       initialValue: label
     },
-    dataDictItem,
-    {
-      key: `${key}${prefix}_children`,
-      name: `${name}${prefix}_children`,
-      label: '固定选项',
-      component: children.length === 0 ? {
-        name: 'Button',
-        props: {icon: 'plus', onClick: plusClick}
-      } : {
-        name: 'Input',
-        props: {type: 'hidden'}
-      },
-      initialValue: '',
-      subscribe: [{
-        name: dataDictItem.name,
-        publish: [{
-          value: 'changeless',
-          property: 'display'
-        }]
-      }],
-    },
-    {
-      key: `${key}${prefix}_dataUrl`,
-      name: `${name}${prefix}_dataUrl`,
-      label: '外部数据源配置',
-      component: {
-        name: 'Input',
-        props: {type: 'hidden'}
-      },
-      subscribe: [{
-        name: dataDictItem.name,
-        publish: [{
-          value: 'outer',
-          property: 'display'
-        }]
-      }],
-    },
-    {
-      key: `${key}${prefix}_dataUrl_value`,
-      name: `${name}${prefix}_dataUrl_value`,
-      component: {
-        name: 'Input',
-        props: {
-          placeholder: '请求URL'
+      (cName === 'Select' ?
+        {
+          key: `${key}${prefix}_props_placeholder`,
+          name: `${name}${prefix}_props_placeholder`,
+          label: '占位符',
+          component: {
+            name: 'Input',
+            props: {placeholder: '该输入些什么', onChange}
+          },
+          initialValue: component.props ? component.props.placeholder : null
+        } : undefined),
+      dataDictItem,
+      {
+        key: `${key}${prefix}_children`,
+        name: `${name}${prefix}_children`,
+        label: '固定选项',
+        component: children.length === 0 ? {
+          name: 'Button',
+          props: {icon: 'plus', onClick: plusClick}
+        } : {
+          name: 'Input',
+          props: {type: 'hidden'}
         },
-        rules: [{
-          require: true
-        }]
+        initialValue: '',
+        subscribe: [{
+          name: dataDictItem.name,
+          publish: [{
+            value: 'changeless',
+            property: 'display'
+          }]
+        }],
       },
-      initialValue: component.dataUrl && component.dataUrl.value,
-      subscribe: [{
-        name: dataDictItem.name,
-        publish: [{
-          value: 'outer',
-          property: 'display'
-        }]
-      }],
-    },
-    {
-      key: `${key}${prefix}_dataUrl_labelPropName`,
-      name: `${name}${prefix}_dataUrl_labelPropName`,
-      component: {
-        name: 'Input',
-        props: {
-          placeholder: '回显的属性名'
+      {
+        key: `${key}${prefix}_dataUrl`,
+        name: `${name}${prefix}_dataUrl`,
+        label: '外部数据源配置',
+        component: {
+          name: 'Input',
+          props: {type: 'hidden'}
         },
-        rules: [{
-          require: true
-        }]
+        subscribe: [{
+          name: dataDictItem.name,
+          publish: [{
+            value: 'outer',
+            property: 'display'
+          }]
+        }],
       },
-      initialValue: component.dataUrl && component.dataUrl.labelPropName,
-      subscribe: [{
-        name: dataDictItem.name,
-        publish: [{
-          value: 'outer',
-          property: 'display'
-        }]
-      }],
-    },
-    {
-      key: `${key}${prefix}_dataUrl_valuePropName`,
-      name: `${name}${prefix}_dataUrl_valuePropName`,
-      component: {
-        name: 'Input',
-        props: {
-          placeholder: '保存的属性值'
+      {
+        key: `${key}${prefix}_dataUrl_value`,
+        name: `${name}${prefix}_dataUrl_value`,
+        component: {
+          name: 'Input',
+          props: {
+            placeholder: '请求URL'
+          },
+          rules: [{
+            require: true
+          }]
         },
-        rules: [{
-          require: true
-        }]
+        initialValue: component.dataUrl && component.dataUrl.value,
+        subscribe: [{
+          name: dataDictItem.name,
+          publish: [{
+            value: 'outer',
+            property: 'display'
+          }]
+        }],
       },
-      initialValue: component.dataUrl && component.dataUrl.valuePropName,
-      subscribe: [{
-        name: dataDictItem.name,
-        publish: [{
-          value: 'outer',
-          property: 'display'
-        }]
-      }],
-    },
-    {
-      key: `${key}${prefix}_dataUrl_button`,
-      name: `${name}${prefix}_dataUrl_button`,
-      component: (
+      {
+        key: `${key}${prefix}_dataUrl_labelPropName`,
+        name: `${name}${prefix}_dataUrl_labelPropName`,
+        component: {
+          name: 'Input',
+          props: {
+            placeholder: '回显的属性名'
+          },
+          rules: [{
+            require: true
+          }]
+        },
+        initialValue: component.dataUrl && component.dataUrl.labelPropName,
+        subscribe: [{
+          name: dataDictItem.name,
+          publish: [{
+            value: 'outer',
+            property: 'display'
+          }]
+        }],
+      },
+      {
+        key: `${key}${prefix}_dataUrl_valuePropName`,
+        name: `${name}${prefix}_dataUrl_valuePropName`,
+        component: {
+          name: 'Input',
+          props: {
+            placeholder: '保存的属性值'
+          },
+          rules: [{
+            require: true
+          }]
+        },
+        initialValue: component.dataUrl && component.dataUrl.valuePropName,
+        subscribe: [{
+          name: dataDictItem.name,
+          publish: [{
+            value: 'outer',
+            property: 'display'
+          }]
+        }],
+      },
+      {
+        key: `${key}${prefix}_dataUrl_button`,
+        name: `${name}${prefix}_dataUrl_button`,
+        component: (
       <Button
         type="primary"
         onClick={()=>{
@@ -307,14 +318,14 @@ export default (item, eventsCollection, loading)=>{
       }}>
         测试
       </Button>),
-      subscribe: [{
-        name: dataDictItem.name,
-        publish: [{
-          value: 'outer',
-          property: 'display'
-        }]
-      }],
-    }];
+        subscribe: [{
+          name: dataDictItem.name,
+          publish: [{
+            value: 'outer',
+            property: 'display'
+          }]
+        }],
+      }].filter(it=>it !== undefined);
     const childrenArr = children.map((cld, i)=>(
       {
         key: `${key}${prefix}_children_label_${i}`,

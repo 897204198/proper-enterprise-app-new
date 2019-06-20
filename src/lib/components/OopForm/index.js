@@ -341,12 +341,14 @@ export default class OopForm extends React.PureComponent {
     }
   }
   handleFormChange = (changedFields)=>{
-    // this.setState(({ fields }) => ({
-    //   fields: { ...fields, ...changedFields },
-    // }));
-    this.setState({
-      fields: { ...this.state.fields, ...changedFields }
-    })
+    this.setState(({ fields }) => ({
+      fields: { ...fields, ...changedFields },
+    }));
+    // console.log(this.state.fields)
+    // this.setState({
+    //   fields: { ...this.state.fields, ...changedFields }
+    // })
+    // TODO 注释写法不好用??? 不理解
   }
   render() {
     const {fields} = this.state;
