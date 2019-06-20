@@ -5,6 +5,7 @@ import Debounce from 'lodash-decorators/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
 import { getUuid } from '@framework/common/oopUtils';
+import { isRegExp } from '@framework/utils/utils';
 import OopForm from '@pea/components/OopForm';
 import {toString2} from './utils/toString';
 import buildEditPanel from './utils/buildEditPanel';
@@ -488,6 +489,7 @@ export default class OopFormDesigner extends React.PureComponent {
       this.oopForm.getForm().setFieldsValue({[this.state.currentRowItem.name]: undefined})
     }
   }
+  // 返回一个表单的配置 ※注※：其中会对`函数`和`正则表达式`字符串化
   getFormConfig = ()=>{
     const {rowItems, formLayout, formTitle, formPattern} = this.state;
     const isAdvanced = formPattern === 'advanced';
@@ -506,7 +508,7 @@ export default class OopFormDesigner extends React.PureComponent {
     console.log(fieldsValue)
     // 设置默认值
     rowItems.forEach((item)=>{
-      const {name, component, subscribe = []} = item;
+      const {name, component, subscribe = [], rules = []} = item;
       const value = fieldsValue[name];
       item.initialValue = value;
       if (component.dictCatalog || component.dataUrl) {
@@ -532,6 +534,14 @@ export default class OopFormDesigner extends React.PureComponent {
                 pb.value = v.toString()
               }
             })
+          }
+        })
+      }
+      if (rules.length) {
+        rules.forEach((rule)=>{
+          const {pattern} = rule;
+          if (pattern && isRegExp(pattern)) {
+            rule.pattern = pattern.toString();
           }
         })
       }
@@ -583,30 +593,29 @@ export default class OopFormDesigner extends React.PureComponent {
   handleFormPatternChange = (event)=>{
     // console.log(event);
     const { value: formPattern } = event.target;
-    this.setState({
-      formPattern
-    }, ()=>{
-      if (formPattern === 'advanced') {
-        const {currentRowItem} = this.state;
-        const jsonItem = {
-          ...currentRowItem
-        }
-        delete jsonItem.active;
-        delete jsonItem.initialValue;
-        delete jsonItem.syncTag;
-        const currentRowItemJson = jsBeautify(toString2(jsonItem))
-        this.setState({
-          currentRowItemJson
-        });
-      } else {
-        // const item = JSON.parse(this.state.currentRowItemJson);
-        // eslint-disable-next-line
-        // const item = new Function('return '.concat(this.state.currentRowItemJson))();
-        // if (item && item.name) {
-        //   this.onRowItemClick(item.name);
-        // }
+    if (formPattern === 'advanced') {
+      const {currentRowItem} = this.state;
+      const jsonItem = {
+        ...currentRowItem
       }
-    })
+      delete jsonItem.active;
+      delete jsonItem.initialValue;
+      delete jsonItem.syncTag;
+      const currentRowItemJson = jsBeautify(toString2(jsonItem))
+      this.setState({
+        formPattern,
+        currentRowItemJson
+      });
+    } else {
+      // eslint-disable-next-line
+      const item = new Function('return '.concat(this.state.currentRowItemJson))();
+      if (item && item.name) {
+        this.setState({
+          formPattern,
+          currentRowItem: item
+        })
+      }
+    }
   }
   renderCodeMirror = (formJson)=>{
     console.log(formJson)

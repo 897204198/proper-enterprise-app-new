@@ -171,14 +171,16 @@ export default class CustomQuery extends React.PureComponent {
     this.onLoad();
   }
   onLoad = (param = {}) => {
-    const {pagination, condition} = param;
-    // this.oopSearch.load({
-    //  pagination
-    // });
+    const { pagination, condition } = param;
+    if (pagination) {
+      this.setState({
+        pagination
+      })
+    }
     this.props.dispatch({
       type: 'devtoolsCustomQuery/fetch',
       payload: {
-        pagination,
+        pagination: pagination || this.state.pagination,
         ...condition
       },
       callback: (res) => {
@@ -1337,7 +1339,7 @@ export default class CustomQuery extends React.PureComponent {
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
-    const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys, workflowSelection} = this.state;
+    const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys, workflowSelection, pagination } = this.state;
     const { formConfig = {formJson: [], formLayout: 'horizontal'} } = curRecord
     const { columns, props } = gridConfig
     const parseFormConfig = typeof formConfig === 'string' ? JSON.parse(formConfig) : formConfig
@@ -1691,7 +1693,7 @@ export default class CustomQuery extends React.PureComponent {
           <input type="file" id="file" hidden onChange={this.handleUpload} />
           <OopTable
             loading={loading === undefined ? gridLoading : loading}
-            grid={{list: list.data, pagination: {total: list.count}} || oopSearchGrid}
+            grid={{list: list.data, pagination: {...pagination, total: list.count}} || oopSearchGrid}
             columns={oopTablecolumns}
             onLoad={this.onLoad}
             rowButtons={rowButtons}

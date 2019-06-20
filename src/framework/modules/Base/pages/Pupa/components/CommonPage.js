@@ -312,7 +312,7 @@ export default class CommonPage extends React.PureComponent {
   constructGridButtons = (tbCfg = [], rbCfg = [])=>{
     const topButtons = [];
     tbCfg.forEach((tb)=>{
-      if (tb.enable) {
+      if (tb.enable && tb.name !== 'export') {
         this.bingBtnClickEvent(tb)
         topButtons.push(tb);
       }
