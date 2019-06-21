@@ -13,7 +13,7 @@ const firstName = (name) => {
 const { CheckboxItem } = Checkbox
 // 底部固定选人组件
 const BottomFixed = (props) => {
-  const { users, show, subUser, delUser } = props
+  const { users, show, subUser, delUser, showMoreStatus, showMore } = props
   if (show) {
     return (
       <div className={styles.bottom}>
@@ -33,7 +33,30 @@ const BottomFixed = (props) => {
         </div>
         <div className={styles.btnBox}>
           <div className={`container ${styles.subBtn} ${users.length === 0 ? styles.noUser : ''}`} onClick={()=> subUser()}>确认({users.length})</div>
+          <div className={styles.arrowBox} onClick={() => showMore()} >
+            <Icon type={!showMoreStatus ? 'down' : 'up'} />
+          </div>
         </div>
+        {
+          showMoreStatus && (
+            <div className={styles.moreWrapper}>
+              <div className={styles.moreBox}>
+              {
+                users.map((item) => {
+                  return (
+                    <div className={styles.moreChild} key={item.id}>
+                      <span>{item.name}</span>
+                      {
+                        !item.disabled && <Icon type="cross-circle-o" className={styles.iconbox} onClick={()=> delUser(item)} />
+                      }
+                    </div>
+                  )
+                })
+              }
+              </div>
+            </div>
+          )
+        }
       </div>
     )
   } else {
@@ -139,6 +162,7 @@ class OopSelectUser extends React.PureComponent {
       activemenus: [], // 活动菜单
       users, // 选人数组
       isSearch: false,
+      showMoreStatus: false,
       // open
     };
   }
@@ -405,9 +429,18 @@ class OopSelectUser extends React.PureComponent {
       type: 'OopSelectUser$model/delUser'
     })
   }
+  showMore = () => {
+    const { showMoreStatus, users } = this.state;
+    if (users.length === 0) {
+      return false;
+    }
+    this.setState({
+      showMoreStatus: !showMoreStatus
+    })
+  }
   render() {
     const { user = [], searchUser = [] } = this.props.OopSelectUser$model
-    const { activemenus, bread, users, isSearch } = this.state
+    const { activemenus, bread, users, isSearch, showMoreStatus } = this.state
     // let groups = group[0].children || []
     // const { siderbar = [], users = [] } = this.props.OopSelectUser$model
     const { multiply } = this.state
@@ -416,7 +449,7 @@ class OopSelectUser extends React.PureComponent {
         <NavBar
           mode="light"
           // onLeftClick={() => console.log('onLeftClick')}
-          rightContent={
+          leftContent={
             <span onClick={this.navCancel}>取消</span>
           }
           >选择人员</NavBar>
@@ -448,9 +481,9 @@ class OopSelectUser extends React.PureComponent {
             <RadioList list={user} selectUser={this.selectUser} /> }
           </div>
         </div>
-        {
+        {/* {
           multiply ? <BottomFixed show={true} users={users} subUser={this.subUser} delUser={this.delUser} /> : null
-        }
+        } */}
       </div>
     )
     const search = (
@@ -483,7 +516,7 @@ class OopSelectUser extends React.PureComponent {
           isSearch ? search : page
         }
         {
-          multiply ? <BottomFixed show={true} users={users} subUser={this.subUser} delUser={this.delUser} /> : null
+          multiply ? <BottomFixed show={true} users={users} subUser={this.subUser} delUser={this.delUser} showMoreStatus={showMoreStatus} showMore={this.showMore} /> : null
         }
       </div>
       // </Drawer>
