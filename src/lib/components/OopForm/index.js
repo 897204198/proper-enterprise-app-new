@@ -161,11 +161,11 @@ export default class OopForm extends React.PureComponent {
       const {prototype: {hasOwnProperty}} = Object;
       if (hasOwnProperty.call(item, 'initialValue')) {
         fields[name] = {
-          value: isAntdMobliePicker(item) ? [initialValue] : initialValue
+          value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
         }
-      } else if (hasOwnProperty.call(defaultValue, name)) {
+      } else if (hasOwnProperty.call(item, 'initialValue')) {
         fields[name] = {
-          value: defaultValue[name]
+          value: isAntdMobliePicker(item) ? [initialValue] : initialValue
         }
       } else {
         fields[name] = {
