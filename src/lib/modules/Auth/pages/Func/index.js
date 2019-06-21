@@ -326,7 +326,8 @@ export default class Func extends PureComponent {
     },
     warningWrapper: false, // from 是否记录修改状态
     warningField: {}, // from 字段变化
-    curEditMenuId: ''
+    curEditMenuId: '',
+    menuEnable: 'ALL'
   }
   componentDidMount() {
     this.props.dispatch({
@@ -556,7 +557,6 @@ export default class Func extends PureComponent {
     this.oopTreeTable.oopSearch.load({
       pagination,
       parentId,
-      menuEnable: 'ALL'
     })
   }
   onBatchDelete = (items)=>{
@@ -687,7 +687,7 @@ export default class Func extends PureComponent {
       global: { size, oopSearchGrid }
     } = this.props;
     const { parentNode, tableTitle, addOrEditModalTitle, closeConfirmConfig,
-      warningField, warningWrapper } = this.state;
+      warningField, warningWrapper, menuEnable } = this.state;
     const columns = [
       {
         title: '菜单名称', dataIndex: 'name'
@@ -749,7 +749,8 @@ export default class Func extends PureComponent {
             oopSearch: {
               moduleName: 'authmenus',
               placeholder: '请输入',
-              enterButtonText: '搜索'
+              enterButtonText: '搜索',
+              param: {menuEnable}
             }
           }}
           tree={{

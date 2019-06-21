@@ -58,5 +58,8 @@ const routers = {
   '/pupa': {
     component: ()=>import('@framework/modules/Base/pages/Pupa')
   },
+  '/webapp/test-oopform': {
+    component: ()=>import('@pea/components/WebApp/Other/Test')
+  },
 };
 export default routers

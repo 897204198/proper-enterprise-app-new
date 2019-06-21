@@ -439,7 +439,8 @@ export default class Role extends PureComponent {
     rolesCheckedData: [],
     groupsCheckedData: [],
     // 规则类型
-    ruleType: ''
+    ruleType: '',
+    roleEnable: 'ALL'
   };
 
   componentDidMount() {
@@ -455,7 +456,6 @@ export default class Role extends PureComponent {
     const params = {
       pagination,
       ...param,
-      roleEnable: 'ALL'
     }
     this.oopSearch.load(params);
   }
@@ -1052,7 +1052,7 @@ export default class Role extends PureComponent {
     const { viewVisible, checkedMenuKeys, checkedResourceKeys,
       roleUsersList, groupUsersList, addOrEditModalTitle,
       closeConfirmConfig, warningField, warningWrapper, rolesSearchType,
-      groupsSearchType, rolesCheckedData, groupsCheckedData, ruleType, userPagination } = this.state;
+      groupsSearchType, rolesCheckedData, groupsCheckedData, ruleType, userPagination, roleEnable } = this.state;
     const columns = [
       { title: '名称', dataIndex: 'name', key: 'name',
         render: (text, record) => (
@@ -1134,6 +1134,7 @@ export default class Role extends PureComponent {
           placeholder="请输入"
           enterButtonText="搜索"
           moduleName="authroles"
+          param={{roleEnable}}
           ref={(el)=>{ this.oopSearch = el && el.getWrappedInstance() }}
         />
       }>

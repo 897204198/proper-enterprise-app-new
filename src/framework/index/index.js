@@ -44,17 +44,19 @@ app.start('#root');
 // log dependencies version
 // eslint-disable-next-line
 setTimeout((function (des = []) {
-  const last = des[des.length - 1];
+  const {length} = des;
   console.info(`当前系统名称： ${pkg.name}, version: ${pkg.version}`);
   console.info(`当前ant-design版本： ${version}`);
   console.info(`当前framework版本： ${framework.version}`);
-  if (des.length === 0) {
+  if (length === 0) {
     const pkJson = require('@pea/package.json');
     console.info(`当前${pkJson.name}版本： ${pkJson.version}`);
   } else {
     try {
-      const packageJson = require(`@proper/${last}-lib/package.json`);
-      console.info(`当前${packageJson.name}版本： ${packageJson.version}`);
+      for (let i = 0; i < length; i++) {
+        const packageJson = require(`@proper/${des[i]}-lib/package.json`);
+        console.info(`当前${packageJson.name}版本： ${packageJson.version}`);
+      }
     } catch (err) {
       console.error(err)
     }

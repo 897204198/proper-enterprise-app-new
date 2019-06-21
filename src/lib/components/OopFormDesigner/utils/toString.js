@@ -3,20 +3,28 @@
  * @param object
  * @returns {string}
  */
+import {isString, isArray, isObject, isRegExp} from '@framework/utils/utils';
+
+const replaceSpecialCharacters = (str)=>{
+  return str.replace(/'/g, '\\\'');
+}
+
 export const toString2 = (object)=>{
   let r = '{';
   for (const k in object) {
     const value = object[k];
-    if (typeof value === 'string') {
-      r += `${k}:'${value}',`
-    } else if (Array.isArray(value)) {
+    if (isString(value)) {
+      r += `${k}:'${replaceSpecialCharacters(value)}',`
+    } else if (isArray(value)) {
       let ar = `${k}:[`;
       for (let i = 0; i < value.length; i++) {
         const v = value[i];
-        if (v && v.toString() === '[object Object]') {
+        if (isObject(v)) {
           ar += `${toString2(v)}`;
-        } else if (typeof v === 'string') {
-          ar += `'${v}'`;
+        } else if (isString(v)) {
+          ar += `'${replaceSpecialCharacters(v)}'`;
+        } else if (isRegExp(v)) {
+          console.log(1)
         } else {
           ar += `${v}`;
         }
@@ -26,8 +34,10 @@ export const toString2 = (object)=>{
       }
       ar += '],'
       r += ar;
-    } else if (value && value.toString() === '[object Object]') {
+    } else if (isObject(value)) {
       r += `${k}:${toString2(value)},`
+    } else if (isRegExp(value)) {
+      console.log('this is regExp')
     } else {
       r += `${k}:${value},`
     }
