@@ -1,0 +1,17 @@
+.btn {
+  max-width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.disabledBtn {
+  max-width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  :global {
+    .ant-btn {
+      max-width: 140px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}
