@@ -1037,7 +1037,7 @@ export default class CustomQuery extends React.PureComponent {
       type: 'devtoolsCustomQuery/saveOrUpdate',
       payload: params,
       callback: (res) => {
-        oopToast(res, '保存成功', '保存失败')
+        oopToast(res, '删除成功', '删除失败')
         if (res.status === 'ok') {
           const record = list.length ? list[0] : {
             _id: '',

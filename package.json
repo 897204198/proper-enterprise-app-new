@@ -47,6 +47,7 @@
     "path-to-regexp": "^2.1.0",
     "pinch-zoom-proper": "^1.0.0",
     "prop-types": "^15.5.10",
+    "proper-pinyin": "^1.0.0",
     "qrcode.react": "^0.8.0",
     "qs": "^6.5.0",
     "rc-drawer-menu": "^0.5.0",
