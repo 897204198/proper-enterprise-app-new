@@ -164,7 +164,16 @@ export default class SiderMenu extends PureComponent {
     if (typeof name === 'string') {
       // 有值 准备过滤
       if (menuSearchValue !== '') {
-        const hasValue = item.name_py.toString().includes(menuSearchValue);
+        let hasValue = false
+        // 判断是否为汉字
+        if (/[\u4e00-\u9fa5]/.test(menuSearchValue)) {
+          const checkRule = new RegExp(`[${item.name}]`, 'gim')
+          const matchValue = menuSearchValue.replace(/ /g, '').match(checkRule)
+          hasValue = matchValue && matchValue.length === menuSearchValue.replace(/ /g, '').length
+        } else {
+          const strs = item.name_py.toString()
+          hasValue = strs.includes(menuSearchValue)
+        }
         if (hasValue) {
           // 过滤成蓝色的
           // const beforeStr = item.name.substr(0, index);
@@ -218,7 +227,7 @@ export default class SiderMenu extends PureComponent {
     menusData.map((item) => {
       if (!item.name_py) {
         const strObj = exchangeStr(item.name)
-        item.name_py = [item.name, ...strObj.shouzimu, ...strObj.quanpin]
+        item.name_py = [...strObj.shouzimu, ...strObj.quanpin]
       }
       return null
     })
