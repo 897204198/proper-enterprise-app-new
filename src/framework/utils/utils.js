@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { prefix, devMode } from '@/config/config';
+import pinyinUtil from 'proper-pinyin';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -302,6 +303,29 @@ export const getCurrentUser = (token)=>{
     username: u.name
   };
   return user;
+}
+export const exchangeStr = (string) => {
+  const exchange = (strArr) => {
+    const results = [];
+    const result = [];
+    const permutation = (arr, index) => {
+      for (let i = 0; i < arr[index].length; i++) {
+        result[index] = arr[index][i]
+        if (index !== arr.length - 1) {
+          permutation(arr, index + 1)
+        } else {
+          results.push(result.reduce((strs, str) => strs + str))
+        }
+      }
+    }
+    permutation(strArr, 0)
+    return results
+  }
+  const qp = pinyinUtil.getPinyin(string, ',', false, true) // 参数：（要翻译的字符串，分隔符，是否显示声调，是否支持多音字）
+  const szm = pinyinUtil.getFirstLetter(string, true) // 参数：（要翻译的字符串，是否支持多音字）
+  const quanpin = exchange(qp)
+  const shouzimu = exchange(szm)
+  return {quanpin, shouzimu}
 }
 
 export const isObject = (object)=>{
