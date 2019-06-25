@@ -6,11 +6,13 @@
 import React from 'react';
 import {connect} from 'dva';
 import {Input, Spin, Tooltip, Popover, message} from 'antd';
+import {routerRedux} from 'dva/router';
 import {getParamObj} from '@framework/utils/utils';
+import { getMenuData } from '@framework/common/frameHelper';
 import styles from '@framework/index/index.less';
 import CommonPage from './components/CommonPage';
 
-const checkComponentName = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker'];
+const checkComponentName = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker', 'OopDict'];
 const isReactObject = (component)=>{
   return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
 }
@@ -136,10 +138,14 @@ export default class Pupa extends React.PureComponent {
   }
   isFetching = false
   componentDidMount() {
-    const {location: {search}} = this.props;
-    const {code} = getParamObj(search);
-    console.log(code)
-    this.init(code);
+    const {location: {pathname, search}} = this.props;
+    // check auth
+    if (getMenuData().map(it=>it.path).includes(`${pathname}${search}`)) {
+      const {code} = getParamObj(search);
+      this.init(code);
+    } else {
+      this.props.dispatch(routerRedux.push('/404'));
+    }
   }
   componentWillReceiveProps(nextProps) {
     const {location: {search}} = nextProps;
