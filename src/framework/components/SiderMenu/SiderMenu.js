@@ -4,6 +4,7 @@ import pathToRegexp from 'path-to-regexp';
 import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import * as properties from '@/config/properties';
+import { exchangeStr } from '@framework/utils/utils';
 import styles from './index.less';
 
 const { Sider } = Layout;
@@ -157,21 +158,30 @@ export default class SiderMenu extends PureComponent {
    * get SubMenu or Item
    */
   getSubMenuOrItem=(item) => {
-    const {menuSearchValue = ''} = this.state;
+    const {menuSearchValue = '', selectedKeys} = this.state;
     let {name} = item;
     item.display = true;
     if (typeof name === 'string') {
       // 有值 准备过滤
       if (menuSearchValue !== '') {
-        const index = name.indexOf(menuSearchValue);
-        if (index > -1) {
+        let hasValue = false
+        // 判断是否为汉字
+        if (/[\u4e00-\u9fa5]/.test(menuSearchValue)) {
+          const checkRule = new RegExp(`[${item.name}]`, 'gim')
+          const matchValue = menuSearchValue.replace(/ /g, '').match(checkRule)
+          hasValue = matchValue && matchValue.length === menuSearchValue.replace(/ /g, '').length
+        } else {
+          const strs = item.name_py.toString()
+          hasValue = strs.includes(menuSearchValue)
+        }
+        if (hasValue) {
           // 过滤成蓝色的
-          const beforeStr = item.name.substr(0, index);
-          const afterStr = item.name.substr(index + menuSearchValue.length);
+          // const beforeStr = item.name.substr(0, index);
+          // const afterStr = item.name.substr(index + menuSearchValue.length);
           name = (<span>
-            {beforeStr}
-            <span className={styles.primaryColor}>{menuSearchValue}</span>
-            {afterStr}
+            {/* {beforeStr} */}
+            <span className={styles.primaryColor} style={{color: selectedKeys[0] === item.path ? '#fff' : ''}}>{item.name}</span>
+            {/* {afterStr} */}
           </span>)
         } else {
           item.display = false;
@@ -214,6 +224,13 @@ export default class SiderMenu extends PureComponent {
     if (!menusData) {
       return [];
     }
+    menusData.map((item) => {
+      if (!item.name_py) {
+        const strObj = exchangeStr(item.name)
+        item.name_py = [...strObj.shouzimu, ...strObj.quanpin]
+      }
+      return null
+    })
     const filterMenus = menusData
       .filter(item => item.name && !item.hideInMenu)
       .map((item) => {
