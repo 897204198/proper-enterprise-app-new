@@ -158,21 +158,22 @@ export default class SiderMenu extends PureComponent {
    * get SubMenu or Item
    */
   getSubMenuOrItem=(item) => {
-    const {menuSearchValue = '', selectedKeys} = this.state;
-    let {name} = item;
+    const { selectedKeys } = this.state;
+    let { menuSearchValue = '' } = this.state;
+    let { name } = item;
     item.display = true;
     if (typeof name === 'string') {
       // 有值 准备过滤
       if (menuSearchValue !== '') {
         let hasValue = false
-        // 判断是否为汉字
-        if (/[\u4e00-\u9fa5]/.test(menuSearchValue)) {
-          const checkRule = new RegExp(`[${item.name}]`, 'gim')
-          const matchValue = menuSearchValue.replace(/ /g, '').match(checkRule)
-          hasValue = matchValue && matchValue.length === menuSearchValue.replace(/ /g, '').length
-        } else {
-          const strs = item.name_py.toString()
-          hasValue = strs.includes(menuSearchValue)
+        menuSearchValue = menuSearchValue.replace(/ /g, '')
+        const rule = menuSearchValue.split('').reduce((sum, val) => { return sum.includes('.*') ? `${sum}${val}.*` : `${sum}.*${val}.*` })
+        const checkRule = new RegExp(rule, 'gim')
+        for (let i = 0; i < item.name_py.length; i++) {
+          if (checkRule.test(item.name_py[i])) {
+            hasValue = true
+            break
+          }
         }
         if (hasValue) {
           // 过滤成蓝色的
@@ -227,7 +228,7 @@ export default class SiderMenu extends PureComponent {
     menusData.map((item) => {
       if (!item.name_py) {
         const strObj = exchangeStr(item.name)
-        item.name_py = [...strObj.shouzimu, ...strObj.quanpin]
+        item.name_py = [item.name, ...strObj.shouzimu, ...strObj.quanpin]
       }
       return null
     })
