@@ -331,8 +331,8 @@ export const exchangeStr = (string) => {
 
 // 正则匹配字符
 export const regexStr = (targetStr, searchStr) => {
-  if (!targetStr || typeof targetStr !== 'string') return targetStr
-  if (!searchStr || typeof searchStr !== 'string') return targetStr
+  if (!targetStr || !isString(targetStr)) return false
+  if (!searchStr || !isString(searchStr)) return false
   targetStr = targetStr.replace(/ /g, '')
   searchStr = searchStr.replace(/ /g, '')
   const strObj = exchangeStr(targetStr)
