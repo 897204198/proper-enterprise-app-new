@@ -4,7 +4,7 @@ import pathToRegexp from 'path-to-regexp';
 import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import * as properties from '@/config/properties';
-import { exchangeStr } from '@framework/utils/utils';
+import { regexStr } from '@framework/utils/utils';
 import styles from './index.less';
 
 const { Sider } = Layout;
@@ -158,22 +158,13 @@ export default class SiderMenu extends PureComponent {
    * get SubMenu or Item
    */
   getSubMenuOrItem=(item) => {
-    const {menuSearchValue = '', selectedKeys} = this.state;
-    let {name} = item;
+    const { menuSearchValue = '', selectedKeys } = this.state;
+    let { name } = item;
     item.display = true;
     if (typeof name === 'string') {
       // 有值 准备过滤
       if (menuSearchValue !== '') {
-        let hasValue = false
-        // 判断是否为汉字
-        if (/[\u4e00-\u9fa5]/.test(menuSearchValue)) {
-          const checkRule = new RegExp(`[${item.name}]`, 'gim')
-          const matchValue = menuSearchValue.replace(/ /g, '').match(checkRule)
-          hasValue = matchValue && matchValue.length === menuSearchValue.replace(/ /g, '').length
-        } else {
-          const strs = item.name_py.toString()
-          hasValue = strs.includes(menuSearchValue)
-        }
+        const hasValue = regexStr(item.name, menuSearchValue)
         if (hasValue) {
           // 过滤成蓝色的
           // const beforeStr = item.name.substr(0, index);
@@ -224,13 +215,6 @@ export default class SiderMenu extends PureComponent {
     if (!menusData) {
       return [];
     }
-    menusData.map((item) => {
-      if (!item.name_py) {
-        const strObj = exchangeStr(item.name)
-        item.name_py = [...strObj.shouzimu, ...strObj.quanpin]
-      }
-      return null
-    })
     const filterMenus = menusData
       .filter(item => item.name && !item.hideInMenu)
       .map((item) => {
