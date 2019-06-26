@@ -304,6 +304,7 @@ export const getCurrentUser = (token)=>{
   };
   return user;
 }
+// 汉字转拼音
 export const exchangeStr = (string) => {
   const exchange = (strArr) => {
     const results = [];
@@ -326,6 +327,26 @@ export const exchangeStr = (string) => {
   const quanpin = exchange(qp)
   const shouzimu = exchange(szm)
   return {quanpin, shouzimu}
+}
+
+// 正则匹配字符
+export const regexStr = (targetStr, searchStr) => {
+  if (!targetStr || typeof targetStr !== 'string') return targetStr
+  if (!searchStr || typeof searchStr !== 'string') return targetStr
+  targetStr = targetStr.replace(/ /g, '')
+  searchStr = searchStr.replace(/ /g, '')
+  const strObj = exchangeStr(targetStr)
+  const strs = [targetStr, ...strObj.shouzimu, ...strObj.quanpin]
+  const rule = searchStr.split('').reduce((sum, val) => { return sum.includes('.*') ? `${sum}${val}.*` : `${sum}.*${val}.*` })
+  const checkRule = new RegExp(rule, 'gim')
+  let hasValue = false
+  for (let i = 0; i < strs.length; i++) {
+    if (checkRule.test(strs[i])) {
+      hasValue = true
+      break;
+    }
+  }
+  return hasValue
 }
 
 export const isObject = (object)=>{
