@@ -2993,7 +2993,7 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
         ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
       ],
-      "value": "123456"
+      "value": "12345"
     }, {
       "id": "bff74d8b-e050-4695-b43b-9a1e80d28518",
       "comment": "",
