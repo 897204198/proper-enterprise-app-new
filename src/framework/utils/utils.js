@@ -304,24 +304,27 @@ export const getCurrentUser = (token)=>{
   };
   return user;
 }
-// 汉字转拼音
-export const exchangeStr = (string) => {
-  const exchange = (strArr) => {
-    const results = [];
-    const result = [];
-    const permutation = (arr, index) => {
-      for (let i = 0; i < arr[index].length; i++) {
-        result[index] = arr[index][i]
-        if (index !== arr.length - 1) {
-          permutation(arr, index + 1)
-        } else {
-          results.push(result.reduce((strs, str) => strs + str))
-        }
+const exchange = (strArr) => {
+  const results = [];
+  const result = [];
+  const permutation = (arr, index) => {
+    for (let i = 0; i < arr[index].length; i++) {
+      result[index] = arr[index][i]
+      if (index !== arr.length - 1) {
+        permutation(arr, index + 1)
+      } else {
+        results.push(result.reduce((strs, str) => strs + str))
       }
     }
-    permutation(strArr, 0)
-    return results
   }
+  permutation(strArr, 0)
+  return results
+}
+/*
+* 汉字转成拼音
+* 返回一个对象里面包含这个汉字的拼音和首字母
+ */
+export const convertChineseToPinyin = (string) => {
   const qp = pinyinUtil.getPinyin(string, ',', false, true) // 参数：（要翻译的字符串，分隔符，是否显示声调，是否支持多音字）
   const szm = pinyinUtil.getFirstLetter(string, true) // 参数：（要翻译的字符串，是否支持多音字）
   const quanpin = exchange(qp)
@@ -329,24 +332,32 @@ export const exchangeStr = (string) => {
   return {quanpin, shouzimu}
 }
 
-// 正则匹配字符
-export const regexStr = (targetStr, searchStr) => {
-  if (!targetStr || !isString(targetStr)) return false
-  if (!searchStr || !isString(searchStr)) return false
-  targetStr = targetStr.replace(/ /g, '')
-  searchStr = searchStr.replace(/ /g, '')
-  const strObj = exchangeStr(targetStr)
-  const strs = [targetStr, ...strObj.shouzimu, ...strObj.quanpin]
-  const rule = searchStr.split('').reduce((sum, val) => { return sum.includes('.*') ? `${sum}${val}.*` : `${sum}.*${val}.*` })
-  const checkRule = new RegExp(rule, 'gim')
-  let hasValue = false
+const trimWhiteSpace = (str)=>{
+  return str.replace(/ /g, '');
+}
+
+/*
+* 根据你的输入字符与目标字符做匹配
+* 返回结果是boolean
+* 例如：目标字符“流程设计” 输入字符：“liuchengsheji、lcsj、liucshej、lcsheji、流程设计”都能够返回true
+ */
+export const matchInputStrForTargetStr = (targetStr, searchStr) => {
+  if (!isString(targetStr) || !isString(searchStr)) return false;
+  targetStr = trimWhiteSpace(targetStr);
+  searchStr = trimWhiteSpace(searchStr);
+  const strObj = convertChineseToPinyin(targetStr);
+  const strs = [targetStr, ...strObj.shouzimu, ...strObj.quanpin];
+  const rule = searchStr.split('').reduce((sum, val) => { return sum.includes('.*') ? `${sum}${val}.*` : `${sum}.*${val}.*` });
+  let checkRule = new RegExp(rule, 'gim');
+  let hasValue = false;
   for (let i = 0; i < strs.length; i++) {
     if (checkRule.test(strs[i])) {
       hasValue = true
       break;
     }
   }
-  return hasValue
+  checkRule = null;
+  return hasValue;
 }
 
 export const isObject = (object)=>{

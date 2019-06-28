@@ -26,7 +26,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.36",
     "@babel/runtime": "7.0.0-beta.46",
-    "antd": "3.15.2",
+    "antd": "3.17.0",
     "antd-mobile": "2.2.6",
     "av-core": "^1.1.1",
     "babel-preset-umi": "^0.2.8",
@@ -48,7 +48,7 @@
     "path-to-regexp": "^2.1.0",
     "pinch-zoom-proper": "^1.0.0",
     "prop-types": "^15.5.10",
-    "proper-pinyin": "^1.0.0",
+    "proper-pinyin": "^1.0.1",
     "qrcode.react": "^0.8.0",
     "qs": "^6.5.0",
     "rc-drawer-menu": "^0.5.0",

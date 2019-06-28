@@ -16,116 +16,6 @@ const checkComponentName = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemC
 const isReactObject = (component)=>{
   return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
 }
-const convertProperties = (props)=>{
-  const {gridConfig: {columns = [], rowButtons = [], topButtons = [], props: tableProps = {}}, formConfig: {formJson = []}} = props;
-  // 为表单 添加 ID
-  if (formJson.length) {
-    if (formJson.find(it=>it.name === 'id') === undefined) {
-      formJson.unshift({name: 'id', component: ()=><Input type="hidden" />, wrapper: true})
-    }
-  }
-  try {
-    if (columns.length) {
-      columns.forEach((it)=>{
-        if (it.enable !== false) {
-          const formItem = formJson.find(item=>item.name === it.dataIndex);
-          if (formItem && formItem.component) {
-            if (checkComponentName.includes(formItem.component.name)) {
-              it.dataIndex = `${it.dataIndex}_text`
-            }
-          }
-          if (it.sorter && typeof it.sorter === 'string') {
-            try {
-              const fn = eval(it.sorter); // eslint-disable-line
-              it.sorter = (a, b)=>{
-                return fn(a, b);
-              }
-            } catch (e) {
-              message.error(`${it.dataIndex}列排序配置错误：${e.message}`);
-              it.sorter = f=>f;
-            }
-          }
-          if (it.render) {
-            if (typeof it.render === 'string') {
-              // it.dataIndex = `${it.dataIndex}_text`;
-              try {
-                const fn = eval(it.render); // eslint-disable-line
-                it.render = (items, record)=>{
-                  if (isReactObject(items)) {
-                    return items;
-                  }
-                  try {
-                    const rr = fn(items, record);
-                    if (rr.includes('<')) {
-                      return <span dangerouslySetInnerHTML={{__html: rr}} />;
-                    }
-                    return rr;
-                  } catch (e) {
-                    return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
-                  }
-                }
-              } catch (e) {
-                it.render = ()=>{
-                  return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
-                }
-              }
-            }
-          } else {
-            it.render = (text)=> {
-              if (text) {
-                if (isReactObject(text)) {
-                  return text;
-                } else {
-                  const string = text.toString();
-                  if (it.hover) {
-                    const style = {
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      width: `${it.width}px`
-                    }
-                    return (<Popover content={<div style={{whiteSpace: 'pre'}}>{string}</div>} trigger="hover">
-                      <div style={style}>{string}</div>
-                    </Popover>);
-                  }
-                  return string
-                }
-              }
-            }
-          }
-        }
-      })
-    }
-    if (rowButtons.length) {
-      rowButtons.forEach((it)=>{
-        if (it.display && typeof it.display === 'string') {
-          it.display = eval(it.display); // eslint-disable-line
-        }
-      })
-    }
-    if (topButtons.length) {
-      topButtons.forEach((it)=>{
-        if (it.display && typeof it.display === 'string') {
-          it.display = eval(it.display); // eslint-disable-line
-        }
-      })
-    }
-    const {tableInfoExtra} = tableProps;
-    if (tableInfoExtra) {
-      if (typeof tableInfoExtra === 'string') {
-        tableProps.tableInfoExtra = eval(tableInfoExtra); // eslint-disable-line
-      }
-    }
-  } catch (e) {
-    console.log(e)
-  }
-}
-const Page = (props)=>{
-  if (Object.keys(props).length > 0) {
-    convertProperties(props);
-    return <CommonPage {...props} />
-  }
-}
 
 
 @connect(({ global}) => ({
@@ -184,6 +74,123 @@ export default class Pupa extends React.PureComponent {
       }
     }
   }
+  notifyCommonPageRender = (record)=>{
+    this.commonPage.onView(record)
+  }
+  convertProperties = (props)=>{
+    const {gridConfig: {columns = [], rowButtons = [], topButtons = [], props: tableProps = {}}, formConfig: {formJson = []}} = props;
+    // 为表单 添加 ID
+    if (formJson.length) {
+      if (formJson.find(it=>it.name === 'id') === undefined) {
+        formJson.unshift({name: 'id', component: ()=><Input type="hidden" />, wrapper: true})
+      }
+    }
+    try {
+      if (columns.length) {
+        const cols = columns.filter(it=>it.enable === true);
+        cols.forEach((it)=>{
+          if (it.enable === true) {
+            const formItem = formJson.find(item=>item.name === it.dataIndex);
+            if (formItem && formItem.component) {
+              if (checkComponentName.includes(formItem.component.name)) {
+                it.dataIndex = `${it.dataIndex}_text`
+              }
+            }
+            if (it.sorter && typeof it.sorter === 'string') {
+              try {
+                const fn = eval(it.sorter); // eslint-disable-line
+                it.sorter = (a, b)=>{
+                  return fn(a, b);
+                }
+              } catch (e) {
+                message.error(`${it.dataIndex}列排序配置错误：${e.message}`);
+                it.sorter = f=>f;
+              }
+            }
+            if (it.render) {
+              if (typeof it.render === 'string') {
+                // it.dataIndex = `${it.dataIndex}_text`;
+                try {
+                  const fn = eval(it.render); // eslint-disable-line
+                  it.render = (items, record)=>{
+                    if (isReactObject(items)) {
+                      return items;
+                    }
+                    try {
+                      const rr = fn(items, record);
+                      if (rr.includes('<')) {
+                        return <span dangerouslySetInnerHTML={{__html: rr}} />;
+                      }
+                      return rr;
+                    } catch (e) {
+                      return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
+                    }
+                  }
+                } catch (e) {
+                  it.render = ()=>{
+                    return <Tooltip placement="bottom" title={e.message}><span style={{color: 'red'}}>渲染异常</span></Tooltip>
+                  }
+                }
+              }
+            } else {
+              it.render = (text)=> {
+                if (text) {
+                  if (isReactObject(text)) {
+                    return text;
+                  } else {
+                    const string = text.toString();
+                    if (it.hover) {
+                      const style = {
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        width: `${it.width}px`
+                      }
+                      return (<Popover content={<div style={{whiteSpace: 'pre'}}>{string}</div>} trigger="hover">
+                        <div style={style}>{string}</div>
+                      </Popover>);
+                    }
+                    return string
+                  }
+                }
+              }
+            }
+          }
+        })
+        const firstCol = cols[0];
+        if (firstCol) {
+          const {render: oldRender} = firstCol;
+          firstCol.render = (text, record)=>{
+            const value = oldRender ? oldRender(text, record) : text;
+            return <div onClick={() => { this.notifyCommonPageRender(record) }} style={{textDecoration: 'underline', cursor: 'pointer'}}>{value}</div>;
+          }
+        }
+        props.gridConfig.columns = cols;
+      }
+      if (rowButtons.length) {
+        rowButtons.forEach((it)=>{
+          if (it.display && typeof it.display === 'string') {
+            it.display = eval(it.display); // eslint-disable-line
+          }
+        })
+      }
+      if (topButtons.length) {
+        topButtons.forEach((it)=>{
+          if (it.display && typeof it.display === 'string') {
+            it.display = eval(it.display); // eslint-disable-line
+          }
+        })
+      }
+      const {tableInfoExtra} = tableProps;
+      if (tableInfoExtra) {
+        if (typeof tableInfoExtra === 'string') {
+          tableProps.tableInfoExtra = eval(tableInfoExtra); // eslint-disable-line
+        }
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
   renderPage = ()=>{
     const {pageConfig} = this.state;
     if (pageConfig === undefined || this.isFetching) {
@@ -193,8 +200,9 @@ export default class Pupa extends React.PureComponent {
         message.error('gridConfig未配置');
         return <Spin size="large" className={styles.globalSpin} />;
       } else {
+        this.convertProperties(pageConfig);
         console.log('pageConfig', pageConfig)
-        return <Page {...pageConfig} />
+        return <CommonPage {...pageConfig} ref={(el)=>{ this.commonPage = el && el.getWrappedInstance() }} />
       }
     }
   }

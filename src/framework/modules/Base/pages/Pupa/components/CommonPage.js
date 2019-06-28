@@ -105,7 +105,7 @@ const ViewModal = (props) => {
   basePage,
   global,
   loading: loading.models.basePage
-}))
+}), null, null, {withRef: true})
 export default class CommonPage extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -229,11 +229,6 @@ export default class CommonPage extends React.PureComponent {
         type: 'basePage/clearEntity',
         tableName: this.props.tableName
       });
-      // this.props.formConfig.formJson.forEach(
-      //   (item)=>{
-      //     item.initialValue = undefined
-      //   }
-      // );
     }, 300)
   }
   // 点击modal窗口保存按钮
@@ -453,15 +448,26 @@ export default class CommonPage extends React.PureComponent {
     });
     this.handleViewModalVisible(true)
   }
-  createColumns = (cols)=>{
-    const firstCol = cols[0];
-    const {render: oldRender} = firstCol;
-    firstCol.render = (text, record)=>{
-      const value = oldRender ? oldRender(text, record) : text;
-      return <div onClick={() => this.onView(record)} style={{textDecoration: 'underline', cursor: 'pointer'}}>{value}</div>;
-    }
-    return cols.filter(it=>it.enable !== false);
+  handleViewModalCancel = ()=>{
+    this.handleViewModalVisible(false)
+    setTimeout(()=>{
+      this.props.dispatch({
+        type: 'basePage/clearEntity',
+        tableName: this.props.tableName
+      });
+    }, 300)
   }
+  // createColumns = (cols = [])=>{
+  //   const firstCol = cols[0];
+  //   if (firstCol) {
+  //     const {render: oldRender} = firstCol;
+  //     firstCol.render = (text, record)=>{
+  //       const value = oldRender ? oldRender(text, record) : text;
+  //       return <div onClick={() => this.onView(record)} style={{textDecoration: 'underline', cursor: 'pointer'}}>{value}</div>;
+  //     }
+  //   }
+  //   return cols;
+  // }
   getHandleFunctionByBtnName = (btnName)=> {
     const map = {
       start: this.handleStart,
@@ -484,7 +490,7 @@ export default class CommonPage extends React.PureComponent {
       stateCode
     }, onModalSubmit} = this.state;
     const {basePage, global: {size},
-      loading, gridLoading, gridConfig: {columns: cols = [], topButtons: tbCfg, rowButtons: rbCfg},
+      loading, gridLoading, gridConfig: {columns, topButtons: tbCfg, rowButtons: rbCfg},
       formConfig, modalConfig, tableName } = this.props;
     let entity = {};
     if (basePage && basePage[tableName]) {
@@ -492,7 +498,7 @@ export default class CommonPage extends React.PureComponent {
     }
     const tableInfoExtra = this.getTableInfoExtra(list);
     const {topButtons, rowButtons} = this.constructGridButtons(tbCfg, rbCfg);
-    const columns = this.createColumns(cols);
+    // const columns = this.createColumns(cols);
     return (
       <PageHeaderLayout content={
         <OopSearch
@@ -542,7 +548,7 @@ export default class CommonPage extends React.PureComponent {
           columns={columns}
           formEntity={entity}
           visible={viewModalVisible}
-          onModalCancel={()=>this.handleViewModalVisible(false)}
+          onModalCancel={ this.handleViewModalCancel}
           loading={loading}
         />
       </PageHeaderLayout>
