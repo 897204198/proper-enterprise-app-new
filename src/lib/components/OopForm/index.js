@@ -13,7 +13,8 @@ const isAntdMobliePicker = (item)=>{
     const {component: {name}, initialValue} = item;
     // antd-mobile Picker的默认值为数组
     if (name === 'Select' || name === 'RadioGroup') {
-      if ((typeof (initialValue) === 'string' || typeof (initialValue) === 'number')) {
+      const type = typeof initialValue;
+      if ((type === 'string' || type === 'number') || type === 'boolean') {
         return true;
       }
     }
@@ -54,7 +55,14 @@ const FormContainer = Form.create({
                 const changeItem = formJson.find(it=>it.name === subscribeName);
                 if (changeItem) {
                   const changeField = fields[subscribeName];
-                  const changeValue = changeField === undefined ? undefined : changeField.value;
+                  let changeValue = changeField === undefined ? undefined : changeField.value;
+                  if (isAntdMobliePicker(changeItem)) {
+                    const [first] = changeValue;
+                    changeValue = first
+                  }
+                  if (changeItem.display === false) {
+                    changeValue = undefined;
+                  }
                   const currentValue = value === undefined ? initialValue : value;
                   // 被依赖的组件还没有 渲染
                   setFormJsonProperties(item, changeValue, currentValue, publish);

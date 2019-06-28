@@ -156,8 +156,14 @@ export default class OopFormDesigner extends React.PureComponent {
         })
       }
     });
+    let currentRowItem = null;
+    if (formJson.length) {
+      const first = formJson[0];
+      currentRowItem = {...first};
+      first.active = true;
+    }
     this.state = {
-      currentRowItem: null,
+      currentRowItem,
       selections: [
         {label: '输入框', key: 'Input', component: {name: 'Input'}},
         {label: '文本域', key: 'TextArea', component: {name: 'TextArea'}},
@@ -343,12 +349,12 @@ export default class OopFormDesigner extends React.PureComponent {
       this.forceUpdate();
     } else {
       const item = this.state.currentRowItem;
-      let index = 0;
-      this.state.rowItems.forEach((rItem, i)=>{
-        if (item.name === rItem.name) {
-          index = i
-        }
-      })
+      // this.state.rowItems.forEach((rItem, i)=>{
+      //   if (item.name === rItem.name) {
+      //     index = i
+      //   }
+      // })
+      const index = this.state.rowItems.findIndex(it=>it.key === item.key);
       this.state.rowItems.splice(index, 1);
       if (item.active) {
         this.state.currentRowItem = null;
@@ -591,10 +597,14 @@ export default class OopFormDesigner extends React.PureComponent {
     })
   }
   handleFormPatternChange = (event)=>{
+    const {currentRowItem} = this.state;
+    if (currentRowItem === null) {
+      message.error('please select a item first !')
+      return
+    }
     // console.log(event);
     const { value: formPattern } = event.target;
     if (formPattern === 'advanced') {
-      const {currentRowItem} = this.state;
       const jsonItem = {
         ...currentRowItem
       }
