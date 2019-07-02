@@ -21,7 +21,8 @@
     "test:all": "node ./tests/run-tests.js",
     "copyWf": "node .copyWf.js",
     "WfServer": "node .copyWf.js && node .devServer.js",
-    "selenium": "node ./tests/selenium.js"
+    "selenium": "node ./tests/selenium.js",
+    "updata": "node .updata.js"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.36",
@@ -46,6 +47,7 @@
     "moment": "^2.19.1",
     "omit.js": "^1.0.0",
     "path-to-regexp": "^2.1.0",
+    "pea-cli": "^0.5.11",
     "pinch-zoom-proper": "^1.0.0",
     "prop-types": "^15.5.10",
     "proper-pinyin": "^1.0.1",
@@ -66,6 +68,7 @@
     "react-infinite-scroller": "^1.2.0",
     "react-markdown": "^3.6.0",
     "react-stomp": "^4.0.0",
+    "shelljs": "^0.8.3",
     "timeago-react": "^2.0.0",
     "url-polyfill": "^1.0.10"
   },
