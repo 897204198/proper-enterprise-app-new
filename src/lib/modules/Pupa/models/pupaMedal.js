@@ -30,7 +30,18 @@ const mergeDetail = (arr, indent = false) => {
   return paths
 }
 const mergeMedal = (arr, from, to, num) => {
-  const fromArr = arr.filter(item => item.type === from)
+  let fromArr = arr.filter(item => item.type === from)
+  for (let i = 0; i < fromArr.length; i++) {
+    if (fromArr[i].medalNumber > 1) {
+      const obj = {...fromArr[i]}
+      const { medalNumber } = fromArr[i]
+      obj.medalNumber = 1
+      delete obj.id
+      delete obj._id
+      fromArr.splice(i, 1)
+      fromArr = [...fromArr, ...new Array(medalNumber).fill(obj)]
+    }
+  }
   const elseArr = arr.filter(item => item.type !== from)
   const times = parseInt(fromArr.length / num, 10)
   const toArr = []
@@ -102,7 +113,7 @@ export default {
         if (!saveSuccess) {
           if (callback) callback({status: 'error'})
         } else {
-          deleteIds = [...deleteIds, ...memberArr.map(item => item.id)]
+          deleteIds = [...deleteIds, ...memberArr.map(item => item.id)].filter(Boolean)
           /* eslint-disable-next-line */
           b2a.map((item) => {
             if (item.id && deleteIds.indexOf(item.id) !== -1) {
