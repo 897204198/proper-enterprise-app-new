@@ -17,7 +17,7 @@ execute()
 function execute() {
   for (let i = 0; i < fileResult.length; i++) {
     console.log(fileResult[i])
-    execSync(`selenium-side-runner ${fileResult[i]} --output-directory=result --output-format=junit -c "browserName=chrome platform=linux chromeOptions.args=[disable-infobars,no-sandbox,headless,disable-dev-shm-usage,disable-gpu]"`)
+    execSync(`selenium-side-runner ${fileResult[i]} --output-directory=result --output-format=junit -c "browserName=chrome chromeOptions.binary='/opt/google/chrome/chrome'  chromeOptions.args=[disable-infobars,--no-sandbox,--headless,--disable-dev-shm-usage,--disable-gpu,--disable-extensions]"`)
   }
 }
 
