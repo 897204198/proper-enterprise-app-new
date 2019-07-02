@@ -30,18 +30,7 @@ const mergeDetail = (arr, indent = false) => {
   return paths
 }
 const mergeMedal = (arr, from, to, num) => {
-  let fromArr = arr.filter(item => item.type === from)
-  for (let i = 0; i < fromArr.length; i++) {
-    if (fromArr[i].medalNumber > 1) {
-      const obj = {...fromArr[i]}
-      const { medalNumber } = fromArr[i]
-      obj.medalNumber = 1
-      delete obj.id
-      delete obj._id
-      fromArr.splice(i, 1)
-      fromArr = [...fromArr, ...new Array(medalNumber).fill(obj)]
-    }
-  }
+  const fromArr = arr.filter(item => item.type === from)
   const elseArr = arr.filter(item => item.type !== from)
   const times = parseInt(fromArr.length / num, 10)
   const toArr = []
@@ -80,8 +69,24 @@ export default {
       const resp = yield call(fetch);
       const { result } = resp
       if (!result.length) return
+      let deleteIds = []
       let c2b = []
       let b2a = []
+      // 多个人员拆分
+      for (let i = 0; i < result.length; i++) {
+        if (result[i].emp.length > 1) {
+          const newItem = {...result[i]}
+          deleteIds.push(result[i].id)
+          result.splice(i, 1)
+          for (let j = 0; j < newItem.emp.length; j++) {
+            const obj = {...newItem}
+            obj.emp = [newItem.emp[j]]
+            delete obj.id
+            delete obj._id
+            result.push(obj)
+          }
+        }
+      }
       const members = filterMembers(result)
       let saveSuccess = true
       for (let i = 0; i < members.length; i++) {
@@ -97,17 +102,18 @@ export default {
         if (!saveSuccess) {
           if (callback) callback({status: 'error'})
         } else {
-          const ids = memberArr.map(item => item.id)
+          deleteIds = [...deleteIds, ...memberArr.map(item => item.id)]
+          /* eslint-disable-next-line */
           b2a.map((item) => {
-            if (item.id && ids.indexOf(item.id) !== -1) {
-              const index = ids.findIndex((value) => {
+            if (item.id && deleteIds.indexOf(item.id) !== -1) {
+              const index = deleteIds.findIndex((value) => {
                 return value === item.id
               })
-              ids.splice(index, 1)
+              deleteIds.splice(index, 1)
             }
             return null
           })
-          yield call(removeAll, {ids: ids.join(',')})
+          yield call(removeAll, {ids: deleteIds.join(',')})
         }
       }
       if (saveSuccess) {
