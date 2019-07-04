@@ -4,6 +4,7 @@ const { execSync } = require('child_process');
 
 // 解析需要遍历的文件夹，我这以E盘根目录为例
 const filePath = path.resolve('./tests/modules');
+const seleniumRunnerPath = path.resolve('./node_modules/proper-selenium-side-runner/dist/index.js');
 
 console.log(filePath)
 const fileResult = []
@@ -17,7 +18,7 @@ execute()
 function execute() {
   for (let i = 0; i < fileResult.length; i++) {
     console.log(fileResult[i])
-    execSync(`proper-selenium-side-runner ${fileResult[i]} --output-directory=result --output-html=true --output-format=junit -c "browserName=chrome chromeOptions.binary='/opt/google/chrome/chrome'  chromeOptions.args=[disable-infobars,--no-sandbox,--headless,--disable-dev-shm-usage,--disable-gpu,--disable-extensions]"`)
+    execSync(`node ${seleniumRunnerPath} ${fileResult[i]} --output-directory=result --output-html=true --output-format=junit -c "browserName=chrome chromeOptions.binary='/opt/google/chrome/chrome'  chromeOptions.args=[disable-infobars,--no-sandbox,--headless,--disable-dev-shm-usage,--disable-gpu,--disable-extensions]"`)
   }
 }
 
