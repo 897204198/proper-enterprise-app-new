@@ -5,7 +5,7 @@ import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { Route, Switch } from 'dva/router';
 import styles from './index.less';
 
-const componentNames = ['OopTable', 'OopSearch', 'OopTree', 'OopTreeTable', 'OopForm', 'OopUpload', 'OopOrgEmpPicker', 'OopModal', 'OopCollapse', 'OopAnswer', 'OopTableForm', 'Pupa'];
+const componentNames = ['OopTable', 'OopSearch', 'OopTree', 'OopTreeTable', 'OopForm', 'OopUpload', 'OopOrgEmpPicker', 'OopModal', 'OopCollapse', 'OopAnswer', 'OopTableForm'];
 const docuRouters = {};
 componentNames.forEach((it)=>{
   docuRouters[`/document/${it.toLowerCase()}`] = {
@@ -13,6 +13,19 @@ componentNames.forEach((it)=>{
     name: it
   }
 })
+// Pupa doc
+docuRouters['/document/pupa/basic'] = {
+  component: ()=>import('@/document/UIPupa/Basic'),
+  name: '基本使用'
+}
+docuRouters['/document/pupa/advance'] = {
+  component: ()=>import('@/document/UIPupa/Advance'),
+  name: '高级用法'
+}
+docuRouters['/document/pupa/item-demo'] = {
+  component: ()=>import('@/document/UIPupa/ItemDemo'),
+  name: '高级用法'
+}
 const routers = initRouter(docuRouters);
 addRoutersData(routers);
 
@@ -39,21 +52,23 @@ export default class Document extends React.PureComponent {
       <Menu
         onClick={this.handleClick}
         style={{ width: 256 }}
-        defaultSelectedKeys={selectedKeys}
-        defaultOpenKeys={['sub1']}
+        selectedKeys={selectedKeys}
+        openKeys={['sub1']}
         mode="inline"
       >
-        <SubMenu key="sub1" title={<span><Icon type="mail" /><span>Navigation One</span></span>}>
-          <MenuItemGroup key="g1" title="数据展示类">
+        <SubMenu key="sub1" title={<span><Icon type="snippets" /><span>PEA Developer Guide</span></span>}>
+          <MenuItemGroup key="g1" title="Oop组件">
             {
               componentNames.map(it=>(
                 <Menu.Item key={it}><a href={`#/document/${it.toLowerCase()}`}>{it}</a></Menu.Item>
               ))
             }
           </MenuItemGroup>
-          <MenuItemGroup key="g2" title="Item 2">
-            <Menu.Item key="3">Option 3</Menu.Item>
-            <Menu.Item key="4">Option 4</Menu.Item>
+          <MenuItemGroup key="g2" title={<span style={{fontWeight: 'bold'}}>Pupa</span>}>
+            <Menu.Item key="3"><a href="#/document/pupa/basic">基本使用</a></Menu.Item>
+            <Menu.Item key="4"><a href="#/document/pupa/advance">高级用法</a></Menu.Item>
+            <Menu.Item key="5"><a href="#/document/pupa/item-demo">项目中的实例</a></Menu.Item>
+            <Menu.Item key="6"><a href="#/document/pupa/api">详细配置</a></Menu.Item>
           </MenuItemGroup>
         </SubMenu>
       </Menu>

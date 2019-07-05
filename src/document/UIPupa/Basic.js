@@ -1,9 +1,9 @@
 import React from 'react';
+import {Card} from 'antd';
 import Markdown from 'react-markdown';
 
-const {decodeURIComponent, escape, atob} = window;
 
-export default class UIDocDetails extends React.PureComponent {
+export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -11,8 +11,8 @@ export default class UIDocDetails extends React.PureComponent {
     }
   }
   componentDidMount() {
-    const {name} = this.props;
-    import(`@/lib/components/${name}/index.md`).then((res)=>{
+    // const {name} = this.props;
+    import('./basic.md').then((res)=>{
       const markdownBase64 = res.substring(res.indexOf('base64,') + 7, res.length);
       const source = decodeURIComponent(escape(atob(markdownBase64)));
       this.setState({
@@ -23,9 +23,9 @@ export default class UIDocDetails extends React.PureComponent {
 
   render() {
     const {source} = this.state;
-    return (
-      <div>
-        <Markdown source={source} />
-      </div>)
+    const component = (
+      <Card><Markdown source={source} /></Card>
+    )
+    return component;
   }
 }

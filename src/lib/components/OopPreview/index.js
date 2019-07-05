@@ -146,6 +146,12 @@ export default class OopPreview extends PureComponent {
 
   // 双指放大
   onImgLoaded = ()=>{
+    const { degs, horWidth, verWidth } = this.state;
+    const index = degs / 90;
+    const width = isApp() ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`;
+    if (width !== '0px') {
+      this.image.style.width = width;
+    }
     new pinchZoom(this.image.parentNode, {}); // eslint-disable-line
   }
   // 拖拽图片
@@ -171,8 +177,7 @@ export default class OopPreview extends PureComponent {
   }
   render() {
     const { img } = this.props;
-    const { scales, degs, horWidth, verWidth } = this.state;
-    const index = degs / 90;
+    const { scales } = this.state;
     const Footer = (
       <div className={styles.footerButtons}>
         <Button onClick={() => this.scale(true)}>
@@ -220,7 +225,7 @@ export default class OopPreview extends PureComponent {
             onMouseDown={e => this.mouseDown(e)}
             onLoad={e => this.onImgLoaded(e)}
             style={{
-              width: isApp() ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`,
+              // width: isApp() ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`,
               transform: `translate(-50%, -50%) scale(${scales}, ${scales}) rotate(${this.state.degs}deg)`,
               cursor: `${scales !== 1 ? 'move' : 'default'}`
             }}
