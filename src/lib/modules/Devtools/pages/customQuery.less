@@ -1,0 +1,33 @@
+.line {
+  display: flex;
+  padding: 10px;
+  padding-left: 20px;
+  background: #fff;
+  :global {
+    .ant-tag {
+      min-width: 64px;
+      margin-right: 0;
+      line-height: 22px;
+      text-align: center;
+    }
+  }
+}
+.line div[draggable="true"] {
+  display: inline-block;
+  margin: 0 8px;
+}
+.line > div:nth-child(1) {
+  width: 100px;
+}
+.line > div:nth-child(2) {
+  flex: 1;
+}
+.colItem {
+  display: flex;
+  // min-width: 64px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 0 8px;
+  text-align: center;
+}

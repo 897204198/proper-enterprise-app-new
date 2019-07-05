@@ -107,7 +107,7 @@ export const formGenerator = (formConfig)=>{
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {key, name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout = {},
-    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, display} = formItemConfig;
+    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, display, extra = ''} = formItemConfig;
   const FormItem = Form.Item;
   const { itemStyle } = formItemLayout;
   if (wrapper) {
@@ -128,6 +128,7 @@ const getFormItem = (formItemInner, formItemConfig)=>{
           key={key || name}
           {...formItemLayout}
           label={label}
+          extra={extra}
         >
           {formItemInner}
         </FormItem>{active ? (

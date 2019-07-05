@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react';
 import FileSaver from 'file-saver';
-import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tree, Row, Col, Popconfirm, Tabs, Spin} from 'antd';
+import { Modal, Card, Select, Switch, Icon, Input, Button, message, Row, Popconfirm, Tabs, Spin} from 'antd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import {inject} from '@framework/common/inject';
@@ -11,117 +12,16 @@ import OopForm from '@pea/components/OopForm';
 import OopTable from '@pea/components/OopTable';
 import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopTableForm from '@pea/components/OopTableForm';
+import { makeDefaultButtons, filterDefault, checkRepeat, makeRandomId, isJson } from './PupaUtils/utils'
+import styles from './customQuery.less';
 
 const { TabPane } = Tabs
 const { Option } = Select
-const { TreeNode } = Tree
+// const { TreeNode } = Tree
 const tableInputStyle = {
   height: '32px'
 }
-const isJson = (str) => {
-  if (typeof str === 'string') {
-    try {
-      const strObj = JSON.parse(str);
-      if (typeof strObj === 'object' && strObj) {
-        return true
-      } else {
-        return false
-      }
-    } catch (e) {
-      return false
-    }
-  }
-}
-const makeRandomId = () => {
-  return Math.random().toString(36).substring(2)
-}
-const makeDefaultButtons = (relaWf) => {
-  const startBtn = {
-    _id: makeRandomId(),
-    text: '发起',
-    name: 'start',
-    position: 'top',
-    type: 'primary',
-    icon: 'branches',
-    enable: true,
-    default: true
-  }
-  const defaultButtons = [
-    {
-      _id: makeRandomId(),
-      text: '新建',
-      name: 'create',
-      position: 'top',
-      type: 'primary',
-      icon: 'plus',
-      enable: true,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '删除',
-      name: 'batchDelete',
-      position: 'top',
-      type: 'default',
-      icon: 'delete',
-      display: 'items=>(items.length > 0)',
-      enable: true,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '导入',
-      name: 'upload',
-      position: 'top',
-      type: 'default',
-      icon: 'upload',
-      enable: false,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '导出',
-      name: 'export',
-      position: 'top',
-      type: 'default',
-      icon: 'download',
-      enable: false,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '编辑',
-      name: 'edit',
-      position: 'row',
-      icon: 'edit',
-      type: 'default',
-      enable: true,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '删除',
-      name: 'delete',
-      position: 'row',
-      icon: 'delete',
-      type: 'default',
-      enable: true,
-      default: true
-    }
-  ]
-  return relaWf ? [startBtn, ...defaultButtons] : defaultButtons
-}
 const defaultBtnArr = makeDefaultButtons(true).map(btn => btn.name)
-const filterDefault = (arr) => {
-  for (let i = 0; i < defaultBtnArr.length; i++) {
-    for (let j = 0; j < arr.length; j++) {
-      if (arr[j].name === defaultBtnArr[i]) {
-        arr[j].default = true
-      }
-    }
-  }
-  return arr
-}
 const renderTitle = (text) => {
   return (
     <span style={{display: 'flex', alignItems: 'center'}}>
@@ -129,22 +29,26 @@ const renderTitle = (text) => {
     </span>
   )
 }
-const checkRepeat = (arr, field, param) => {
-  if (param) {
-    const tempArr = arr.filter(item => ((item[field] === param[field]) && (item._id !== param._id)))
-    if (tempArr.length > 0) return true;
-    return false;
-  } else {
-    const hash = {};
-    for (let i = 0; i < arr.length; i++) {
-      if (hash[arr[i][field]]) {
-        return true
-      }
-      hash[arr[i][field]] = true;
-    }
-    return false
-  }
-}
+const move = (source, destination, droppableSource, droppableDestination) => {
+  const sourceClone = Array.from(source);
+  const destClone = Array.from(destination);
+  const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+  destClone.splice(droppableDestination.index, 0, removed);
+
+  const result = {};
+  result[droppableSource.droppableId] = sourceClone;
+  result[droppableDestination.droppableId] = destClone;
+
+  return result;
+};
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 @inject(['devtoolsCustomQuery', 'workflowManager', 'global'])
 @connect(({ devtoolsCustomQuery, global, loading }) => ({
   devtoolsCustomQuery,
@@ -164,9 +68,49 @@ export default class CustomQuery extends React.PureComponent {
     workflowSelection: [],
     selectedKeys: [],
     isCreate: false,
-    list: []
+    list: [],
+    showCols: [],
+    hideCols: []
+  }
+  id2List = {
+    droppable: 'showCols',
+    droppable2: 'hideCols'
   }
   currentRowRecordId = null;
+  getList = id => this.state[this.id2List[id]];
+  onDragEnd = (result) => {
+    const { source, destination } = result;
+    // dropped outside the list
+    if (!destination) {
+      return;
+    }
+    if (source.droppableId === destination.droppableId) {
+      const items = reorder(
+        this.getList(source.droppableId),
+        source.index,
+        destination.index
+      );
+      let state = { showCols: items };
+      if (source.droppableId === 'droppable2') {
+        state = { hideCols: items };
+      }
+      this.setState(state);
+    } else {
+      /* eslint-disable-next-line */
+      const result = move(
+        this.getList(source.droppableId),
+        this.getList(destination.droppableId),
+        source,
+        destination
+      );
+
+      this.setState({
+        showCols: result.droppable,
+        hideCols: result.droppable2
+      });
+    }
+  };
+
   componentDidMount() {
     this.onLoad();
   }
@@ -417,6 +361,7 @@ export default class CustomQuery extends React.PureComponent {
   }
   makeTableCfgConfig = (formEntity, submit, remove) => {
     return {
+      columnsNum: 2,
       formLayoutConfig: {
         labelCol: {
           xs: {span: 24},
@@ -424,7 +369,7 @@ export default class CustomQuery extends React.PureComponent {
         },
         wrapperCol: {
           xs: {span: 24},
-          sm: {span: 16},
+          sm: {span: 18},
         },
       },
       formJson: [
@@ -478,23 +423,23 @@ export default class CustomQuery extends React.PureComponent {
             message: '此项为必填项'
           }]
         },
-        {
-          label: '列序号',
-          key: 'colIndex',
-          name: 'colIndex',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入列序号',
-              type: 'number'
-            }
-          },
-          initialValue: formEntity.colIndex || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
+        // {
+        //   label: '列序号',
+        //   key: 'colIndex',
+        //   name: 'colIndex',
+        //   component: {
+        //     name: 'Input',
+        //     props: {
+        //       placeholder: '请输入列序号',
+        //       type: 'number'
+        //     }
+        //   },
+        //   initialValue: formEntity.colIndex || '',
+        //   rules: [{
+        //     required: true,
+        //     message: '此项为必填项'
+        //   }]
+        // },
         {
           label: '列宽',
           key: 'width',
@@ -547,19 +492,6 @@ export default class CustomQuery extends React.PureComponent {
           initialValue: formEntity.filter || '',
         },
         {
-          label: '自定义渲染',
-          key: 'render',
-          name: 'render',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入自定义渲染规则',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.render || '',
-        },
-        {
           label: '鼠标悬停提示',
           key: 'hover',
           name: 'hover',
@@ -585,17 +517,32 @@ export default class CustomQuery extends React.PureComponent {
           // }],
         },
         {
-          label: '启/停用',
+          label: '自定义渲染',
+          key: 'render',
+          name: 'render',
+          component: {
+            name: 'TextArea',
+            props: {
+              placeholder: '请输入自定义渲染规则',
+              autosize: true
+            }
+          },
+          initialValue: formEntity.render || '',
+        },
+        {
+          label: '显示与否',
           key: 'enable',
           name: 'enable',
           component: {
-            name: 'Switch',
-            props: {
-              checkedChildren: '启',
-              unCheckedChildren: '停'
-            }
+            name: 'RadioGroup',
+            children: [{
+              label: '否',
+              value: false
+            }, {
+              label: '是',
+              value: true
+            }],
           },
-          valuePropName: 'checked',
           initialValue: formEntity.enable || true,
         },
         {
@@ -643,9 +590,10 @@ export default class CustomQuery extends React.PureComponent {
             name: 'TextArea',
             props: {
               placeholder: '请输入扩展内容',
-              autosize: true
+              autosize: true,
             },
           },
+          extra: '列表扩展信息将展示在表格的上部',
           initialValue: entity.tableInfoExtra || ''
         },
         {
@@ -700,12 +648,11 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleModalCancel = () => {
     this.setModalVisible('modalFormVisible', false);
-    // setTimeout(() => {
-    //   form.resetFields();
-    //   this.props.dispatch({
-    //     type: 'devtoolsCustomQuery/clearEntity'
-    //   });
-    // }, 300)
+    setTimeout(() => {
+      this.props.dispatch({
+        type: 'devtoolsCustomQuery/clearEntity'
+      });
+    }, 300)
   }
   handleCreate = () => {
     this.setModalVisible('isCreate', true);
@@ -828,13 +775,15 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleDesignTable = (record) => {
     const { gridConfig } = record;
-    const { topButtons, rowButtons } = JSON.parse(gridConfig)
+    const { topButtons, rowButtons, columns } = JSON.parse(gridConfig)
     const buttons = [...topButtons, ...rowButtons]
     this.setState({
       curRecord: record,
       curTableRecord: JSON.parse(gridConfig).columns[0],
       gridConfig: JSON.parse(gridConfig),
-      buttons
+      buttons,
+      showCols: columns.filter(item => item.enable),
+      hideCols: columns.filter(item => !item.enable),
     })
     this.currentRowRecordId = record.id;
     this.setModalVisible('modalTableCfgVisible', true);
@@ -960,18 +909,15 @@ export default class CustomQuery extends React.PureComponent {
     })
     this.setModalVisible('modalTableCfgVisible', false)
   }
-  onTableCfgSelect = (record) => {
-    if (record.length) {
-      const value = JSON.parse(record[0])
-      this.setState({
-        curTableRecord: value,
-        selectedKeys: [record[0]]
-      })
-      const form = this.oopTableCfgForm.getForm()
-      form.resetFields()
-      for (const key in JSON.parse(record)) {
-        form.setFieldsValue({[key]: JSON.parse(record)[key]})
-      }
+  onTableCfgSelect = (col) => {
+    this.setState({
+      curTableRecord: col,
+    })
+    const form = this.oopTableCfgForm.getForm()
+    form.resetFields()
+    console.log(form)
+    for (const key in col) {
+      form.setFieldsValue({[key]: col[key]})
     }
   }
   handleTableCfgSubmit = () => {
@@ -1055,7 +1001,7 @@ export default class CustomQuery extends React.PureComponent {
             selectedKeys: [JSON.stringify(record)]
           })
           this.onLoad()
-          this.onTableCfgSelect([JSON.stringify(record)])
+          this.onTableCfgSelect(record)
         }
       }
     });
@@ -1090,53 +1036,6 @@ export default class CustomQuery extends React.PureComponent {
       })
     })
   }
-  // syncColConfirm = () => {
-  //   confirm({
-  //     content: '同步表单字段的label和name属性，确定同步？',
-  //     onOk: () => {
-  //       this.syncColumns()
-  //     }
-  //   });
-  // }
-  // syncColumns = () => {
-  //   const { curRecord, gridConfig } = this.state
-  //   const { formConfig } = curRecord
-  //   const { formJson } = JSON.parse(formConfig)
-  //   const { columns: cols } = gridConfig
-  //   let columns = []
-  //   const colsSyncTags = cols.map(col => col.syncTag)
-  //   for (let i = 0; i < formJson.length; i++) {
-  //     const index = colsSyncTags.indexOf(formJson[i].syncTag)
-  //     if (index >= 0) {
-  //       cols[index].title = formJson[i].label
-  //       cols[index].dataIndex = formJson[i].name
-  //       columns = [...cols]
-  //     } else {
-  //       const obj = {
-  //         _id: makeRandomId(),
-  //         title: formJson[i].label,
-  //         dataIndex: formJson[i].name,
-  //         syncTag: formJson[i].syncTag
-  //       }
-  //       columns = [...cols, obj]
-  //     }
-  //   }
-  //   const obj = {
-  //     ...gridConfig,
-  //     columns
-  //   }
-  //   const params = {
-  //     ...curRecord,
-  //     gridConfig: JSON.stringify(obj),
-  //     id: this.currentRowRecordId
-  //   }
-  //   this.setState({
-  //     curRecord: params,
-  //     gridConfig: obj,
-  //     curTableRecord: columns[0],
-  //     selectedKeys: [JSON.stringify(columns[0])]
-  //   })
-  // }
   addTableCol = () => {
     const { gridConfig } = this.state
     const { columns } = gridConfig
@@ -1157,7 +1056,7 @@ export default class CustomQuery extends React.PureComponent {
     }
     const { length } = config.columns
     const record = JSON.stringify(config.columns[length - 1])
-    this.onTableCfgSelect([record])
+    this.onTableCfgSelect(record)
     this.setState({
       gridConfig: config,
       selectedKeys: [record]
@@ -1339,11 +1238,12 @@ export default class CustomQuery extends React.PureComponent {
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
-    const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys, workflowSelection, pagination } = this.state;
+    const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {},
+      isCreate, buttons, curTableRecord = {}, workflowSelection, pagination, showCols, hideCols } = this.state;
     const { formConfig = {formJson: [], formLayout: 'horizontal'} } = curRecord
-    const { columns, props } = gridConfig
+    const { props } = gridConfig
     const parseFormConfig = typeof formConfig === 'string' ? JSON.parse(formConfig) : formConfig
-    const buttonCfgDatas = filterDefault(buttons)
+    const buttonCfgDatas = filterDefault(buttons, defaultBtnArr)
     const formdata = isCreate ? {} : entity
     const oopTablecolumns = [
       {
@@ -1734,75 +1634,113 @@ export default class CustomQuery extends React.PureComponent {
             ref={(el)=>{ this.oopFormDesigner = el }}
             formDetails={parseFormConfig} />
         </Modal>
-        <Modal
-          visible={modalTableCfgVisible}
-          width="90%"
-          title="设计列表"
-          onCancel={() => { this.setState({modalTableCfgVisible: false}) }}
-          destroyOnClose={true}
-          maskClosable={false}
-          style={{top: '20px'}}
-          footer={
-            <Fragment>
-              <Button onClick={this.handleTableCfgCancel}>关闭</Button>
-            </Fragment>
-          }
-        >
-          <div style={{marginTop: '-24px'}}>
-            <Tabs defaultActiveKey="1" animated={false}>
-              <TabPane tab="列编辑" key="1">
-                <div style={{backgroundColor: '#f0f2f5', padding: '10px'}}>
-                  <Row gutter={16}>
-                    <Col span={5}>
-                      <Card
-                        title="字段列表"
-                        bordered={false}
-                        extra={<Button type="primary" onClick={this.addTableCol}>新建</Button>}
-                      >
-                        {
-                          columns ?
-                            (
-                              <Tree
-                                showLine
-                                selectedKeys={selectedKeys.length ? selectedKeys : [JSON.stringify(columns[0])]}
-                                onSelect={this.onTableCfgSelect}
-                              >
-                                {
-                                  columns.map((col) => {
-                                    return (
-                                      <TreeNode title={col.title} key={JSON.stringify(col)} />
-                                    )
-                                  })
-                                }
-                              </Tree>
-                            ) : null
-                        }
-                      </Card>
-                    </Col>
-                    <Col span={19}>
-                      <Card title="字段编辑" bordered={false}>
-                        <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
-                      </Card>
-                    </Col>
-                  </Row>
-                </div>
-              </TabPane>
-              <TabPane tab="按钮编辑" key="2">
-                <OopTableForm
-                  columns={buttonCfgColumns}
-                  onChange={this.onButtonCfgChange}
-                  value={buttonCfgDatas}
-                  ref={(el)=>{ this.buttonCfgForm = el }}
-                />
-                <div style={{textAlign: 'right', marginTop: '10px'}}><Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button></div>
-              </TabPane>
-              <TabPane tab="列表编辑" key="3">
-                <Card bordered={false}>
-                  <OopForm {...this.makeTableInfoCfgConfig(props, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
-                </Card>
-              </TabPane>
-            </Tabs>
-          </div>
+         <Modal
+           visible={modalTableCfgVisible}
+           width="90%"
+           title="设计列表"
+           onCancel={() => { this.setState({modalTableCfgVisible: false}) }}
+           destroyOnClose={true}
+           maskClosable={false}
+           style={{top: '20px'}}
+           footer={
+             <Fragment>
+               <Button onClick={this.handleTableCfgCancel}>关闭</Button>
+             </Fragment>
+           }
+         >
+           <div style={{marginTop: '-24px'}}>
+             <Tabs defaultActiveKey="1" animated={false}>
+               <TabPane tab="列编辑" key="1">
+                 <div>
+                   <Row gutter={16}>
+                    <DragDropContext onDragEnd={this.onDragEnd}>
+                      <div className={styles.line}>
+                        <div>显示列</div>
+                        <div>
+                          <Droppable droppableId="droppable" direction="horizontal">
+                            {provided => (
+                              <div ref={provided.innerRef} style={{display: 'flex'}}>
+                                  {showCols.map((item, index) => (
+                                      <Draggable
+                                          key={item.dataIndex}
+                                          draggableId={item.dataIndex}
+                                          index={index}
+                                          >
+                                          {/* eslint-disable-next-line */}
+                                          {provided => (
+                                              <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                onClick={()=>this.onTableCfgSelect(item)}
+                                                className={styles.colItem}
+                                              >
+                                                  {item.title}
+                                              </div>
+                                          )}
+                                      </Draggable>
+                                  ))}
+                                  {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </div>
+                      </div>
+                      <div className={styles.line}>
+                        <div>不显示列</div>
+                        <div>
+                          <Droppable droppableId="droppable2" direction="horizontal">
+                              {provided => (
+                                  <div ref={provided.innerRef} style={{display: 'flex'}}>
+                                      {hideCols.map((item, index) => (
+                                          <Draggable
+                                              key={item.dataIndex}
+                                              draggableId={item.dataIndex}
+                                              index={index}
+                                              >
+                                              {/* eslint-disable-next-line */}
+                                              {provided => (
+                                                  <div
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    onClick={()=>this.onTableCfgSelect(item)}
+                                                    className={styles.colItem}
+                                                    >
+                                                      {item.title}
+                                                  </div>
+                                              )}
+                                          </Draggable>
+                                      ))}
+                                      {provided.placeholder}
+                                  </div>
+                              )}
+                          </Droppable>
+                        </div>
+                      </div>
+                    </DragDropContext>
+                    <Card title="列信息编辑" bordered={false}>
+                      <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
+                    </Card>
+                   </Row>
+                 </div>
+               </TabPane>
+               <TabPane tab="按钮编辑" key="2">
+                 <OopTableForm
+                   columns={buttonCfgColumns}
+                   onChange={this.onButtonCfgChange}
+                   value={buttonCfgDatas}
+                   ref={(el)=>{ this.buttonCfgForm = el }}
+                 />
+                 <div style={{textAlign: 'right', marginTop: '10px'}}><Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button></div>
+               </TabPane>
+               <TabPane tab="列表编辑" key="3">
+                 <Card bordered={false}>
+                   <OopForm {...this.makeTableInfoCfgConfig(props, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
+                 </Card>
+               </TabPane>
+             </Tabs>
+           </div>
         </Modal>
         <Modal
           visible={modalModalCfgVisible}
