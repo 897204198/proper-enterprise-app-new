@@ -218,7 +218,7 @@
       "id": "723c18c8-e27f-46d0-adce-a11bb6ab1f44",
       "comment": "",
       "command": "click",
-      "target": "css=.ant-modal-close-icon path",
+      "target": "css=.anticon-close > svg",
       "targets": [
         ["css=.ant-modal-close-icon path", "css:finder"]
       ],
