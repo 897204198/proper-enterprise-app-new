@@ -20,6 +20,11 @@ const { Option } = Select
 const tableInputStyle = {
   height: '32px'
 }
+const addColBtnStyle = {
+  fontSize: '22px',
+  verticalAlign: '-webkit-baseline-middle',
+  color: '#1890ff'
+}
 const defaultBtnArr = makeDefaultButtons(true).map(btn => btn.name)
 const renderTitle = (text) => {
   return (
@@ -32,33 +37,27 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   const sourceClone = Array.from(source);
   const destClone = Array.from(destination);
   const [removed] = sourceClone.splice(droppableSource.index, 1);
-
   destClone.splice(droppableDestination.index, 0, removed);
-
   const result = {};
   result[droppableSource.droppableId] = sourceClone;
   result[droppableDestination.droppableId] = destClone;
-
   return result;
 };
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
-
   return result;
 };
-
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
   ...draggableStyle
 });
-
 const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'e6f7ff' : 'transparent',
+  border: '2px dashed transparent',
+  borderColor: isDraggingOver ? '#ddd' : 'transparent',
   padding: '5px 10px',
   minHeight: '42px',
-  border: '1px dashed transparent',
   display: 'flex'
 });
 @inject(['devtoolsCustomQuery', 'workflowManager', 'global'])
@@ -133,10 +132,14 @@ export default class CustomQuery extends React.PureComponent {
   onDragEnd = (result) => {
     const { source, destination } = result;
     // dropped outside the list
+    this.setState({
+      dragging: false
+    })
     if (!destination) {
       return;
     }
     if (source.droppableId === destination.droppableId) {
+      if (source.droppableId === destination.droppableId && source.droppableId === 'hide') return
       const items = reorder(
         this.getList(source.droppableId),
         source.index,
@@ -144,9 +147,9 @@ export default class CustomQuery extends React.PureComponent {
       );
       let state = { showCols: items };
       if (source.droppableId === 'hide') {
-        state = { hideCols: items };
+        state = { hideCols: items }
       }
-      this.setState(state, () => this.onDragUpdate());
+      this.setState(state, () => this.onDragUpdate())
     } else {
       /* eslint-disable-next-line */
       const result = move(
@@ -1728,7 +1731,7 @@ export default class CustomQuery extends React.PureComponent {
                               )}
                             </Droppable>
                           </div>
-                          <div style={{padding: '5px 10px'}}><Button type="primary" onClick={this.addTableCol}>新建</Button></div>
+                          <div style={{padding: '5px 10px', lineHeight: '2'}}><Popover content="新建列"><Icon type="plus-circle" style={{...addColBtnStyle}} onClick={this.addTableCol} /></Popover></div>
                         </div>
                         <div className="colLine">
                           <div style={{padding: '5px 10px', width: '80px', lineHeight: '2.3'}}>不显示列:</div>
