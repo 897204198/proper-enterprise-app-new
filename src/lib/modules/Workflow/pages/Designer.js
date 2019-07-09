@@ -68,8 +68,9 @@ const CreateForm = Form.create()((props) => {
 
 const CreateModal = (props) => {
   const { viewVisible, createOk, createCancel } = props;
+  const temp = {};
   const okHandle = () => {
-    const form = this.CreateForm.getForm();
+    const form = temp.CreateForm.getForm();
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       createOk(false, fieldsValue);
@@ -84,7 +85,7 @@ const CreateModal = (props) => {
       maskClosable={false}
       destroyOnClose={true}
     >
-      <CreateForm ref={(el)=>{ this.CreateForm = el; }} />
+      <CreateForm ref={(el)=>{ temp.CreateForm = el; }} />
     </Modal>
   );
 };

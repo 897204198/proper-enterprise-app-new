@@ -159,8 +159,8 @@ export default class OopFormDesigner extends React.PureComponent {
     let currentRowItem = null;
     if (formJson.length) {
       const first = formJson[0];
-      currentRowItem = {...first};
       first.active = true;
+      currentRowItem = first;
     }
     this.state = {
       currentRowItem,
@@ -617,12 +617,23 @@ export default class OopFormDesigner extends React.PureComponent {
         currentRowItemJson
       });
     } else {
-      // eslint-disable-next-line
-      const item = new Function('return '.concat(this.state.currentRowItemJson))();
-      if (item && item.name) {
+      const values = this.state.currentRowItemJson;
+      const item = this.validateItemJson(values);
+      if (item) {
+        const index = this.state.rowItems.findIndex(it=>it.active === true);
+        const oldItem = this.state.rowItems[index];
+        const newItem = {
+          ...item,
+          initialValue: oldItem.initialValue,
+          active: oldItem.active
+        }
+        if (oldItem.syncTag) {
+          newItem.syncTag = oldItem.syncTag
+        }
+        this.state.rowItems[index] = newItem;
         this.setState({
           formPattern,
-          currentRowItem: item
+          currentRowItem: newItem
         })
       }
     }

@@ -303,7 +303,6 @@ const BtnLInfoForm = (props) => {
       onChange={onChange}
       loading={loading}
       size="small"
-      ref={(el)=>{ this.btnInfoForm = el }}
   />)
 };
 

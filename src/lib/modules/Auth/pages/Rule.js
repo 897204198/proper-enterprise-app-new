@@ -10,15 +10,16 @@ import OopTable from '../../../components/OopTable';
 
 const ModalForm = Form.create()((props) => {
   const {loading, visible, title, onModalCancel, onModalSubmit, formEntity, filters} = props;
+  const temp = {};
   const submitForm = ()=>{
-    const form = this.oopForm.getForm()
+    const form = temp.oopForm.getForm()
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       onModalSubmit(fieldsValue, form);
     });
   }
   const cancelForm = ()=>{
-    const form = this.oopForm.getForm()
+    const form = temp.oopForm.getForm()
     onModalCancel(form)
   }
   const footer = (
@@ -77,7 +78,7 @@ const ModalForm = Form.create()((props) => {
     <Modal title={title} visible={visible} footer={footer} onCancel={cancelForm}>
     <Alert message="约定：规则的实现bean名称 应为规则code+AuthRuleImpl 否则规则工厂无法根据code找到对应规则的解析方式" type="warning" showIcon />
       <Spin spinning={loading}>
-        <OopForm {...formConfig} ref={(el)=>{ this.oopForm = el && el.getWrappedInstance() }} defaultValue={formEntity} />
+        <OopForm {...formConfig} ref={(el)=>{ temp.oopForm = el && el.getWrappedInstance() }} defaultValue={formEntity} />
       </Spin>
     </Modal>
   )
