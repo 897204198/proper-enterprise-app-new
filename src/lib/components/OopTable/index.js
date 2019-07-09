@@ -39,6 +39,11 @@ const getFilterParams = (filters)=>{
     return {}
   }
 }
+const orderCol = {
+  title: '序号',
+  width: 60,
+  render: (text, record, index)=>`${index + 1}`
+}
 export default class OopTable extends PureComponent {
   constructor(props) {
     super(props);
@@ -434,7 +439,7 @@ export default class OopTable extends PureComponent {
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
       _onSelect, _onSelectAll, multiple = true, selectedDisabled = [],
-      showTableInfo, tableInfoExtra, ...otherProps } = this.props;
+      showTableInfo, tableInfoExtra, order = false, ...otherProps } = this.props;
     const { selectedRowKeys, pagination, filters, sorter } = this.state;
     const hasFilters = filters && Object.keys(filters).length > 0;
     const hasSorter = sorter && Object.keys(sorter).length > 0;
@@ -465,6 +470,9 @@ export default class OopTable extends PureComponent {
       }
     })
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
+    if (order) {
+      cols.unshift(orderCol)
+    }
     const tableData = [...list];
     if (multiple !== false) {
       if (tableData.length && selectedDisabled.length) {

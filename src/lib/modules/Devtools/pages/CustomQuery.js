@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import FileSaver from 'file-saver';
-import { Modal, Card, Select, Switch, Icon, Input, Button, message, Row, Popconfirm, Tabs, Spin} from 'antd';
+import { Modal, Card, Select, Switch, Icon, Input, Button, message, Row, Popconfirm, Tabs, Spin, Popover} from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {connect} from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
@@ -17,7 +17,6 @@ import styles from './customQuery.less';
 
 const { TabPane } = Tabs
 const { Option } = Select
-// const { TreeNode } = Tree
 const tableInputStyle = {
   height: '32px'
 }
@@ -49,6 +48,19 @@ const reorder = (list, startIndex, endIndex) => {
 
   return result;
 };
+
+const getItemStyle = (isDragging, draggableStyle) => ({
+  userSelect: 'none',
+  ...draggableStyle
+});
+
+const getListStyle = isDraggingOver => ({
+  background: isDraggingOver ? 'e6f7ff' : 'transparent',
+  padding: '5px 10px',
+  minHeight: '42px',
+  border: '1px dashed transparent',
+  display: 'flex'
+});
 @inject(['devtoolsCustomQuery', 'workflowManager', 'global'])
 @connect(({ devtoolsCustomQuery, global, loading }) => ({
   devtoolsCustomQuery,
@@ -70,14 +82,54 @@ export default class CustomQuery extends React.PureComponent {
     isCreate: false,
     list: [],
     showCols: [],
-    hideCols: []
+    hideCols: [],
+    curCol: null,
+    dragging: false
   }
   id2List = {
-    droppable: 'showCols',
-    droppable2: 'hideCols'
+    show: 'showCols',
+    hide: 'hideCols'
   }
   currentRowRecordId = null;
-  getList = id => this.state[this.id2List[id]];
+  getList = id => this.state[this.id2List[id]]
+  onDragUpdate = () => {
+    const { curRecord, gridConfig, showCols, hideCols } = this.state
+    showCols.forEach((item) => {
+      item.enable = true
+    })
+    hideCols.forEach((item) => {
+      item.enable = false
+    })
+    const newColumns = [...showCols, ...hideCols]
+    gridConfig.columns = newColumns
+    this.setState({
+      dragging: false,
+    })
+    const params = {
+      ...curRecord,
+      gridConfig: JSON.stringify(gridConfig),
+      id: this.currentRowRecordId
+    }
+    this.props.dispatch({
+      type: 'devtoolsCustomQuery/saveOrUpdate',
+      payload: params,
+      callback: (res) => {
+        oopToast(res, '保存成功', '保存失败')
+        if (res.status === 'ok') {
+          this.setState({
+            curRecord: params,
+            gridConfig,
+          })
+          this.onLoad()
+        }
+      }
+    });
+  }
+  onDragStart = () => {
+    this.setState({
+      dragging: true
+    })
+  }
   onDragEnd = (result) => {
     const { source, destination } = result;
     // dropped outside the list
@@ -91,10 +143,10 @@ export default class CustomQuery extends React.PureComponent {
         destination.index
       );
       let state = { showCols: items };
-      if (source.droppableId === 'droppable2') {
+      if (source.droppableId === 'hide') {
         state = { hideCols: items };
       }
-      this.setState(state);
+      this.setState(state, () => this.onDragUpdate());
     } else {
       /* eslint-disable-next-line */
       const result = move(
@@ -103,14 +155,12 @@ export default class CustomQuery extends React.PureComponent {
         source,
         destination
       );
-
       this.setState({
-        showCols: result.droppable,
-        hideCols: result.droppable2
-      });
+        showCols: result.show,
+        hideCols: result.hide
+      }, () => this.onDragUpdate());
     }
-  };
-
+  }
   componentDidMount() {
     this.onLoad();
   }
@@ -423,23 +473,6 @@ export default class CustomQuery extends React.PureComponent {
             message: '此项为必填项'
           }]
         },
-        // {
-        //   label: '列序号',
-        //   key: 'colIndex',
-        //   name: 'colIndex',
-        //   component: {
-        //     name: 'Input',
-        //     props: {
-        //       placeholder: '请输入列序号',
-        //       type: 'number'
-        //     }
-        //   },
-        //   initialValue: formEntity.colIndex || '',
-        //   rules: [{
-        //     required: true,
-        //     message: '此项为必填项'
-        //   }]
-        // },
         {
           label: '列宽',
           key: 'width',
@@ -506,15 +539,6 @@ export default class CustomQuery extends React.PureComponent {
             }],
           },
           initialValue: formEntity.hover || false,
-          // subscribe: [{
-          //   name: 'width',
-          //   publish: [{
-          //     value(chanageValue, curValue) {
-          //       return 'A,B'.includes(chanageValue) && (curValue.length > 0)
-          //     },
-          //     property: 'display'
-          //   }]
-          // }],
         },
         {
           label: '自定义渲染',
@@ -528,22 +552,6 @@ export default class CustomQuery extends React.PureComponent {
             }
           },
           initialValue: formEntity.render || '',
-        },
-        {
-          label: '显示与否',
-          key: 'enable',
-          name: 'enable',
-          component: {
-            name: 'RadioGroup',
-            children: [{
-              label: '否',
-              value: false
-            }, {
-              label: '是',
-              value: true
-            }],
-          },
-          initialValue: formEntity.enable || true,
         },
         {
           key: 'submitBtn',
@@ -595,6 +603,23 @@ export default class CustomQuery extends React.PureComponent {
           },
           extra: '列表扩展信息将展示在表格的上部',
           initialValue: entity.tableInfoExtra || ''
+        },
+        {
+          label: '显示序号',
+          key: 'order',
+          name: 'order',
+          component: {
+            name: 'RadioGroup',
+            children: [{
+              label: '否',
+              value: false
+            }, {
+              label: '是',
+              value: true
+            }],
+          },
+          extra: '列表每条数据前是否显示序号',
+          initialValue: entity.order || false,
         },
         {
           key: 'submitBtn',
@@ -777,12 +802,14 @@ export default class CustomQuery extends React.PureComponent {
     const { gridConfig } = record;
     const { topButtons, rowButtons, columns } = JSON.parse(gridConfig)
     const buttons = [...topButtons, ...rowButtons]
+    const curCol = columns.filter(item => item.enable)[0] || columns[0]
     this.setState({
       curRecord: record,
-      curTableRecord: JSON.parse(gridConfig).columns[0],
+      curTableRecord: curCol,
+      curCol: curCol.dataIndex,
       gridConfig: JSON.parse(gridConfig),
       buttons,
-      showCols: columns.filter(item => item.enable),
+      showCols: columns.filter(item => item.enable === true),
       hideCols: columns.filter(item => !item.enable),
     })
     this.currentRowRecordId = record.id;
@@ -905,20 +932,24 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleTableCfgCancel = () => {
     this.setState({
-      curTableRecord: {}
+      curTableRecord: {},
+      curCol: null
     })
     this.setModalVisible('modalTableCfgVisible', false)
   }
   onTableCfgSelect = (col) => {
-    this.setState({
-      curTableRecord: col,
-    })
     const form = this.oopTableCfgForm.getForm()
     form.resetFields()
-    console.log(form)
-    for (const key in col) {
-      form.setFieldsValue({[key]: col[key]})
-    }
+    this.setState({
+      curTableRecord: col,
+      curCol: col.dataIndex
+    }, () => {
+      for (const key in col) {
+        if (key !== 'enable') {
+          form.setFieldsValue({[key]: col[key]})
+        }
+      }
+    })
   }
   handleTableCfgSubmit = () => {
     const { curRecord, gridConfig } = this.state
@@ -932,12 +963,11 @@ export default class CustomQuery extends React.PureComponent {
       } else {
         const list = gridConfig.columns.map((col) => {
           if (col._id === fieldsValue._id) {
-            return fieldsValue
-          } else {
-            return col
+            return Object.assign(col, fieldsValue)
           }
+          return col
         })
-        list.sort((a, b) => parseInt(a.colIndex, 10) - parseInt(b.colIndex, 10))
+        // list.sort((a, b) => parseInt(a.colIndex, 10) - parseInt(b.colIndex, 10))
         const obj = {
           ...gridConfig,
           columns: list
@@ -957,7 +987,9 @@ export default class CustomQuery extends React.PureComponent {
                 curRecord: params,
                 gridConfig: obj,
                 curTableRecord: fieldsValue,
-                selectedKeys: [JSON.stringify(fieldsValue)]
+                selectedKeys: [JSON.stringify(fieldsValue)],
+                showCols: list.filter(item => item.enable === true),
+                hideCols: list.filter(item => !item.enable),
               })
               this.onLoad()
             }
@@ -998,7 +1030,8 @@ export default class CustomQuery extends React.PureComponent {
             curRecord: params,
             gridConfig: obj,
             curTableRecord: record,
-            selectedKeys: [JSON.stringify(record)]
+            showCols: list.filter(item => item.enable === true),
+            hideCols: list.filter(item => !item.enable),
           })
           this.onLoad()
           this.onTableCfgSelect(record)
@@ -1039,28 +1072,30 @@ export default class CustomQuery extends React.PureComponent {
   addTableCol = () => {
     const { gridConfig } = this.state
     const { columns } = gridConfig
+    const newCol = {
+      _id: makeRandomId(),
+      title: '新建列',
+      dataIndex: makeRandomId(),
+      sorter: '',
+      filter: '',
+      render: '',
+      enable: true
+    }
     const config = {
       ...gridConfig,
       columns: [
         ...columns,
-        {
-          _id: makeRandomId(),
-          title: '新建列',
-          dataIndex: makeRandomId(),
-          sorter: '',
-          filter: '',
-          render: '',
-          enable: true
-        }
+        newCol
       ]
     }
     const { length } = config.columns
-    const record = JSON.stringify(config.columns[length - 1])
-    this.onTableCfgSelect(record)
+    const record = config.columns[length - 1]
     this.setState({
       gridConfig: config,
-      selectedKeys: [record]
+      showCols: config.columns.filter(item => item.enable === true),
+      hideCols: config.columns.filter(item => !item.enable),
     })
+    this.onTableCfgSelect(record)
   }
   onButtonCfgChange = (type, item) => {
     const { buttons } = this.state
@@ -1239,39 +1274,44 @@ export default class CustomQuery extends React.PureComponent {
     const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
     const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {},
-      isCreate, buttons, curTableRecord = {}, workflowSelection, pagination, showCols, hideCols } = this.state;
+      isCreate, buttons, curTableRecord = {}, workflowSelection, pagination, showCols, hideCols, curCol, dragging } = this.state;
     const { formConfig = {formJson: [], formLayout: 'horizontal'} } = curRecord
     const { props } = gridConfig
     const parseFormConfig = typeof formConfig === 'string' ? JSON.parse(formConfig) : formConfig
     const buttonCfgDatas = filterDefault(buttons, defaultBtnArr)
     const formdata = isCreate ? {} : entity
     const oopTablecolumns = [
-      {
-        title: '功能名',
-        dataIndex: 'functionName',
+      {title: '功能名', dataIndex: 'functionName', width: 150},
+      {title: '表名', dataIndex: 'tableName',
+        render: (text) => {
+          return (
+            <Popover content={text}>
+              <div className={styles.ellipsis}>{text}</div>
+            </Popover>
+          )
+        }
       },
-      {
-        title: '表名',
-        dataIndex: 'tableName',
+      {title: '编码', dataIndex: 'code',
+        render: (text) => {
+          return (
+            <Popover content={text}>
+              <div className={styles.ellipsis}>{text}</div>
+            </Popover>
+          )
+        }
       },
-      {
-        title: '编码',
-        dataIndex: 'code',
-      },
-      {
-        title: '关联流程',
-        dataIndex: 'wfKey',
+      {title: '关联流程', dataIndex: 'wfKey',
         render: (text, record) => {
           if (record.relaWf && workflowSelection.length) {
             const wf = workflowSelection.filter(item => item.value === text)
-            return wf.length ? wf[0].label : '流程不存在'
+            return wf.length ? <Popover content={wf[0].label}>
+              <div className={styles.ellipsis}>{wf[0].label}</div>
+            </Popover> : '流程不存在'
           }
           return null
         }
       },
-      {
-        title: '启/停用',
-        dataIndex: 'enable',
+      {title: '启/停用', dataIndex: 'enable',
         render: (text, record) => {
           return <Switch checkedChildren="启" unCheckedChildren="停" checked={text} onClick={checked => this.handleToggleEnable(checked, record)} />
         }
@@ -1601,6 +1641,7 @@ export default class CustomQuery extends React.PureComponent {
             size={size}
             // showTableInfo
             ref={(el) => { this.oopTable = el }}
+            order
           />
         </Card>
         <Modal
@@ -1652,92 +1693,101 @@ export default class CustomQuery extends React.PureComponent {
              <Tabs defaultActiveKey="1" animated={false}>
                <TabPane tab="列编辑" key="1">
                  <div>
-                   <Row gutter={16}>
-                    <DragDropContext onDragEnd={this.onDragEnd}>
-                      <div className={styles.line}>
-                        <div>显示列</div>
-                        <div>
-                          <Droppable droppableId="droppable" direction="horizontal">
-                            {provided => (
-                              <div ref={provided.innerRef} style={{display: 'flex'}}>
-                                  {showCols.map((item, index) => (
-                                      <Draggable
-                                          key={item.dataIndex}
-                                          draggableId={item.dataIndex}
-                                          index={index}
-                                          >
-                                          {/* eslint-disable-next-line */}
-                                          {provided => (
+                  <Spin spinning={loading}>
+                    <Row gutter={16}>
+                      <DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                        <div className="colLine" style={{marginBottom: '10px'}}>
+                          <div style={{padding: '5px 10px', width: '80px', lineHeight: '2.3'}}>显示列:</div>
+                          <div className={`${dragging ? 'dragging' : ''}`}>
+                            <Droppable droppableId="show" direction="horizontal">
+                              {(provided, snapshot) => (
+                                <div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+                                    {showCols.map((item, index) => (
+                                        <Draggable
+                                            key={item.dataIndex}
+                                            draggableId={item.dataIndex}
+                                            index={index}
+                                            >
+                                            {/* eslint-disable-next-line */}
+                                            {(provided, snapshot) => (
                                               <div
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
                                                 onClick={()=>this.onTableCfgSelect(item)}
-                                                className={styles.colItem}
-                                              >
-                                                  {item.title}
-                                              </div>
-                                          )}
-                                      </Draggable>
-                                  ))}
-                                  {provided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
+                                                className={`colItem ${curCol === item.dataIndex ? 'active' : ''}`}
+                                                style={getItemStyle(
+                                                  snapshot.isDragging,
+                                                  provided.draggableProps.style
+                                              )}>{`${index + 1} ${item.title}`}</div>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
+                          <div style={{padding: '5px 10px'}}><Button type="primary" onClick={this.addTableCol}>新建</Button></div>
                         </div>
-                      </div>
-                      <div className={styles.line}>
-                        <div>不显示列</div>
-                        <div>
-                          <Droppable droppableId="droppable2" direction="horizontal">
-                              {provided => (
-                                  <div ref={provided.innerRef} style={{display: 'flex'}}>
-                                      {hideCols.map((item, index) => (
-                                          <Draggable
-                                              key={item.dataIndex}
-                                              draggableId={item.dataIndex}
-                                              index={index}
-                                              >
-                                              {/* eslint-disable-next-line */}
-                                              {provided => (
+                        <div className="colLine">
+                          <div style={{padding: '5px 10px', width: '80px', lineHeight: '2.3'}}>不显示列:</div>
+                          <div className={`${dragging ? 'dragging' : ''}`}>
+                            <Droppable droppableId="hide" direction="horizontal">
+                                {(provided, snapshot) => (
+                                    <div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+                                        {hideCols.map((item, index) => (
+                                            <Draggable
+                                                key={item.dataIndex}
+                                                draggableId={item.dataIndex}
+                                                index={index}
+                                                >
+                                                {/* eslint-disable-next-line */}
+                                                {(provided, snapshot) => (
                                                   <div
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
                                                     onClick={()=>this.onTableCfgSelect(item)}
-                                                    className={styles.colItem}
-                                                    >
-                                                      {item.title}
-                                                  </div>
-                                              )}
-                                          </Draggable>
-                                      ))}
-                                      {provided.placeholder}
-                                  </div>
-                              )}
-                          </Droppable>
+                                                    className={`colItem ${curCol === item.dataIndex ? 'active' : ''} hideCol`}
+                                                    style={getItemStyle(
+                                                      snapshot.isDragging,
+                                                      provided.draggableProps.style
+                                                  )}>{item.title}</div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                          </div>
                         </div>
-                      </div>
-                    </DragDropContext>
-                    <Card title="列信息编辑" bordered={false}>
-                      <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
-                    </Card>
-                   </Row>
+                      </DragDropContext>
+                      <Card title="列信息编辑" bordered={false}>
+                        <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove, loading)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
+                      </Card>
+                    </Row>
+                  </Spin>
                  </div>
                </TabPane>
                <TabPane tab="按钮编辑" key="2">
-                 <OopTableForm
-                   columns={buttonCfgColumns}
-                   onChange={this.onButtonCfgChange}
-                   value={buttonCfgDatas}
-                   ref={(el)=>{ this.buttonCfgForm = el }}
-                 />
-                 <div style={{textAlign: 'right', marginTop: '10px'}}><Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button></div>
+                <Spin spinning={loading}>
+                  <OopTableForm
+                    columns={buttonCfgColumns}
+                    onChange={this.onButtonCfgChange}
+                    value={buttonCfgDatas}
+                    ref={(el)=>{ this.buttonCfgForm = el }}
+                  />
+                  <div style={{textAlign: 'right', marginTop: '10px'}}><Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button></div>
+                 </Spin>
                </TabPane>
-               <TabPane tab="列表编辑" key="3">
-                 <Card bordered={false}>
-                   <OopForm {...this.makeTableInfoCfgConfig(props, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
-                 </Card>
+               <TabPane tab="其他" key="3">
+                  <Spin spinning={loading}>
+                    <Card bordered={false}>
+                      <OopForm {...this.makeTableInfoCfgConfig(props, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
+                    </Card>
+                  </Spin>
                </TabPane>
              </Tabs>
            </div>

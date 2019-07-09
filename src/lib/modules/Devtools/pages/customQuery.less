@@ -1,15 +1,35 @@
-.line {
-  display: flex;
-  padding: 10px;
-  padding-left: 20px;
-  background: #fff;
-  :global {
-    .ant-tag {
-      min-width: 64px;
-      margin-right: 0;
-      line-height: 22px;
-      text-align: center;
+:global {
+  .colLine {
+    display: flex;
+    padding: 10px;
+    background: #fff;
+    .dragging {
+      background: #e6f7ff;
+      border-color: #ddd!important;
     }
+  }
+  .ant-tag {
+    min-width: 64px;
+    margin-right: 0;
+    line-height: 22px;
+    text-align: center;
+  }
+  .colItem {
+    padding: 5px 10px;
+    color: #1890ff;
+    border: 1px solid #1890ff;
+    border-radius: 4px;
+    margin: 0 8px;
+    text-align: center;
+  }
+  .colItem.hideCol {
+    color: #7c7c7c;
+    border-color: #ddd;
+  }
+  .colItem.active {
+    background: #0079fa;
+    color: white;
+    border-color: #0079fa;
   }
 }
 .line div[draggable="true"] {
@@ -22,12 +42,15 @@
 .line > div:nth-child(2) {
   flex: 1;
 }
-.colItem {
-  display: flex;
-  // min-width: 64px;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin: 0 8px;
-  text-align: center;
+.ellipsis {
+  min-width: 130px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+@media screen and (max-width: 1800px) {
+  .ellipsis {
+    width: 130px;
+    min-width: 0;
+  }
 }
