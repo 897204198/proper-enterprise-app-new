@@ -4,6 +4,7 @@
   "dependencies":{
     "braft-editor": "^2.2.9",
     "codemirror": "^5.43.0",
+    "react-beautiful-dnd": "^11.0.4",
     "react-codemirror2": "^5.1.0"
   }
 }
