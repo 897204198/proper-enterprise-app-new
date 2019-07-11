@@ -150,7 +150,7 @@ export default (item, eventsCollection, loading)=>{
       const showTimeChange = (event)=>{
         console.log(event);
         // 刷新showTime
-        updateCenterPanel(event.target.name, event.target.value ? {format: 'HH:mm'} : null);
+        updateCenterPanel(event.target.name, event.target.value ? true : null);
         // TODO 350延时躲过节流函数
         setTimeout(()=>{
           // 刷新format
@@ -159,7 +159,7 @@ export default (item, eventsCollection, loading)=>{
         }, 350);
       }
       const toggleShowTime = (
-        <RadioGroup onChange={showTimeChange} size="small" name={`${name}${prefix}_props_showTime`} >
+        <RadioGroup onChange={showTimeChange} size="small" name={`${name}${prefix}_props_showTime`} defaultValue={(component.props && component.props.showTime) || false}>
           <RadioButton value={false}>不显示时间</RadioButton>
           <RadioButton value={true}>显示时间</RadioButton>
         </RadioGroup>)

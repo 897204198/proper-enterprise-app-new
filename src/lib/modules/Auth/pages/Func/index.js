@@ -445,7 +445,7 @@ export default class Func extends PureComponent {
           type: 'authFunc/updateResource',
           payload: data,
           callback(res) {
-            oopToast(res, '更新成功', '更新失败');
+            oopToast(res, '更新成功');
             dispatch({
               type: 'authFunc/fetchResourceList',
               payload: funcBasicInfo.id
@@ -460,7 +460,7 @@ export default class Func extends PureComponent {
             resources: item,
           },
           callback(res) {
-            oopToast(res, '保存成功', '保存失败');
+            oopToast(res, '保存成功');
             dispatch({
               type: 'authFunc/fetchResourceList',
               payload: funcBasicInfo.id
@@ -476,7 +476,7 @@ export default class Func extends PureComponent {
           menuId: this.state.curEditMenuId
         },
         callback(res) {
-          oopToast(res, '删除成功', '删除失败');
+          oopToast(res, '删除成功');
           dispatch({
             type: 'authFunc/fetchResourceList',
             payload: funcBasicInfo.id
@@ -509,7 +509,7 @@ export default class Func extends PureComponent {
     //       type: 'authFunc/updateResource',
     //       payload: data,
     //       callback(res) {
-    //         oopToast(res, '更新成功', '更新失败');
+    //         oopToast(res, '更新成功');
     //         dispatch({
     //           type: 'authFunc/fetchResourceList',
     //           payload: funcBasicInfo.id
@@ -524,7 +524,7 @@ export default class Func extends PureComponent {
     //         resources: item,
     //       },
     //       callback(res) {
-    //         oopToast(res, '保存成功', '保存失败');
+    //         oopToast(res, '保存成功');
     //         dispatch({
     //           type: 'authFunc/fetchResourceList',
     //           payload: funcBasicInfo.id
@@ -540,7 +540,7 @@ export default class Func extends PureComponent {
     //       menuId: this.state.curEditMenuId
     //     },
     //     callback(res) {
-    //       oopToast(res, '删除成功', '删除失败');
+    //       oopToast(res, '删除成功');
     //       dispatch({
     //         type: 'authFunc/fetchResourceList',
     //         payload: funcBasicInfo.id
@@ -571,7 +571,7 @@ export default class Func extends PureComponent {
           payload: {ids: items.toString()},
           callback(res) {
             me.oopTreeTable.oopTable.clearSelection();
-            oopToast(res, '删除成功', '删除失败');
+            oopToast(res, '删除成功');
             me.onLoad();
             me.refreshMenusAndLeftTree();
           }
@@ -605,7 +605,7 @@ export default class Func extends PureComponent {
       payload: {ids: record.id},
       callback(res) {
         me.oopTreeTable.oopTable.clearSelection();
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功');
         me.onLoad();
         me.refreshMenusAndLeftTree();
       }
@@ -619,7 +619,7 @@ export default class Func extends PureComponent {
       type: 'authFunc/deleteFunc',
       payload: {ids: id},
       callback(res) {
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功');
         self.onLoad();
         self.refreshMenusAndLeftTree();
         self.setState({

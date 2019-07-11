@@ -194,7 +194,7 @@ export default class CommonPage extends React.PureComponent {
       payload: record.id,
       tableName: this.props.tableName,
       callback: (res)=>{
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功');
         this.onLoad();
       }
     });
@@ -213,7 +213,7 @@ export default class CommonPage extends React.PureComponent {
           tableName: this.props.tableName,
           callback(res) {
             me.oopTable.clearSelection()
-            oopToast(res, '删除成功', '删除失败');
+            oopToast(res, '删除成功');
             me.onLoad()
           }
         })
@@ -238,7 +238,7 @@ export default class CommonPage extends React.PureComponent {
       payload: values,
       tableName: this.props.tableName,
       callback: (res)=>{
-        oopToast(res, '保存成功', '保存失败');
+        oopToast(res, '保存成功');
         this.onLoad();
       }
     });
@@ -421,7 +421,9 @@ export default class CommonPage extends React.PureComponent {
     }, 200)
   }
   // 流程提交成功的回调
-  afterProcessSubmit = ()=>{}
+  afterProcessSubmit = ()=>{
+    this.onLoad()
+  }
   getTableInfoExtra = (list)=>{
     const { gridConfig: {props = {}}} = this.props;
     let extra;

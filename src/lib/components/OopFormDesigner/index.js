@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Card, Row, Col, Radio, Input, Tooltip, message } from 'antd';
 import {Controlled as CodeMirror} from 'react-codemirror2';
+import moment from 'moment';
 import Debounce from 'lodash-decorators/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
@@ -170,7 +171,7 @@ export default class OopFormDesigner extends React.PureComponent {
         {label: '单选框', key: 'RadioGroup', component: {name: 'RadioGroup', children: componentData}},
         {label: '多选框', key: 'CheckboxGroup', component: {name: 'CheckboxGroup', children: componentData}, initialValue: []},
         {label: '选择器', key: 'Select', component: {name: 'Select', children: componentData}},
-        {label: '日期选择', key: 'DatePicker', component: {name: 'DatePicker'}},
+        {label: '日期选择', key: 'DatePicker', component: {name: 'DatePicker'}, initialValue: moment().format('YYYY-MM-DD HH:mm:ss')},
         {label: '数字输入框', key: 'InputNumber', component: {name: 'InputNumber'}},
         {
           label: '系统当前',
