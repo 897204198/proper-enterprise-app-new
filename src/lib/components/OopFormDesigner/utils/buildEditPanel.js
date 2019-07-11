@@ -159,7 +159,7 @@ export default (item, eventsCollection, loading)=>{
         }, 350);
       }
       const toggleShowTime = (
-        <RadioGroup onChange={showTimeChange} size="small" name={`${name}${prefix}_props_showTime`} defaultValue={(component.props && component.props.showTime) || false}>
+        <RadioGroup onChange={showTimeChange} size="small" name={`${name}${prefix}_props_showTime`}>
           <RadioButton value={false}>不显示时间</RadioButton>
           <RadioButton value={true}>显示时间</RadioButton>
         </RadioGroup>)
