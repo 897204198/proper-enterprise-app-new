@@ -14,14 +14,18 @@ readDirSync(filePath)
 execute()
 // console.log(fileResult)
 
-
 function execute() {
+  const errs = [];
   for (let i = 0; i < fileResult.length; i++) {
     try {
       execSync(`node ${seleniumRunnerPath} ${fileResult[i]} --output-directory=result --output-html=true --output-format=junit -c "browserName=chrome chromeOptions.binary='/opt/google/chrome/chrome'  chromeOptions.args=[disable-infobars,--no-sandbox,--headless,--disable-dev-shm-usage,--disable-gpu,--disable-extensions]"`)
       // execSync(`node ${seleniumRunnerPath} ${fileResult[i]} --output-directory=result --output-html=true --output-format=junit`)
     } catch (ex) {
+      errs.push(ex);
       console.log('此用例失败')
+    }
+    if (i === fileResult.length - 1 && errs.length > 0) {
+      throw errs
     }
   }
 }
