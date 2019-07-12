@@ -506,24 +506,6 @@
       ],
       "value": "12"
     }, {
-      "id": "54d2da2d-4360-4ea8-9551-b2dbf1ac824c",
-      "comment": "",
-      "command": "click",
-      "target": "//div[@class='ant-select-selection__rendered']//div[@title='否']",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "2a32b407-eaa5-4ad4-a992-377225225fc3",
-      "comment": "",
-      "command": "click",
-      "target": "//li[@class='ant-select-dropdown-menu-item']",
-      "targets": [
-        ["css=#editable .ant-select-selection__rendered", "css:finder"],
-        ["xpath=//div[@id='editable']/div/div", "xpath:idRelative"],
-        ["xpath=//div[2]/div/span/div/div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
       "id": "bafb2581-13e7-4217-8bbf-8916f8ed73b2",
       "comment": "",
       "command": "click",
@@ -1236,7 +1218,7 @@
       "id": "edc3323f-af4c-467b-9fe4-8c8a2d5c03d3",
       "comment": "",
       "command": "assertText",
-      "target": "//td[contains(.,'ASD')]",
+      "target": "//td[contains(.,'ASDaaa')]",
       "targets": [],
       "value": "ASDaaa"
     }, {
