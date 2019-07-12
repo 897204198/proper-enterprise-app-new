@@ -96,9 +96,15 @@ export default class Pupa extends React.PureComponent {
                 it.dataIndex = `${it.dataIndex}_text`
               }
             }
-            if (it.sorter && typeof it.sorter === 'string') {
+            if (it.sorter === true) {
+              it.sorter = (a, b) => {
+                return a - b
+              }
+            } else if (it.sorter === false) {
+              it.sorter = f=>f
+            } else if (it.sorter === 'custom' && typeof it.sorterRule === 'string') {
               try {
-                const fn = eval(it.sorter); // eslint-disable-line
+                const fn = eval(it.sorterRule); // eslint-disable-line
                 it.sorter = (a, b)=>{
                   return fn(a, b);
                 }

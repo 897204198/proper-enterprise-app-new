@@ -412,7 +412,7 @@ export default class CustomQuery extends React.PureComponent {
       ]
     }
   }
-  makeTableCfgConfig = (formEntity, submit, remove) => {
+  makeTableCfgConfig = (formEntity) => {
     return {
       columnsNum: 2,
       formLayoutConfig: {
@@ -506,26 +506,71 @@ export default class CustomQuery extends React.PureComponent {
           key: 'sorter',
           name: 'sorter',
           component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入排序规则',
-              autosize: true
-            }
+            name: 'RadioGroup',
+            children: [{
+              label: '否',
+              value: false
+            }, {
+              label: '是',
+              value: true
+            }, {
+              label: '自定义',
+              value: 'custom'
+            }],
           },
-          initialValue: formEntity.sorter || '',
+          initialValue: formEntity.sorter || false,
         },
+        // {
+        //   label: '筛选',
+        //   key: 'filter',
+        //   name: 'filter',
+        //   component: {
+        //     name: 'TextArea',
+        //     props: {
+        //       placeholder: '请输入筛选规则',
+        //       autosize: true
+        //     }
+        //   },
+        //   initialValue: formEntity.filter || '',
+        // },
         {
-          label: '筛选',
-          key: 'filter',
-          name: 'filter',
+          label: '自定义渲染',
+          key: 'render',
+          name: 'render',
           component: {
             name: 'TextArea',
             props: {
-              placeholder: '请输入筛选规则',
+              placeholder: '例：(text) => {return <span style={{color: "red"}}>{text}</span>}',
               autosize: true
             }
           },
-          initialValue: formEntity.filter || '',
+          initialValue: formEntity.render || '',
+        },
+        {
+          label: '排序规则',
+          key: 'sorterRule',
+          name: 'sorterRule',
+          component: {
+            name: 'TextArea',
+            props: {
+              placeholder: '例：(a, b) => { return a - b }',
+              autosize: true
+            }
+          },
+          rules: [{
+            required: true,
+            message: '请输入排序规则'
+          }],
+          initialValue: formEntity.sorterRule || '',
+          subscribe: [{
+            name: 'sorter',
+            publish: [{
+              value(chanageValue) {
+                return chanageValue === 'custom'
+              },
+              property: 'display'
+            }]
+          }],
         },
         {
           label: '鼠标悬停提示',
@@ -543,40 +588,6 @@ export default class CustomQuery extends React.PureComponent {
           },
           initialValue: formEntity.hover || false,
         },
-        {
-          label: '自定义渲染',
-          key: 'render',
-          name: 'render',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入自定义渲染规则',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.render || '',
-        },
-        {
-          key: 'submitBtn',
-          component: () => {
-            return (
-              <div>
-                <Button type="primary" onClick={submit} style={{marginLeft: '20%'}}>保存</Button>
-                <Popconfirm
-                  title="确认删除？"
-                  onConfirm={() => remove(formEntity._id)}>
-                  <Button type="danger" style={{marginLeft: '10px'}}>删除</Button>
-                </Popconfirm>
-              </div>
-            )
-          },
-          formItemLayout: {
-            wrapperCol: {
-              xs: {span: 24},
-              sm: {span: 20},
-            },
-          }
-        }
       ]
     }
   }
@@ -843,7 +854,14 @@ export default class CustomQuery extends React.PureComponent {
       const { gridConfig, modalConfig, relaWf } = curRecord;
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item) => {
-        if (!item.syncTag) item.syncTag = makeRandomId()
+        if (!item.syncTag) {
+          const hasCol = JSON.parse(gridConfig).columns.filter(col => col.dataIndex === item.name)
+          if (hasCol.length) {
+            item.syncTag = hasCol[0].syncTag
+          } else {
+            item.syncTag = makeRandomId()
+          }
+        }
       });
       const FormObj = {
         ...otherProps,
@@ -1024,8 +1042,8 @@ export default class CustomQuery extends React.PureComponent {
             _id: '',
             title: '',
             dataIndex: '',
-            sorter: '',
-            filter: '',
+            sorter: false,
+            // filter: '',
             render: '',
             enable: false
           }
@@ -1079,8 +1097,8 @@ export default class CustomQuery extends React.PureComponent {
       _id: makeRandomId(),
       title: '新建列',
       dataIndex: makeRandomId(),
-      sorter: '',
-      filter: '',
+      sorter: false,
+      // filter: '',
       render: '',
       enable: true
     }
@@ -1768,7 +1786,15 @@ export default class CustomQuery extends React.PureComponent {
                         </div>
                       </DragDropContext>
                       <Card title="列信息编辑" bordered={false}>
-                        <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove, loading)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
+                        <OopForm {...this.makeTableCfgConfig(curTableRecord)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
+                        <div style={{textAlign: 'right', paddingRight: '5%'}}>
+                          <Button type="primary" onClick={this.handleTableCfgSubmit} style={{marginLeft: '20%'}}>保存</Button>
+                          <Popconfirm
+                            title="确认删除？"
+                            onConfirm={() => this.handleTableCfgRemove(curTableRecord._id)}>
+                            <Button type="danger" style={{marginLeft: '10px'}}>删除</Button>
+                          </Popconfirm>
+                        </div>
                       </Card>
                     </Row>
                   </Spin>
