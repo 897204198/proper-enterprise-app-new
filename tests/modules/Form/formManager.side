@@ -378,6 +378,13 @@
       ],
       "value": ""
     }, {
+      "id": "45aca86c-6b74-42d6-95d9-3a12fd5c1dd9",
+      "comment": "",
+      "command": "waitForElementVisible",
+      "target": "//tbody",
+      "targets": [],
+      "value": "3000"
+    }, {
       "id": "b6bd7e20-c1d0-4c4e-ae39-59ab723d9736",
       "comment": "",
       "command": "click",

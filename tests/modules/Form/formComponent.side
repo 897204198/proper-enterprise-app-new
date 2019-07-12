@@ -118,6 +118,13 @@
       ],
       "value": ""
     }, {
+      "id": "f9cb5fe6-2a33-48d2-a8ed-1a8ab49ed7ec",
+      "comment": "",
+      "command": "waitForElementVisible",
+      "target": "//div[@class='ant-modal-content']",
+      "targets": [],
+      "value": "3000"
+    }, {
       "id": "de5752a0-b0b0-48c7-bf5e-852024a5bf72",
       "comment": "",
       "command": "click",
@@ -380,12 +387,26 @@
       ],
       "value": ""
     }, {
+      "id": "7f83fc63-15be-41ed-b3ac-0979bbaaf922",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "74a20f35-c746-4de0-9a28-7052321ead62",
       "comment": "",
       "command": "click",
       "target": "//td[text()='ASD']/following-sibling::td/a/i[@class='anticon anticon-edit']",
       "targets": [],
       "value": ""
+    }, {
+      "id": "5631ba76-1d92-470e-95af-1168e262edcc",
+      "comment": "",
+      "command": "waitForElementVisible",
+      "target": "//div[@class='ant-modal-content']",
+      "targets": [],
+      "value": "3000"
     }, {
       "id": "2a2840dc-2902-419d-8dcb-ee0e1e0bd172",
       "comment": "",
@@ -922,6 +943,13 @@
       ],
       "value": ""
     }, {
+      "id": "0bfb0b57-dae4-4246-8306-797e9f950300",
+      "comment": "",
+      "command": "waitForElementVisible",
+      "target": "//div[@class='ant-modal-content']",
+      "targets": [],
+      "value": "3000"
+    }, {
       "id": "5994a62d-3077-428d-94a9-a0bffeb826f0",
       "comment": "",
       "command": "click",
@@ -1182,6 +1210,13 @@
         ["xpath=//li/a", "xpath:position"],
         ["xpath=//a[contains(.,'表单当前组件设置')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "d20c1fd1-ba1c-4d2c-9b4e-f2d9e537a9b8",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "05becab1-be9b-483c-b1f1-a222713d3a36",
