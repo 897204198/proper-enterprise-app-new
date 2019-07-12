@@ -378,12 +378,12 @@
       ],
       "value": ""
     }, {
-      "id": "45aca86c-6b74-42d6-95d9-3a12fd5c1dd9",
+      "id": "8621920f-9742-4c34-804b-84b7ac5c0a6c",
       "comment": "",
-      "command": "waitForElementVisible",
-      "target": "//tbody",
+      "command": "pause",
+      "target": "2000",
       "targets": [],
-      "value": "3000"
+      "value": ""
     }, {
       "id": "b6bd7e20-c1d0-4c4e-ae39-59ab723d9736",
       "comment": "",
@@ -807,12 +807,12 @@
       ],
       "value": ""
     }, {
-      "id": "db22684b-9e8e-47bd-b15c-3b5438628ecb",
+      "id": "4024560c-64c7-41f4-8d73-9a8006147edf",
       "comment": "",
-      "command": "waitForElementVisible",
-      "target": "//tbody",
+      "command": "pause",
+      "target": "2000",
       "targets": [],
-      "value": "2000"
+      "value": ""
     }, {
       "id": "77d30710-bb4a-4a42-a6c0-fae3908a41e4",
       "comment": "",
