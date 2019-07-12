@@ -1,7 +1,7 @@
 {
   "id": "c4008059-ad6c-4e8e-9c5c-f9303101d8bf",
   "version": "2.0",
-  "name": "fromManager",
+  "name": "formManager",
   "url": "http://192.168.1.111/",
   "tests": [{
     "id": "6c894748-2847-43c4-a3f3-1b530bc0a9e5",
@@ -102,13 +102,6 @@
         ["xpath=//div/button", "xpath:position"],
         ["xpath=//button[contains(.,'新建')]", "xpath:innerText"]
       ],
-      "value": ""
-    }, {
-      "id": "4aa9fba4-c7be-426b-ab91-005cf3330987",
-      "comment": "",
-      "command": "//click",
-      "target": "css=.toolbar___3VYFC > .ant-btn-primary",
-      "targets": [],
       "value": ""
     }, {
       "id": "6907418a-4197-4535-9f1e-5c92222dd953",
@@ -245,6 +238,13 @@
         ["xpath=//div[3]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'确 定')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "247fbb54-2114-491e-938a-8ab3bab3c93c",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "0504d482-6178-4cca-857a-305a8a5802a6",
@@ -444,6 +444,13 @@
       ],
       "value": ""
     }, {
+      "id": "4d4d7a32-82bf-4a23-8c7e-5ee1e1e02af5",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "762e033b-f341-4151-93fe-44d8fcab0470",
       "comment": "",
       "command": "assertText",
@@ -552,9 +559,9 @@
       "id": "7a2dc894-1f36-4c12-b34f-1e6685f5800c",
       "comment": "",
       "command": "click",
-      "target": "css=.toolbar___3VYFC > .ant-btn-primary",
+      "target": "xpath=//button[contains(.,'新建')]",
       "targets": [],
-      "value": "新建"
+      "value": ""
     }, {
       "id": "179eaea4-d99d-4dcd-8454-04d876136c2c",
       "comment": "",
@@ -658,6 +665,13 @@
         ["xpath=//div[3]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'确 定')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "76536310-eb5a-4cf7-b1b7-bcf3a05a445f",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "ca668b32-6ef2-46de-9043-bc81c30ace54",
@@ -857,435 +871,6 @@
       "value": ""
     }]
   }, {
-    "id": "86999a51-5bd4-4ba1-bf59-1c1a0dc2b5cb",
-    "name": "表单管理_表单自定义_导出文件-meiwan",
-    "commands": [{
-      "id": "fc028382-fae7-49d7-b209-59c5a21173e4",
-      "comment": "",
-      "command": "open",
-      "target": "/pea/develop/#/base/login",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "3ffae20d-6ea6-433c-9a85-007f6effe109",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "admin"
-    }, {
-      "id": "79a4e8b1-ad5c-4d6a-98ed-0a789822b917",
-      "comment": "",
-      "command": "type",
-      "target": "id=pwd",
-      "targets": [
-        ["id=pwd", "id"],
-        ["css=#pwd", "css:finder"],
-        ["xpath=//input[@id='pwd']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
-      ],
-      "value": "123456"
-    }, {
-      "id": "dbb10440-cc02-4330-ac28-37142eed2d62",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "29c63a7e-7e5e-4df1-96c6-e86c66cd4af9",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
-      "id": "28589c3a-6325-4b3c-835e-b74d1c76dbfd",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "03e9d604-eb84-44aa-892f-cc833e7721e9",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=.ant-btn",
-      "targets": [
-        ["css=.ant-btn", "css:finder"],
-        ["xpath=//button[@type='submit']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": "登 录"
-    }, {
-      "id": "df8486cc-44b0-479c-94cf-ee8d07495b8b",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-btn",
-      "targets": [
-        ["css=.ant-btn", "css:finder"],
-        ["xpath=//button[@type='submit']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "f24920de-d3ee-4955-8700-81deb916dc82",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "dfb1e302-cdb6-4bbf-be29-4f549dddc7a0",
-      "comment": "",
-      "command": "type",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='表单自定义']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "表单自定义"
-    }, {
-      "id": "71cbd372-02d7-4f18-89dc-5fcfac4d834f",
-      "comment": "",
-      "command": "click",
-      "target": "linkText=表单自定义",
-      "targets": [
-        ["linkText=表单自定义", "linkText"],
-        ["css=.ant-menu-item > a", "css:finder"],
-        ["xpath=//ul[@id='/form$Menu']/li/a", "xpath:idRelative"],
-        ["xpath=//a[contains(@href, '#/form/template')]", "xpath:href"],
-        ["xpath=//li/a", "xpath:position"],
-        ["xpath=//a[contains(.,'表单自定义')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "8cfe0c39-2f37-40ae-ae7d-446682e1d118",
-      "comment": "",
-      "command": "mouseOver",
-      "target": "linkText=表单自定义",
-      "targets": [
-        ["linkText=表单自定义", "linkText"],
-        ["css=.ant-menu-item > a", "css:finder"],
-        ["xpath=//ul[@id='/form$Menu']/li/a", "xpath:idRelative"],
-        ["xpath=//a[contains(@href, '#/form/template')]", "xpath:href"],
-        ["xpath=//li/a", "xpath:position"],
-        ["xpath=//a[contains(.,'表单自定义')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "44e50be5-d844-4546-950c-13da1a4c76f6",
-      "comment": "",
-      "command": "mouseOut",
-      "target": "linkText=表单自定义",
-      "targets": [
-        ["linkText=表单自定义", "linkText"],
-        ["css=.ant-menu-item > a", "css:finder"],
-        ["xpath=//ul[@id='/form$Menu']/li/a", "xpath:idRelative"],
-        ["xpath=//a[contains(@href, '#/form/template')]", "xpath:href"],
-        ["xpath=//li/a", "xpath:position"],
-        ["xpath=//a[contains(.,'表单自定义')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "7233b0cb-91e1-4d4b-891b-ca16bdd5cefd",
-      "comment": "",
-      "command": "mouseOver",
-      "target": "css=.ant-btn-default",
-      "targets": [
-        ["css=.ant-btn-default", "css:finder"],
-        ["xpath=(//button[@type='button'])[3]", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div/button[2]", "xpath:idRelative"],
-        ["xpath=//button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'导入')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "561f399d-6caa-45ed-b0a5-03e2e422afac",
-      "comment": "",
-      "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-download']/..",
-      "targets": [
-        ["css=.ant-tooltip-open svg", "css:finder"]
-      ],
-      "value": ""
-    }, {
-      "id": "80d087de-43da-4eec-b669-e0052b94ad07",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-tooltip-open svg",
-      "targets": [
-        ["css=.ant-tooltip-open svg", "css:finder"]
-      ],
-      "value": ""
-    }, {
-      "id": "17ff85a1-a141-4b21-8899-0e00c701b469",
-      "comment": "有问题",
-      "command": "selectWindow",
-      "target": "title",
-      "targets": [],
-      "value": "另存为"
-    }]
-  }, {
-    "id": "7b0c260c-7e6f-4309-91b7-df906b2c1d5a",
-    "name": "表单管理_表单自定义_导入文件-meiwan",
-    "commands": [{
-      "id": "c6db786b-95e1-4a05-9e7f-b7507db1ff84",
-      "comment": "",
-      "command": "open",
-      "target": "/pea/develop/#/base/login",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "6438eba0-bab8-4bca-b18a-19eab7a92886",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "admin"
-    }, {
-      "id": "b8e04332-ea5b-450b-a348-e5e2a625501c",
-      "comment": "",
-      "command": "type",
-      "target": "id=pwd",
-      "targets": [
-        ["id=pwd", "id"],
-        ["css=#pwd", "css:finder"],
-        ["xpath=//input[@id='pwd']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
-      ],
-      "value": "123456"
-    }, {
-      "id": "ad8d3d7c-8603-4b9c-8790-13d226782dd0",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ba5c9edd-6443-4221-b413-7dd03f9dcba5",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
-      "id": "f5659b12-49ef-4856-8c93-39b4799ee234",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "35c7991d-b88b-4b53-b07c-85506f4373a6",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=.ant-btn",
-      "targets": [
-        ["css=.ant-btn", "css:finder"],
-        ["xpath=//button[@type='submit']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": "登 录"
-    }, {
-      "id": "6bf4391c-a6a4-438a-8337-a240db4b1fec",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-btn",
-      "targets": [
-        ["css=.ant-btn", "css:finder"],
-        ["xpath=//button[@type='submit']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "8bc307ab-4dd9-4731-8519-edabae6fe740",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ba3836d0-22c5-4e3d-9631-062241b3cfc6",
-      "comment": "",
-      "command": "type",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='表单自定义']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "表单自定义"
-    }, {
-      "id": "ebbf58be-ba23-4f6d-84fa-31d10be5dec0",
-      "comment": "",
-      "command": "click",
-      "target": "linkText=表单自定义",
-      "targets": [
-        ["linkText=表单自定义", "linkText"],
-        ["css=.ant-menu-item > a", "css:finder"],
-        ["xpath=//ul[@id='/form$Menu']/li/a", "xpath:idRelative"],
-        ["xpath=//a[contains(@href, '#/form/template')]", "xpath:href"],
-        ["xpath=//li/a", "xpath:position"],
-        ["xpath=//a[contains(.,'表单自定义')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "6812b223-0b72-4d17-a770-3d2d27c91a45",
-      "comment": "",
-      "command": "mouseOver",
-      "target": "linkText=表单自定义",
-      "targets": [
-        ["linkText=表单自定义", "linkText"],
-        ["css=.ant-menu-item > a", "css:finder"],
-        ["xpath=//ul[@id='/form$Menu']/li/a", "xpath:idRelative"],
-        ["xpath=//a[contains(@href, '#/form/template')]", "xpath:href"],
-        ["xpath=//li/a", "xpath:position"],
-        ["xpath=//a[contains(.,'表单自定义')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "51e7ec53-c776-42ad-a81c-807024c68511",
-      "comment": "",
-      "command": "mouseOut",
-      "target": "linkText=表单自定义",
-      "targets": [
-        ["linkText=表单自定义", "linkText"],
-        ["css=.ant-menu-item > a", "css:finder"],
-        ["xpath=//ul[@id='/form$Menu']/li/a", "xpath:idRelative"],
-        ["xpath=//a[contains(@href, '#/form/template')]", "xpath:href"],
-        ["xpath=//li/a", "xpath:position"],
-        ["xpath=//a[contains(.,'表单自定义')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "5c58906a-a686-4afa-bde2-fe4d9fead5bf",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=.ant-btn-default",
-      "targets": [
-        ["css=.ant-btn-default", "css:finder"],
-        ["xpath=(//button[@type='button'])[3]", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div/button[2]", "xpath:idRelative"],
-        ["xpath=//button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'导入')]", "xpath:innerText"]
-      ],
-      "value": "导入"
-    }, {
-      "id": "d5aa098d-bc2b-4a80-b511-3da3612570e5",
-      "comment": "",
-      "command": "click",
-      "target": "xpath=//button[contains(.,'导入')]",
-      "targets": [
-        ["css=.ant-btn-default", "css:finder"],
-        ["xpath=(//button[@type='button'])[3]", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div/button[2]", "xpath:idRelative"],
-        ["xpath=//button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'导入')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "88ea304b-b600-4f33-a347-399aea80dca4",
-      "comment": "",
-      "command": "",
-      "target": "xpath=//input[@id='file']",
-      "targets": [],
-      "value": "D:\\download\\qqq.json"
-    }, {
-      "id": "38170a56-0dbd-4b8e-9b9e-42f8cc73600c",
-      "comment": "",
-      "command": "type",
-      "target": "id=file",
-      "targets": [
-        ["id=file", "id"],
-        ["css=#file", "css:finder"],
-        ["xpath=//input[@id='file']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/input", "xpath:idRelative"],
-        ["xpath=//div/div/input", "xpath:position"]
-      ],
-      "value": "C:\\fakepath\\qqq.json"
-    }, {
-      "id": "53e478d4-120f-4234-95b5-43a3b8b9c144",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=.ant-message-custom-content > span",
-      "targets": [
-        ["css=.ant-message-custom-content > span", "css:finder"],
-        ["xpath=//span/div/div/div/span", "xpath:position"]
-      ],
-      "value": "文件导入成功"
-    }, {
-      "id": "323f2d16-ea83-4a1a-a402-3db56521a16d",
-      "comment": "",
-      "command": "close",
-      "target": "",
-      "targets": [],
-      "value": ""
-    }]
-  }, {
     "id": "84083d34-43fd-4cfa-8c09-1579697be499",
     "name": "表单管理_表单自定义_设计表单_入口",
     "commands": [{
@@ -1384,6 +969,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "0ed9b3c8-ad73-4e4e-a61d-e922c7a91eac",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "fcce2fcf-bd99-4976-b453-596dd491c4d8",
       "comment": "",
       "command": "type",
@@ -1464,7 +1056,7 @@
       "id": "f6b39e9d-1f7f-4573-8828-995aa9cdf5f0",
       "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=th:nth-child(7)", "css:finder"],
         ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/thead/tr/th[7]", "xpath:idRelative"],
@@ -1473,33 +1065,57 @@
       ],
       "value": ""
     }, {
+      "id": "a82d62c5-487f-41de-8a52-de81b1ec2e80",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "fb8638af-1e44-4d25-80a4-30c53e69889a",
       "comment": "",
       "command": "click",
-      "target": "xpath=//a[contains(text(),'编辑')]",
+      "target": "xpath=//div[@class='ant-card-head-title']//a[contains(text(),'编辑')]",
       "targets": [],
       "value": ""
     }, {
       "id": "fa861aac-4665-4fb8-8dba-2dfba8b3195b",
       "comment": "",
       "command": "type",
-      "target": "css=span > div > .ant-input",
+      "target": "xpath=//div[@class='ant-card-head-title']//input",
       "targets": [],
       "value": "表单标题"
     }, {
       "id": "39912273-99a5-4b40-978f-486f5aab847c",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'确 定')]",
+      "target": "xpath=//div[@class='ant-card-head-title']//button[contains(.,'确 定')]",
       "targets": [],
       "value": ""
     }, {
       "id": "c7ab4111-5c78-47cf-b05d-157473d0b478",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'保 存')]",
+      "target": "xpath=//div[@class='ant-modal-footer']//button[contains(.,'保 存')]",
       "targets": [],
       "value": ""
+    }, {
+      "id": "8d78f814-7534-4830-96ee-17b8c63304bb",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9905cf24-d8b1-43ef-a802-dee99fcd1d23",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-custom-content > span",
+      "targets": [
+        ["css=.ant-message-custom-content > span", "css:finder"],
+        ["xpath=//span/div/div/div/span", "xpath:position"]
+      ],
+      "value": "保存成功"
     }, {
       "id": "3697a966-4e65-4c4c-9e94-e2189b43b1da",
       "comment": "",
@@ -1516,6 +1132,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "309842a1-51c4-4ae8-9557-3fd9bdfefa20",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -1599,13 +1222,20 @@
       "id": "cafb5c7c-de48-4efd-a5b6-76453951cc1a",
       "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=th:nth-child(7)", "css:finder"],
         ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/thead/tr/th[7]", "xpath:idRelative"],
         ["xpath=//th[7]", "xpath:position"],
         ["xpath=//th[contains(.,'操作')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "2e74fbbd-0750-48e2-a331-40f9c4461956",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "57b538d9-5c30-4cd4-b5fa-ac55eae4af08",
@@ -1618,18 +1248,6 @@
         ["xpath=//label[contains(.,'姓名12')]", "xpath:innerText"]
       ],
       "value": ""
-    }, {
-      "id": "33c1fee7-f5e4-48dd-84d5-3a043ddbfb23",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=li:nth-child(1) > .ant-btn",
-      "targets": [
-        ["css=li:nth-child(1) > .ant-btn", "css:finder"],
-        ["xpath=(//button[@type='button'])[4]", "xpath:attributes"],
-        ["xpath=//li/button", "xpath:position"],
-        ["xpath=//button[contains(.,'输入框')]", "xpath:innerText"]
-      ],
-      "value": "输入框"
     }, {
       "id": "a04a360b-d376-47e3-b19b-fa9c4b977bad",
       "comment": "",
@@ -1657,7 +1275,7 @@
       "id": "ef8da3d2-5b3b-46f3-9980-9572679977ee",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='输入框']",
+      "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [
         ["id=aqEXYci75R_edit_label", "id"],
         ["css=#aqEXYci75R_edit_label", "css:finder"],
@@ -1665,6 +1283,13 @@
         ["xpath=//form/div/div/div/div[2]/div/span/input", "xpath:position"]
       ],
       "value": "姓名"
+    }, {
+      "id": "dfcf9ff4-dc00-4492-bc82-211e9f1f8f8e",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "8126df8f-42af-47cb-8f86-e8128dac3671",
       "comment": "",
@@ -1681,7 +1306,7 @@
       "id": "8235ce08-ed81-495a-8bf1-c437e9d255f3",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='']",
+      "target": "xpath=//label[contains(.,'占位符')]/../..//input",
       "targets": [
         ["id=aqEXYci75R_edit_props_placeholder", "id"],
         ["css=#aqEXYci75R_edit_props_placeholder", "css:finder"],
@@ -1689,6 +1314,13 @@
         ["xpath=//div[2]/div/div/div[2]/div/span/input", "xpath:position"]
       ],
       "value": "请输入姓名"
+    }, {
+      "id": "9215b6e7-b69d-497e-8cbf-02509e55d601",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "9c0f4a64-b6af-4ea9-8b9f-749d2d4c75bb",
       "comment": "",
@@ -1703,7 +1335,7 @@
       "id": "c752814d-0825-48ea-bcf8-ba83c8f0860b",
       "comment": "",
       "command": "type",
-      "target": "xpath=//label[@title='name']/../following-sibling::div//input",
+      "target": "xpath=//label[contains(.,'name')]/../..//input",
       "targets": [
         ["id=name_edit_name", "id"],
         ["css=#name_edit_name", "css:finder"],
@@ -1712,16 +1344,30 @@
       ],
       "value": "name"
     }, {
+      "id": "7f129c06-b25d-44f7-a721-a2097afda411",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "58ad441d-4ccc-4784-b3d7-a03bdc9cd36e",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'保 存')]",
+      "target": "xpath=//div[@class='ant-modal-footer']//button[contains(.,'保 存')]",
       "targets": [
         ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
         ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
         ["xpath=//div[2]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "37eac0eb-14d9-441f-a4c4-9a38b3be3d29",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "2b3209c5-0bca-4d2d-8b5e-851857e60ba5",
@@ -1742,6 +1388,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5289fc1c-5847-4fe5-94f0-ede2b94044e7",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -1771,30 +1424,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "c2df960a-4e96-41ab-87b0-5ad1119ae3dd",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "eb4db716-e859-4347-be2a-0253e7e14e45",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "becdbe9f-b508-48b5-ad6f-237f7eee8adb",
       "comment": "",
       "command": "click",
@@ -1805,40 +1434,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "3c22602c-17d4-45f1-be52-fb1783f6595e",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "b2ee3a31-704e-4e54-a746-bb6463747a5f",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ba761870-ddc5-4f99-8749-f43617964f42",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -1881,9 +1476,9 @@
       "value": ""
     }, {
       "id": "56a47b34-bc7e-4e12-8b73-032b0ff88943",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
@@ -1905,7 +1500,7 @@
       "command": "click",
       "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [],
-      "value": "姓名"
+      "value": ""
     }, {
       "id": "500da743-c001-4809-a589-0f362931c2b4",
       "comment": "",
@@ -1914,22 +1509,24 @@
       "targets": [],
       "value": "用户名"
     }, {
+      "id": "4a17eda4-e273-47e3-9669-ebf1c5bcfbbc",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "45af8331-6698-4868-9615-f1cd5071a53f",
       "comment": "",
       "command": "click",
-      "target": "xpath=//label[contains(.,'占位符')]",
-      "targets": [
-        ["id=name_edit_props_placeholder", "id"],
-        ["css=#name_edit_props_placeholder", "css:finder"],
-        ["xpath=//input[@id='name_edit_props_placeholder']", "xpath:attributes"],
-        ["xpath=//div[2]/div/div/div[2]/div/span/input", "xpath:position"]
-      ],
-      "value": "请输入姓名"
+      "target": "xpath=//label[contains(.,'占位符')]/../..//input",
+      "targets": [],
+      "value": ""
     }, {
       "id": "68493c42-cba1-4f90-9dd1-808f166d0375",
       "comment": "",
       "command": "type",
-      "target": "xpath=//label[contains(.,'占位符')]",
+      "target": "xpath=//label[contains(.,'占位符')]/../..//input",
       "targets": [
         ["id=name_edit_props_placeholder", "id"],
         ["css=#name_edit_props_placeholder", "css:finder"],
@@ -1937,6 +1534,13 @@
         ["xpath=//div[2]/div/div/div[2]/div/span/input", "xpath:position"]
       ],
       "value": "请输入用户名"
+    }, {
+      "id": "622cf6c3-595f-420a-b5f5-cef5c58fc2a3",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "7ea35093-f5b8-4d3e-9f39-cec2e0005a63",
       "comment": "",
@@ -1948,7 +1552,7 @@
         ["xpath=//input[@id='name_edit_name']", "xpath:attributes"],
         ["xpath=//div[3]/div/div/div[2]/div/span/input", "xpath:position"]
       ],
-      "value": "name"
+      "value": ""
     }, {
       "id": "d984d6e0-d13d-438e-a290-d9a68fb9ef78",
       "comment": "",
@@ -1957,28 +1561,30 @@
       "targets": [],
       "value": "username"
     }, {
-      "id": "6ebc965e-5ea7-4738-9da4-ff58dda75188",
+      "id": "b9acf13d-9dca-4c56-a47d-14a9fca617a3",
       "comment": "",
-      "command": "assertText",
-      "target": "css=.ant-btn-primary:nth-child(2)",
-      "targets": [
-        ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
-        ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
-        ["xpath=//div[2]/div/button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
-      ],
-      "value": "保 存"
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "a85d4b71-4853-47ec-b7e9-50359b492ef4",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'保 存')]",
+      "target": "xpath=//div[@class='ant-modal-footer']//button[contains(.,'保 存')]",
       "targets": [
         ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
         ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
         ["xpath=//div[2]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "0baa2760-a815-4999-bc53-0303838aeacd",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "3a559e8a-4c22-48ed-984a-a414c76e9909",
@@ -2009,6 +1615,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "5a9a967b-03a2-439c-b332-cea73a75c2e2",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "1b4f99d9-3780-4548-b3e4-f53afa582c0d",
       "comment": "",
       "command": "type",
@@ -2035,30 +1648,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "8ec52c52-fbe3-454e-ab7f-b3faa9fb6413",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "a35a7099-3ad4-4072-8371-2edb25a7ff25",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "a22b930c-52c3-4651-be9b-8beeac1935a4",
       "comment": "",
       "command": "click",
@@ -2069,40 +1658,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "8d66967c-35a6-4c9e-ae95-5627542b77f6",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ac291bad-8f4d-4263-8e68-2ae007664c48",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "8861654c-24e4-4740-a8b7-b62c26d61277",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -2145,12 +1700,19 @@
       "value": ""
     }, {
       "id": "32cb4ba0-d7c6-4b4b-8fc0-6cc9d772d1a8",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "f151c6ba-bb03-42cb-8751-0ca7df6016f5",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "39a23d4f-2990-4e5b-8862-981a658ce021",
@@ -2164,7 +1726,7 @@
       "value": ""
     }, {
       "id": "d610f8a9-48dd-40d0-ae72-ad36dea2bd0f",
-      "comment": "点击复制按钮",
+      "comment": "",
       "command": "click",
       "target": "xpath=//label[@title='用户名']/../../following-sibling::div[@class='ant-form-item-action']/i[@class='anticon anticon-copy']",
       "targets": [
@@ -2172,41 +1734,29 @@
       ],
       "value": ""
     }, {
-      "id": "5c370285-9895-49ae-85c3-b43523c66a44",
-      "comment": "验证是否有两个组件出现",
-      "command": "assertElementPresent",
-      "target": "xpath=//label[@title='用户名' and @for != 'username']",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "c85b2a5a-56d7-4e7e-b667-d52720da60ed",
-      "comment": "",
-      "command": "assertText",
-      "target": "xpath=//button[contains(.,'保 存')]",
-      "targets": [
-        ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
-        ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
-        ["xpath=//div[2]/div/button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
-      ],
-      "value": "保 存"
-    }, {
       "id": "4964b436-d59a-47bb-940f-ba9c305d20f6",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'保 存')]",
+      "target": "xpath=//div[@class='ant-modal-footer']//button[contains(.,'保 存')]",
       "targets": [
         ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
         ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
         ["xpath=//div[2]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "4d2af911-f26b-46e5-a1ed-5351d91005d5",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "d55d358d-4638-4e4c-af1d-a9fa6b9192a4",
       "comment": "",
       "command": "assertText",
-      "target": "css=.ant-message-custom-content",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [
         ["css=.ant-message-custom-content", "css:finder"],
         ["xpath=//div[5]/div/span/div/div/div", "xpath:position"]
@@ -2228,6 +1778,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "65c3112e-6b9d-4bbd-85d2-4f53a7c23167",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -2257,30 +1814,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "dd910cbc-fa64-48f5-8ae1-19c600ae6b8d",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "1385794f-3a63-46a2-a71a-c97c73636f5d",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "dd638729-536f-45f3-ad0c-7ee3fbacee72",
       "comment": "",
       "command": "click",
@@ -2291,40 +1824,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "43ae53f9-5ad4-4828-806c-2786499a0b18",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "a7b6cad9-67b3-4f72-a113-4a5ae4fcdd11",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "15fc1260-8862-4f2f-936e-e76e58f0a99a",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -2367,16 +1866,23 @@
       "value": ""
     }, {
       "id": "4026d914-c2a9-4176-8c05-5e8d9f5f633e",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
       "value": ""
     }, {
+      "id": "a207f316-fa2a-4a41-86c5-d3e599e88b3f",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "a0925dac-5dd6-418e-b9f9-7e1f3c6b50f2",
-      "comment": "点击用户名没有name",
+      "comment": "",
       "command": "click",
       "target": "xpath=//label[@title='用户名' and @for != 'username']",
       "targets": [
@@ -2386,7 +1892,7 @@
       "value": ""
     }, {
       "id": "065983a9-d815-4c85-90bc-d60b56aaacec",
-      "comment": "点击删除",
+      "comment": "",
       "command": "click",
       "target": "xpath=//label[@title='用户名' and @for != 'username']/../../following-sibling::div[@class='ant-form-item-action']/i[@class='anticon anticon-delete']",
       "targets": [],
@@ -2406,28 +1912,23 @@
       "targets": [],
       "value": "1"
     }, {
-      "id": "736b256d-5c57-400f-b4c4-21338dda8974",
-      "comment": "",
-      "command": "assertText",
-      "target": "xpath=//button[contains(.,'保 存')]",
-      "targets": [
-        ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
-        ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
-        ["xpath=//div[2]/div/button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
-      ],
-      "value": "保 存"
-    }, {
       "id": "0ed04016-2471-4a29-a5fe-a9b0600483c1",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'保 存')]",
+      "target": "xpath=//div[@class='ant-modal-footer']//button[contains(.,'保 存')]",
       "targets": [
         ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
         ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
         ["xpath=//div[2]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "a40e6e8c-0efd-4ed7-84d1-97ad295c5eb7",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "b0459e33-7aab-4140-ab65-0a6c8c0da2aa",
@@ -2458,6 +1959,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "14baa43a-6886-4b7f-a962-7fb5955380f4",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "c23164c5-76c7-4bae-aead-fb69a1ed9167",
       "comment": "",
       "command": "type",
@@ -2484,30 +1992,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "ca244ce3-dc68-4f3d-a4db-2bbefd6e7988",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "665525f7-cae8-4bda-b647-c3dae1671688",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "737cfdee-b121-4cea-aca8-0eee460be100",
       "comment": "",
       "command": "click",
@@ -2518,40 +2002,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "bb1ffd22-15e8-4802-976f-bc3a6b3bc6f7",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "2bca294e-84e4-46f1-ae7b-f4edcce92337",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "6bd79325-9de8-421a-8b3b-c01b32447cd5",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -2594,24 +2044,20 @@
       "value": ""
     }, {
       "id": "b67e8122-0623-4745-bb23-a9118290bb2a",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
       "value": ""
     }, {
-      "id": "36e32453-ba3c-46a6-90ad-43dffabc0317",
+      "id": "fea21262-7edb-4855-9144-896e408af3e3",
       "comment": "",
-      "command": "assertText",
-      "target": "xpath=//span[contains(.,'纵向布局')]",
-      "targets": [
-        ["css=.ant-card-bordered .ant-radio-button-wrapper:nth-child(2) > span:nth-child(2)", "css:finder"],
-        ["xpath=//label[2]/span[2]", "xpath:position"],
-        ["xpath=//span[contains(.,'纵向布局')]", "xpath:innerText"]
-      ],
-      "value": "纵向布局"
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "1759d398-e34c-4fd2-a6b1-e3b286a59f90",
       "comment": "",
@@ -2624,8 +2070,15 @@
       ],
       "value": ""
     }, {
+      "id": "70f6e1ff-04ec-4c07-9763-04ae3c748b10",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "32f597b8-6504-402b-8275-051e5a767bc1",
-      "comment": "纵向布局class是否存在",
+      "comment": "",
       "command": "assertElementPresent",
       "target": "xpath=//form[@class='ant-form ant-form-vertical']",
       "targets": [],
@@ -2638,35 +2091,37 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "b76b1111-46cf-47e6-845b-d51cf2818c7a",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "8ed249ae-ce5b-4041-acb9-903cd1d2b81c",
-      "comment": "验证是否存在横向布局",
+      "comment": "",
       "command": "assertElementPresent",
       "target": "xpath=//form[@class='ant-form ant-form-horizontal']",
       "targets": [],
       "value": ""
     }, {
-      "id": "9f4e19e6-a55d-4b61-bd2f-6f425b24c957",
-      "comment": "",
-      "command": "assertText",
-      "target": "xpath=//button[contains(.,'保 存')]",
-      "targets": [
-        ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
-        ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
-        ["xpath=//div[2]/div/button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
-      ],
-      "value": "保 存"
-    }, {
       "id": "ea2e5527-c1a1-4b27-b4cc-d3cce7d63341",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'保 存')]",
+      "target": "xpath=//div[@class='ant-modal-footer']//button[contains(.,'保 存')]",
       "targets": [
         ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
         ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
         ["xpath=//div[2]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "825822d3-4fd3-4e34-bfb6-f03f50ee70ab",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "5b88b59b-1682-4c4d-85e3-b3ff037c8374",
@@ -2969,6 +2424,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "965e98ef-c6d9-4a68-8efe-be8f65e4cd44",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "06eedcd0-fde2-4a31-a5b1-44cd339faf65",
       "comment": "",
       "command": "type",
@@ -2993,31 +2455,7 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
         ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
       ],
-      "value": "12345"
-    }, {
-      "id": "bff74d8b-e050-4695-b43b-9a1e80d28518",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "2746c74e-c6b7-45f2-829d-f170af60575e",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
+      "value": "123456"
     }, {
       "id": "49fb4a04-67aa-4fdd-94c5-908927d39131",
       "comment": "",
@@ -3029,40 +2467,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "9d2e3ce0-667e-441e-8032-44eede311bef",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "b91dc605-14f5-43f2-821e-2598970acf41",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "b3b86feb-82df-4e72-80a1-b55397deda30",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -3105,12 +2509,19 @@
       "value": ""
     }, {
       "id": "5b20c154-bb12-4aad-b880-b4102a7818a5",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
       "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "be3fcf38-d44b-461b-8251-fdc8c8e4fd1b",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "498874d5-c37c-4345-aa42-f3e86b688afb",
@@ -3152,7 +2563,7 @@
       "id": "c15bf7e5-b9a8-44bd-91fc-651f9ac36ed0",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='日期选择']",
+      "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [
         ["id=NE0crVTPlS_edit_label", "id"],
         ["css=#NE0crVTPlS_edit_label", "css:finder"],
@@ -3224,6 +2635,13 @@
       ],
       "value": ""
     }, {
+      "id": "864f60eb-c453-442c-97d7-8ab7e40b1923",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "9f101d10-0119-4f9b-9efd-a13429455e05",
       "comment": "",
       "command": "assertText",
@@ -3249,6 +2667,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "74606cf7-edb1-4a91-8ff0-55cda1607344",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -3278,30 +2703,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "0b9bfe13-4213-4b8e-8b2f-e56c62263e7a",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "4cdc6e75-0510-4720-9c35-de3ad4c1fbd5",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "03af8225-b6fc-4ac2-957a-e2d57342ed54",
       "comment": "",
       "command": "click",
@@ -3312,40 +2713,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "3ca493f6-7054-4d5b-aa79-80bea442efce",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "e7904638-5e5b-47bb-a576-91fab4314434",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "7dea19b4-29de-4103-86df-e0858911f0b2",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -3388,12 +2755,19 @@
       "value": ""
     }, {
       "id": "652068f4-a3ab-41ca-b1e7-d32e25ad1d66",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
       "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "23ebcd7c-f79b-4231-b905-fa861b0d800d",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "1e1a56a3-7614-43ca-accb-816da66a3028",
@@ -3435,7 +2809,7 @@
       "id": "097c3ba6-3b11-401e-b327-c5810fd1e330",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='文本域']",
+      "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [
         ["id=NE0crVTPlS_edit_label", "id"],
         ["css=#NE0crVTPlS_edit_label", "css:finder"],
@@ -3507,6 +2881,13 @@
       ],
       "value": ""
     }, {
+      "id": "fd50e818-52f0-4478-9c41-d809082dc8a9",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "527393a3-02cd-4a0c-a9c8-c972021b996b",
       "comment": "",
       "command": "assertText",
@@ -3532,6 +2913,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6c1113c0-f5dd-446c-87b9-469ce8b78d99",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -3561,30 +2949,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "62420a84-5a98-45c3-b20f-6361632d867a",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "7354904d-b20f-4fcb-aec5-5ef9b689cfcb",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "94c09e63-8132-49bb-812c-1a135f016572",
       "comment": "",
       "command": "click",
@@ -3595,40 +2959,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "0a9d9835-33ca-42f5-80c3-3671391521bb",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "1d1a6226-d005-4593-93a1-dddae933e059",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "0c6ae109-f074-4a71-9771-4d87633a262e",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -3671,12 +3001,19 @@
       "value": ""
     }, {
       "id": "04f74276-6895-4444-b844-60fd8faebe5a",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "86b5b273-035a-4a11-b30e-31a0b1950e64",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "65f854a7-4a58-42a6-853a-1279b2e9b293",
@@ -3790,6 +3127,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "740083be-7b8e-4a6c-aeb8-e35be255bba1",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "3302ce54-1381-47f5-853e-6c36e737c25f",
       "comment": "",
       "command": "assertText",
@@ -3815,6 +3159,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9ba2dbc4-167d-4c82-98b1-d922ce12269d",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -3844,30 +3195,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "fc777d90-e864-4f32-8272-2c5672e2a9f5",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "8e90e913-9159-45c9-9242-814e72e93c30",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "4c981d71-0927-4a6e-ae90-fa55b3667f1b",
       "comment": "",
       "command": "click",
@@ -3878,40 +3205,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "5582ddb7-79e6-4d88-ae1b-c8a19a29b050",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "cc770b34-ea9c-48a5-ae35-596d7480d9d1",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "9d50a404-e490-4bff-920e-1de9f382e11a",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -3954,12 +3247,19 @@
       "value": ""
     }, {
       "id": "d592fcd0-5b61-42a3-8dc9-06c15aac7bb1",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "92f90ce8-1998-4f7f-92cb-e36c2befe80c",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "352edc75-c5e8-4850-bddf-3de00b80d86a",
@@ -4073,6 +3373,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "ce0ed2ab-ba20-478b-8ce1-8787d628d221",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "2e704832-0763-40d9-a4c8-053899bfbf7e",
       "comment": "",
       "command": "assertText",
@@ -4098,6 +3405,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "4e55d7b0-f78a-4a4e-9695-d270e36bb982",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -4127,30 +3441,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "ae172fdc-bf39-4160-aaf6-27361ead3f96",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "491bc959-1779-415e-a67b-d0b425de3af5",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "f55baa2a-e066-4f76-b2fe-ba1d4472a3e7",
       "comment": "",
       "command": "click",
@@ -4161,40 +3451,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "8f44f7e4-4adb-41ca-af9f-dec96ee229bd",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ec2cc52c-b423-4fd8-8f59-d75ac675b236",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "2d6a5fb9-ae53-4d32-b551-f30eb0813225",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -4237,12 +3493,19 @@
       "value": ""
     }, {
       "id": "b51d63c0-5701-4b31-9342-f79d9ab194fb",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
-      "target": "//td[2][text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
+      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "6275dab0-1f90-4733-a3c9-b8586f29a62e",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "35dc18dd-bb6a-4a09-aa20-cc4e7976ab1b",
@@ -4370,6 +3633,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "50bdf4cf-746b-4f63-8807-bc7dee9098e7",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "76a6809d-ea5f-4506-b77a-a59abd772a25",
       "comment": "",
       "command": "assertText",
@@ -4395,6 +3665,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "dfdada51-d86a-4e5b-90d4-15e256e38f0d",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -4424,30 +3701,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "a360f254-3b36-456d-ba41-0aa802668dff",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ba997849-aa24-4962-85a1-1c86ca6a6034",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "b38c3efe-f371-441f-8cd9-62dd880e4813",
       "comment": "",
       "command": "click",
@@ -4458,40 +3711,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "9a379197-ad0c-49de-b7b2-02ea2d44f5d6",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "9ef11765-dc8d-4a7f-9e0c-fbe22b1156dc",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "8578aa16-a31c-44f1-89cf-fe4555ed1bcb",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -4534,12 +3753,19 @@
       "value": ""
     }, {
       "id": "7e3ab759-67c9-4fb5-8ab3-f5aa6426b693",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
       "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "35aaff0e-970e-45f9-a6c8-0789228e3216",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "345bb19b-c242-4112-a015-dea0128c94dc",
@@ -4571,17 +3797,10 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "fc391435-8c64-4863-8c37-31063d9926d5",
-      "comment": "",
-      "command": "//pause",
-      "target": "",
-      "targets": [],
-      "value": "3000"
-    }, {
       "id": "7f9beb19-7c64-4da6-81be-7b43e05aeee9",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='数字输入框']",
+      "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [
         ["id=NE0crVTPlS_edit_label", "id"],
         ["css=#NE0crVTPlS_edit_label", "css:finder"],
@@ -4653,6 +3872,13 @@
       ],
       "value": ""
     }, {
+      "id": "3cdf5f19-7c27-4ea7-915b-4a273b4cf913",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "4a1a5f07-cff5-4df7-9094-77b10a7c839c",
       "comment": "",
       "command": "assertText",
@@ -4678,6 +3904,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "52aa94a6-6490-455c-9285-fee7da46ed67",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -4707,30 +3940,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "f9bfb1b3-fed6-41cd-a7e2-fcd8eaad67e1",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "b212c4d8-bdd8-4774-ad55-c11771540585",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "e1e7e393-e4b4-4855-92ed-59dbc126412f",
       "comment": "",
       "command": "click",
@@ -4741,40 +3950,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "31b03d96-7cf8-418d-ad98-224cab691d7a",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "8ee793e5-ebba-42e9-b203-6bfa93bd9564",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ad2afb6c-0383-4fc5-8842-69e86dfd91d7",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -4817,12 +3992,19 @@
       "value": ""
     }, {
       "id": "ba8c69f2-81b0-4f50-86c6-330e0548ca24",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
       "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "86d96aff-16ab-436b-a180-52a57cd0c01e",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "cb9a2779-67d9-46cf-91fc-b03c5c628e16",
@@ -4864,7 +4046,7 @@
       "id": "8af9a412-d98d-4fe5-936a-8aab6777cbac",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='当前登录人']",
+      "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [
         ["id=NE0crVTPlS_edit_label", "id"],
         ["css=#NE0crVTPlS_edit_label", "css:finder"],
@@ -4908,6 +4090,13 @@
       ],
       "value": ""
     }, {
+      "id": "e1e4c4a4-865a-474c-957d-8ec2dcd8d9e0",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "814703de-c75d-4946-9ad0-95f0120adb3a",
       "comment": "",
       "command": "assertText",
@@ -4926,275 +4115,6 @@
       "value": ""
     }]
   }, {
-    "id": "1a9baec1-a9d7-476d-9fc1-deb14b774de5",
-    "name": "表单管理_表单自定义_设计表单_组件_上传图片",
-    "commands": [{
-      "id": "1f0e62a1-220d-46ba-b5b1-35b4a625a2cc",
-      "comment": "",
-      "command": "open",
-      "target": "/pea/develop/#/base/login",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "3829d192-defd-4c44-9f88-b326672cab77",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
-      "id": "95b69ba9-b515-4b1d-9bac-76fdd41ba664",
-      "comment": "",
-      "command": "type",
-      "target": "id=pwd",
-      "targets": [
-        ["id=pwd", "id"],
-        ["css=#pwd", "css:finder"],
-        ["xpath=//input[@id='pwd']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
-      ],
-      "value": "123456"
-    }, {
-      "id": "39adbf96-47e4-4393-8fcd-6060815f9a87",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "4ecf3e91-ee28-48dc-b16c-95913f282862",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
-      "id": "cb6b6218-74b0-4d0e-8167-88fd277d2c1e",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-btn",
-      "targets": [
-        ["css=.ant-btn", "css:finder"],
-        ["xpath=//button[@type='submit']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "6440b6bb-8b8c-4f23-a634-7ee3bd66489e",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "4a4eae1e-3ebf-4df6-bb8e-d00bd0c33365",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "28ac2aaf-b09f-40ac-9c22-b40794d74ee8",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "82b8e71b-3eb1-4a49-88a9-6d33784d8185",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "d606bb7e-83b0-4bd5-a3bb-06196aa1578e",
-      "comment": "",
-      "command": "type",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='表单自定义']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "表单自定义"
-    }, {
-      "id": "2b5c5525-134a-4a74-877d-14b54e622e0a",
-      "comment": "",
-      "command": "click",
-      "target": "linkText=表单自定义",
-      "targets": [
-        ["linkText=表单自定义", "linkText"],
-        ["css=.ant-menu-item > a", "css:finder"],
-        ["xpath=//ul[@id='/form$Menu']/li/a", "xpath:idRelative"],
-        ["xpath=//a[contains(@href, '#/form/template')]", "xpath:href"],
-        ["xpath=//li/a", "xpath:position"],
-        ["xpath=//a[contains(.,'表单自定义')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "013ff29b-4bdc-4041-9bd9-2fa9fe4d9256",
-      "comment": "点击表单设计按钮",
-      "command": "click",
-      "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
-      "targets": [
-        ["css=.ant-tooltip-open svg", "css:finder"]
-      ],
-      "value": ""
-    }, {
-      "id": "3b7a5bc5-4bcd-40cc-9b8a-cf1b66f6d44a",
-      "comment": "",
-      "command": "click",
-      "target": "xpath=//button[contains(.,'上传图片')]",
-      "targets": [
-        ["css=li:nth-child(1) > .ant-btn", "css:finder"],
-        ["xpath=(//button[@type='button'])[4]", "xpath:attributes"],
-        ["xpath=//li/button", "xpath:position"],
-        ["xpath=//button[contains(.,'输入框')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "055bb526-92b0-431a-9898-290671e83937",
-      "comment": "",
-      "command": "click",
-      "target": "xpath=//label[@title='上传图片']",
-      "targets": [
-        ["css=.ant-form > div:nth-child(1) .ant-row", "css:finder"],
-        ["xpath=//div[3]/div/div/div[2]/div/div/div/form/div/div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "ac1ff47e-35a8-4beb-bb39-52bfebe9a288",
-      "comment": "",
-      "command": "click",
-      "target": "xpath=//label[contains(.,'标题')]",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "91d8a827-d61e-4bb1-8214-587d5932cbdd",
-      "comment": "",
-      "command": "//pause",
-      "target": "",
-      "targets": [],
-      "value": "3000"
-    }, {
-      "id": "07460465-3cf2-4cc3-baab-1bf83df8a728",
-      "comment": "",
-      "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='上传图片']",
-      "targets": [
-        ["id=NE0crVTPlS_edit_label", "id"],
-        ["css=#NE0crVTPlS_edit_label", "css:finder"],
-        ["xpath=//input[@id='NE0crVTPlS_edit_label']", "xpath:attributes"],
-        ["xpath=//div[2]/div/span/input", "xpath:position"]
-      ],
-      "value": "头像图片"
-    }, {
-      "id": "55e0d05e-0b48-4f7e-87aa-a171fa2c40e6",
-      "comment": "",
-      "command": "assertText",
-      "target": "xpath=//label[contains(.,'头像图片')]",
-      "targets": [
-        ["css=.active label", "css:finder"],
-        ["xpath=//form/div/div/div/div/div/label", "xpath:position"],
-        ["xpath=//label[contains(.,'aaa')]", "xpath:innerText"]
-      ],
-      "value": "头像图片"
-    }, {
-      "id": "3843a241-da76-435e-a3bb-db762033d2e6",
-      "comment": "",
-      "command": "click",
-      "target": "xpath=//label[contains(.,'name')]/../..//input",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "66161345-6dbf-4413-80b3-5632457fce5e",
-      "comment": "",
-      "command": "type",
-      "target": "xpath=//label[contains(.,'name')]/../..//input",
-      "targets": [],
-      "value": "imgUrl"
-    }, {
-      "id": "68f718fb-6dfa-4de1-9af1-beb4c410ae74",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=.ant-btn-primary:nth-child(2)",
-      "targets": [
-        ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
-        ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
-        ["xpath=//div[2]/div/button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
-      ],
-      "value": "保 存"
-    }, {
-      "id": "10cdbb7d-18a9-4a06-8f20-e0e5ff06fe19",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-btn-primary:nth-child(2)",
-      "targets": [
-        ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
-        ["xpath=(//button[@type='button'])[22]", "xpath:attributes"],
-        ["xpath=//div[2]/div/button[2]", "xpath:position"],
-        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "48e73422-d280-49c4-b475-e758f1e56734",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=.ant-message-custom-content > span",
-      "targets": [
-        ["css=.ant-message-custom-content > span", "css:finder"],
-        ["xpath=//span/div/div/div/span", "xpath:position"]
-      ],
-      "value": "保存成功"
-    }, {
-      "id": "c461b968-bfd0-487a-a303-ec7182496633",
-      "comment": "",
-      "command": "close",
-      "target": "",
-      "targets": [],
-      "value": ""
-    }]
-  }, {
     "id": "f1857a2b-c398-4345-ad89-3efa05e6bd0e",
     "name": "表单管理_表单自定义_设计表单_组件_文本组件",
     "commands": [{
@@ -5202,6 +4122,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b65c3cd2-0c89-4a9a-bca7-5daef28f1d24",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -5231,30 +4158,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "dc03b1e6-0b60-4f1e-a2aa-34edb4ef8193",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "87067a3f-7dd8-4853-b1ac-b099a14e0fcf",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "a78cf563-3e82-4995-a562-bf5df847397e",
       "comment": "",
       "command": "click",
@@ -5265,40 +4168,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "3538b3e6-f5e5-4b35-9b56-5a4fffe0d713",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "dc20c4a3-38bb-4819-a83d-0bdf14d7ca24",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "a2577122-e005-4525-a073-688aacc16174",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -5341,12 +4210,19 @@
       "value": ""
     }, {
       "id": "c65d963d-23d9-42fe-a7ac-4c709d87532a",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
       "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "81861bed-5ace-4004-b59e-054af60e4093",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "08276c85-0e17-40bc-b53d-7fb9bf4af3f8",
@@ -5378,17 +4254,10 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "f6b7cca1-7112-44a8-a29d-49e2eab5eca3",
-      "comment": "",
-      "command": "//pause",
-      "target": "",
-      "targets": [],
-      "value": "3000"
-    }, {
       "id": "00ac6947-b86e-4413-a470-79ee57d69426",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='文本组件']",
+      "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [
         ["id=NE0crVTPlS_edit_label", "id"],
         ["css=#NE0crVTPlS_edit_label", "css:finder"],
@@ -5436,13 +4305,6 @@
       "targets": [],
       "value": "我豆腐干豆腐<a href=\"http://www.baidu.com\">baidu</a>大范甘迪"
     }, {
-      "id": "de723b65-1717-44d6-9be6-b07e14c6959b",
-      "comment": "",
-      "command": "assertText",
-      "target": "xpath=//label[contains(.,'文本组件')]/../following-sibling::div/div/span/div/div",
-      "targets": [],
-      "value": "我豆腐干豆腐<a href=\"http://www.baidu.com\">baidu</a>大范甘迪"
-    }, {
       "id": "508bdb4b-7489-45fc-b027-2207497ae1a3",
       "comment": "",
       "command": "assertText",
@@ -5454,6 +4316,13 @@
       "comment": "",
       "command": "click",
       "target": "css=.ant-btn-primary:nth-child(2)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0ad6647e-3cfe-4476-8275-45f7433e8d07",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -5479,6 +4348,13 @@
       "comment": "",
       "command": "open",
       "target": "/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "18ad80ac-b264-4c2a-afbe-099fad1ffd48",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -5508,30 +4384,6 @@
       ],
       "value": "123456"
     }, {
-      "id": "e35fb90d-2bb0-43f7-9c8e-00ed3a0d1adf",
-      "comment": "",
-      "command": "click",
-      "target": "css=.container___dgT4x",
-      "targets": [
-        ["css=.container___dgT4x", "css:finder"],
-        ["xpath=//div[@id='root']/div", "xpath:idRelative"],
-        ["xpath=//div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "9f8d250c-7543-440c-9f98-034c137dbecb",
-      "comment": "",
-      "command": "type",
-      "target": "id=username",
-      "targets": [
-        ["id=username", "id"],
-        ["css=#username", "css:finder"],
-        ["xpath=//input[@id='username']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ceshi"
-    }, {
       "id": "63ad4be9-1c54-4b0f-8537-69bfa1221668",
       "comment": "",
       "command": "click",
@@ -5542,40 +4394,6 @@
         ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "f4653f3d-a4ac-40a4-91af-ebf8e60afd00",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "e52e9b74-33b6-4a5f-b9b3-7721f64d3c99",
-      "comment": "",
-      "command": "click",
-      "target": "css=.ant-input-search > .ant-input",
-      "targets": [
-        ["css=.ant-input-search > .ant-input", "css:finder"],
-        ["xpath=//input[@value='自定义表单']", "xpath:attributes"],
-        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "bc8bb078-4cf0-441f-92ca-5659687ab8eb",
-      "comment": "",
-      "command": "click",
-      "target": "css=html",
-      "targets": [
-        ["css=html", "css:finder"],
-        ["xpath=//html", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -5618,12 +4436,19 @@
       "value": ""
     }, {
       "id": "fde7358d-95bd-4c10-ad5e-83f778c39b59",
-      "comment": "点击表单设计按钮",
+      "comment": "",
       "command": "click",
       "target": "//td[2][text()='ccc111']/following-sibling::td/a/i[@class='anticon anticon-layout']/..",
       "targets": [
         ["css=.ant-tooltip-open svg", "css:finder"]
       ],
+      "value": ""
+    }, {
+      "id": "5ca1222b-380b-45af-b157-8e8ea681f67d",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "92657540-bc2f-46f6-8415-fe8333435ed5",
@@ -5655,17 +4480,10 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "05e172d7-1947-4092-a3b5-d71c0bbe5a0c",
-      "comment": "",
-      "command": "//pause",
-      "target": "",
-      "targets": [],
-      "value": "3000"
-    }, {
       "id": "7f4a3140-b5a5-42bc-a395-d19993208479",
       "comment": "",
       "command": "type",
-      "target": "xpath=//div[@class='ant-form-item-control-wrapper']//input[@class='ant-input' and @value='用户选择']",
+      "target": "xpath=//label[contains(.,'标题')]/../..//input",
       "targets": [
         ["id=NE0crVTPlS_edit_label", "id"],
         ["css=#NE0crVTPlS_edit_label", "css:finder"],
@@ -5735,6 +4553,13 @@
         ["xpath=//div[2]/div/button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "5ddec294-b065-49ab-9d9a-866624f2c99e",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "8f5cc6ac-a363-4225-91e8-87aba79c569d",
@@ -5914,12 +4739,12 @@
     }]
   }],
   "suites": [{
-    "id": "c1e68173-135d-42bc-8a5a-f3e49242e062",
+    "id": "736802c3-ee3f-42bb-8337-c17892fbdf8e",
     "name": "表单管理_表单自定义",
     "persistSession": false,
     "parallel": false,
     "timeout": 300,
-    "tests": ["6c894748-2847-43c4-a3f3-1b530bc0a9e5", "294296a5-ce32-4004-85a3-211310a26e20", "d41f5ef4-a650-4f0b-86a9-436af790e731", "6772c1a7-08fa-40d7-9949-dffa4ff880c6", "2b757714-c437-419b-a180-1e017596e8ac", "cf8bfad7-2009-41f5-9dce-607624922462", "88793e87-28a8-49f0-a66c-0e13c333a766"]
+    "tests": ["6c894748-2847-43c4-a3f3-1b530bc0a9e5", "294296a5-ce32-4004-85a3-211310a26e20", "6772c1a7-08fa-40d7-9949-dffa4ff880c6", "d41f5ef4-a650-4f0b-86a9-436af790e731", "2b757714-c437-419b-a180-1e017596e8ac", "84083d34-43fd-4cfa-8c09-1579697be499", "aae02f67-7b14-4eb9-b387-27a17ad545f9", "3fe1ac16-54bd-4581-b897-bf60f85a4d3c", "3ef8b280-807b-4857-aafb-e65538df51f5", "1d9ad6ed-2163-489c-9266-54000179f668", "ad66f2fc-00a0-4446-9837-f8c0bb60d51c", "af97f095-5936-454d-a976-b27960f3b1d8", "27ed4b48-5a4e-456b-83a3-80b3cff8defc", "ca9de639-b730-4ea3-8eaf-be62b6f9b8a7", "2a4f0adb-33f2-4a81-b502-3981e41dc167", "ff13be21-5221-4152-bf10-0b5a780631b1", "f1857a2b-c398-4345-ad89-3efa05e6bd0e", "ed7cadb8-0225-46e5-8960-803aeda509ba", "ac6d122d-cadd-4b8d-aafb-23911a75976e", "82083129-b2cb-492a-9b20-3b2db8916f6f", "23d816c5-40b3-4d5b-b16d-a22b55d9a4d7", "cf8bfad7-2009-41f5-9dce-607624922462", "88793e87-28a8-49f0-a66c-0e13c333a766"]
   }],
   "urls": ["http://192.168.1.111/", "http://192.168.1.111//pea/develop/#/base/login", "http://192.168.1.111/pea/develop/#/base/login"],
   "plugins": []

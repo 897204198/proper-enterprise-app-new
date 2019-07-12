@@ -205,6 +205,13 @@
       ],
       "value": ""
     }, {
+      "id": "e0b3d47c-bc87-40f3-9a4b-5128c01aba47",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "6454270c-15ee-4201-9776-282174570bfa",
       "comment": "",
       "command": "assertText",
@@ -387,6 +394,13 @@
       ],
       "value": ""
     }, {
+      "id": "875561ef-8b47-48d8-a0d0-44731da6fd2d",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "0c4791c2-d481-4ccb-bf73-31e5defe7831",
       "comment": "",
       "command": "assertText",
@@ -434,7 +448,7 @@
       "id": "168ae941-1748-4748-8124-ab4cc4872922",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -468,7 +482,7 @@
       "id": "e9be3ebd-579d-4245-a7b6-2f2113950653",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -516,7 +530,7 @@
       "id": "e9b9f09b-80cd-4711-af1b-ee3a093400c2",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -547,7 +561,7 @@
       "id": "d6edac15-95b9-4d91-85c5-27f597f8909c",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -595,7 +609,7 @@
       "id": "b2c4b274-9ea0-4329-8620-13b42017dd34",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -626,7 +640,7 @@
       "id": "a9ee55d7-3617-40ae-9d42-ff91f0682d12",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -832,7 +846,7 @@
       "id": "601fab3e-65de-4a99-8190-9164c5da592a",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {

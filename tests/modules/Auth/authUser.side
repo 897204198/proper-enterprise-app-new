@@ -585,7 +585,7 @@
       "id": "683a0ab2-f735-45b8-a53f-5897b1981c61",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -638,7 +638,7 @@
       "id": "86b9f7ba-691a-4d63-b383-3d9e8e6ae0da",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -691,7 +691,7 @@
       "id": "a3c733ab-016d-4f14-b995-1fa494b7b2f2",
       "comment": "",
       "command": "pause",
-      "target": "1000",
+      "target": "2000",
       "targets": [],
       "value": ""
     }, {
@@ -932,6 +932,13 @@
         ["xpath=//button[2]", "xpath:position"],
         ["xpath=//button[contains(.,'确 定')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "f376e785-91e9-428d-b74f-3110da51b367",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
       "value": ""
     }, {
       "id": "8ce499d2-52c7-4631-8bb3-529fbe58a6a2",
