@@ -22,7 +22,7 @@
     "copyWf": "node .copyWf.js",
     "WfServer": "node .copyWf.js && node .devServer.js",
     "selenium": "node ./tests/selenium.js",
-    "updata": "node .updata.js"
+    "update": "node .update.js"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.36",

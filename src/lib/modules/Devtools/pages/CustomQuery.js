@@ -855,9 +855,13 @@ export default class CustomQuery extends React.PureComponent {
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item) => {
         if (!item.syncTag) {
-          const hasCol = JSON.parse(gridConfig).columns.filter(col => col.dataIndex === item.name)
-          if (hasCol.length) {
-            item.syncTag = hasCol[0].syncTag
+          if (gridConfig) {
+            const hasCol = JSON.parse(gridConfig).columns.filter(col => col.dataIndex === item.name)
+            if (hasCol.length) {
+              item.syncTag = hasCol[0].syncTag
+            } else {
+              item.syncTag = makeRandomId()
+            }
           } else {
             item.syncTag = makeRandomId()
           }
