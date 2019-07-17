@@ -314,6 +314,13 @@
       ],
       "value": ""
     }, {
+      "id": "2e1784d2-8653-46b2-ae03-ae06bba77ead",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "f664001d-e141-4291-a4de-417d585f6ed8",
       "comment": "",
       "command": "type",
@@ -325,6 +332,13 @@
         ["xpath=//span/span/input", "xpath:position"]
       ],
       "value": "aaa"
+    }, {
+      "id": "dbc2c756-a8c5-436c-93ce-6bba740969bb",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "cd0b43be-3276-4b7f-a360-990c525c89b6",
       "comment": "",
@@ -349,6 +363,13 @@
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'搜 索')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "63ea3392-b927-49a3-ad1f-919982387c30",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "7af01c9e-a030-4cc6-acc7-d08b5dda5afc",

@@ -1060,6 +1060,13 @@
       ],
       "value": ""
     }, {
+      "id": "c1a0e2b4-f17a-425c-b4bf-abc858191c3d",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "f6b39e9d-1f7f-4573-8828-995aa9cdf5f0",
       "comment": "",
       "command": "click",

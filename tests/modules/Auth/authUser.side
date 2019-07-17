@@ -388,13 +388,6 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "9a12eaa1-6cc9-4c5d-9b8b-c9067060ee36",
-      "comment": "",
-      "command": "//click",
-      "target": "xpath=//ul/li[3]",
-      "targets": [],
-      "value": ""
-    }, {
       "id": "06e5e81f-37c4-4214-9611-e654c48518ee",
       "comment": "",
       "command": "click",
@@ -465,6 +458,13 @@
       ],
       "value": "123456"
     }, {
+      "id": "0f8c91eb-386e-421f-b252-06c02e528368",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "6dea80e9-0107-41cf-aa9b-4a9f23ff961d",
       "comment": "",
       "command": "click",
@@ -487,6 +487,13 @@
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'搜 索')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "3d2f8c6d-48e7-4ced-9830-3567bdfd8700",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "591ec03a-ec71-43f9-a7fd-51404e96ec27",
@@ -753,52 +760,6 @@
       "target": "1000",
       "targets": [],
       "value": ""
-    }, {
-      "id": "2237c498-d340-4c92-b0db-fe2dd271c51c",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=td:nth-child(2) > div",
-      "targets": [
-        ["css=td:nth-child(2) > div", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[2]/div", "xpath:idRelative"],
-        ["xpath=//td[2]/div", "xpath:position"]
-      ],
-      "value": "1234567"
-    }, {
-      "id": "70daa837-4fa5-4c7a-b545-68abe6573911",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=td:nth-child(3)",
-      "targets": [
-        ["css=td:nth-child(3)", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[3]", "xpath:idRelative"],
-        ["xpath=//td[3]", "xpath:position"]
-      ],
-      "value": "1234567"
-    }, {
-      "id": "0da88005-abcc-4e53-a94d-ed9881a77f90",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=td:nth-child(4)",
-      "targets": [
-        ["css=td:nth-child(4)", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[4]", "xpath:idRelative"],
-        ["xpath=//td[4]", "xpath:position"],
-        ["xpath=//td[contains(.,'ztasdgsd@126.com')]", "xpath:innerText"]
-      ],
-      "value": "ztasdgsd1@126.com"
-    }, {
-      "id": "93d22be1-5b16-4228-852d-0f4de040016c",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=td:nth-child(5)",
-      "targets": [
-        ["css=td:nth-child(5)", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[5]", "xpath:idRelative"],
-        ["xpath=//td[5]", "xpath:position"],
-        ["xpath=//td[contains(.,'13333333333')]", "xpath:innerText"]
-      ],
-      "value": "13333333331"
     }]
   }, {
     "id": "f2e7bb03-3e09-4f48-8ebb-0e278f5e585c",
@@ -1022,6 +983,13 @@
       ],
       "value": ""
     }, {
+      "id": "d31c69a8-2e6d-4d25-87bf-ef7e5d113d51",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "7d80a3a8-858f-4ce8-9da5-655da903b8f1",
       "comment": "",
       "command": "type",
@@ -1033,6 +1001,13 @@
         ["xpath=//span/span/input", "xpath:position"]
       ],
       "value": "1234567"
+    }, {
+      "id": "ed0272de-1be5-4329-93d2-920eb85f04df",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "4b50f1fa-123d-433c-8554-a8ccea468307",
       "comment": "",
@@ -1056,6 +1031,13 @@
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'搜 索')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "5fdee31a-894d-4a04-ba2a-ef6dc5ad8dd9",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "e4a3d9a7-1a2f-4ff4-b4ef-a5c82bd21b5d",
