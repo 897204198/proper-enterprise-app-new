@@ -1,11 +1,12 @@
 import React from 'react';
-import { Upload, Button, Icon, message} from 'antd';
+import { Upload, Button, message} from 'antd';
 import { getApplicationContextUrl } from '@framework/utils/utils';
 import OopPreview from '../OopPreview';
+import styles from './index.less';
 
 const { Dragger } = Upload
 
-const imgSuffix = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
+const imgSuffix = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 export default class OopUpload extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -16,6 +17,15 @@ export default class OopUpload extends React.PureComponent {
       uploading: false,
       previewVisible: false,
       previewUrl: ''
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps) {
+      const { defaultFileList = [], value = [] } = nextProps;
+      const fileList = this.assemblingFileList([...defaultFileList.concat(value)]);
+      this.setState({
+        fileList
+      })
     }
   }
   assemblingFileList = (arr)=>{
@@ -40,8 +50,8 @@ export default class OopUpload extends React.PureComponent {
         // 兼容http模式 base64模式 proper自己的服务器模式（即一个ID）
         item.url = (id.includes('http') || id.includes('data:image/')) ?
           id : this.getFileUrl(id);
-        item.thumbUrl = this.getFileDownloadUrl(id);
       }
+      item.thumbUrl = this.getFileDownloadUrl(id);
       return item;
     }).filter(it=>it !== undefined);
   }
@@ -57,15 +67,6 @@ export default class OopUpload extends React.PureComponent {
   }
   getFileUrl = (id) =>{
     return `${getApplicationContextUrl()}/file/${id}`;
-  }
-  componentWillReceiveProps(nextProps) {
-    if ('value' in nextProps) {
-      const { defaultFileList = [], value = [] } = nextProps;
-      const fileList = this.assemblingFileList([...defaultFileList.concat(value)]);
-      this.setState({
-        fileList
-      })
-    }
   }
   beforeUpload = (file) => {
     const { type = [], size, maxFiles = -1 } = this.props;
@@ -92,9 +93,9 @@ export default class OopUpload extends React.PureComponent {
   }
   defaultExtra = ()=>{
     const {uploading} = this.state;
+    const {disabled} = this.props;
     return (
-    <Button disabled={uploading}>
-      <Icon type={uploading ? 'loading' : 'upload'} />
+    <Button disabled={disabled} loading={uploading} icon="upload">
       {uploading ? '上传中...' : (this.props.buttonText ? this.props.buttonText : '点击上传')}
     </Button>);
   };
@@ -266,7 +267,7 @@ export default class OopUpload extends React.PureComponent {
     const {previewVisible, previewUrl} = this.state;
     // console.log(this.state.fileList);
     return (
-      <div style={{...wrapperStyles}}>
+      <div style={{...wrapperStyles}} className={styles.OopUploadContainer}>
         {
           dragable ? (
             <Dragger {...props}>

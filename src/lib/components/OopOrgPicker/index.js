@@ -79,7 +79,7 @@ export default class OopOrgPicker extends React.PureComponent {
         const keys = value.length && value.map(val => val.id)
         this.setState({
           orgList: orgTreeData,
-          expand: [orgTreeData[0].id],
+          expand: orgTreeData.length ? orgTreeData[0].id : undefined,
           checkedKeys: {checked: keys, halfChecked: []},
           checkedOrgs: value
         })
@@ -220,7 +220,7 @@ export default class OopOrgPicker extends React.PureComponent {
     return (
       <div>
         <Tooltip title={btnText}>
-          <Button onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
+          <Button icon="apartment" onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
         </Tooltip>
         <OopModal
           title={placeholder}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Icon, Tooltip, Popover, Input, Spin } from 'antd';
+import {Form, Icon, Tooltip, Popover, Input, Spin} from 'antd';
 import {List, Toast} from 'antd-mobile';
 import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
@@ -20,8 +20,11 @@ const getOopFormChildrenRef = (el, oopForm)=>{
   }
 }
 export const formGenerator = (formConfig)=>{
-  const {children: Component, loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
-    rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1, mode} = formConfig;
+  const {children: Component, loading = false, formTitle, className,
+    formJson, form, formLayout = 'horizontal',
+    rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag, rowItemSetValue,
+    dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1,
+    mode, defaultValue} = formConfig;
   const _formLayout = formLayoutConfig || (formLayout === 'horizontal' ? {
     labelCol: {
       xs: {span: 24},
@@ -49,7 +52,8 @@ export const formGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value', formItemLayout = {} } = formItemConfig;
+      const {name, label, initialValue, rules = [], component,
+        display = true, valuePropName = 'value', readonly = false, formItemLayout = {} } = formItemConfig;
       if (display === true || mode === 'design') {
         let formItem = null;
         let _rules = null;
@@ -64,7 +68,13 @@ export const formGenerator = (formConfig)=>{
             comArgs = component;
           } else if (typeof component === 'object') {
             comArgs = {
-              ...component, label, rules, valuePropName, form
+              ...component,
+              comName: component.name,
+              name, label, rules, valuePropName,
+              initialValue,
+              defaultValue,
+              readonly,
+              form
             }
           }
           const com = createComponent(comArgs, false);
@@ -164,7 +174,7 @@ const getFormItem = (formItemInner, formItemConfig)=>{
 
 // appFormGenerator 为了移动端展示用 没有设计的功能
 export const appFormGenerator = (formConfig)=>{
-  const {loading = false, formTitle, className, formJson, form} = formConfig;
+  const {loading = false, formTitle, className, formJson, form, defaultValue} = formConfig;
   // 把正则的字符串形式转义成正则形式 fe: "/^0-9*$/" => /^0-9*$/
   const transformRules = (rules)=>{
     const arr = cloneDeep(rules);
@@ -181,7 +191,7 @@ export const appFormGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value' } = formItemConfig;
+      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value', readonly} = formItemConfig;
       if (display === true) {
         let formItem = null;
         let _rules = null;
@@ -191,7 +201,11 @@ export const appFormGenerator = (formConfig)=>{
           }
           const obj = {initialValue, rules: _rules};
           const formItemInner = getFieldDecorator(name, obj)(
-            createComponent({...component, label, rules, valuePropName, form}, true)
+            createComponent(
+              {...component,
+                comName: component.name,
+                name, label, rules, valuePropName, initialValue, form, defaultValue, readonly},
+              true)
           );
           formItem = getListItem(formItemInner,
             {...formItemConfig});
@@ -233,18 +247,21 @@ const getListItem = (formItemInner, formItemConfig)=>{
 // 请注意：这些属性在配置 表单的时候并不在component中配置
 const createComponent = (component, isApp)=>{
   if (typeof component === 'object') {
-    if (component.name) {
+    if (component.comName) {
       // object desc
-      const {name, label, props = {}, children = [], rules} = component;
-      if (name) {
-        return getComponent(name, label, props, children, rules, isApp);
+      const {comName, label, props = {}, children = [], rules, readonly} = component;
+      if (props.disabled === true && readonly === true) {
+        // 只读的表单
+        return getReadOnlyForm(component, isApp);
+      } else {
+        return getComponent(comName, label, props, children, rules, isApp);
       }
     } else if (component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)') {
       // React component
       return component
     }
   } else if (typeof component === 'function') {
-    return component()
+    return component(component.form)
   }
 }
 
@@ -358,3 +375,39 @@ export const getValueByFunctionStr = (functionStr, ...value)=>{
     }
   }
 }
+
+const getDisplayValue = (component)=>{
+  const {name, defaultValue = {}, initialValue, comName, label, props, children, rules} = component;
+  if (comName === 'OopUpload') {
+    const value = defaultValue[name] || initialValue;
+    return getComponent(comName, label, {...props, value}, children, rules, false);
+  }
+  const {prototype: {hasOwnProperty}} = Object;
+  if (hasOwnProperty.call(defaultValue, `${name}_text`)) {
+    return defaultValue[`${name}_text`];
+  } else if (defaultValue[name] !== undefined && defaultValue[name] !== null) {
+    if ('OopGroupUserPicker,OopOrgEmpPicker,OopOrgPicker'.includes(comName)) {
+      // hack 选择组件 默认取name
+      return defaultValue[name].map(it=>it.name).join(',');
+    }
+    return defaultValue[name].toString();
+  } else {
+    return (initialValue !== undefined && initialValue !== null) ? initialValue.toString() : '';
+  }
+}
+
+const getReadOnlyForm = (component, isApp)=>{
+  const {label} = component;
+  const styleCss = {
+    whiteSpace: 'normal',
+    maxHeight: '120px',
+    overflowY: 'scroll'
+  }
+  return isApp === true ? (
+    <List.Item
+    arrow="horizontal"
+    extra={<div style={styleCss}>{getDisplayValue(component)}</div>}>
+      {label}
+    </List.Item>) : (<div>{getDisplayValue(component)}</div>);
+}
+

@@ -106,6 +106,7 @@ export default class OopGroupUserPicker extends React.PureComponent {
           icon: 'user',
           onClick: this.handleButtonClick,
           text: placeholder,
+          showIcon: true,
           disabled
         }}
         defaultSelected={ this.state.selectedRowItems}

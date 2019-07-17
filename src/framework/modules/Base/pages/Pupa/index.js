@@ -12,7 +12,9 @@ import { getMenuData } from '@framework/common/frameHelper';
 import styles from '@framework/index/index.less';
 import CommonPage from './components/CommonPage';
 
-const checkComponentName = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker', 'OopDict'];
+const checkComponentName = ['Select', 'RadioGroup', 'CheckboxGroup',
+  'OopSystemCurrent', 'DatePicker', 'OopDict',
+  'OopGroupUserPicker', 'OopOrgEmpPicker', 'OopOrgPicker'];
 const isReactObject = (component)=>{
   return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
 }

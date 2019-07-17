@@ -182,14 +182,24 @@ export default class OopFormDesigner extends React.PureComponent {
         },
         {
           label: '上传图片',
-          key: 'OopUpload',
+          key: 'OopUpload_pic',
           component: {
             name: 'OopUpload',
             props: {
               buttonText: '上传图片',
               accept: 'image/*',
               listType: 'picture',
-              type: ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
+              type: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']
+            }
+          }
+        },
+        {
+          label: '上传文件',
+          key: 'OopUpload_file',
+          component: {
+            name: 'OopUpload',
+            props: {
+              buttonText: '上传文件',
             }
           }
         },

@@ -21,13 +21,14 @@ export default class Test extends React.PureComponent {
     }, {
       label: '年级(OopDict-RULE)',
       name: 'grade',
-      initialValue: ['USER', 'GROUP'],
+      initialValue: {id: 'pep_rule_user', enable: true, catalog: 'RULE', code: 'USER', name: '用户组规则', order: 0, dataDicType: 'SYSTEM', deft: true},
       component: {
         name: 'OopDict',
         props: {
+          disabled: false,
           placeholder: '选择年级',
           catalog: 'RULE',
-          multiple: true,
+          multiple: false,
           // listData: [
           //   {catalog: 'grade', code: '1', label: '一年级'},
           //   {catalog: 'grade', code: '2', label: '二年级'},

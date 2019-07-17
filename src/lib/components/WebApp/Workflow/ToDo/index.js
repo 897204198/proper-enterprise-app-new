@@ -8,29 +8,30 @@ import InfiniteScroll from 'react-infinite-scroller';
 import TimeAgo from 'timeago-react';
 import classNames from 'classnames';
 import {inject} from '@framework/common/inject';
+import {getParamObj} from '@framework/utils/utils';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
 
-function toArray(children) {
-  const c = [];
-  React.Children.forEach(children, (child) => {
-    if (child) {
-      c.push(child);
-    }
-  });
-  return c;
-}
+// function toArray(children) {
+//   const c = [];
+//   React.Children.forEach(children, (child) => {
+//     if (child) {
+//       c.push(child);
+//     }
+//   });
+//   return c;
+// }
 
-function getActiveIndex(children, activeKey) {
-  const c = toArray(children);
-  for (let i = 0; i < c.length; i++) {
-    if (c[i].key === activeKey) {
-      return i;
-    }
-  }
-  return -1;
-}
+// function getActiveIndex(children, activeKey) {
+//   const c = toArray(children);
+//   for (let i = 0; i < c.length; i++) {
+//     if (c[i].key === activeKey) {
+//       return i;
+//     }
+//   }
+//   return -1;
+// }
 
 @inject(['OopWorkflowMain$model', 'workflowManager', 'workflowDesigner', 'global'])
 @connect(({workflowManager, workflowDesigner, global, loading}) => ({
@@ -40,17 +41,43 @@ function getActiveIndex(children, activeKey) {
   gridLoading: loading.effects['global/oopSearchResult'],
 }))
 export default class ToDo extends React.PureComponent {
-  state = {
-    activeKey: 'task',
-    activeIndex: 0,
-    task: {data: [], pagination: {}},
-    taskAssignee: {data: [], pagination: {}},
+  constructor(props) {
+    super(props);
+    const state = {
+      activeKey: 'task',
+      activeIndex: 0,
+      task: {data: [], pagination: {}},
+      taskAssignee: {data: [], pagination: {}},
+    }
+    const {location} = props;
+    if (location.search) {
+      if (location.search.includes('taskAssignee')) {
+        state.activeKey = 'taskAssignee';
+        state.activeIndex = 1;
+      }
+    }
+    this.state = state
   }
-
   componentDidMount() {
     this.fetchData();
   }
-
+  componentWillReceiveProps(nextProps) {
+    const {location} = nextProps;
+    const {activeKey: currentActiveKey} = this.state;
+    if (location.search) {
+      const {activeKey} = getParamObj(location.search);
+      if (currentActiveKey !== activeKey) {
+        this.setState({
+          activeKey,
+          activeIndex: activeKey === 'taskAssignee' ? 1 : 0,
+          task: {data: [], pagination: {}},
+          taskAssignee: {data: [], pagination: {}},
+        }, ()=>{
+          this.fetchData();
+        })
+      }
+    }
+  }
 
   fetchData = (page) => {
     const self = this;
@@ -77,19 +104,7 @@ export default class ToDo extends React.PureComponent {
   }
 
   handleTabsChange = (key) => {
-    const { children } = this.tabs.props
-    let activeIndex = getActiveIndex(children, key);
-    if (activeIndex === -1) {
-      activeIndex = 0;
-    }
-    this.setState({
-      activeKey: key,
-      activeIndex,
-      task: {data: [], pagination: {}},
-      taskAssignee: {data: [], pagination: {}},
-    }, () => {
-      this.fetchData();
-    });
+    this.props.dispatch(routerRedux.push(`/webapp/workflow/todo?activeKey=${key}`));
   }
   handleProcessLaunch = (record)=>{
     console.log('handleProcessLaunch', record);
@@ -255,7 +270,7 @@ export default class ToDo extends React.PureComponent {
   }
   renderImage = (item)=>{
     const {globalData: {workflow_icon: workflowIcon}} = item;
-    let img = require('./assets/default.png');;
+    let img = require('./assets/default.png');
     if (workflowIcon) {
       img = require(`./assets/${workflowIcon}`);
     }
@@ -275,7 +290,7 @@ export default class ToDo extends React.PureComponent {
       <div className={styles.container}>
         <Tabs
           animated={false}
-          defaultActiveKey="task"
+          defaultActiveKey={activeKey}
           className={styles.tabs}
           onChange={this.handleTabsChange}
           ref={(el)=>{ this.tabs = el }}>

@@ -89,7 +89,9 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       >{ p => <List.Item arrow="horizontal" extra={p.extra}>{label}</List.Item>}</OopUpload>)
       break;
     case 'OopSystemCurrent':
-      component = <OopSystemCurrent {...props} label={componentLabel} />
+      component = (<OopSystemCurrent {...props} label={undefined} >
+        {c=> <List.Item arrow="horizontal" extra={c}>{label}</List.Item>}
+      </OopSystemCurrent>)
       break;
     case 'OopGroupUserPicker':
       component = <OopGroupUserPicker {...props} />

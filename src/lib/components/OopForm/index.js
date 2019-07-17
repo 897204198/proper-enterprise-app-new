@@ -18,6 +18,9 @@ const isAntdMobliePicker = (item)=>{
         return true;
       }
     }
+    if (name === 'OopDict') {
+      return true;
+    }
   }
   return false;
 };
@@ -82,15 +85,6 @@ const FormContainer = Form.create({
   const { OopForm$model, disabled = false, formJson = [], form, self } = props;
   formJson.forEach((item)=>{
     const {name, component /* render */} = item;
-    // initialValue是数组但是长度为0 或者 没有initialValue;
-    // const value = defaultValue[name];
-    // if ((Array.isArray(initialValue) && initialValue.length === 0)
-    //   || initialValue === undefined) {
-    //   item.initialValue = value
-    // } else {
-    //   item.initialValue = self.isDictValue(value) ? JSON.stringify(value) : (value || initialValue);
-    // }
-    // 处理DatePicker的值 如果是移动端不需要转化成moment对象
     if (component.name === 'DatePicker') {
       if (item.initialValue) {
         if (ifRenderByAntdMobile) {
@@ -165,9 +159,12 @@ export default class OopForm extends React.PureComponent {
     const fields = {};
     // 初始化表单值的时候 1.formJson配置的initialValue 2.defaultValue中改name的值 3. undefined
     formJson.forEach((item)=>{
-      const {name, initialValue} = item;
+      const {name, initialValue, component = {}} = item;
       const {prototype: {hasOwnProperty}} = Object;
       if (hasOwnProperty.call(defaultValue, name)) {
+        if (component.props && component.props.disabled === true) {
+          item.readonly = true;
+        }
         fields[name] = {
           value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
         }
@@ -204,7 +201,11 @@ export default class OopForm extends React.PureComponent {
     for (const name in fields) {
       const item = formJson.find(it=>it.name === name);
       if (item) {
+        const {component = {}} = item;
         if (Object.prototype.hasOwnProperty.call(defaultValue, name)) {
+          if (component.props && component.props.disabled === true) {
+            item.readonly = true;
+          }
           fields[name] = {
             ...fields[name],
             value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
@@ -330,6 +331,10 @@ export default class OopForm extends React.PureComponent {
           const {Number} = window;
           if (value !== +value) {
             data[`${name}`] = Number(value)
+          }
+        } else if ('OopGroupUserPicker,OopOrgEmpPicker,OopOrgPicker'.includes(cName)) {
+          if (!data[textKey]) {
+            data[textKey] = value.map(v=>v.name).join(',');
           }
         }
       }

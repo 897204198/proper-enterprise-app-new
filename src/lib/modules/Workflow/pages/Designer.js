@@ -311,8 +311,9 @@ export default class Designer extends PureComponent {
     this.props.dispatch({
       type: 'workflowDesigner/remove',
       payload: id,
-      callback: () => {
+      callback: (res) => {
         this.refresh(this.state.nowTreeCode);
+        oopToast(res, '删除成功');
       }
     });
   }
@@ -422,7 +423,8 @@ export default class Designer extends PureComponent {
     this.props.dispatch({
       type: 'workflowDesigner/repository',
       payload: item.id,
-      callback: () => {
+      callback: (res) => {
+        oopToast(res, '部署成功');
         for (let i = 0; i < this.state.lists.length; i++) {
           if (this.state.lists[i].id === this.props.workflowDesigner.deployData.id) {
             this.state.lists[i].deploymentTime =

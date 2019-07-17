@@ -86,6 +86,7 @@ export const makeDefaultButtons = (relaWf) => {
       icon: 'delete',
       type: 'default',
       enable: true,
+      confirm: '确定删除此项吗',
       default: true
     }
   ]

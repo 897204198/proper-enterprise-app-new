@@ -70,7 +70,7 @@ export default class WorkflowMainPop extends PureComponent {
             return
           }
           // TODO 多个forms情况先不予考虑
-          const {forms} = res;
+          const {forms = []} = res;
           const obj = forms.length ? forms[0] : null;
           // HACK 兼容后台数据结构的问题
           if (obj.formData[obj.formKey]) {
@@ -185,21 +185,29 @@ export default class WorkflowMainPop extends PureComponent {
       this.setButtonLoading(false);
     }
   }
+  buildFooter = ()=>{
+    const {activeTabKey, buttonLoading, taskOrProcDefKey, isLaunch} = this.state;
+    const {cancelBtn, submitBtn} = styles;
+    if (activeTabKey === 'handle') {
+      return (
+        <Fragment>
+          <Popover
+            placement="bottom"
+            content={this.getPopoverContent()}
+            trigger="click"
+          >
+            {!isLaunch ? <Button size="large" type="danger" ghost loading={this.state.buttonLoading} style={{display: 'none', float: 'left'}}>退回</Button> : null}
+          </Popover>
+          <Button size="large" onClick={this.handleCancel} className={cancelBtn}>取消</Button>
+          {taskOrProcDefKey ? (isLaunch ? <Button size="large" type="primary" onClick={this.launchWorkflow} loading={buttonLoading} className={submitBtn}>发起</Button>
+            : <Button size="large" type="primary" onClick={this.submitWorkflow} loading={buttonLoading} className={submitBtn}>提交</Button>) : null}
+        </Fragment>);
+    }
+    return null;
+  }
   render() {
-    const {taskOrProcDefKey, isLaunch, businessObj: {formKey}} = this.state;
-    const footer = this.state.activeTabKey === 'handle' ? (
-      <Fragment>
-        <Popover
-          placement="bottom"
-          content={this.getPopoverContent()}
-          trigger="click"
-        >
-          {!isLaunch ? <Button size="large" type="danger" ghost loading={this.state.buttonLoading} style={{display: 'none', float: 'left'}}>退回</Button> : null}
-        </Popover>
-        <Button size="large" onClick={this.handleCancel} className={styles.cancelBtn}>取消</Button>
-        {taskOrProcDefKey ? (isLaunch ? <Button size="large" type="primary" onClick={this.launchWorkflow} loading={this.state.buttonLoading} className={styles.submitBtn}>发起</Button>
-          : <Button size="large" type="primary" onClick={this.submitWorkflow} loading={this.state.buttonLoading} className={styles.submitBtn}>提交</Button>) : null}
-      </Fragment>) : null;
+    const {businessObj: {formKey}} = this.state;
+    const footer = this.buildFooter();
     return (
       <PopPage
         footer={footer}

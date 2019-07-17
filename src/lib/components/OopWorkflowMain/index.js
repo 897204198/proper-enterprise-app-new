@@ -72,7 +72,7 @@ const BusinessPanel = (props)=>{
         },
         rules: [{
           required: approvalRemarksRequire,
-          message: '请填写审批意见',
+          message: '该项为必填项',
         }],
       }];
       formConfig.formJson = formConfig.formJson.concat(ApprovalPanelJson);

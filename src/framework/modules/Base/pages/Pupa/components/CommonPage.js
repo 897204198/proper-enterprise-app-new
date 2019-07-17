@@ -111,6 +111,7 @@ export default class CommonPage extends React.PureComponent {
     super(props);
     this.formJson = cloneDeep(props.formConfig.formJson);
     this.state = {
+      gridLoading: undefined,
       modalFormVisible: false,
       viewModalVisible: false,
       list: [],
@@ -329,18 +330,26 @@ export default class CommonPage extends React.PureComponent {
     const { restPath, confirm } = button;
     if (restPath) {
       const dofn = ()=>{
-        this.props.dispatch({
-          type: 'basePage/restfulAction',
-          payload: {
-            restPath,
-            param
-          },
-          tableName: this.props.tableName,
-          callback: (res)=>{
-            oopToast(res, '操作成功');
-            this.oopTable.clearSelection();
-            this.onLoad();
-          }
+        button.loading = true;
+        this.state.gridLoading = true;
+        this.forceUpdate(()=>{
+          setTimeout(()=>{
+            this.props.dispatch({
+              type: 'basePage/restfulAction',
+              payload: {
+                restPath,
+                param
+              },
+              tableName: this.props.tableName,
+              callback: (res)=>{
+                button.loading = false;
+                this.state.gridLoading = false;
+                oopToast(res, '操作成功');
+                this.oopTable.clearSelection();
+                this.onLoad();
+              }
+            })
+          }, 200)
         })
       }
       if (confirm) {
@@ -363,18 +372,30 @@ export default class CommonPage extends React.PureComponent {
     const { restPath, confirm } = button;
     if (restPath) {
       const dofn = ()=>{
-        const path = restPath.split('@')[1]
-        const modelUrl = path.split('/')[0]
-        inject(modelUrl)();
-        this.props.dispatch({
-          type: path,
-          payload: param,
-          tableName: this.props.tableName,
-          callback: (res)=>{
-            oopToast(res, '操作成功');
-            this.oopTable.clearSelection();
-            this.onLoad();
-          }
+        const path = restPath.split('@')[1];
+        const modelUrl = path.split('/')[0];
+        button.loading = true;
+        this.state.gridLoading = true;
+        this.forceUpdate(()=> {
+          setTimeout(() => {
+            try {
+              inject(modelUrl)();
+              this.props.dispatch({
+                type: path,
+                payload: param,
+                tableName: this.props.tableName,
+                callback: (res)=>{
+                  button.loading = false;
+                  this.state.gridLoading = false;
+                  oopToast(res, '操作成功');
+                  this.oopTable.clearSelection();
+                  this.onLoad();
+                }
+              })
+            } catch (e) {
+              console.log(e)
+            }
+          }, 200)
         })
       }
       if (confirm) {
@@ -481,7 +502,7 @@ export default class CommonPage extends React.PureComponent {
     return map[btnName];
   }
   render() {
-    const {list, modalFormVisible, viewModalVisible, modalWfFormConfig: {
+    const {gridLoading, list, modalFormVisible, viewModalVisible, modalWfFormConfig: {
       name,
       isLaunch,
       wfVisible,
@@ -492,7 +513,7 @@ export default class CommonPage extends React.PureComponent {
       stateCode
     }, onModalSubmit} = this.state;
     const {basePage, global: {size},
-      loading, gridLoading, gridConfig: {columns, topButtons: tbCfg, rowButtons: rbCfg},
+      loading, gridConfig: {columns, topButtons: tbCfg, rowButtons: rbCfg},
       formConfig, modalConfig, tableName } = this.props;
     let entity = {};
     if (basePage && basePage[tableName]) {
@@ -515,7 +536,7 @@ export default class CommonPage extends React.PureComponent {
             showTableInfo={true}
             tableInfoExtra={tableInfoExtra}
             showExport={true}
-            loading={loading === undefined ? gridLoading : loading}
+            loading={gridLoading === undefined ? loading : gridLoading}
             grid={{list}}
             columns={columns}
             rowButtons={rowButtons}
