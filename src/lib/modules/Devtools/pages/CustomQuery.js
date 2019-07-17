@@ -77,7 +77,6 @@ export default class CustomQuery extends React.PureComponent {
     gridConfig: {},
     buttons: [],
     workflowSelection: [],
-    selectedKeys: [],
     isCreate: false,
     list: [],
     showCols: [],
@@ -592,6 +591,18 @@ export default class CustomQuery extends React.PureComponent {
     }
   }
   makeTableInfoCfgConfig = (entity = {}, submit) => {
+    const { gridConfig = {} } = this.state
+    const { columns = [] } = gridConfig
+    const CTandLT = [
+      {label: '创建时间', value: 'CT'},
+      {label: '修改时间', value: 'LT'},
+    ]
+    const list = [...CTandLT, ...columns.map((item) => {
+      return {
+        label: item.title,
+        value: item.dataIndex
+      }
+    })]
     return {
       formLayoutConfig: {
         labelCol: {
@@ -636,6 +647,44 @@ export default class CustomQuery extends React.PureComponent {
           initialValue: entity.order || false,
         },
         {
+          label: '列表排序',
+          key: 'rank',
+          name: 'rank',
+          component: {
+            name: 'Select',
+            props: { placeholder: '请选择排序字段', style: {width: 240} },
+            children: list,
+          },
+          extra: '按选定字段排序',
+          initialValue: entity.rank || 'CT',
+        },
+        {
+          label: '升降序',
+          key: 'rankRule',
+          name: 'rankRule',
+          component: {
+            name: 'RadioGroup',
+            children: [{
+              label: '升序',
+              value: 'asc'
+            }, {
+              label: '降序',
+              value: 'desc'
+            }],
+          },
+          initialValue: entity.rankRule || 'desc',
+          subscribe: [{
+            name: 'rank',
+            publish: [{
+              value(chanageValue) {
+                console.log(chanageValue)
+                return !!chanageValue
+              },
+              property: 'display'
+            }]
+          }],
+        },
+        {
           key: 'submitBtn',
           component: () => {
             return (
@@ -664,7 +713,6 @@ export default class CustomQuery extends React.PureComponent {
       gridConfig: {},
       buttons: [],
       workflowSelection: [],
-      selectedKeys: [],
     })
   }
   handleToggleEnable = (checked, record) => {
@@ -1012,7 +1060,6 @@ export default class CustomQuery extends React.PureComponent {
                 curRecord: params,
                 gridConfig: obj,
                 curTableRecord: fieldsValue,
-                selectedKeys: [JSON.stringify(fieldsValue)],
                 showCols: list.filter(item => item.enable === true),
                 hideCols: list.filter(item => !item.enable),
               })
