@@ -1,7 +1,6 @@
 import React, {Fragment} from 'react';
 import FileSaver from 'file-saver';
-import { Modal, Card, Select, Switch, Icon, Input, Button, message, Row, Popconfirm, Tabs, Spin, Popover} from 'antd';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tabs, Spin, Popover} from 'antd';
 import { connect } from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
 import { inject } from '@framework/common/inject';
@@ -12,18 +11,15 @@ import OopForm from '@pea/components/OopForm';
 import OopTable from '@pea/components/OopTable';
 import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopTableForm from '@pea/components/OopTableForm';
-import { makeDefaultButtons, filterDefault, checkRepeat, makeRandomId, isJson } from './PupaUtils/utils'
+import { ColumnsEdit } from './Pupa/components/columnsEdit'
+import { makeCreateFormConfig, makeDefaultButtons, makeTableInfoCfgConfig, filterDefault, checkRepeat,
+  makeRandomId, isJson, reorder, move } from './Pupa/utils'
 import styles from './customQuery.less';
 
 const { TabPane } = Tabs
 const { Option } = Select
 const tableInputStyle = {
   height: '32px'
-}
-const addColBtnStyle = {
-  fontSize: '22px',
-  verticalAlign: '-webkit-baseline-middle',
-  color: '#1890ff'
 }
 const defaultBtnArr = makeDefaultButtons(true).map(btn => btn.name)
 const renderTitle = (text) => {
@@ -33,33 +29,6 @@ const renderTitle = (text) => {
     </span>
   )
 }
-const move = (source, destination, droppableSource, droppableDestination) => {
-  const sourceClone = Array.from(source);
-  const destClone = Array.from(destination);
-  const [removed] = sourceClone.splice(droppableSource.index, 1);
-  destClone.splice(droppableDestination.index, 0, removed);
-  const result = {};
-  result[droppableSource.droppableId] = sourceClone;
-  result[droppableDestination.droppableId] = destClone;
-  return result;
-};
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
-const getItemStyle = (isDragging, draggableStyle) => ({
-  userSelect: 'none',
-  ...draggableStyle
-});
-const getListStyle = isDraggingOver => ({
-  border: '2px dashed transparent',
-  borderColor: isDraggingOver ? '#ddd' : 'transparent',
-  padding: '5px 10px',
-  minHeight: '42px',
-  display: 'flex'
-});
 @inject(['devtoolsCustomQuery', 'workflowManager', 'global'])
 @connect(({ devtoolsCustomQuery, global, loading }) => ({
   devtoolsCustomQuery,
@@ -258,450 +227,6 @@ export default class CustomQuery extends React.PureComponent {
         }
       }
     });
-  }
-  makeCreateFormConfig = (formEntity, checkCode, checkTableName) => {
-    const me = this
-    const rule = {};
-    if (!formEntity.code && !formEntity.tableName) {
-      rule.checkCodeRepeat = [{
-        required: true,
-        max: 20,
-        pattern: /^[_0-9A-Za-z]+$/,
-        message: '字段名称不能为空,且必须是"_"、数字或英文字符'
-      }, {
-        validator(rules, value, callback) {
-          checkCode(rules, value, callback, me);
-        }
-      }];
-      rule.checkTableNameRepeat = [{
-        required: true,
-        max: 20,
-        pattern: /^[_0-9A-Za-z]+$/,
-        message: '字段名称不能为空,且必须是"_"、数字或英文字符'
-      }, {
-        validator(rules, value, callback) {
-          checkTableName(rules, value, callback, me);
-        }
-      }];
-    }
-    return {
-      formLayout: 'horizontal',
-      formJson: [
-        {
-          name: 'id',
-          component: {
-            name: 'Input',
-            props: {type: 'hidden'}
-          },
-          initialValue: formEntity.id || undefined,
-          wrapper: true
-        },
-        {
-          label: '功能名',
-          key: 'functionName',
-          name: 'functionName',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入功能名',
-            }
-          },
-          initialValue: formEntity.functionName || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
-        {
-          label: '表名',
-          key: 'tableName',
-          name: 'tableName',
-          component: {
-            name: 'Input',
-            props: {
-              addonBefore: 'PEP_PUPA_',
-              placeholder: '请输入表名',
-              disabled: !!formEntity.tableName
-            }
-          },
-          initialValue: formEntity.tableName ? formEntity.tableName.replace('PEP_PUPA_', '') : '',
-          rules: rule.checkTableNameRepeat
-        },
-        {
-          label: '编码',
-          key: 'code',
-          name: 'code',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入编码',
-              disabled: !!formEntity.code
-            }
-          },
-          initialValue: formEntity.code || undefined,
-          rules: rule.checkCodeRepeat
-        },
-        {
-          label: '关联流程',
-          key: 'relaWf',
-          name: 'relaWf',
-          component: {
-            name: 'Switch',
-            props: {
-              checkedChildren: '是',
-              unCheckedChildren: '否'
-            }
-          },
-          initialValue: formEntity.relaWf || undefined,
-          valuePropName: 'checked'
-        },
-        {
-          label: '选择流程',
-          key: 'wfKey',
-          name: 'wfKey',
-          display: false,
-          component: {
-            name: 'Select',
-            props: {
-              placeholder: '请选择流程',
-              showSearch: true
-            },
-            children: this.state.workflowSelection,
-          },
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }],
-          initialValue: formEntity.wfKey || undefined,
-          subscribe: [{
-            name: 'relaWf',
-            publish: [{
-              value: true,
-              property: 'display'
-            }]
-          }],
-        },
-        {
-          label: '备注',
-          key: 'note',
-          name: 'note',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入备注',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.note || '',
-        },
-        {
-          label: '启/停用',
-          key: 'enable',
-          name: 'enable',
-          component: {
-            name: 'Switch',
-            props: {
-              checkedChildren: '启',
-              unCheckedChildren: '停'
-            }
-          },
-          valuePropName: 'checked',
-          initialValue: formEntity.enable || false,
-        }
-      ]
-    }
-  }
-  makeTableCfgConfig = (formEntity) => {
-    return {
-      columnsNum: 2,
-      formLayoutConfig: {
-        labelCol: {
-          xs: {span: 24},
-          sm: {span: 4},
-        },
-        wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 18},
-        },
-      },
-      formJson: [
-        {
-          name: '_id',
-          component: {
-            name: 'Input',
-            props: {type: 'hidden'}
-          },
-          wrapper: true
-        },
-        {
-          name: 'syncTag',
-          component: {
-            name: 'Input',
-            props: {
-              type: 'hidden',
-            }
-          },
-          wrapper: true
-        },
-        {
-          label: '列名',
-          key: 'title',
-          name: 'title',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入列名',
-            }
-          },
-          initialValue: formEntity.title || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
-        {
-          label: '字段名',
-          key: 'dataIndex',
-          name: 'dataIndex',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入字段名'
-            }
-          },
-          initialValue: formEntity.dataIndex || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
-        {
-          label: '列宽',
-          key: 'width',
-          name: 'width',
-          component: {
-            name: 'InputNumber',
-            props: {
-              placeholder: '请输入字段名',
-            }
-          },
-          initialValue: formEntity.width || '',
-          rules: [{
-            required: false,
-            message: '此项为必填项'
-          }],
-          subscribe: [{
-            name: 'hover',
-            publish: [{
-              value(chanageValue) {
-                return chanageValue === true
-              },
-              property: 'rules[0].required'
-            }]
-          }],
-        },
-        {
-          label: '排序',
-          key: 'sorter',
-          name: 'sorter',
-          component: {
-            name: 'RadioGroup',
-            children: [{
-              label: '否',
-              value: false
-            }, {
-              label: '是',
-              value: true
-            }, {
-              label: '自定义',
-              value: 'custom'
-            }],
-          },
-          initialValue: formEntity.sorter || false,
-        },
-        // {
-        //   label: '筛选',
-        //   key: 'filter',
-        //   name: 'filter',
-        //   component: {
-        //     name: 'TextArea',
-        //     props: {
-        //       placeholder: '请输入筛选规则',
-        //       autosize: true
-        //     }
-        //   },
-        //   initialValue: formEntity.filter || '',
-        // },
-        {
-          label: '自定义渲染',
-          key: 'render',
-          name: 'render',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '例：(text) => {return <span style={{color: "red"}}>{text}</span>}',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.render || '',
-        },
-        {
-          label: '排序规则',
-          key: 'sorterRule',
-          name: 'sorterRule',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '例：(a, b) => { return a - b }',
-              autosize: true
-            }
-          },
-          rules: [{
-            required: true,
-            message: '请输入排序规则'
-          }],
-          initialValue: formEntity.sorterRule || '',
-          subscribe: [{
-            name: 'sorter',
-            publish: [{
-              value(chanageValue) {
-                return chanageValue === 'custom'
-              },
-              property: 'display'
-            }]
-          }],
-        },
-        {
-          label: '鼠标悬停提示',
-          key: 'hover',
-          name: 'hover',
-          component: {
-            name: 'RadioGroup',
-            children: [{
-              label: '关闭',
-              value: false
-            }, {
-              label: '开启',
-              value: true
-            }],
-          },
-          initialValue: formEntity.hover || false,
-        },
-      ]
-    }
-  }
-  makeTableInfoCfgConfig = (entity = {}, submit) => {
-    const { gridConfig = {} } = this.state
-    const { columns = [] } = gridConfig
-    const CTandLT = [
-      {label: '创建时间', value: 'CT'},
-      {label: '修改时间', value: 'LT'},
-    ]
-    const list = [...CTandLT, ...columns.map((item) => {
-      return {
-        label: item.title,
-        value: item.dataIndex
-      }
-    })]
-    return {
-      formLayoutConfig: {
-        labelCol: {
-          xs: {span: 24},
-          sm: {span: 4},
-        },
-        wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16},
-        },
-      },
-      formJson: [
-        {
-          label: '列表信息扩展',
-          key: 'tableInfoExtra',
-          name: 'tableInfoExtra',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入扩展内容',
-              autosize: true,
-            },
-          },
-          extra: '列表扩展信息将展示在表格的上部',
-          initialValue: entity.tableInfoExtra || ''
-        },
-        {
-          label: '显示序号',
-          key: 'order',
-          name: 'order',
-          component: {
-            name: 'RadioGroup',
-            children: [{
-              label: '否',
-              value: false
-            }, {
-              label: '是',
-              value: true
-            }],
-          },
-          extra: '列表每条数据前是否显示序号',
-          initialValue: entity.order || false,
-        },
-        {
-          label: '列表排序',
-          key: 'rank',
-          name: 'rank',
-          component: {
-            name: 'Select',
-            props: { placeholder: '请选择排序字段', style: {width: 240} },
-            children: list,
-          },
-          extra: '按选定字段排序',
-          initialValue: entity.rank || 'CT',
-        },
-        {
-          label: '升降序',
-          key: 'rankRule',
-          name: 'rankRule',
-          component: {
-            name: 'RadioGroup',
-            children: [{
-              label: '升序',
-              value: 'asc'
-            }, {
-              label: '降序',
-              value: 'desc'
-            }],
-          },
-          initialValue: entity.rankRule || 'desc',
-          subscribe: [{
-            name: 'rank',
-            publish: [{
-              value(chanageValue) {
-                console.log(chanageValue)
-                return !!chanageValue
-              },
-              property: 'display'
-            }]
-          }],
-        },
-        {
-          key: 'submitBtn',
-          component: () => {
-            return (
-              <div>
-                <Button type="primary" onClick={submit} style={{marginLeft: '20%'}}>保存</Button>
-              </div>
-            )
-          },
-          formItemLayout: {
-            wrapperCol: {
-              xs: {span: 24},
-              sm: {span: 20},
-            },
-          }
-        }
-      ]
-    }
   }
   setModalVisible = (field, flag) => {
     this.setState({[field]: flag})
@@ -1727,7 +1252,7 @@ export default class CustomQuery extends React.PureComponent {
           // footer={<Button type="primary" onClick={() => { this.setState({modalAssignmentCollectVisible: false}) }}>关闭</Button>}
         >
           {isCreate || Object.keys(formdata).length > 0 ?
-            <OopForm {...this.makeCreateFormConfig(formdata, this.checkCode, this.checkTableName)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} />
+            <OopForm {...makeCreateFormConfig(formdata, this.checkCode, this.checkTableName, workflowSelection)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} />
             : <div style={{textAlign: 'center'}}><Spin /></div>
           }
         </Modal>
@@ -1764,92 +1289,21 @@ export default class CustomQuery extends React.PureComponent {
            <div style={{marginTop: '-24px'}}>
              <Tabs defaultActiveKey="1" animated={false}>
                <TabPane tab="列编辑" key="1">
-                 <div>
-                  <Spin spinning={loading}>
-                    <Row gutter={16}>
-                      <DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
-                        <div className="colLine" style={{marginBottom: '10px'}}>
-                          <div style={{padding: '5px 10px', width: '80px', lineHeight: '2.3'}}>显示列:</div>
-                          <div className={`${dragging ? 'dragging' : ''}`}>
-                            <Droppable droppableId="show" direction="horizontal">
-                              {(provided, snapshot) => (
-                                <div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-                                    {showCols.map((item, index) => (
-                                        <Draggable
-                                            key={item.dataIndex}
-                                            draggableId={item.dataIndex}
-                                            index={index}
-                                            >
-                                            {/* eslint-disable-next-line */}
-                                            {(provided, snapshot) => (
-                                              <div
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                onClick={()=>this.onTableCfgSelect(item)}
-                                                className={`colItem ${curCol === item.dataIndex ? 'active' : ''}`}
-                                                style={getItemStyle(
-                                                  snapshot.isDragging,
-                                                  provided.draggableProps.style
-                                              )}>{`${index + 1} ${item.title}`}</div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                              )}
-                            </Droppable>
-                          </div>
-                          <div style={{padding: '5px 10px', lineHeight: '2'}}><Popover content="新建列"><Icon type="plus-circle" style={{...addColBtnStyle}} onClick={this.addTableCol} /></Popover></div>
-                        </div>
-                        <div className="colLine">
-                          <div style={{padding: '5px 10px', width: '80px', lineHeight: '2.3'}}>不显示列:</div>
-                          <div className={`${dragging ? 'dragging' : ''}`}>
-                            <Droppable droppableId="hide" direction="horizontal">
-                                {(provided, snapshot) => (
-                                    <div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-                                        {hideCols.map((item, index) => (
-                                            <Draggable
-                                                key={item.dataIndex}
-                                                draggableId={item.dataIndex}
-                                                index={index}
-                                                >
-                                                {/* eslint-disable-next-line */}
-                                                {(provided, snapshot) => (
-                                                  <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    onClick={()=>this.onTableCfgSelect(item)}
-                                                    className={`colItem ${curCol === item.dataIndex ? 'active' : ''} hideCol`}
-                                                    style={getItemStyle(
-                                                      snapshot.isDragging,
-                                                      provided.draggableProps.style
-                                                  )}>{item.title}</div>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                          </div>
-                        </div>
-                      </DragDropContext>
-                      <Card title="列信息编辑" bordered={false}>
-                        <OopForm {...this.makeTableCfgConfig(curTableRecord)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
-                        <div style={{textAlign: 'right', paddingRight: '5%'}}>
-                          <Button type="primary" onClick={this.handleTableCfgSubmit} style={{marginLeft: '20%'}}>保存</Button>
-                          <Popconfirm
-                            title="确认删除？"
-                            onConfirm={() => this.handleTableCfgRemove(curTableRecord._id)}>
-                            <Button type="danger" style={{marginLeft: '10px'}}>删除</Button>
-                          </Popconfirm>
-                        </div>
-                      </Card>
-                    </Row>
-                  </Spin>
-                 </div>
+                 <ColumnsEdit
+                    loading={loading}
+                    curTableRecord={curTableRecord}
+                    showCols={showCols}
+                    hideCols={hideCols}
+                    curCol={curCol}
+                    dragging={dragging}
+                    onSelect={this.onTableCfgSelect}
+                    onSubmit={this.handleTableCfgSubmit}
+                    onRemove={this.handleTableCfgRemove}
+                    onDragStart={this.onDragStart}
+                    onDragEnd={this.onDragEnd}
+                    addTableCol={this.addTableCol}
+                    self={this}
+                 />
                </TabPane>
                <TabPane tab="按钮编辑" key="2">
                 <Spin spinning={loading}>
@@ -1865,7 +1319,7 @@ export default class CustomQuery extends React.PureComponent {
                <TabPane tab="其他" key="3">
                   <Spin spinning={loading}>
                     <Card bordered={false}>
-                      <OopForm {...this.makeTableInfoCfgConfig(props, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
+                      <OopForm {...makeTableInfoCfgConfig(props, gridConfig, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
                     </Card>
                   </Spin>
                </TabPane>
