@@ -543,7 +543,7 @@ export default class CustomQuery extends React.PureComponent {
       curCol: col.dataIndex
     }, () => {
       for (const key in col) {
-        if (key !== 'enable') {
+        if (!'enable,syncTag'.includes(key)) {
           form.setFieldsValue({[key]: col[key]})
         }
       }

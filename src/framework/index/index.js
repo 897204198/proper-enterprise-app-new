@@ -1,7 +1,7 @@
 import '@babel/polyfill';
 import 'url-polyfill';
-import dva from 'dva';
-import createHistory from 'history/createHashHistory';
+import dva from 'dva'
+import { createHashHistory as createHistory } from 'history';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
@@ -13,7 +13,6 @@ import pkg from '@/../package.json';
 import framework from '@framework/package.json';
 // import plpk from '@pea/lib/package.json';
 import './index.less';
-
 
 // 1. Initialize
 const app = dva({
