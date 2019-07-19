@@ -195,7 +195,7 @@ export default class CustomQuery extends React.PureComponent {
     const {devtoolsCustomQuery: {list}} = this.props;
     const newList = value ? filter(list, ['functionName', 'tableName', 'code', 'wfKey']) : list
     this.setState({
-      list: newList
+      list: { data: newList }
     })
   }
   @Debounce(300)
@@ -882,7 +882,7 @@ export default class CustomQuery extends React.PureComponent {
       {title: '表名', dataIndex: 'tableName',
         render: (text) => {
           return (
-            <Popover content={text}>
+            <Popover content={text} placement="topLeft">
               <div className={styles.ellipsis}>{text}</div>
             </Popover>
           )
@@ -891,7 +891,7 @@ export default class CustomQuery extends React.PureComponent {
       {title: '编码', dataIndex: 'code',
         render: (text) => {
           return (
-            <Popover content={text}>
+            <Popover content={text} placement="topLeft">
               <div className={styles.ellipsis}>{text}</div>
             </Popover>
           )
@@ -901,7 +901,7 @@ export default class CustomQuery extends React.PureComponent {
         render: (text, record) => {
           if (record.relaWf && workflowSelection.length) {
             const wf = workflowSelection.filter(item => item.value === text)
-            return wf.length ? <Popover content={wf[0].label}>
+            return wf.length ? <Popover content={wf[0].label} placement="topLeft">
               <div className={styles.ellipsis}>{wf[0].label}</div>
             </Popover> : '流程不存在'
           }
