@@ -232,6 +232,7 @@ export default class OopTree extends PureComponent {
     })
   }
   renderTreeNodes = (data = [], treeTitle, treeKey, treeRoot, searchValue, selectedKeys = [])=> {
+    const { currentSelectTreeNode } = this.state
     const treeNodes = data.map((node) => {
       const item = {
         ...node,
@@ -241,10 +242,11 @@ export default class OopTree extends PureComponent {
       const index = item.title.indexOf(searchValue);
       const beforeStr = item.title.substr(0, index);
       const afterStr = item.title.substr(index + searchValue.length);
+      const selectedStyle = currentSelectTreeNode && currentSelectTreeNode.id === item.id ? {color: '#fff'} : {}
       const title = index > -1 ? (
         <span>
           {beforeStr}
-          <span className={selectedKeys[0] === item.id ? '' : styles.primaryColor}>{searchValue}</span>
+          <span className={selectedKeys[0] === item.id ? '' : styles.primaryColor} style={selectedStyle}>{searchValue}</span>
           {afterStr}
         </span>
       ) : item.title;
