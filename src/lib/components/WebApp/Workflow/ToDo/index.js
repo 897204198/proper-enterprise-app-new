@@ -66,7 +66,7 @@ export default class ToDo extends React.PureComponent {
     const {activeKey: currentActiveKey} = this.state;
     if (location.search) {
       const {activeKey} = getParamObj(location.search);
-      if (currentActiveKey !== activeKey) {
+      if (activeKey && currentActiveKey !== activeKey) {
         this.setState({
           activeKey,
           activeIndex: activeKey === 'taskAssignee' ? 1 : 0,

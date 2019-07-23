@@ -68,7 +68,7 @@ const FormContainer = Form.create({
                   }
                   const currentValue = value === undefined ? initialValue : value;
                   // 被依赖的组件还没有 渲染
-                  setFormJsonProperties(item, changeValue, currentValue, publish);
+                  setFormJsonProperties(item, changeValue, currentValue, publish, result);
                 }
               })
             }
@@ -84,7 +84,7 @@ const FormContainer = Form.create({
 })((props)=>{
   const { OopForm$model, disabled = false, formJson = [], form, self } = props;
   formJson.forEach((item)=>{
-    const {name, component /* render */} = item;
+    const {name, component, readonly = false} = item;
     if (component.name === 'DatePicker') {
       if (item.initialValue) {
         if (ifRenderByAntdMobile) {
@@ -110,7 +110,7 @@ const FormContainer = Form.create({
       }
     }
     // 如果是有字典数据源的组件
-    if (component.children && component.children.length === 0 && component.dictCatalog) {
+    if (readonly === false && component.children && component.children.length === 0 && component.dictCatalog) {
       const {dictCatalog} = component;
       if (dictCatalog !== '请选择') {
         if (OopForm$model[dictCatalog] === undefined) {
@@ -125,7 +125,7 @@ const FormContainer = Form.create({
       }
     }
     // 如果是有url数据源的组件
-    if (component.children && component.children.length === 0 && component.dataUrl) {
+    if (readonly === false && component.children && component.children.length === 0 && component.dataUrl) {
       const {dataUrl} = component;
       if (dataUrl.value) {
         if (!OopForm$model[dataUrl.value] || OopForm$model[dataUrl.value].length === 0) {
@@ -195,6 +195,11 @@ export default class OopForm extends React.PureComponent {
       const {name, initialValue} = item;
       if (!Object.prototype.hasOwnProperty.call(fields, name)) {
         fields[name] = Form.createFormField({value: initialValue})
+      } else {
+        // 如果是initialValue有值 fields没值的情况 可能是 initialValue是被订阅的字段这块给fields赋值
+        if (fields[name].value === undefined || fields[name].value === null) {  // eslint-disable-line
+          fields[name].value = initialValue
+        }
       }
     })
     // 把fields多的内容删除 存在的看看是否需要赋值
@@ -310,7 +315,11 @@ export default class OopForm extends React.PureComponent {
           }
         } else if ('OopSystemCurrent'.includes(cName)) {
           if (!data[textKey]) {
-            data[textKey] = value.text
+            if (value.code === 'currentSysDate') {
+              data[textKey] = value.id;
+            } else {
+              data[textKey] = value.text;
+            }
           }
         } else if ('DatePicker'.includes(cName)) {
           if (!data[textKey]) {

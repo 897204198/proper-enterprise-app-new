@@ -1,6 +1,6 @@
 import '@babel/polyfill';
 import 'url-polyfill';
-import dva from 'dva'
+import dva from 'dva';
 import { createHashHistory as createHistory } from 'history';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';

@@ -59,7 +59,7 @@ export const formGenerator = (formConfig)=>{
         let _rules = null;
         if (component) {
           // component增加loading属性
-          if (rules.length) {
+          if (rules.length && readonly === false) {
             _rules = transformRules(rules);
           }
           // component是函数的时候直接作为参数传入createComponent ，否则解构component 再附加其他参数传入
@@ -166,8 +166,8 @@ const getFormItem = (formItemInner, formItemConfig)=>{
               type="pause-circle-o"
               style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
           </Tooltip>
-        </div>
-      ) : null}</div>
+        </div>) : null}
+      </div>
     </div>);
   }
 }
@@ -303,44 +303,56 @@ export const equals = (value, value2)=>{
 }
 
 // 通知formJson变化
-export const setFormJsonProperties = (item, changedValue, currentValue, publish)=>{
+export const setFormJsonProperties = (item, changedValue, currentValue, publish, result)=>{
   const {value, property} = publish;
+  const allValue = {};
+  Object.keys(result).forEach((key)=>{ allValue[key] = result[key].value })
   if (property) {
-    const properties = property.split('.');
-    if (properties.length > 1) {
-      let tempObj = item;
-      for (let i = 0; i < properties.length; i++) {
-        const proper = properties[i];
-        if (tempObj[proper] === undefined) {
-          if (properties.length !== (i + 1)) {
-            tempObj[proper] = {}
-          }
-        } else {
-          tempObj = tempObj[proper]
-        }
+    if (property === 'component.props.value' || property === 'value') {
+      result[item.name].value = caculateSubscribeResult(changedValue, currentValue, allValue, value)
+    } else if (property === 'initialValue') {
+      const v = caculateSubscribeResult(changedValue, currentValue, allValue, value);
+      if (v && (item.initialValue === null || item.initialValue === undefined)) {
+        result[item.name].value = v;
+        item[property] = v;
       }
-      const funcStr = `return this.${property} = arguments[0](arguments[1], arguments[2], arguments[3])`;
-      let fn = null;
-      try {
-        // eslint-disable-next-line
-        fn = new Function(funcStr);
-        fn.apply(item, [caculateSubscribeResult, changedValue, currentValue, value]);
-      } catch (e) {
-        console.error(e)
-      }
-      setTimeout(()=>{
-        fn = null;
-      })
     } else {
-      item[property] = caculateSubscribeResult(changedValue, currentValue, value);
+      const properties = property.split('.');
+      if (properties.length > 1) {
+        let tempObj = item;
+        for (let i = 0; i < properties.length; i++) {
+          const proper = properties[i];
+          if (tempObj[proper] === undefined) {
+            if (properties.length !== (i + 1)) {
+              tempObj[proper] = {}
+            }
+          } else {
+            tempObj = tempObj[proper]
+          }
+        }
+        const funcStr = `return this.${property} = arguments[0](arguments[1], arguments[2], arguments[3])`;
+        let fn = null;
+        try {
+          // eslint-disable-next-line
+          fn = new Function(funcStr);
+          fn.apply(item, [caculateSubscribeResult, changedValue, currentValue, allValue, value]);
+        } catch (e) {
+          console.error(e)
+        }
+        setTimeout(()=>{
+          fn = null;
+        })
+      } else {
+        item[property] = caculateSubscribeResult(changedValue, currentValue, allValue, value);
+      }
     }
   }
 }
 
 // 根据subscribe中的设置 来计算结果
-const caculateSubscribeResult = (changedValue, currentValue, value)=>{
+const caculateSubscribeResult = (changedValue, currentValue, allValue, value)=>{
   try {
-    return getValueByFunctionStr(value, changedValue, currentValue);
+    return getValueByFunctionStr(value, changedValue, currentValue, allValue);
   } catch (e) {
     return equals(changedValue, value)
   }

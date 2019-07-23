@@ -274,7 +274,7 @@ export default class OopTree extends PureComponent {
       } else {
         return false
       }
-    })
+    }).filter(it=>it !== false);
     return treeRoot ?
       (
         <TreeNode
