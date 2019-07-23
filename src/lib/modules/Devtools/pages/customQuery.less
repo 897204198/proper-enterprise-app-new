@@ -1,3 +1,5 @@
+@import "~antd/lib/style/themes/default.less";
+
 :global {
   .colLine {
     display: flex;
@@ -10,8 +12,8 @@
   }
   .colItem {
     padding: 5px 10px;
-    color: #1890ff;
-    border: 1px solid #1890ff;
+    color: @primary-color;
+    border: 1px solid @primary-color;
     border-radius: 4px;
     margin: 0 8px;
     text-align: center;
@@ -21,9 +23,9 @@
     border-color: #ddd;
   }
   .colItem.active {
-    background: #0079fa;
+    background: @primary-color;
     color: white;
-    border-color: #0079fa;
+    border-color: @primary-color;
   }
 }
 .ellipsis {

@@ -2,12 +2,14 @@ import React from 'react';
 import { Card, Icon, Button, Row, Popconfirm, Spin, Popover} from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import OopForm from '@pea/components/OopForm';
-import { makeTableCfgConfig } from '../utils'
+import { makeTableCfgConfig } from '../utils';
+
+const primaryColor = require('@/config/theme.js')['primary-color']
 
 const addColBtnStyle = {
   fontSize: '22px',
   verticalAlign: '-webkit-baseline-middle',
-  color: '#1890ff'
+  color: primaryColor
 }
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
