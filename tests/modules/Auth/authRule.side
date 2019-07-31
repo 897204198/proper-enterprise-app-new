@@ -274,6 +274,13 @@
         ["xpath=//td[5]", "xpath:position"]
       ],
       "value": "1"
+    }, {
+      "id": "7cfa39ca-4165-4198-870c-f20f661dc649",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }, {
     "id": "e64b53b3-ae64-4ffe-a93e-36ce709e1340",
@@ -529,6 +536,13 @@
         ["xpath=//div[4]/div/span/div/div", "xpath:position"]
       ],
       "value": "删除成功"
+    }, {
+      "id": "15343a4a-9a9d-425d-b148-cf326dbffc1b",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }],
   "suites": [{

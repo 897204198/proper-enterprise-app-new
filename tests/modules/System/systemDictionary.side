@@ -1,0 +1,630 @@
+{
+  "id": "697e03bd-d367-45ec-b461-962b3d04a6df",
+  "version": "2.0",
+  "name": "systemDictionary",
+  "url": "http://192.168.1.111/pea/develop/#/",
+  "tests": [{
+    "id": "e761afcc-e1b8-4546-8c4e-73f334a1af2f",
+    "name": "PEP配置管理_数据字典配置_新增字典",
+    "commands": [{
+      "id": "db03a57b-8cc4-4acf-a718-b8215b4dc9b4",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e3799e5d-2a43-4ae7-8f35-cca8436539f4",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "84283066-e81a-4df1-9ac4-984704d3fa34",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [],
+      "value": "ceshi"
+    }, {
+      "id": "cea8c4fb-f994-42ff-9850-271d522bc237",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [],
+      "value": "123456"
+    }, {
+      "id": "45fc9cee-4b0d-45c4-a947-758d192003e9",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3290c24a-f77f-479a-a581-f6ace326d526",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0182f6ca-357c-42a1-818a-ae48730c357c",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": "数据字典配置"
+    }, {
+      "id": "b76aafc6-0614-4ecd-a6c5-7f2df712aaaf",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=数据字典配置",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e718dc3c-1aac-4525-8afb-a553b94e4da3",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=(//button[@type='button'])[2]",
+      "targets": [
+        ["css=.toolbar___3VYFC > .ant-btn", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div[2]/div/button", "xpath:idRelative"],
+        ["xpath=//div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'新建')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5a4290bf-9347-47a7-b7bd-d21610522f28",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-select-selection__placeholder",
+      "targets": [
+        ["css=.ant-select-selection__placeholder", "css:finder"],
+        ["xpath=//div[@id='catalog']/div/div/div", "xpath:idRelative"],
+        ["xpath=//span/div/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "feabca87-4ada-4336-97c0-f67da56e4ea0",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-select-dropdown-menu-item-active",
+      "targets": [
+        ["css=.ant-select-dropdown-menu-item-active", "css:finder"],
+        ["xpath=//div[@id='63588794-4c26-4b1a-826e-196818322ea0']/ul/li", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/div/ul/li", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "494f9bb2-4eb5-40ba-ada3-75ed02860605",
+      "comment": "",
+      "command": "click",
+      "target": "id=code",
+      "targets": [
+        ["id=code", "id"],
+        ["css=#code", "css:finder"],
+        ["xpath=//input[@id='code']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "4634811e-a27a-4e55-90c0-18d0c6c59213",
+      "comment": "",
+      "command": "type",
+      "target": "id=code",
+      "targets": [
+        ["id=code", "id"],
+        ["css=#code", "css:finder"],
+        ["xpath=//input[@id='code']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "11111"
+    }, {
+      "id": "208d90f1-09d3-4bfb-b926-e066986bcaf2",
+      "comment": "",
+      "command": "click",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[4]/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "00ab403c-4402-414f-8378-7db63e2a4beb",
+      "comment": "",
+      "command": "type",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[4]/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "22222"
+    }, {
+      "id": "1841b2ac-9c3b-4bd1-842d-21af10951a17",
+      "comment": "",
+      "command": "click",
+      "target": "id=order",
+      "targets": [
+        ["id=order", "id"],
+        ["css=#order", "css:finder"],
+        ["xpath=//input[@id='order']", "xpath:attributes"],
+        ["xpath=//div/div[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3c0c4425-496c-4826-86cc-575da7adf618",
+      "comment": "",
+      "command": "type",
+      "target": "id=order",
+      "targets": [
+        ["id=order", "id"],
+        ["css=#order", "css:finder"],
+        ["xpath=//input[@id='order']", "xpath:attributes"],
+        ["xpath=//div/div[2]/input", "xpath:position"]
+      ],
+      "value": "1"
+    }, {
+      "id": "7c6106ad-c134-4b1e-9863-e564950ffc35",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn:nth-child(2)",
+      "targets": [
+        ["css=.ant-btn:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[4]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "57b93f38-7c45-44b9-a054-4762357d780d",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2f5ffd08-3219-472c-9266-4b073ba3708a",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-custom-content > span",
+      "targets": [],
+      "value": "保存成功"
+    }, {
+      "id": "d8ae124b-470e-4306-8db9-2417b2d13a07",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "5ccab0e4-f9a3-49db-94db-c8c6007d1aa3",
+    "name": "PEP配置管理_数据字典配置_编辑字典",
+    "commands": [{
+      "id": "4d8774d9-84a7-4184-8006-39f2b29b28e3",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c3dfd0a1-3414-4232-bad5-25deb8939f76",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "4ddaff65-4b74-45d8-862b-3cce74067f38",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [],
+      "value": "ceshi"
+    }, {
+      "id": "757c3ada-462a-40d1-bc3a-93e1aea940db",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [],
+      "value": "123456"
+    }, {
+      "id": "bd987721-6087-43cb-b97b-4f39817c0d9c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "56beea97-f68f-4b01-b35e-6829c7a89504",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "07290ba1-f9eb-4307-b0b3-359791bdf197",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": "数据字典配置"
+    }, {
+      "id": "436fe404-b80b-488e-ad53-87c54c1e38b1",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=数据字典配置",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fcde869c-4614-4d08-a290-41c35d8b073c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fd7b8b5c-6e4a-4fcf-ae09-fa20f9f49409",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=//input[@value='11111']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": "11111"
+    }, {
+      "id": "3eadc6ea-1510-4a72-8530-28c31d779c70",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//td[contains(., '11111')]/following-sibling::td/a/i[@class='anticon anticon-edit']",
+      "targets": [
+        ["css=.anticon-edit > svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "4c16e8a4-080c-4395-9125-5800c0353a1c",
+      "comment": "",
+      "command": "click",
+      "target": "id=code",
+      "targets": [
+        ["id=code", "id"],
+        ["css=#code", "css:finder"],
+        ["xpath=//input[@id='code']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "412fadcf-4177-43ab-a176-515b9de417c0",
+      "comment": "",
+      "command": "type",
+      "target": "id=code",
+      "targets": [
+        ["id=code", "id"],
+        ["css=#code", "css:finder"],
+        ["xpath=//input[@id='code']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "111111"
+    }, {
+      "id": "2ad2e052-94d8-4b1a-a3ff-fbb464ac3066",
+      "comment": "",
+      "command": "click",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[4]/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "349e44fc-42dc-4572-838e-90f4eae07c4c",
+      "comment": "",
+      "command": "type",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[4]/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "222222"
+    }, {
+      "id": "064d0ddf-af51-4d3e-ba1d-f61acd80b772",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-radio-wrapper:nth-child(2) > span:nth-child(2)",
+      "targets": [
+        ["css=.ant-radio-wrapper:nth-child(2) > span:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='deft']/label[2]/span[2]", "xpath:idRelative"],
+        ["xpath=//label[2]/span[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "899a9159-179e-4f3d-abb3-fc0202bfb93e",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn:nth-child(3)",
+      "targets": [
+        ["css=.ant-btn:nth-child(3)", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//button[3]", "xpath:position"],
+        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "4690e712-f885-457f-875a-af003206535b",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2611820f-9dd6-4eef-9501-1df2f68fb713",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-custom-content > span",
+      "targets": [],
+      "value": "保存成功"
+    }, {
+      "id": "20caa344-f4dc-445c-b28b-4aab6c3ace20",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "24316bbf-e0e6-435a-8f5e-68565ced8c57",
+    "name": "PEP配置管理_数据字典配置_查看字典",
+    "commands": [{
+      "id": "9682b4f6-90ff-4d08-b9f9-8da11e62e2ee",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2686bf7c-e3e1-439f-bc93-2b97f746594c",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "deac1203-ee85-4f1b-94df-d0ae18888fa0",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [],
+      "value": "ceshi"
+    }, {
+      "id": "b835cc42-8b96-4197-a0df-2b6a623aa8ea",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [],
+      "value": "123456"
+    }, {
+      "id": "df453d40-5441-4c20-89a9-5798aa0e6a85",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "337f47b4-2c12-48d6-a744-2d84bd9d3e45",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3572f3d6-5c57-46b2-9948-df5c686fd7a0",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": "数据字典配置"
+    }, {
+      "id": "2020f925-4171-4b0e-b700-c9f12c155641",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=数据字典配置",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "ef0aabbc-2ebc-432b-af2a-bb433c62933c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c1dd8d3f-e7c7-4559-9ed2-55bc4b18175b",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=//input[@value='11111']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": "111111"
+    }, {
+      "id": "87d5e3a0-f81a-4053-abb0-d392d994e1f6",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//td[contains(., '11111')]/../td[1]/div",
+      "targets": [
+        ["css=.anticon-edit > svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "3c175f0a-c864-4581-93f2-f5e44ff834ca",
+      "comment": "",
+      "command": "click",
+      "target": "//button[contains(.,'确 定')]",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "a9597706-ef23-4acf-8b5e-6de247766c2e",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "18a6abee-1138-4c82-a217-234590a1ceac",
+    "name": "PEP配置管理_数据字典配置_删除字典",
+    "commands": [{
+      "id": "42d69577-0f71-4593-9f90-60878123cbe8",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8fa00fda-10ab-4a02-b878-f8bbde40d7d5",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e5a688ff-0a08-4a1d-bd0a-86a91d29e584",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [],
+      "value": "ceshi"
+    }, {
+      "id": "e4bf49f8-f5a9-46bc-9ec4-a569fc535729",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [],
+      "value": "123456"
+    }, {
+      "id": "99ed7bee-f1dc-46f9-a7bf-6822395060d3",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "19918b13-39fe-4fc1-b8bc-3afa6e4c2155",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3b24a13b-f08d-4c8c-b0e3-6eedf3e42611",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [],
+      "value": "数据字典配置"
+    }, {
+      "id": "6a8eb29e-1723-453b-a0ca-454718de7c20",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=数据字典配置",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6a6f23da-8347-4021-87cd-8952b70b74bd",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "614ff281-94d5-49fa-98e4-a3b3dc0023b5",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=//input[@value='11111']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": "111111"
+    }, {
+      "id": "c004a2ea-f257-407d-a992-912e9572d3fc",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//td[contains(., '11111')]/following-sibling::td/a/i[@class='anticon anticon-delete']",
+      "targets": [
+        ["css=.anticon-edit > svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "14fdbcf5-0bd9-4aea-9a6e-561df1c4a1d8",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[@class='ant-popover-buttons']/button[contains(.,'确 定')]",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "ac255e3d-adfa-4bb0-acc5-69a7b2435a1c",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "34a1aed6-34af-4dbd-88f9-2ce13bca3710",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-custom-content > span",
+      "targets": [],
+      "value": "删除成功"
+    }, {
+      "id": "b47dca56-801c-41e6-b9ae-3302028ff687",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "08f8e8af-f9e5-4ae1-97c3-3795922ed2dc",
+    "name": "PEP配置管理_数据字典配置",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["e761afcc-e1b8-4546-8c4e-73f334a1af2f", "5ccab0e4-f9a3-49db-94db-c8c6007d1aa3", "24316bbf-e0e6-435a-8f5e-68565ced8c57", "18a6abee-1138-4c82-a217-234590a1ceac"]
+  }],
+  "urls": ["http://192.168.1.111/pea/develop/#/"],
+  "plugins": []
+}

@@ -224,6 +224,13 @@
         ["css=.ant-modal-close-icon path", "css:finder"]
       ],
       "value": ""
+    }, {
+      "id": "a8c52c70-fd4c-400a-ad55-5dceef9f1d16",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }, {
     "id": "9b814981-f3d9-4633-922c-c4e429306311",
@@ -437,6 +444,13 @@
       ],
       "value": ""
     }, {
+      "id": "c38b870a-53ff-48b6-b845-ff4e82890b09",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "408d5733-5db0-498c-b7ab-4f2af8fb5034",
       "comment": "",
       "command": "runScript",
@@ -522,6 +536,13 @@
       ],
       "value": ""
     }, {
+      "id": "d7069b34-c95b-47a7-8f55-90dc15e66548",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "175bf07e-df6c-49a4-a806-9d306d44e511",
       "comment": "",
       "command": "runScript",
@@ -592,6 +613,13 @@
         ["css=.ant-tabs-tab:nth-child(3)", "css:finder"],
         ["xpath=//div/div/div/div/div/div/div/div/div[3]", "xpath:position"]
       ],
+      "value": ""
+    }, {
+      "id": "eec93d35-6ff2-433c-a212-ec8aac003d6d",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
       "value": ""
     }, {
       "id": "a338799f-5109-4182-ad10-da9472874764",
@@ -672,41 +700,12 @@
       ],
       "value": ""
     }, {
-      "id": "77d4e4ba-37bb-420d-83b7-f3247a0e90b6",
+      "id": "f015eab0-de6e-4aec-9439-08c08731e5a4",
       "comment": "",
-      "command": "assertText",
-      "target": "css=td > span:nth-child(2)",
-      "targets": [
-        ["css=td > span:nth-child(2)", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[2]/span[2]", "xpath:idRelative"],
-        ["xpath=//td[2]/span[2]", "xpath:position"],
-        ["xpath=//span[contains(.,'aaa')]", "xpath:innerText"]
-      ],
-      "value": "aaa"
-    }, {
-      "id": "ee0dff44-93e0-4d0d-993b-fb4da470552c",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=td:nth-child(3)",
-      "targets": [
-        ["css=td:nth-child(3)", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[3]", "xpath:idRelative"],
-        ["xpath=//td[3]", "xpath:position"],
-        ["xpath=//td[contains(.,'123')]", "xpath:innerText"]
-      ],
-      "value": "1234"
-    }, {
-      "id": "b7e1d898-9ba7-4eab-83c7-662eb5d56167",
-      "comment": "",
-      "command": "assertText",
-      "target": "css=td:nth-child(4)",
-      "targets": [
-        ["css=td:nth-child(4)", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[4]", "xpath:idRelative"],
-        ["xpath=//td[4]", "xpath:position"],
-        ["xpath=//td[contains(.,'DevOps')]", "xpath:innerText"]
-      ],
-      "value": "DevOps"
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }, {
     "id": "153ac246-9e3f-467d-923d-54fd7ffa61f2",
@@ -862,6 +861,13 @@
         ["xpath=//span/div/div/div/span", "xpath:position"]
       ],
       "value": "删除成功"
+    }, {
+      "id": "0f55e853-2589-44df-bfde-28b390d02681",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }],
   "suites": [{

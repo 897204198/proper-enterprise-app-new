@@ -309,6 +309,13 @@
         ["xpath=//td[contains(.,'13333333333')]", "xpath:innerText"]
       ],
       "value": "13333333333"
+    }, {
+      "id": "26b9e4dc-d0f4-45d9-8f93-fba820689e89",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }, {
     "id": "0e3c9620-0d42-4a26-b130-b21cf2b0eebf",
@@ -760,6 +767,13 @@
       "target": "1000",
       "targets": [],
       "value": ""
+    }, {
+      "id": "c4555e75-345e-4415-b6bd-be3dc2ba9086",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }, {
     "id": "f2e7bb03-3e09-4f48-8ebb-0e278f5e585c",
@@ -911,6 +925,13 @@
         ["xpath=//span/div/div/div/span", "xpath:position"]
       ],
       "value": "删除成功"
+    }, {
+      "id": "94095a41-55be-4147-8041-11d49ee13b26",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
     }]
   }, {
     "id": "998b306f-52ec-4378-9702-d2276263f241",
@@ -1158,6 +1179,13 @@
         ["xpath=//div[2]/div[2]/button", "xpath:position"],
         ["xpath=//button[contains(.,'确 定')]", "xpath:innerText"]
       ],
+      "value": ""
+    }, {
+      "id": "26092d29-6bf3-4d50-bb31-3c2fdf3cec06",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
       "value": ""
     }]
   }],

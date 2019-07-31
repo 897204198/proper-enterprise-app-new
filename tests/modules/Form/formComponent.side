@@ -806,10 +806,17 @@
       ],
       "value": ""
     }, {
+      "id": "b0fcd1b1-97b1-4681-b8ea-a1a4fa9b6370",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "933dcb10-e95c-4e6c-98f9-cafd33d45351",
       "comment": "",
       "command": "click",
-      "target": "xpath=//button[contains(.,'确 认')]",
+      "target": "xpath=//div[@class='ant-modal-confirm-btns']/button[contains(.,'确 认')]",
       "targets": [
         ["css=.ant-btn-primary:nth-child(2)", "css:finder"],
         ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
