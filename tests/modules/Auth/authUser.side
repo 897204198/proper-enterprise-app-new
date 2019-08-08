@@ -978,6 +978,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "1e470aea-e881-477b-969d-7bf3056c5b8a",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "7516c6c5-bbe8-4281-b9ac-853a893b8baa",
       "comment": "",
       "command": "type",
@@ -989,6 +996,13 @@
         ["xpath=//input", "xpath:position"]
       ],
       "value": "用户管理"
+    }, {
+      "id": "b713da0d-78db-4337-87b1-63747601784e",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
     }, {
       "id": "2f049dd7-dbf5-4f7b-9543-272e2058fe75",
       "comment": "",
@@ -1070,6 +1084,13 @@
       ],
       "value": ""
     }, {
+      "id": "3aa5ee8f-e6ef-49e0-b7a5-69b677ef9bd8",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "c327df99-600e-4bb7-816c-44d42ca4e30f",
       "comment": "",
       "command": "click",
@@ -1084,6 +1105,13 @@
       "comment": "",
       "command": "runScript",
       "target": "window.scrollTo(0,0)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d16e648d-96e1-49f0-88a2-cebdc22a352a",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
       "targets": [],
       "value": ""
     }, {
@@ -1137,6 +1165,13 @@
       "comment": "",
       "command": "runScript",
       "target": "window.scrollTo(0,0)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "bd012d5b-d1e1-42ed-b40e-f0be4395caed",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
       "targets": [],
       "value": ""
     }, {

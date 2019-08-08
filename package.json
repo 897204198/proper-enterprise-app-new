@@ -70,6 +70,7 @@
     "react-markdown": "^3.6.0",
     "react-stomp": "^4.0.0",
     "shelljs": "^0.8.3",
+    "simple-scp": "^1.0.0",
     "timeago-react": "^2.0.0",
     "url-polyfill": "^1.0.10"
   },
