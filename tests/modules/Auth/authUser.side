@@ -14,6 +14,13 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "e2be0d19-9562-46f6-a4b0-db735b94d494",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
+      "targets": [],
+      "value": ""
+    }, {
       "id": "d884b2a2-2641-4efb-ba1e-c23db3ec6190",
       "comment": "",
       "command": "type",
@@ -164,12 +171,12 @@
       ],
       "value": ""
     }, {
-      "id": "4a259a01-219f-45f6-b2f0-647fc5ccfb89",
+      "id": "b8e9f036-d22a-4b64-ad43-8602ffe9335a",
       "comment": "",
-      "command": "pause",
-      "target": "2000",
+      "command": "waitForElementVisible",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [],
-      "value": ""
+      "value": "30000"
     }, {
       "id": "226cf7a7-ef65-479d-9f23-1072671674a1",
       "comment": "",
@@ -596,12 +603,12 @@
       ],
       "value": ""
     }, {
-      "id": "683a0ab2-f735-45b8-a53f-5897b1981c61",
+      "id": "cd2315fc-67dc-4faa-8910-29ee0ad06c18",
       "comment": "",
-      "command": "pause",
-      "target": "2000",
+      "command": "waitForElementVisible",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [],
-      "value": ""
+      "value": "30000"
     }, {
       "id": "ac03df57-2cc0-4ee6-9da3-864d53f15234",
       "comment": "",
@@ -649,12 +656,12 @@
       ],
       "value": ""
     }, {
-      "id": "86b9f7ba-691a-4d63-b383-3d9e8e6ae0da",
+      "id": "2bb5d8e8-cfe4-4e32-bce9-c09d321228d5",
       "comment": "",
-      "command": "pause",
-      "target": "2000",
+      "command": "waitForElementVisible",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [],
-      "value": ""
+      "value": "30000"
     }, {
       "id": "9b06dad2-0e42-40be-a6bb-3933f38497d3",
       "comment": "",
@@ -702,12 +709,12 @@
       ],
       "value": ""
     }, {
-      "id": "a3c733ab-016d-4f14-b995-1fa494b7b2f2",
+      "id": "8394df33-d474-4385-83fb-e0027e303576",
       "comment": "",
-      "command": "pause",
-      "target": "2000",
+      "command": "waitForElementVisible",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [],
-      "value": ""
+      "value": "30000"
     }, {
       "id": "0e680834-c6c6-4381-8670-f4bf735d125a",
       "comment": "",
@@ -783,6 +790,13 @@
       "comment": "",
       "command": "open",
       "target": "#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8cc30489-df1b-465b-a125-0cbf82741b58",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x768",
       "targets": [],
       "value": ""
     }, {
@@ -1129,10 +1143,10 @@
     }, {
       "id": "dc101ffc-3317-4b6d-959c-0387e513efa2",
       "comment": "",
-      "command": "pause",
-      "target": "2000",
+      "command": "waitForElementVisible",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [],
-      "value": ""
+      "value": "30000"
     }, {
       "id": "4f6486cc-48dd-4b09-a136-fdb9e300de22",
       "comment": "",
@@ -1187,12 +1201,12 @@
       ],
       "value": ""
     }, {
-      "id": "82c34e7e-6560-40ec-97b0-d8c2fb84f1e1",
+      "id": "4a7c6a12-0d19-4c1a-acbc-5384cedd5f3c",
       "comment": "",
-      "command": "pause",
-      "target": "2000",
+      "command": "waitForElementVisible",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [],
-      "value": ""
+      "value": "30000"
     }, {
       "id": "226fb806-3c4f-4ad2-9444-f310c40c9023",
       "comment": "",

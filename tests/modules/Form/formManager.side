@@ -240,12 +240,12 @@
       ],
       "value": ""
     }, {
-      "id": "247fbb54-2114-491e-938a-8ab3bab3c93c",
+      "id": "24f978c0-dfd6-4d93-be87-1c2b5d0f3513",
       "comment": "",
-      "command": "pause",
-      "target": "2000",
+      "command": "waitForElementVisible",
+      "target": "css=.ant-message-custom-content > span",
       "targets": [],
-      "value": ""
+      "value": "30000"
     }, {
       "id": "0504d482-6178-4cca-857a-305a8a5802a6",
       "comment": "",
