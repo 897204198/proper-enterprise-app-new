@@ -68,8 +68,9 @@ const CreateForm = Form.create()((props) => {
 
 const CreateModal = (props) => {
   const { viewVisible, createOk, createCancel } = props;
+  const temp = {};
   const okHandle = () => {
-    const form = this.CreateForm.getForm();
+    const form = temp.CreateForm.getForm();
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       createOk(false, fieldsValue);
@@ -84,7 +85,7 @@ const CreateModal = (props) => {
       maskClosable={false}
       destroyOnClose={true}
     >
-      <CreateForm ref={(el)=>{ this.CreateForm = el; }} />
+      <CreateForm ref={(el)=>{ temp.CreateForm = el; }} />
     </Modal>
   );
 };
@@ -310,8 +311,9 @@ export default class Designer extends PureComponent {
     this.props.dispatch({
       type: 'workflowDesigner/remove',
       payload: id,
-      callback: () => {
+      callback: (res) => {
         this.refresh(this.state.nowTreeCode);
+        oopToast(res, '删除成功');
       }
     });
   }
@@ -421,7 +423,8 @@ export default class Designer extends PureComponent {
     this.props.dispatch({
       type: 'workflowDesigner/repository',
       payload: item.id,
-      callback: () => {
+      callback: (res) => {
+        oopToast(res, '部署成功');
         for (let i = 0; i < this.state.lists.length; i++) {
           if (this.state.lists[i].id === this.props.workflowDesigner.deployData.id) {
             this.state.lists[i].deploymentTime =

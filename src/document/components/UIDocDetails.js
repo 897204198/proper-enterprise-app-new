@@ -1,6 +1,8 @@
 import React from 'react';
 import Markdown from 'react-markdown';
 
+const {decodeURIComponent, escape, atob} = window;
+
 export default class UIDocDetails extends React.PureComponent {
   constructor(props) {
     super(props);

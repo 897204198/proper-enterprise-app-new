@@ -1,5 +1,6 @@
 import app from '@framework/index';
 import {dependencies} from '@/config/config';
+import {message} from 'antd';
 
 // 在加载Router页面 connect属性之前 注入当前Router页面需要的model
 export const inject = (url)=> {
@@ -79,7 +80,7 @@ const getDvaModelByModelUrlAndDepdecs = (modelUrl, depdecs = []) =>{
   try {
     model = getModel(modelUrl);
   } catch (e) {
-    if (is404Exception(e.message)) {
+    if (is404Exception(e.message) && depdecs.length) {
       for (let i = depdecs.length - 1; i >= 0; i--) {
         const root = depdecs[i];
         try {
@@ -87,15 +88,16 @@ const getDvaModelByModelUrlAndDepdecs = (modelUrl, depdecs = []) =>{
           break;
         } catch (err) {
           if (!is404Exception(err.message)) {
-            console.error(err);
-            model = { default: {}}
-            break;
+            console.error(e);
+            message.error(e.message);
+            throw e;
           }
         }
       }
     } else {
       console.error(e);
-      model = { default: {}}
+      message.error(e.message);
+      throw e;
     }
   }
   return model.default;

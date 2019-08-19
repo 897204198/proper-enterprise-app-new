@@ -105,12 +105,13 @@ const ViewModal = (props) => {
   basePage,
   global,
   loading: loading.models.basePage
-}))
+}), null, null, {withRef: true})
 export default class CommonPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.formJson = cloneDeep(props.formConfig.formJson);
     this.state = {
+      gridLoading: undefined,
       modalFormVisible: false,
       viewModalVisible: false,
       list: [],
@@ -194,7 +195,7 @@ export default class CommonPage extends React.PureComponent {
       payload: record.id,
       tableName: this.props.tableName,
       callback: (res)=>{
-        oopToast(res, '删除成功', '删除失败');
+        oopToast(res, '删除成功');
         this.onLoad();
       }
     });
@@ -213,7 +214,7 @@ export default class CommonPage extends React.PureComponent {
           tableName: this.props.tableName,
           callback(res) {
             me.oopTable.clearSelection()
-            oopToast(res, '删除成功', '删除失败');
+            oopToast(res, '删除成功');
             me.onLoad()
           }
         })
@@ -229,11 +230,6 @@ export default class CommonPage extends React.PureComponent {
         type: 'basePage/clearEntity',
         tableName: this.props.tableName
       });
-      // this.props.formConfig.formJson.forEach(
-      //   (item)=>{
-      //     item.initialValue = undefined
-      //   }
-      // );
     }, 300)
   }
   // 点击modal窗口保存按钮
@@ -243,7 +239,7 @@ export default class CommonPage extends React.PureComponent {
       payload: values,
       tableName: this.props.tableName,
       callback: (res)=>{
-        oopToast(res, '保存成功', '保存失败');
+        oopToast(res, '保存成功');
         this.onLoad();
       }
     });
@@ -334,18 +330,26 @@ export default class CommonPage extends React.PureComponent {
     const { restPath, confirm } = button;
     if (restPath) {
       const dofn = ()=>{
-        this.props.dispatch({
-          type: 'basePage/restfulAction',
-          payload: {
-            restPath,
-            param
-          },
-          tableName: this.props.tableName,
-          callback: (res)=>{
-            oopToast(res, '操作成功');
-            this.oopTable.clearSelection();
-            this.onLoad();
-          }
+        button.loading = true;
+        this.state.gridLoading = true;
+        this.forceUpdate(()=>{
+          setTimeout(()=>{
+            this.props.dispatch({
+              type: 'basePage/restfulAction',
+              payload: {
+                restPath,
+                param
+              },
+              tableName: this.props.tableName,
+              callback: (res)=>{
+                button.loading = false;
+                this.state.gridLoading = false;
+                oopToast(res, '操作成功');
+                this.oopTable.clearSelection();
+                this.onLoad();
+              }
+            })
+          }, 200)
         })
       }
       if (confirm) {
@@ -368,18 +372,30 @@ export default class CommonPage extends React.PureComponent {
     const { restPath, confirm } = button;
     if (restPath) {
       const dofn = ()=>{
-        const path = restPath.split('@')[1]
-        const modelUrl = path.split('/')[0]
-        inject(modelUrl)();
-        this.props.dispatch({
-          type: path,
-          payload: param,
-          tableName: this.props.tableName,
-          callback: (res)=>{
-            oopToast(res, '操作成功');
-            this.oopTable.clearSelection();
-            this.onLoad();
-          }
+        const path = restPath.split('@')[1];
+        const modelUrl = path.split('/')[0];
+        button.loading = true;
+        this.state.gridLoading = true;
+        this.forceUpdate(()=> {
+          setTimeout(() => {
+            try {
+              inject(modelUrl)();
+              this.props.dispatch({
+                type: path,
+                payload: param,
+                tableName: this.props.tableName,
+                callback: (res)=>{
+                  button.loading = false;
+                  this.state.gridLoading = false;
+                  oopToast(res, '操作成功');
+                  this.oopTable.clearSelection();
+                  this.onLoad();
+                }
+              })
+            } catch (e) {
+              console.log(e)
+            }
+          }, 200)
         })
       }
       if (confirm) {
@@ -426,7 +442,9 @@ export default class CommonPage extends React.PureComponent {
     }, 200)
   }
   // 流程提交成功的回调
-  afterProcessSubmit = ()=>{}
+  afterProcessSubmit = ()=>{
+    this.onLoad()
+  }
   getTableInfoExtra = (list)=>{
     const { gridConfig: {props = {}}} = this.props;
     let extra;
@@ -453,15 +471,26 @@ export default class CommonPage extends React.PureComponent {
     });
     this.handleViewModalVisible(true)
   }
-  createColumns = (cols)=>{
-    const firstCol = cols[0];
-    const {render: oldRender} = firstCol;
-    firstCol.render = (text, record)=>{
-      const value = oldRender ? oldRender(text, record) : text;
-      return <div onClick={() => this.onView(record)} style={{textDecoration: 'underline', cursor: 'pointer'}}>{value}</div>;
-    }
-    return cols.filter(it=>it.enable !== false);
+  handleViewModalCancel = ()=>{
+    this.handleViewModalVisible(false)
+    setTimeout(()=>{
+      this.props.dispatch({
+        type: 'basePage/clearEntity',
+        tableName: this.props.tableName
+      });
+    }, 300)
   }
+  // createColumns = (cols = [])=>{
+  //   const firstCol = cols[0];
+  //   if (firstCol) {
+  //     const {render: oldRender} = firstCol;
+  //     firstCol.render = (text, record)=>{
+  //       const value = oldRender ? oldRender(text, record) : text;
+  //       return <div onClick={() => this.onView(record)} style={{textDecoration: 'underline', cursor: 'pointer'}}>{value}</div>;
+  //     }
+  //   }
+  //   return cols;
+  // }
   getHandleFunctionByBtnName = (btnName)=> {
     const map = {
       start: this.handleStart,
@@ -473,7 +502,7 @@ export default class CommonPage extends React.PureComponent {
     return map[btnName];
   }
   render() {
-    const {list, modalFormVisible, viewModalVisible, modalWfFormConfig: {
+    const {gridLoading, list, modalFormVisible, viewModalVisible, modalWfFormConfig: {
       name,
       isLaunch,
       wfVisible,
@@ -484,7 +513,7 @@ export default class CommonPage extends React.PureComponent {
       stateCode
     }, onModalSubmit} = this.state;
     const {basePage, global: {size},
-      loading, gridLoading, gridConfig: {columns: cols = [], topButtons: tbCfg, rowButtons: rbCfg},
+      loading, gridConfig: {columns, topButtons: tbCfg, rowButtons: rbCfg},
       formConfig, modalConfig, tableName } = this.props;
     let entity = {};
     if (basePage && basePage[tableName]) {
@@ -492,7 +521,7 @@ export default class CommonPage extends React.PureComponent {
     }
     const tableInfoExtra = this.getTableInfoExtra(list);
     const {topButtons, rowButtons} = this.constructGridButtons(tbCfg, rbCfg);
-    const columns = this.createColumns(cols);
+    // const columns = this.createColumns(cols);
     return (
       <PageHeaderLayout content={
         <OopSearch
@@ -507,7 +536,7 @@ export default class CommonPage extends React.PureComponent {
             showTableInfo={true}
             tableInfoExtra={tableInfoExtra}
             showExport={true}
-            loading={loading === undefined ? gridLoading : loading}
+            loading={gridLoading === undefined ? loading : gridLoading}
             grid={{list}}
             columns={columns}
             rowButtons={rowButtons}
@@ -542,7 +571,7 @@ export default class CommonPage extends React.PureComponent {
           columns={columns}
           formEntity={entity}
           visible={viewModalVisible}
-          onModalCancel={()=>this.handleViewModalVisible(false)}
+          onModalCancel={ this.handleViewModalCancel}
           loading={loading}
         />
       </PageHeaderLayout>

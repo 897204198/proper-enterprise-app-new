@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Icon, Tooltip, Popover, Input, Spin } from 'antd';
+import {Form, Icon, Tooltip, Popover, Input, Spin} from 'antd';
 import {List, Toast} from 'antd-mobile';
 import cloneDeep from 'lodash/cloneDeep';
 import getComponent from './ComponentsMap';
@@ -20,8 +20,11 @@ const getOopFormChildrenRef = (el, oopForm)=>{
   }
 }
 export const formGenerator = (formConfig)=>{
-  const {children: Component, loading = false, formTitle, className, formJson, form, formLayout = 'horizontal', rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag,
-    rowItemSetValue, dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1, mode} = formConfig;
+  const {children: Component, loading = false, formTitle, className,
+    formJson, form, formLayout = 'horizontal',
+    rowItemClick, rowItemIconCopy, rowItemIconDelete, rowItemDrag, rowItemSetValue,
+    dragable = false, showSetValueIcon = false, formLayoutConfig = null, columnsNum = 1,
+    mode, defaultValue} = formConfig;
   const _formLayout = formLayoutConfig || (formLayout === 'horizontal' ? {
     labelCol: {
       xs: {span: 24},
@@ -49,13 +52,14 @@ export const formGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value', formItemLayout = {} } = formItemConfig;
+      const {name, label, initialValue, rules = [], component,
+        display = true, valuePropName = 'value', readonly = false, formItemLayout = {} } = formItemConfig;
       if (display === true || mode === 'design') {
         let formItem = null;
         let _rules = null;
         if (component) {
           // component增加loading属性
-          if (rules.length) {
+          if (rules.length && readonly === false) {
             _rules = transformRules(rules);
           }
           // component是函数的时候直接作为参数传入createComponent ，否则解构component 再附加其他参数传入
@@ -64,7 +68,13 @@ export const formGenerator = (formConfig)=>{
             comArgs = component;
           } else if (typeof component === 'object') {
             comArgs = {
-              ...component, label, rules, valuePropName, form
+              ...component,
+              comName: component.name,
+              name, label, rules, valuePropName,
+              initialValue,
+              defaultValue,
+              readonly,
+              form
             }
           }
           const com = createComponent(comArgs, false);
@@ -107,7 +117,7 @@ export const formGenerator = (formConfig)=>{
 }
 const getFormItem = (formItemInner, formItemConfig)=>{
   const {key, name, initialChildrenValue, label, wrapper, wrapperClass, formItemLayout = {},
-    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, display} = formItemConfig;
+    rowItemClick = f=>f, rowItemIconCopy, rowItemIconDelete, active, showSetValueIcon, rowItemSetValue, columnsNum, display, extra = ''} = formItemConfig;
   const FormItem = Form.Item;
   const { itemStyle } = formItemLayout;
   if (wrapper) {
@@ -128,6 +138,7 @@ const getFormItem = (formItemInner, formItemConfig)=>{
           key={key || name}
           {...formItemLayout}
           label={label}
+          extra={extra}
         >
           {formItemInner}
         </FormItem>{active ? (
@@ -155,15 +166,15 @@ const getFormItem = (formItemInner, formItemConfig)=>{
               type="pause-circle-o"
               style={{cursor: 'move', transform: 'rotate(90deg)', display: 'none'}} />
           </Tooltip>
-        </div>
-      ) : null}</div>
+        </div>) : null}
+      </div>
     </div>);
   }
 }
 
 // appFormGenerator 为了移动端展示用 没有设计的功能
 export const appFormGenerator = (formConfig)=>{
-  const {loading = false, formTitle, className, formJson, form} = formConfig;
+  const {loading = false, formTitle, className, formJson, form, defaultValue} = formConfig;
   // 把正则的字符串形式转义成正则形式 fe: "/^0-9*$/" => /^0-9*$/
   const transformRules = (rules)=>{
     const arr = cloneDeep(rules);
@@ -180,7 +191,7 @@ export const appFormGenerator = (formConfig)=>{
   if (Array.isArray(formJson) && formJson.length > 0) {
     for (let i = 0; i < formJson.length; i++) {
       const formItemConfig = formJson[i];
-      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value' } = formItemConfig;
+      const {name, label, initialValue, rules = [], component, display = true, valuePropName = 'value', readonly} = formItemConfig;
       if (display === true) {
         let formItem = null;
         let _rules = null;
@@ -190,7 +201,11 @@ export const appFormGenerator = (formConfig)=>{
           }
           const obj = {initialValue, rules: _rules};
           const formItemInner = getFieldDecorator(name, obj)(
-            createComponent({...component, label, rules, valuePropName, form}, true)
+            createComponent(
+              {...component,
+                comName: component.name,
+                name, label, rules, valuePropName, initialValue, form, defaultValue, readonly},
+              true)
           );
           formItem = getListItem(formItemInner,
             {...formItemConfig});
@@ -232,18 +247,21 @@ const getListItem = (formItemInner, formItemConfig)=>{
 // 请注意：这些属性在配置 表单的时候并不在component中配置
 const createComponent = (component, isApp)=>{
   if (typeof component === 'object') {
-    if (component.name) {
+    if (component.comName) {
       // object desc
-      const {name, label, props = {}, children = [], rules} = component;
-      if (name) {
-        return getComponent(name, label, props, children, rules, isApp);
+      const {comName, label, props = {}, children = [], rules, readonly} = component;
+      if (props.disabled === true && readonly === true) {
+        // 只读的表单
+        return getReadOnlyForm(component, isApp);
+      } else {
+        return getComponent(comName, label, props, children, rules, isApp);
       }
     } else if (component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)') {
       // React component
       return component
     }
   } else if (typeof component === 'function') {
-    return component()
+    return component(component.form)
   }
 }
 
@@ -285,44 +303,56 @@ export const equals = (value, value2)=>{
 }
 
 // 通知formJson变化
-export const setFormJsonProperties = (item, changedValue, currentValue, publish)=>{
+export const setFormJsonProperties = (item, changedValue, currentValue, publish, result)=>{
   const {value, property} = publish;
+  const allValue = {};
+  Object.keys(result).forEach((key)=>{ allValue[key] = result[key].value })
   if (property) {
-    const properties = property.split('.');
-    if (properties.length > 1) {
-      let tempObj = item;
-      for (let i = 0; i < properties.length; i++) {
-        const proper = properties[i];
-        if (tempObj[proper] === undefined) {
-          if (properties.length !== (i + 1)) {
-            tempObj[proper] = {}
-          }
-        } else {
-          tempObj = tempObj[proper]
-        }
+    if (property === 'component.props.value' || property === 'value') {
+      result[item.name].value = caculateSubscribeResult(changedValue, currentValue, allValue, value)
+    } else if (property === 'initialValue') {
+      const v = caculateSubscribeResult(changedValue, currentValue, allValue, value);
+      if (v && (item.initialValue === null || item.initialValue === undefined)) {
+        result[item.name].value = v;
+        item[property] = v;
       }
-      const funcStr = `return this.${property} = arguments[0](arguments[1], arguments[2], arguments[3])`;
-      let fn = null;
-      try {
-        // eslint-disable-next-line
-        fn = new Function(funcStr);
-        fn.apply(item, [caculateSubscribeResult, changedValue, currentValue, value]);
-      } catch (e) {
-        console.error(e)
-      }
-      setTimeout(()=>{
-        fn = null;
-      })
     } else {
-      item[property] = caculateSubscribeResult(changedValue, currentValue, value);
+      const properties = property.split('.');
+      if (properties.length > 1) {
+        let tempObj = item;
+        for (let i = 0; i < properties.length; i++) {
+          const proper = properties[i];
+          if (tempObj[proper] === undefined) {
+            if (properties.length !== (i + 1)) {
+              tempObj[proper] = {}
+            }
+          } else {
+            tempObj = tempObj[proper]
+          }
+        }
+        const funcStr = `return this.${property} = arguments[0](arguments[1], arguments[2], arguments[3])`;
+        let fn = null;
+        try {
+          // eslint-disable-next-line
+          fn = new Function(funcStr);
+          fn.apply(item, [caculateSubscribeResult, changedValue, currentValue, allValue, value]);
+        } catch (e) {
+          console.error(e)
+        }
+        setTimeout(()=>{
+          fn = null;
+        })
+      } else {
+        item[property] = caculateSubscribeResult(changedValue, currentValue, allValue, value);
+      }
     }
   }
 }
 
 // 根据subscribe中的设置 来计算结果
-const caculateSubscribeResult = (changedValue, currentValue, value)=>{
+const caculateSubscribeResult = (changedValue, currentValue, allValue, value)=>{
   try {
-    return getValueByFunctionStr(value, changedValue, currentValue);
+    return getValueByFunctionStr(value, changedValue, currentValue, allValue);
   } catch (e) {
     return equals(changedValue, value)
   }
@@ -357,3 +387,39 @@ export const getValueByFunctionStr = (functionStr, ...value)=>{
     }
   }
 }
+
+const getDisplayValue = (component)=>{
+  const {name, defaultValue = {}, initialValue, comName, label, props, children, rules} = component;
+  if (comName === 'OopUpload') {
+    const value = defaultValue[name] || initialValue;
+    return getComponent(comName, label, {...props, value}, children, rules, false);
+  }
+  const {prototype: {hasOwnProperty}} = Object;
+  if (hasOwnProperty.call(defaultValue, `${name}_text`)) {
+    return defaultValue[`${name}_text`];
+  } else if (defaultValue[name] !== undefined && defaultValue[name] !== null) {
+    if ('OopGroupUserPicker,OopOrgEmpPicker,OopOrgPicker'.includes(comName)) {
+      // hack 选择组件 默认取name
+      return defaultValue[name].map(it=>it.name).join(',');
+    }
+    return defaultValue[name].toString();
+  } else {
+    return (initialValue !== undefined && initialValue !== null) ? initialValue.toString() : '';
+  }
+}
+
+const getReadOnlyForm = (component, isApp)=>{
+  const {label} = component;
+  const styleCss = {
+    whiteSpace: 'normal',
+    maxHeight: '120px',
+    overflowY: 'scroll'
+  }
+  return isApp === true ? (
+    <List.Item
+    arrow="horizontal"
+    extra={<div style={styleCss}>{getDisplayValue(component)}</div>}>
+      {label}
+    </List.Item>) : (<div>{getDisplayValue(component)}</div>);
+}
+

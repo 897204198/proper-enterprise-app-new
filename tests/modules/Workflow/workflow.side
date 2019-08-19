@@ -1,0 +1,1558 @@
+{
+  "id": "c52c3e2f-1144-4aa7-8a54-f7c2d4f5a143",
+  "version": "2.0",
+  "name": "workflow",
+  "url": "http://192.168.1.111/pea/develop/#/",
+  "tests": [{
+    "id": "1c2b17c1-5060-4905-ad16-17b80542c573",
+    "name": "流程设置_流程设计_新建",
+    "commands": [{
+      "id": "6d7ff143-9884-4fde-89da-ed40ea449a68",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "81b7f2d6-1c63-4d20-8660-93d88264037f",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "039c4df4-a609-4cfa-9b77-85c608c0e66f",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ceshi"
+    }, {
+      "id": "be424696-ad7a-412f-9a7f-02ba755b3552",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "795e54fe-9098-4cd9-8100-a04621729f49",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2f918f7c-9bde-490f-ae2d-532e2238f513",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b4bb54ab-c8c0-4a75-ba8e-0c4ee67a0d6d",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程设计"
+    }, {
+      "id": "f2373d19-4e2f-463b-9821-05a359bced7f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程设计",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "cc3c8872-6225-4c3c-bf3a-aafc96ec04b4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper",
+      "targets": [
+        ["css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div[2]/div/div[2]/div/div/div/div/div/ul/li/ul/li/span[2]", "xpath:idRelative"],
+        ["xpath=//li/ul/li/span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'默认类别')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2ca6c72a-99ab-4e4a-a142-a73d21dd0d60",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//button[contains(.,'新建')]",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3a48068f-f382-4467-b181-2a81ab8f78e0",
+      "comment": "",
+      "command": "click",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "74f52164-352e-4cf2-9ba7-74510d9a7215",
+      "comment": "",
+      "command": "type",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "745ed412-2674-44f4-a533-917d1234d88a",
+      "comment": "",
+      "command": "click",
+      "target": "id=key",
+      "targets": [
+        ["id=key", "id"],
+        ["css=#key", "css:finder"],
+        ["xpath=//input[@id='key']", "xpath:attributes"],
+        ["xpath=//div[2]/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "bc8b04f6-05c9-42e4-9c8e-d2063f16ce65",
+      "comment": "",
+      "command": "type",
+      "target": "id=key",
+      "targets": [
+        ["id=key", "id"],
+        ["css=#key", "css:finder"],
+        ["xpath=//input[@id='key']", "xpath:attributes"],
+        ["xpath=//div[2]/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "ddfb6235-2fe5-4024-bc17-e962959f44cb",
+      "comment": "",
+      "command": "type",
+      "target": "id=description",
+      "targets": [
+        ["id=description", "id"],
+        ["css=#description", "css:finder"],
+        ["xpath=//textarea[@id='description']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "179ddbc4-9f68-4137-a476-c94878383a5a",
+      "comment": "",
+      "command": "type",
+      "target": "id=description",
+      "targets": [
+        ["id=description", "id"],
+        ["css=#description", "css:finder"],
+        ["xpath=//textarea[@id='description']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "e90af238-d0f4-4ab8-b64c-7328a597f3af",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-modal-footer .ant-btn-primary",
+      "targets": [
+        ["css=.ant-modal-footer .ant-btn-primary", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'确 定')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "6914079f-f966-43f2-a429-24ce023d42ff",
+      "comment": "",
+      "command": "click",
+      "target": "css=.editor-icon-save",
+      "targets": [
+        ["css=.editor-icon-save", "css:finder"],
+        ["xpath=//div[@id='editor-header']/div/div/button/i", "xpath:idRelative"],
+        ["xpath=//button/i", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "bff38d75-916a-422b-a026-610d2a339b56",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-primary:nth-child(2)",
+      "targets": [
+        ["css=.btn-primary:nth-child(2)", "css:finder"],
+        ["xpath=//div[3]/div/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'保存和关闭编辑器')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "0a53a685-191b-4e0b-b9cc-ba74cd9244b3",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "0f4a328f-e4af-45d2-a1d6-c6d7259718e6",
+    "name": "流程设置_流程设计_删除",
+    "commands": [{
+      "id": "6f84b116-f182-418e-8edb-e1efd063b96b",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "ae7b2775-623e-4ecb-94d3-55295d78a879",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "12b8a78c-10c3-4b75-aa79-20264f021bb0",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ceshi"
+    }, {
+      "id": "da72e37c-3e26-4b20-9d94-ae7bd34a9593",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "90168c02-77df-4194-a9e0-7a96bd266e15",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "67a4dbba-11ec-4e3f-9fa5-a11715413f54",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "45ff6c7f-a873-4c6e-811d-42d306cc863c",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程设计"
+    }, {
+      "id": "15b218d6-e098-4dbc-a348-cbab98343c16",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程设计",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7dfc2987-443f-47ae-83fe-e7bc66dedbc6",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper",
+      "targets": [
+        ["css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div[2]/div/div[2]/div/div/div/div/div/ul/li/ul/li/span[2]", "xpath:idRelative"],
+        ["xpath=//li/ul/li/span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'默认类别')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "30f2e7a7-d3ab-4783-90c5-fc2f088d5a9e",
+      "comment": "",
+      "command": "click",
+      "target": "//a[contains(.,'testwork')]/../../../../../../following-sibling::ul/li[4]/span/i",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "57d91a64-1a57-4bfe-b5ac-a1f9f50fc2c8",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn-sm:nth-child(2)",
+      "targets": [
+        ["css=.ant-btn-sm:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'确 定')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "582defd0-f4f5-4224-b65f-ab584be2ddfa",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper",
+      "targets": [
+        ["css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div[2]/div/div[2]/div/div/div/div/div/ul/li/ul/li/span[2]", "xpath:idRelative"],
+        ["xpath=//li/ul/li/span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'默认类别')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eefb0a28-c27d-440d-ace5-f6eeed73fdd6",
+      "comment": "",
+      "command": "click",
+      "target": "//a[contains(.,'testwork')]/../../../../../../following-sibling::ul/li[4]/span/i",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2bb5c83a-3de9-4677-a0f7-24dd868700c1",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn-sm:nth-child(2)",
+      "targets": [
+        ["css=.ant-btn-sm:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'确 定')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5b699085-6662-43cb-b4c4-ceffa0d0d17c",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "d2a9422d-3044-486b-8d8f-e2b5b5845370",
+    "name": "流程设置_流程设计_导入",
+    "commands": [{
+      "id": "c15ee044-c8fa-407c-9e70-53d352271e1d",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "4dc3aa9f-dfdc-4da8-a4e3-724761dfb3da",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "61623d23-f761-4422-81c0-037640f46e09",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ceshi"
+    }, {
+      "id": "544c48bc-488c-445d-86b7-0775a13a44ba",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "ab495e36-0f11-4b4d-b647-2b088101e1bd",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "be192cf3-f94a-443a-a21c-6ea4355d59d3",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "15b3af1a-d150-4cd1-9878-a2789f2f1927",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程设计"
+    }, {
+      "id": "5aa77e8e-8f5b-4a9b-868c-fe2226f64a77",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程设计",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "05543d20-d4b9-4656-97f6-991d18153bd8",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper",
+      "targets": [
+        ["css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div[2]/div/div[2]/div/div/div/div/div/ul/li/ul/li/span[2]", "xpath:idRelative"],
+        ["xpath=//li/ul/li/span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'默认类别')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "8b3760d8-d047-4f47-bcb9-5fa95f168f2c",
+      "comment": "",
+      "command": "store",
+      "target": "C:\\\\Users\\\\41396\\\\Desktop\\\\testwork.bpmn20.xml",
+      "targets": [],
+      "value": "path"
+    }, {
+      "id": "b4156fa5-dcb9-452f-93dc-93c2aaacad1e",
+      "comment": "",
+      "command": "//click",
+      "target": "css=.ant-upload > .ant-btn",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9bf23f64-ecd7-411f-a363-8150c8d7286b",
+      "comment": "",
+      "command": "type",
+      "target": "//span[@class='ant-upload']/input[@type='file']",
+      "targets": [],
+      "value": "${path}"
+    }, {
+      "id": "1954c84c-4f33-489c-a95b-184d1f53de01",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "2312180f-4823-4fa2-818a-d282de8ee1a5",
+    "name": "流程设置_流程设计_部署及搜索",
+    "commands": [{
+      "id": "cc8ded4c-b037-4b51-ac04-f215ed6ac760",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "166936b6-2d1c-48b9-b2f7-b06eb4dafeea",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "053c601a-80f8-4532-bbbb-c6dae9a102ac",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ceshi"
+    }, {
+      "id": "aa687205-acda-4486-8a7f-b0eac168faf4",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "19bcb718-33e7-464a-b380-4f884d806f49",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d827c697-8005-435f-8833-5725afbcdc0d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "1d915afe-5dbc-4dd6-b121-b92662367322",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程设计"
+    }, {
+      "id": "497a6179-025c-48e4-94e5-948633de970e",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程设计",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "169e3519-b5c6-4f4e-b766-435aa29b3a65",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper",
+      "targets": [
+        ["css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div[2]/div/div[2]/div/div/div/div/div/ul/li/ul/li/span[2]", "xpath:idRelative"],
+        ["xpath=//li/ul/li/span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'默认类别')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "47b0e329-7623-4fd6-b7a5-c2c431e1d8e7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "2fcbc568-4a49-4091-9a33-bc6a819b6d58",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=//input[@value='testwork']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "e4a85594-fabb-4ddc-bd01-04391e1eb5f3",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search-button",
+      "targets": [
+        ["css=.ant-input-search-button", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div/span/span/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'搜 索')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "daa7bb3f-99b4-4752-b660-8c8194569273",
+      "comment": "",
+      "command": "click",
+      "target": "//a[contains(.,'testwork')]/../../../../../../following-sibling::ul/li[1]/span/i",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6f3118ae-7d5b-4243-9b11-1694f9f7cc99",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "2474e8f7-116d-4322-862e-9890a5f409f2",
+    "name": "流程设置_流程设计_编辑",
+    "commands": [{
+      "id": "e72d6192-adac-4377-b4b0-bf851d383682",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7088ff1d-a9ec-4a6c-bb86-6f6fa890b71a",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "806c5083-23f8-412f-aa51-7c999ce90f4c",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ceshi"
+    }, {
+      "id": "b36f7c41-277f-436f-b245-259a245aa7e4",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "9e2bfc43-a8d7-464a-b9e2-3466352d0402",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "28b45a69-2546-424e-9441-85789df62483",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9f7db89b-36df-474a-b1b9-dfe7d8f360c0",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程设计"
+    }, {
+      "id": "4afbd1b1-822f-4161-9daa-7a9fae2ee40b",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程设计",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "bd8201b1-de60-4d34-a092-26e0ba601862",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper",
+      "targets": [
+        ["css=.ant-tree-treenode-switcher-close:nth-child(1) > .ant-tree-node-content-wrapper", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div[2]/div/div[2]/div/div/div/div/div/ul/li/ul/li/span[2]", "xpath:idRelative"],
+        ["xpath=//li/ul/li/span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'默认类别')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eb06efdf-cf01-4d8a-ba83-02a35f0c94a5",
+      "comment": "",
+      "command": "click",
+      "target": "//a[contains(.,'testwork')]/../../../../../../following-sibling::ul/li[3]/span/i",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c2a925c9-cb2a-4f6d-a4fc-ea7fb8b112b1",
+      "comment": "",
+      "command": "click",
+      "target": "//span[@class='ant-select-selection__rendered']",
+      "targets": [
+        ["css=.ant-select-focused .ant-select-selection__rendered", "css:finder"],
+        ["xpath=//form[@id='designer_type_form']/div[2]/div[2]/div/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "5ea20615-f375-457c-bd5b-a30512e8b28f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-select-tree-treenode-switcher-open:nth-child(1) > .ant-select-tree-child-tree > .ant-select-tree-treenode-switcher-open:nth-child(1) > .ant-select-tree-node-content-wrapper-normal",
+      "targets": [
+        ["css=.ant-select-tree-treenode-switcher-open:nth-child(1) > .ant-select-tree-child-tree > .ant-select-tree-treenode-switcher-open:nth-child(1) > .ant-select-tree-node-content-wrapper-normal", "css:finder"],
+        ["xpath=//div[@id='rc-tree-select-list_1']/ul/li/ul/li/ul/li/span[2]", "xpath:idRelative"],
+        ["xpath=//li/ul/li/ul/li/span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'Flowable流程')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "4d047c11-2e4f-40a2-a7bd-15453c3ffa6c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-modal-footer > .ant-btn-primary",
+      "targets": [
+        ["css=.ant-modal-footer > .ant-btn-primary", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "cc09dae4-dafa-4857-ac9a-65efd40070c9",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "8d1fe1bb-27c8-46dc-b578-b62b2e6fed8e",
+    "name": "流程设置_流程管理_发起",
+    "commands": [{
+      "id": "33a5feb4-693b-4cf7-9cbc-a47a3845a351",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d5783589-90e8-4874-b0f0-c2196843634e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "1c6acc4b-4f62-48ff-a258-91b6553053c0",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ceshi"
+    }, {
+      "id": "5db3b789-a058-4957-9ca4-ea71089e48c5",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "e8d22a52-e945-4384-ae5a-015c5a4618f9",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "47bd36c3-2cbd-4b98-9e03-e679fe8297f1",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6d9054ac-79ea-43ed-8eb1-f91dc122874b",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程管理"
+    }, {
+      "id": "573e1ef8-b201-4696-9501-76ddbd3b0812",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程管理",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7315d3e7-5f88-4a9b-8dbe-40733b7b2280",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tabs-tab:nth-child(2)",
+      "targets": [
+        ["css=.ant-tabs-tab:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/div/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e4febddc-ed1c-4f46-85f5-505d7f8fae4a",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@role='tabpanel'][2]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[4]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "dbb5c96b-5ff5-47a0-98d8-522513ae1f75",
+      "comment": "",
+      "command": "type",
+      "target": "//div[@role='tabpanel'][2]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=//input[@value='testwork']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "556ff897-e254-43bb-ae89-7e6f6358349d",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//td/span/span[text()='testwork']/../../following-sibling::td/a/i[@class='anticon anticon-select']",
+      "targets": [
+        ["css=.ant-tooltip-open svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "7a209aa9-0747-4d7c-8d58-c3344b697bcb",
+      "comment": "",
+      "command": "type",
+      "target": "//label[@title='输入框']/../following-sibling::div//input",
+      "targets": [
+        ["id=mJ34PZ56bw", "id"],
+        ["css=#mJ34PZ56bw", "css:finder"],
+        ["xpath=//input[@id='mJ34PZ56bw']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "b771c1fd-1aa1-489d-af88-86b218547140",
+      "comment": "",
+      "command": "type",
+      "target": "//label[@title='输入框2']/../following-sibling::div//input",
+      "targets": [
+        ["id=h8NsiIkECi", "id"],
+        ["css=#h8NsiIkECi", "css:finder"],
+        ["xpath=//input[@id='h8NsiIkECi']", "xpath:attributes"],
+        ["xpath=//div[2]/div/div/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "51c9a6c1-d60a-4718-91cd-204961df9514",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//button[contains(.,'发 起')]",
+      "targets": [
+        ["css=.ant-btn:nth-child(3)", "css:finder"],
+        ["xpath=(//button[@type='button'])[4]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'发 起')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f5d42ae2-0af0-40c8-a9d5-62b79adf06be",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-custom-content > span",
+      "targets": [],
+      "value": "流程提交成功"
+    }, {
+      "id": "45b950df-727e-4e20-9df0-a546ba7a9153",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "d8759f09-2727-4f76-b31c-bba2b6c6460d",
+    "name": "流程设置_流程管理_发起历史",
+    "commands": [{
+      "id": "df70fd4a-a16f-44db-9828-43495cf87aab",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "a2bdfe59-91cb-49fc-95d3-920bd4dd6361",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0f3bdab5-6dcf-455b-86a1-623e5ffea6ef",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ceshi"
+    }, {
+      "id": "5ad5fdc1-92cb-4a86-80f0-21f55e6b134b",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "0823afd7-8434-4a7c-bfb5-c80296ad272d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "578a5864-ffce-412f-a87e-2a3bff102c40",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b06f8961-88a3-4861-8d68-62c3205446f9",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程管理"
+    }, {
+      "id": "e98791fd-5709-468b-b79c-79da5d46a391",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程管理",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "03316558-292a-4adb-9645-6bc671b92a7b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tabs-tab:nth-child(3)",
+      "targets": [
+        ["css=.ant-tabs-tab:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/div/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f75e60a2-94c4-4f8a-8dff-902c78e60cfc",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@role='tabpanel'][3]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[4]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "404ccebe-7978-4be3-ba52-8c94f0070846",
+      "comment": "",
+      "command": "type",
+      "target": "//div[@role='tabpanel'][3]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=//input[@value='testwork']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "68f7e758-9a89-43c4-9c93-9597bd67bc27",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=testwork流程名称",
+      "targets": [
+        ["linkText=testwork流程名称", "linkText"],
+        ["css=.ant-select-dropdown-menu-item > a", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[3]/div[2]/div/div/div[2]/ul/li/a", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'testwork流程名称')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3c09ae05-3017-4a37-8bc6-2a5b31acd971",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@role='tabpanel'][3]//input/following-sibling::span/button",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-btn", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[3]/div[2]/div/div/span/span/span/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/span/button", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "7f8002c7-1e2b-4f0e-ac10-b46c6d971f1e",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[@role='tabpanel'][3]//tbody/tr[1]/td[1][text()='testwork']/following-sibling::td/a/i[@class='anticon anticon-select']",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "89fa144e-010a-407f-9cf1-931ae8490fb8",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@class='ant-modal-body']//div[@role='tab'][2]",
+      "targets": [
+        ["css=.container___1i3WS .ant-tabs-tab:nth-child(3)", "css:finder"],
+        ["xpath=//div[2]/div/div/div/div/div/div/div/div/div/div[3]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f93649f7-8695-47a8-bb27-d4319fdee013",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@class='ant-modal-body']//div[@role='tab'][3]",
+      "targets": [
+        ["css=.container___1i3WS .ant-tabs-tab:nth-child(3)", "css:finder"],
+        ["xpath=//div[2]/div/div/div/div/div/div/div/div/div/div[3]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fa96590c-2a4d-422e-b5a0-f62d60e2bfda",
+      "comment": "",
+      "command": "click",
+      "target": "css=.anticon-close > svg",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b614ed5f-ae7b-4ad4-b9ce-268fe6b6dd8b",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "f5daaa3b-a6ec-4318-b3ba-ed0d1183cc43",
+    "name": "流程设置_流程管理_待办",
+    "commands": [{
+      "id": "0762fe64-44cb-48dd-a570-e2d7a609c35e",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "f2646b26-0b97-499a-adb6-c75e03cd6d6a",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8835d2c8-2a50-46cb-baf1-49c0039059ec",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "5f9ab161-0d0f-4e5a-ac83-9c873a3c5563",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "850e867b-af51-4bbd-ba72-245940758fd9",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fb12b613-8009-4faf-9ced-d0d196b424cc",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c320aae9-eff3-4ed7-911c-ab84fdbd98cf",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程管理"
+    }, {
+      "id": "efc67587-ccb7-4923-91f8-9b1f5eccba11",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程管理",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "18a9d867-decb-455a-aea1-872e2ca181d6",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tabs-tab:nth-child(1)",
+      "targets": [
+        ["css=.ant-tabs-tab:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/div/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c7ce5e7e-0e79-489b-9d86-329a8c792730",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@role='tabpanel'][1]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[4]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "cfa293ec-8468-4ddc-9622-c2d1275b4329",
+      "comment": "",
+      "command": "type",
+      "target": "//div[@role='tabpanel'][1]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=//input[@value='testwork']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "c7e75933-b666-42cd-a7d3-e378db4333dc",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=testwork流程名称",
+      "targets": [
+        ["linkText=testwork流程名称", "linkText"],
+        ["css=.ant-select-dropdown-menu-item > a", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[3]/div[2]/div/div/div[2]/ul/li/a", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'testwork流程名称')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f8580cb3-bb0c-4c2b-8113-cb49826a8e07",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@role='tabpanel'][1]//input/following-sibling::span/button",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-btn", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[3]/div[2]/div/div/span/span/span/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/span/button", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "7fef9c75-cb4b-45da-9863-c695387caa4e",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[@role='tabpanel'][1]//tbody/tr[1]/td[1][text()='testwork']/following-sibling::td/a/i[@class='anticon anticon-select']",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0800419a-cdee-49fe-a7b4-37720ee5de65",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//button[contains(.,'提 交')]",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0a76ea47-5821-469b-a024-3f8649b6c348",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-custom-content > span",
+      "targets": [],
+      "value": "流程提交成功"
+    }, {
+      "id": "f7d9f6dc-876c-4980-8fe6-1b643d7826dd",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "70da3141-552d-46e2-a02c-af702fc1f145",
+    "name": "流程设置_流程管理_已处理流程",
+    "commands": [{
+      "id": "727b0efe-f5df-4086-a3fc-28f38edaa0dc",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.111/pea/develop/#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "787a2109-cf0e-4ef1-8736-6bb07516f633",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1366x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "ad6c589c-9c79-4090-89b3-e169566b02e4",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "819691d9-860c-4277-be37-81f36c9f0554",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "bbc93ff6-e886-4757-991c-5b0352ce1827",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-btn",
+      "targets": [
+        ["css=.ant-btn", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div[3]/div/div/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登 录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7573582c-6ac5-4619-ad83-808a69a27d6d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "01d07c44-7020-4c4c-9f6d-1f89fa021712",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='流程设计']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "流程管理"
+    }, {
+      "id": "896c87c9-11a9-43a0-b28a-b65c70553a7e",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=流程管理",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fbfb2a70-625a-471c-9a60-6947bb324405",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-tabs-tab:nth-child(4)",
+      "targets": [
+        ["css=.ant-tabs-tab:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/div/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3f15000a-a1f2-4f28-989f-22c66c66e4ac",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@role='tabpanel'][4]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=(//input[@value=''])[4]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c6616487-6a0a-44f4-ac58-cc59cd75bc5e",
+      "comment": "",
+      "command": "type",
+      "target": "//div[@role='tabpanel'][4]//input",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-input", "css:finder"],
+        ["xpath=//input[@value='testwork']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[2]/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "testwork"
+    }, {
+      "id": "1a6ca7cb-2da6-41d6-9a97-d2863bab0c19",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=testwork流程名称",
+      "targets": [
+        ["linkText=testwork流程名称", "linkText"],
+        ["css=.ant-select-dropdown-menu-item > a", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[3]/div[2]/div/div/div[2]/ul/li/a", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'testwork流程名称')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ab027429-e8f8-4593-b34e-ef9e430ee054",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@role='tabpanel'][4]//input/following-sibling::span/button",
+      "targets": [
+        ["css=div:nth-child(2) > .globalSearchWrapper___1xXHv .ant-btn", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div[3]/div[3]/div[2]/div/div/span/span/span/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/span/span/span/button", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e2457888-bdf0-477e-b9bb-79fa8478d5c3",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[@role='tabpanel'][4]//tbody/tr[1]/td[1][text()='testwork']/following-sibling::td/a/i[@class='anticon anticon-select']",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "f7f18400-4bcb-4421-bc59-6b5a6c8f5083",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@class='ant-modal-body']//div[@role='tab'][2]",
+      "targets": [
+        ["css=.container___1i3WS .ant-tabs-tab:nth-child(3)", "css:finder"],
+        ["xpath=//div[2]/div/div/div/div/div/div/div/div/div/div[3]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "44bcbb8e-4ec7-4d1f-b966-6bccdc3d38db",
+      "comment": "",
+      "command": "click",
+      "target": "//div[@class='ant-modal-body']//div[@role='tab'][3]",
+      "targets": [
+        ["css=.container___1i3WS .ant-tabs-tab:nth-child(3)", "css:finder"],
+        ["xpath=//div[2]/div/div/div/div/div/div/div/div/div/div[3]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "814feca4-7121-415e-b626-e69f76477a3a",
+      "comment": "",
+      "command": "click",
+      "target": "css=.anticon-close > svg",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fb0e3670-a51c-4b81-9b3f-d6e015bf7fe1",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "f8e7e227-6bf1-494f-af97-ff7b4e63da24",
+    "name": "流程设置_流程设计",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["1c2b17c1-5060-4905-ad16-17b80542c573", "2474e8f7-116d-4322-862e-9890a5f409f2", "d2a9422d-3044-486b-8d8f-e2b5b5845370", "2312180f-4823-4fa2-818a-d282de8ee1a5", "8d1fe1bb-27c8-46dc-b578-b62b2e6fed8e", "d8759f09-2727-4f76-b31c-bba2b6c6460d", "f5daaa3b-a6ec-4318-b3ba-ed0d1183cc43", "70da3141-552d-46e2-a02c-af702fc1f145", "0f4a328f-e4af-45d2-a1d6-c6d7259718e6"]
+  }],
+  "urls": ["http://192.168.1.111/pea/develop/#/"],
+  "plugins": []
+}

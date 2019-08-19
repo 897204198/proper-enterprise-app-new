@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Card, Row, Col, Radio, Input, Tooltip, message } from 'antd';
 import {Controlled as CodeMirror} from 'react-codemirror2';
+import moment from 'moment';
 import Debounce from 'lodash-decorators/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper/index';
@@ -156,15 +157,21 @@ export default class OopFormDesigner extends React.PureComponent {
         })
       }
     });
+    let currentRowItem = null;
+    if (formJson.length) {
+      const first = formJson[0];
+      first.active = true;
+      currentRowItem = first;
+    }
     this.state = {
-      currentRowItem: null,
+      currentRowItem,
       selections: [
         {label: '输入框', key: 'Input', component: {name: 'Input'}},
         {label: '文本域', key: 'TextArea', component: {name: 'TextArea'}},
         {label: '单选框', key: 'RadioGroup', component: {name: 'RadioGroup', children: componentData}},
         {label: '多选框', key: 'CheckboxGroup', component: {name: 'CheckboxGroup', children: componentData}, initialValue: []},
         {label: '选择器', key: 'Select', component: {name: 'Select', children: componentData}},
-        {label: '日期选择', key: 'DatePicker', component: {name: 'DatePicker'}},
+        {label: '日期选择', key: 'DatePicker', component: {name: 'DatePicker'}, initialValue: moment().format('YYYY-MM-DD HH:mm:ss')},
         {label: '数字输入框', key: 'InputNumber', component: {name: 'InputNumber'}},
         {
           label: '系统当前',
@@ -175,14 +182,24 @@ export default class OopFormDesigner extends React.PureComponent {
         },
         {
           label: '上传图片',
-          key: 'OopUpload',
+          key: 'OopUpload_pic',
           component: {
             name: 'OopUpload',
             props: {
               buttonText: '上传图片',
               accept: 'image/*',
               listType: 'picture',
-              type: ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
+              type: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']
+            }
+          }
+        },
+        {
+          label: '上传文件',
+          key: 'OopUpload_file',
+          component: {
+            name: 'OopUpload',
+            props: {
+              buttonText: '上传文件',
             }
           }
         },
@@ -343,12 +360,12 @@ export default class OopFormDesigner extends React.PureComponent {
       this.forceUpdate();
     } else {
       const item = this.state.currentRowItem;
-      let index = 0;
-      this.state.rowItems.forEach((rItem, i)=>{
-        if (item.name === rItem.name) {
-          index = i
-        }
-      })
+      // this.state.rowItems.forEach((rItem, i)=>{
+      //   if (item.name === rItem.name) {
+      //     index = i
+      //   }
+      // })
+      const index = this.state.rowItems.findIndex(it=>it.key === item.key);
       this.state.rowItems.splice(index, 1);
       if (item.active) {
         this.state.currentRowItem = null;
@@ -591,10 +608,14 @@ export default class OopFormDesigner extends React.PureComponent {
     })
   }
   handleFormPatternChange = (event)=>{
+    const {currentRowItem} = this.state;
+    if (currentRowItem === null) {
+      message.error('please select a item first !')
+      return
+    }
     // console.log(event);
     const { value: formPattern } = event.target;
     if (formPattern === 'advanced') {
-      const {currentRowItem} = this.state;
       const jsonItem = {
         ...currentRowItem
       }
@@ -607,12 +628,23 @@ export default class OopFormDesigner extends React.PureComponent {
         currentRowItemJson
       });
     } else {
-      // eslint-disable-next-line
-      const item = new Function('return '.concat(this.state.currentRowItemJson))();
-      if (item && item.name) {
+      const values = this.state.currentRowItemJson;
+      const item = this.validateItemJson(values);
+      if (item) {
+        const index = this.state.rowItems.findIndex(it=>it.active === true);
+        const oldItem = this.state.rowItems[index];
+        const newItem = {
+          ...item,
+          initialValue: oldItem.initialValue,
+          active: oldItem.active
+        }
+        if (oldItem.syncTag) {
+          newItem.syncTag = oldItem.syncTag
+        }
+        this.state.rowItems[index] = newItem;
         this.setState({
           formPattern,
-          currentRowItem: item
+          currentRowItem: newItem
         })
       }
     }

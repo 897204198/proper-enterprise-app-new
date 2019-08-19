@@ -1,9 +1,9 @@
 import React, {Fragment} from 'react';
 import FileSaver from 'file-saver';
-import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tree, Row, Col, Popconfirm, Tabs, Spin} from 'antd';
-import {connect} from 'dva';
+import { Modal, Card, Select, Switch, Icon, Input, Button, message, Tabs, Spin, Popover} from 'antd';
+import { connect } from 'dva';
 import PageHeaderLayout from '@framework/components/PageHeaderLayout';
-import {inject} from '@framework/common/inject';
+import { inject } from '@framework/common/inject';
 import Debounce from 'lodash-decorators/debounce';
 import { oopToast } from '@framework/common/oopUtils';
 import OopSearch from '@pea/components/OopSearch';
@@ -11,139 +11,23 @@ import OopForm from '@pea/components/OopForm';
 import OopTable from '@pea/components/OopTable';
 import OopFormDesigner from '@pea/components/OopFormDesigner';
 import OopTableForm from '@pea/components/OopTableForm';
+import { ColumnsEdit } from './Pupa/components/columnsEdit'
+import { makeCreateFormConfig, makeDefaultButtons, makeTableInfoCfgConfig, filterDefault, checkRepeat,
+  makeRandomId, isJson, reorder, move } from './Pupa/utils'
+import styles from './customQuery.less';
 
 const { TabPane } = Tabs
 const { Option } = Select
-const { TreeNode } = Tree
 const tableInputStyle = {
   height: '32px'
 }
-const isJson = (str) => {
-  if (typeof str === 'string') {
-    try {
-      const strObj = JSON.parse(str);
-      if (typeof strObj === 'object' && strObj) {
-        return true
-      } else {
-        return false
-      }
-    } catch (e) {
-      return false
-    }
-  }
-}
-const makeRandomId = () => {
-  return Math.random().toString(36).substring(2)
-}
-const makeDefaultButtons = (relaWf) => {
-  const startBtn = {
-    _id: makeRandomId(),
-    text: '发起',
-    name: 'start',
-    position: 'top',
-    type: 'primary',
-    icon: 'branches',
-    enable: true,
-    default: true
-  }
-  const defaultButtons = [
-    {
-      _id: makeRandomId(),
-      text: '新建',
-      name: 'create',
-      position: 'top',
-      type: 'primary',
-      icon: 'plus',
-      enable: true,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '删除',
-      name: 'batchDelete',
-      position: 'top',
-      type: 'default',
-      icon: 'delete',
-      display: 'items=>(items.length > 0)',
-      enable: true,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '导入',
-      name: 'upload',
-      position: 'top',
-      type: 'default',
-      icon: 'upload',
-      enable: false,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '导出',
-      name: 'export',
-      position: 'top',
-      type: 'default',
-      icon: 'download',
-      enable: false,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '编辑',
-      name: 'edit',
-      position: 'row',
-      icon: 'edit',
-      type: 'default',
-      enable: true,
-      default: true
-    },
-    {
-      _id: makeRandomId(),
-      text: '删除',
-      name: 'delete',
-      position: 'row',
-      icon: 'delete',
-      type: 'default',
-      enable: true,
-      default: true
-    }
-  ]
-  return relaWf ? [startBtn, ...defaultButtons] : defaultButtons
-}
 const defaultBtnArr = makeDefaultButtons(true).map(btn => btn.name)
-const filterDefault = (arr) => {
-  for (let i = 0; i < defaultBtnArr.length; i++) {
-    for (let j = 0; j < arr.length; j++) {
-      if (arr[j].name === defaultBtnArr[i]) {
-        arr[j].default = true
-      }
-    }
-  }
-  return arr
-}
 const renderTitle = (text) => {
   return (
     <span style={{display: 'flex', alignItems: 'center'}}>
       <Icon type="bars" style={{fontSize: 24}} /><span style={{marginLeft: 8}}>{text}</span>
     </span>
   )
-}
-const checkRepeat = (arr, field, param) => {
-  if (param) {
-    const tempArr = arr.filter(item => ((item[field] === param[field]) && (item._id !== param._id)))
-    if (tempArr.length > 0) return true;
-    return false;
-  } else {
-    const hash = {};
-    for (let i = 0; i < arr.length; i++) {
-      if (hash[arr[i][field]]) {
-        return true
-      }
-      hash[arr[i][field]] = true;
-    }
-    return false
-  }
 }
 @inject(['devtoolsCustomQuery', 'workflowManager', 'global'])
 @connect(({ devtoolsCustomQuery, global, loading }) => ({
@@ -162,11 +46,92 @@ export default class CustomQuery extends React.PureComponent {
     gridConfig: {},
     buttons: [],
     workflowSelection: [],
-    selectedKeys: [],
     isCreate: false,
-    list: []
+    list: [],
+    showCols: [],
+    hideCols: [],
+    curCol: null,
+    dragging: false
+  }
+  id2List = {
+    show: 'showCols',
+    hide: 'hideCols'
   }
   currentRowRecordId = null;
+  getList = id => this.state[this.id2List[id]]
+  onDragUpdate = () => {
+    const { curRecord, gridConfig, showCols, hideCols } = this.state
+    showCols.forEach((item) => {
+      item.enable = true
+    })
+    hideCols.forEach((item) => {
+      item.enable = false
+    })
+    const newColumns = [...showCols, ...hideCols]
+    gridConfig.columns = newColumns
+    this.setState({
+      dragging: false,
+    })
+    const params = {
+      ...curRecord,
+      gridConfig: JSON.stringify(gridConfig),
+      id: this.currentRowRecordId
+    }
+    this.props.dispatch({
+      type: 'devtoolsCustomQuery/saveOrUpdate',
+      payload: params,
+      callback: (res) => {
+        oopToast(res, '保存成功', '保存失败')
+        if (res.status === 'ok') {
+          this.setState({
+            curRecord: params,
+            gridConfig,
+          })
+          this.onLoad()
+        }
+      }
+    });
+  }
+  onDragStart = () => {
+    this.setState({
+      dragging: true
+    })
+  }
+  onDragEnd = (result) => {
+    const { source, destination } = result;
+    // dropped outside the list
+    this.setState({
+      dragging: false
+    })
+    if (!destination) {
+      return;
+    }
+    if (source.droppableId === destination.droppableId) {
+      if (source.droppableId === destination.droppableId && source.droppableId === 'hide') return
+      const items = reorder(
+        this.getList(source.droppableId),
+        source.index,
+        destination.index
+      );
+      let state = { showCols: items };
+      if (source.droppableId === 'hide') {
+        state = { hideCols: items }
+      }
+      this.setState(state, () => this.onDragUpdate())
+    } else {
+      /* eslint-disable-next-line */
+      const result = move(
+        this.getList(source.droppableId),
+        this.getList(destination.droppableId),
+        source,
+        destination
+      );
+      this.setState({
+        showCols: result.show,
+        hideCols: result.hide
+      }, () => this.onDragUpdate());
+    }
+  }
   componentDidMount() {
     this.onLoad();
   }
@@ -230,7 +195,7 @@ export default class CustomQuery extends React.PureComponent {
     const {devtoolsCustomQuery: {list}} = this.props;
     const newList = value ? filter(list, ['functionName', 'tableName', 'code', 'wfKey']) : list
     this.setState({
-      list: newList
+      list: { data: newList }
     })
   }
   @Debounce(300)
@@ -263,410 +228,6 @@ export default class CustomQuery extends React.PureComponent {
       }
     });
   }
-  makeCreateFormConfig = (formEntity, checkCode, checkTableName) => {
-    const me = this
-    const rule = {};
-    if (!formEntity.code && !formEntity.tableName) {
-      rule.checkCodeRepeat = [{
-        required: true,
-        max: 20,
-        pattern: /^[_0-9A-Za-z]+$/,
-        message: '字段名称不能为空,且必须是"_"、数字或英文字符'
-      }, {
-        validator(rules, value, callback) {
-          checkCode(rules, value, callback, me);
-        }
-      }];
-      rule.checkTableNameRepeat = [{
-        required: true,
-        max: 20,
-        pattern: /^[_0-9A-Za-z]+$/,
-        message: '字段名称不能为空,且必须是"_"、数字或英文字符'
-      }, {
-        validator(rules, value, callback) {
-          checkTableName(rules, value, callback, me);
-        }
-      }];
-    }
-    return {
-      formLayout: 'horizontal',
-      formJson: [
-        {
-          name: 'id',
-          component: {
-            name: 'Input',
-            props: {type: 'hidden'}
-          },
-          initialValue: formEntity.id || undefined,
-          wrapper: true
-        },
-        {
-          label: '功能名',
-          key: 'functionName',
-          name: 'functionName',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入功能名',
-            }
-          },
-          initialValue: formEntity.functionName || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
-        {
-          label: '表名',
-          key: 'tableName',
-          name: 'tableName',
-          component: {
-            name: 'Input',
-            props: {
-              addonBefore: 'PEP_PUPA_',
-              placeholder: '请输入表名',
-              disabled: !!formEntity.tableName
-            }
-          },
-          initialValue: formEntity.tableName ? formEntity.tableName.replace('PEP_PUPA_', '') : '',
-          rules: rule.checkTableNameRepeat
-        },
-        {
-          label: '编码',
-          key: 'code',
-          name: 'code',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入编码',
-              disabled: !!formEntity.code
-            }
-          },
-          initialValue: formEntity.code || undefined,
-          rules: rule.checkCodeRepeat
-        },
-        {
-          label: '关联流程',
-          key: 'relaWf',
-          name: 'relaWf',
-          component: {
-            name: 'Switch',
-            props: {
-              checkedChildren: '是',
-              unCheckedChildren: '否'
-            }
-          },
-          initialValue: formEntity.relaWf || undefined,
-          valuePropName: 'checked'
-        },
-        {
-          label: '选择流程',
-          key: 'wfKey',
-          name: 'wfKey',
-          display: false,
-          component: {
-            name: 'Select',
-            props: {
-              placeholder: '请选择流程',
-              showSearch: true
-            },
-            children: this.state.workflowSelection,
-          },
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }],
-          initialValue: formEntity.wfKey || undefined,
-          subscribe: [{
-            name: 'relaWf',
-            publish: [{
-              value: true,
-              property: 'display'
-            }]
-          }],
-        },
-        {
-          label: '备注',
-          key: 'note',
-          name: 'note',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入备注',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.note || '',
-        },
-        {
-          label: '启/停用',
-          key: 'enable',
-          name: 'enable',
-          component: {
-            name: 'Switch',
-            props: {
-              checkedChildren: '启',
-              unCheckedChildren: '停'
-            }
-          },
-          valuePropName: 'checked',
-          initialValue: formEntity.enable || false,
-        }
-      ]
-    }
-  }
-  makeTableCfgConfig = (formEntity, submit, remove) => {
-    return {
-      formLayoutConfig: {
-        labelCol: {
-          xs: {span: 24},
-          sm: {span: 4},
-        },
-        wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16},
-        },
-      },
-      formJson: [
-        {
-          name: '_id',
-          component: {
-            name: 'Input',
-            props: {type: 'hidden'}
-          },
-          wrapper: true
-        },
-        {
-          name: 'syncTag',
-          component: {
-            name: 'Input',
-            props: {
-              type: 'hidden',
-            }
-          },
-          wrapper: true
-        },
-        {
-          label: '列名',
-          key: 'title',
-          name: 'title',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入列名',
-            }
-          },
-          initialValue: formEntity.title || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
-        {
-          label: '字段名',
-          key: 'dataIndex',
-          name: 'dataIndex',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入字段名'
-            }
-          },
-          initialValue: formEntity.dataIndex || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
-        {
-          label: '列序号',
-          key: 'colIndex',
-          name: 'colIndex',
-          component: {
-            name: 'Input',
-            props: {
-              placeholder: '请输入列序号',
-              type: 'number'
-            }
-          },
-          initialValue: formEntity.colIndex || '',
-          rules: [{
-            required: true,
-            message: '此项为必填项'
-          }]
-        },
-        {
-          label: '列宽',
-          key: 'width',
-          name: 'width',
-          component: {
-            name: 'InputNumber',
-            props: {
-              placeholder: '请输入字段名',
-            }
-          },
-          initialValue: formEntity.width || '',
-          rules: [{
-            required: false,
-            message: '此项为必填项'
-          }],
-          subscribe: [{
-            name: 'hover',
-            publish: [{
-              value(chanageValue) {
-                return chanageValue === true
-              },
-              property: 'rules[0].required'
-            }]
-          }],
-        },
-        {
-          label: '排序',
-          key: 'sorter',
-          name: 'sorter',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入排序规则',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.sorter || '',
-        },
-        {
-          label: '筛选',
-          key: 'filter',
-          name: 'filter',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入筛选规则',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.filter || '',
-        },
-        {
-          label: '自定义渲染',
-          key: 'render',
-          name: 'render',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入自定义渲染规则',
-              autosize: true
-            }
-          },
-          initialValue: formEntity.render || '',
-        },
-        {
-          label: '鼠标悬停提示',
-          key: 'hover',
-          name: 'hover',
-          component: {
-            name: 'RadioGroup',
-            children: [{
-              label: '关闭',
-              value: false
-            }, {
-              label: '开启',
-              value: true
-            }],
-          },
-          initialValue: formEntity.hover || false,
-          // subscribe: [{
-          //   name: 'width',
-          //   publish: [{
-          //     value(chanageValue, curValue) {
-          //       return 'A,B'.includes(chanageValue) && (curValue.length > 0)
-          //     },
-          //     property: 'display'
-          //   }]
-          // }],
-        },
-        {
-          label: '启/停用',
-          key: 'enable',
-          name: 'enable',
-          component: {
-            name: 'Switch',
-            props: {
-              checkedChildren: '启',
-              unCheckedChildren: '停'
-            }
-          },
-          valuePropName: 'checked',
-          initialValue: formEntity.enable || true,
-        },
-        {
-          key: 'submitBtn',
-          component: () => {
-            return (
-              <div>
-                <Button type="primary" onClick={submit} style={{marginLeft: '20%'}}>保存</Button>
-                <Popconfirm
-                  title="确认删除？"
-                  onConfirm={() => remove(formEntity._id)}>
-                  <Button type="danger" style={{marginLeft: '10px'}}>删除</Button>
-                </Popconfirm>
-              </div>
-            )
-          },
-          formItemLayout: {
-            wrapperCol: {
-              xs: {span: 24},
-              sm: {span: 20},
-            },
-          }
-        }
-      ]
-    }
-  }
-  makeTableInfoCfgConfig = (entity = {}, submit) => {
-    return {
-      formLayoutConfig: {
-        labelCol: {
-          xs: {span: 24},
-          sm: {span: 4},
-        },
-        wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16},
-        },
-      },
-      formJson: [
-        {
-          label: '列表信息扩展',
-          key: 'tableInfoExtra',
-          name: 'tableInfoExtra',
-          component: {
-            name: 'TextArea',
-            props: {
-              placeholder: '请输入扩展内容',
-              autosize: true
-            },
-          },
-          initialValue: entity.tableInfoExtra || ''
-        },
-        {
-          key: 'submitBtn',
-          component: () => {
-            return (
-              <div>
-                <Button type="primary" onClick={submit} style={{marginLeft: '20%'}}>保存</Button>
-              </div>
-            )
-          },
-          formItemLayout: {
-            wrapperCol: {
-              xs: {span: 24},
-              sm: {span: 20},
-            },
-          }
-        }
-      ]
-    }
-  }
   setModalVisible = (field, flag) => {
     this.setState({[field]: flag})
   }
@@ -677,7 +238,6 @@ export default class CustomQuery extends React.PureComponent {
       gridConfig: {},
       buttons: [],
       workflowSelection: [],
-      selectedKeys: [],
     })
   }
   handleToggleEnable = (checked, record) => {
@@ -700,12 +260,11 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleModalCancel = () => {
     this.setModalVisible('modalFormVisible', false);
-    // setTimeout(() => {
-    //   form.resetFields();
-    //   this.props.dispatch({
-    //     type: 'devtoolsCustomQuery/clearEntity'
-    //   });
-    // }, 300)
+    setTimeout(() => {
+      this.props.dispatch({
+        type: 'devtoolsCustomQuery/clearEntity'
+      });
+    }, 300)
   }
   handleCreate = () => {
     this.setModalVisible('isCreate', true);
@@ -828,13 +387,17 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleDesignTable = (record) => {
     const { gridConfig } = record;
-    const { topButtons, rowButtons } = JSON.parse(gridConfig)
+    const { topButtons, rowButtons, columns } = JSON.parse(gridConfig)
     const buttons = [...topButtons, ...rowButtons]
+    const curCol = columns.filter(item => item.enable)[0] || columns[0]
     this.setState({
       curRecord: record,
-      curTableRecord: JSON.parse(gridConfig).columns[0],
+      curTableRecord: curCol,
+      curCol: curCol.dataIndex,
       gridConfig: JSON.parse(gridConfig),
-      buttons
+      buttons,
+      showCols: columns.filter(item => item.enable === true),
+      hideCols: columns.filter(item => !item.enable),
     })
     this.currentRowRecordId = record.id;
     this.setModalVisible('modalTableCfgVisible', true);
@@ -864,7 +427,18 @@ export default class CustomQuery extends React.PureComponent {
       const { gridConfig, modalConfig, relaWf } = curRecord;
       const { formJson, ...otherProps } = formDetails;
       formJson.forEach((item) => {
-        if (!item.syncTag) item.syncTag = makeRandomId()
+        if (!item.syncTag) {
+          if (gridConfig) {
+            const hasCol = JSON.parse(gridConfig).columns.filter(col => col.dataIndex === item.name)
+            if (hasCol.length) {
+              item.syncTag = hasCol[0].syncTag
+            } else {
+              item.syncTag = makeRandomId()
+            }
+          } else {
+            item.syncTag = makeRandomId()
+          }
+        }
       });
       const FormObj = {
         ...otherProps,
@@ -956,23 +530,24 @@ export default class CustomQuery extends React.PureComponent {
   }
   handleTableCfgCancel = () => {
     this.setState({
-      curTableRecord: {}
+      curTableRecord: {},
+      curCol: null
     })
     this.setModalVisible('modalTableCfgVisible', false)
   }
-  onTableCfgSelect = (record) => {
-    if (record.length) {
-      const value = JSON.parse(record[0])
-      this.setState({
-        curTableRecord: value,
-        selectedKeys: [record[0]]
-      })
-      const form = this.oopTableCfgForm.getForm()
-      form.resetFields()
-      for (const key in JSON.parse(record)) {
-        form.setFieldsValue({[key]: JSON.parse(record)[key]})
+  onTableCfgSelect = (col) => {
+    const form = this.oopTableCfgForm.getForm()
+    form.resetFields()
+    this.setState({
+      curTableRecord: col,
+      curCol: col.dataIndex
+    }, () => {
+      for (const key in col) {
+        if (!'enable,syncTag'.includes(key)) {
+          form.setFieldsValue({[key]: col[key]})
+        }
       }
-    }
+    })
   }
   handleTableCfgSubmit = () => {
     const { curRecord, gridConfig } = this.state
@@ -986,12 +561,11 @@ export default class CustomQuery extends React.PureComponent {
       } else {
         const list = gridConfig.columns.map((col) => {
           if (col._id === fieldsValue._id) {
-            return fieldsValue
-          } else {
-            return col
+            return Object.assign(col, fieldsValue)
           }
+          return col
         })
-        list.sort((a, b) => parseInt(a.colIndex, 10) - parseInt(b.colIndex, 10))
+        // list.sort((a, b) => parseInt(a.colIndex, 10) - parseInt(b.colIndex, 10))
         const obj = {
           ...gridConfig,
           columns: list
@@ -1011,7 +585,8 @@ export default class CustomQuery extends React.PureComponent {
                 curRecord: params,
                 gridConfig: obj,
                 curTableRecord: fieldsValue,
-                selectedKeys: [JSON.stringify(fieldsValue)]
+                showCols: list.filter(item => item.enable === true),
+                hideCols: list.filter(item => !item.enable),
               })
               this.onLoad()
             }
@@ -1037,14 +612,14 @@ export default class CustomQuery extends React.PureComponent {
       type: 'devtoolsCustomQuery/saveOrUpdate',
       payload: params,
       callback: (res) => {
-        oopToast(res, '保存成功', '保存失败')
+        oopToast(res, '删除成功', '删除失败')
         if (res.status === 'ok') {
           const record = list.length ? list[0] : {
             _id: '',
             title: '',
             dataIndex: '',
-            sorter: '',
-            filter: '',
+            sorter: false,
+            // filter: '',
             render: '',
             enable: false
           }
@@ -1052,10 +627,11 @@ export default class CustomQuery extends React.PureComponent {
             curRecord: params,
             gridConfig: obj,
             curTableRecord: record,
-            selectedKeys: [JSON.stringify(record)]
+            showCols: list.filter(item => item.enable === true),
+            hideCols: list.filter(item => !item.enable),
           })
           this.onLoad()
-          this.onTableCfgSelect([JSON.stringify(record)])
+          this.onTableCfgSelect(record)
         }
       }
     });
@@ -1090,78 +666,33 @@ export default class CustomQuery extends React.PureComponent {
       })
     })
   }
-  // syncColConfirm = () => {
-  //   confirm({
-  //     content: '同步表单字段的label和name属性，确定同步？',
-  //     onOk: () => {
-  //       this.syncColumns()
-  //     }
-  //   });
-  // }
-  // syncColumns = () => {
-  //   const { curRecord, gridConfig } = this.state
-  //   const { formConfig } = curRecord
-  //   const { formJson } = JSON.parse(formConfig)
-  //   const { columns: cols } = gridConfig
-  //   let columns = []
-  //   const colsSyncTags = cols.map(col => col.syncTag)
-  //   for (let i = 0; i < formJson.length; i++) {
-  //     const index = colsSyncTags.indexOf(formJson[i].syncTag)
-  //     if (index >= 0) {
-  //       cols[index].title = formJson[i].label
-  //       cols[index].dataIndex = formJson[i].name
-  //       columns = [...cols]
-  //     } else {
-  //       const obj = {
-  //         _id: makeRandomId(),
-  //         title: formJson[i].label,
-  //         dataIndex: formJson[i].name,
-  //         syncTag: formJson[i].syncTag
-  //       }
-  //       columns = [...cols, obj]
-  //     }
-  //   }
-  //   const obj = {
-  //     ...gridConfig,
-  //     columns
-  //   }
-  //   const params = {
-  //     ...curRecord,
-  //     gridConfig: JSON.stringify(obj),
-  //     id: this.currentRowRecordId
-  //   }
-  //   this.setState({
-  //     curRecord: params,
-  //     gridConfig: obj,
-  //     curTableRecord: columns[0],
-  //     selectedKeys: [JSON.stringify(columns[0])]
-  //   })
-  // }
   addTableCol = () => {
     const { gridConfig } = this.state
     const { columns } = gridConfig
+    const newCol = {
+      _id: makeRandomId(),
+      title: '新建列',
+      dataIndex: makeRandomId(),
+      sorter: false,
+      // filter: '',
+      render: '',
+      enable: true
+    }
     const config = {
       ...gridConfig,
       columns: [
         ...columns,
-        {
-          _id: makeRandomId(),
-          title: '新建列',
-          dataIndex: makeRandomId(),
-          sorter: '',
-          filter: '',
-          render: '',
-          enable: true
-        }
+        newCol
       ]
     }
     const { length } = config.columns
-    const record = JSON.stringify(config.columns[length - 1])
-    this.onTableCfgSelect([record])
+    const record = config.columns[length - 1]
     this.setState({
       gridConfig: config,
-      selectedKeys: [record]
+      showCols: config.columns.filter(item => item.enable === true),
+      hideCols: config.columns.filter(item => !item.enable),
     })
+    this.onTableCfgSelect(record)
   }
   onButtonCfgChange = (type, item) => {
     const { buttons } = this.state
@@ -1339,39 +870,45 @@ export default class CustomQuery extends React.PureComponent {
   render() {
     const {devtoolsCustomQuery: {entity}, loading,
       global: { oopSearchGrid, size }, gridLoading } = this.props;
-    const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {}, isCreate, buttons, curTableRecord = {}, selectedKeys, workflowSelection, pagination } = this.state;
+    const { modalCreateVisible, modalTableCfgVisible, modalModalCfgVisible, list, curRecord, gridConfig, modalConfig = {},
+      isCreate, buttons, curTableRecord = {}, workflowSelection, pagination, showCols, hideCols, curCol, dragging } = this.state;
     const { formConfig = {formJson: [], formLayout: 'horizontal'} } = curRecord
-    const { columns, props } = gridConfig
+    const { props } = gridConfig
     const parseFormConfig = typeof formConfig === 'string' ? JSON.parse(formConfig) : formConfig
-    const buttonCfgDatas = filterDefault(buttons)
+    const buttonCfgDatas = filterDefault(buttons, defaultBtnArr)
     const formdata = isCreate ? {} : entity
     const oopTablecolumns = [
-      {
-        title: '功能名',
-        dataIndex: 'functionName',
+      {title: '功能名', dataIndex: 'functionName', width: 150},
+      {title: '表名', dataIndex: 'tableName',
+        render: (text) => {
+          return (
+            <Popover content={text} placement="topLeft">
+              <div className={styles.ellipsis}>{text}</div>
+            </Popover>
+          )
+        }
       },
-      {
-        title: '表名',
-        dataIndex: 'tableName',
+      {title: '编码', dataIndex: 'code',
+        render: (text) => {
+          return (
+            <Popover content={text} placement="topLeft">
+              <div className={styles.ellipsis}>{text}</div>
+            </Popover>
+          )
+        }
       },
-      {
-        title: '编码',
-        dataIndex: 'code',
-      },
-      {
-        title: '关联流程',
-        dataIndex: 'wfKey',
+      {title: '关联流程', dataIndex: 'wfKey',
         render: (text, record) => {
           if (record.relaWf && workflowSelection.length) {
             const wf = workflowSelection.filter(item => item.value === text)
-            return wf.length ? wf[0].label : '流程不存在'
+            return wf.length ? <Popover content={wf[0].label} placement="topLeft">
+              <div className={styles.ellipsis}>{wf[0].label}</div>
+            </Popover> : '流程不存在'
           }
           return null
         }
       },
-      {
-        title: '启/停用',
-        dataIndex: 'enable',
+      {title: '启/停用', dataIndex: 'enable',
         render: (text, record) => {
           return <Switch checkedChildren="启" unCheckedChildren="停" checked={text} onClick={checked => this.handleToggleEnable(checked, record)} />
         }
@@ -1701,6 +1238,7 @@ export default class CustomQuery extends React.PureComponent {
             size={size}
             // showTableInfo
             ref={(el) => { this.oopTable = el }}
+            order
           />
         </Card>
         <Modal
@@ -1714,7 +1252,7 @@ export default class CustomQuery extends React.PureComponent {
           // footer={<Button type="primary" onClick={() => { this.setState({modalAssignmentCollectVisible: false}) }}>关闭</Button>}
         >
           {isCreate || Object.keys(formdata).length > 0 ?
-            <OopForm {...this.makeCreateFormConfig(formdata, this.checkCode, this.checkTableName)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} />
+            <OopForm {...makeCreateFormConfig(formdata, this.checkCode, this.checkTableName, workflowSelection)} ref={(el)=>{ this.oopCreateForm = el && el.getWrappedInstance() }} />
             : <div style={{textAlign: 'center'}}><Spin /></div>
           }
         </Modal>
@@ -1734,75 +1272,59 @@ export default class CustomQuery extends React.PureComponent {
             ref={(el)=>{ this.oopFormDesigner = el }}
             formDetails={parseFormConfig} />
         </Modal>
-        <Modal
-          visible={modalTableCfgVisible}
-          width="90%"
-          title="设计列表"
-          onCancel={() => { this.setState({modalTableCfgVisible: false}) }}
-          destroyOnClose={true}
-          maskClosable={false}
-          style={{top: '20px'}}
-          footer={
-            <Fragment>
-              <Button onClick={this.handleTableCfgCancel}>关闭</Button>
-            </Fragment>
-          }
-        >
-          <div style={{marginTop: '-24px'}}>
-            <Tabs defaultActiveKey="1" animated={false}>
-              <TabPane tab="列编辑" key="1">
-                <div style={{backgroundColor: '#f0f2f5', padding: '10px'}}>
-                  <Row gutter={16}>
-                    <Col span={5}>
-                      <Card
-                        title="字段列表"
-                        bordered={false}
-                        extra={<Button type="primary" onClick={this.addTableCol}>新建</Button>}
-                      >
-                        {
-                          columns ?
-                            (
-                              <Tree
-                                showLine
-                                selectedKeys={selectedKeys.length ? selectedKeys : [JSON.stringify(columns[0])]}
-                                onSelect={this.onTableCfgSelect}
-                              >
-                                {
-                                  columns.map((col) => {
-                                    return (
-                                      <TreeNode title={col.title} key={JSON.stringify(col)} />
-                                    )
-                                  })
-                                }
-                              </Tree>
-                            ) : null
-                        }
-                      </Card>
-                    </Col>
-                    <Col span={19}>
-                      <Card title="字段编辑" bordered={false}>
-                        <OopForm {...this.makeTableCfgConfig(curTableRecord, this.handleTableCfgSubmit, this.handleTableCfgRemove)} ref={(el)=>{ this.oopTableCfgForm = el && el.getWrappedInstance() }} defaultValue={curTableRecord} />
-                      </Card>
-                    </Col>
-                  </Row>
-                </div>
-              </TabPane>
-              <TabPane tab="按钮编辑" key="2">
-                <OopTableForm
-                  columns={buttonCfgColumns}
-                  onChange={this.onButtonCfgChange}
-                  value={buttonCfgDatas}
-                  ref={(el)=>{ this.buttonCfgForm = el }}
-                />
-                <div style={{textAlign: 'right', marginTop: '10px'}}><Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button></div>
-              </TabPane>
-              <TabPane tab="列表编辑" key="3">
-                <Card bordered={false}>
-                  <OopForm {...this.makeTableInfoCfgConfig(props, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
-                </Card>
-              </TabPane>
-            </Tabs>
-          </div>
+         <Modal
+           visible={modalTableCfgVisible}
+           width="90%"
+           title="设计列表"
+           onCancel={() => { this.setState({modalTableCfgVisible: false}) }}
+           destroyOnClose={true}
+           maskClosable={false}
+           style={{top: '20px'}}
+           footer={
+             <Fragment>
+               <Button onClick={this.handleTableCfgCancel}>关闭</Button>
+             </Fragment>
+           }
+         >
+           <div style={{marginTop: '-24px'}}>
+             <Tabs defaultActiveKey="1" animated={false}>
+               <TabPane tab="列编辑" key="1">
+                 <ColumnsEdit
+                    loading={loading}
+                    curTableRecord={curTableRecord}
+                    showCols={showCols}
+                    hideCols={hideCols}
+                    curCol={curCol}
+                    dragging={dragging}
+                    onSelect={this.onTableCfgSelect}
+                    onSubmit={this.handleTableCfgSubmit}
+                    onRemove={this.handleTableCfgRemove}
+                    onDragStart={this.onDragStart}
+                    onDragEnd={this.onDragEnd}
+                    addTableCol={this.addTableCol}
+                    self={this}
+                 />
+               </TabPane>
+               <TabPane tab="按钮编辑" key="2">
+                <Spin spinning={loading}>
+                  <OopTableForm
+                    columns={buttonCfgColumns}
+                    onChange={this.onButtonCfgChange}
+                    value={buttonCfgDatas}
+                    ref={(el)=>{ this.buttonCfgForm = el }}
+                  />
+                  <div style={{textAlign: 'right', marginTop: '10px'}}><Button type="primary" onClick={this.handleButtonCfgSubmit}>保存</Button></div>
+                 </Spin>
+               </TabPane>
+               <TabPane tab="其他" key="3">
+                  <Spin spinning={loading}>
+                    <Card bordered={false}>
+                      <OopForm {...makeTableInfoCfgConfig(props, gridConfig, this.handleTableInfoCfgSubmit)} ref={(el)=>{ this.oopTableInfoCfgForm = el && el.getWrappedInstance() }} defaultValue={props} />
+                    </Card>
+                  </Spin>
+               </TabPane>
+             </Tabs>
+           </div>
         </Modal>
         <Modal
           visible={modalModalCfgVisible}

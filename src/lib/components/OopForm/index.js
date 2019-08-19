@@ -13,9 +13,13 @@ const isAntdMobliePicker = (item)=>{
     const {component: {name}, initialValue} = item;
     // antd-mobile Picker的默认值为数组
     if (name === 'Select' || name === 'RadioGroup') {
-      if ((typeof (initialValue) === 'string' || typeof (initialValue) === 'number')) {
+      const type = typeof initialValue;
+      if ((type === 'string' || type === 'number') || type === 'boolean') {
         return true;
       }
+    }
+    if (name === 'OopDict') {
+      return true;
     }
   }
   return false;
@@ -54,10 +58,17 @@ const FormContainer = Form.create({
                 const changeItem = formJson.find(it=>it.name === subscribeName);
                 if (changeItem) {
                   const changeField = fields[subscribeName];
-                  const changeValue = changeField === undefined ? undefined : changeField.value;
+                  let changeValue = changeField === undefined ? undefined : changeField.value;
+                  if (isAntdMobliePicker(changeItem)) {
+                    const [first] = changeValue;
+                    changeValue = first
+                  }
+                  if (changeItem.display === false) {
+                    changeValue = undefined;
+                  }
                   const currentValue = value === undefined ? initialValue : value;
                   // 被依赖的组件还没有 渲染
-                  setFormJsonProperties(item, changeValue, currentValue, publish);
+                  setFormJsonProperties(item, changeValue, currentValue, publish, result);
                 }
               })
             }
@@ -73,16 +84,7 @@ const FormContainer = Form.create({
 })((props)=>{
   const { OopForm$model, disabled = false, formJson = [], form, self } = props;
   formJson.forEach((item)=>{
-    const {name, component /* render */} = item;
-    // initialValue是数组但是长度为0 或者 没有initialValue;
-    // const value = defaultValue[name];
-    // if ((Array.isArray(initialValue) && initialValue.length === 0)
-    //   || initialValue === undefined) {
-    //   item.initialValue = value
-    // } else {
-    //   item.initialValue = self.isDictValue(value) ? JSON.stringify(value) : (value || initialValue);
-    // }
-    // 处理DatePicker的值 如果是移动端不需要转化成moment对象
+    const {name, component, readonly = false} = item;
     if (component.name === 'DatePicker') {
       if (item.initialValue) {
         if (ifRenderByAntdMobile) {
@@ -108,7 +110,7 @@ const FormContainer = Form.create({
       }
     }
     // 如果是有字典数据源的组件
-    if (component.children && component.children.length === 0 && component.dictCatalog) {
+    if (readonly === false && component.children && component.children.length === 0 && component.dictCatalog) {
       const {dictCatalog} = component;
       if (dictCatalog !== '请选择') {
         if (OopForm$model[dictCatalog] === undefined) {
@@ -123,7 +125,7 @@ const FormContainer = Form.create({
       }
     }
     // 如果是有url数据源的组件
-    if (component.children && component.children.length === 0 && component.dataUrl) {
+    if (readonly === false && component.children && component.children.length === 0 && component.dataUrl) {
       const {dataUrl} = component;
       if (dataUrl.value) {
         if (!OopForm$model[dataUrl.value] || OopForm$model[dataUrl.value].length === 0) {
@@ -157,9 +159,12 @@ export default class OopForm extends React.PureComponent {
     const fields = {};
     // 初始化表单值的时候 1.formJson配置的initialValue 2.defaultValue中改name的值 3. undefined
     formJson.forEach((item)=>{
-      const {name, initialValue} = item;
+      const {name, initialValue, component = {}} = item;
       const {prototype: {hasOwnProperty}} = Object;
       if (hasOwnProperty.call(defaultValue, name)) {
+        if (component.props && component.props.disabled === true) {
+          item.readonly = true;
+        }
         fields[name] = {
           value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
         }
@@ -190,13 +195,22 @@ export default class OopForm extends React.PureComponent {
       const {name, initialValue} = item;
       if (!Object.prototype.hasOwnProperty.call(fields, name)) {
         fields[name] = Form.createFormField({value: initialValue})
+      } else {
+        // 如果是initialValue有值 fields没值的情况 可能是 initialValue是被订阅的字段这块给fields赋值
+        if (fields[name].value === undefined || fields[name].value === null) {  // eslint-disable-line
+          fields[name].value = initialValue
+        }
       }
     })
     // 把fields多的内容删除 存在的看看是否需要赋值
     for (const name in fields) {
       const item = formJson.find(it=>it.name === name);
       if (item) {
+        const {component = {}} = item;
         if (Object.prototype.hasOwnProperty.call(defaultValue, name)) {
+          if (component.props && component.props.disabled === true) {
+            item.readonly = true;
+          }
           fields[name] = {
             ...fields[name],
             value: isAntdMobliePicker(item) ? [defaultValue[name]] : defaultValue[name]
@@ -301,7 +315,11 @@ export default class OopForm extends React.PureComponent {
           }
         } else if ('OopSystemCurrent'.includes(cName)) {
           if (!data[textKey]) {
-            data[textKey] = value.text
+            if (value.code === 'currentSysDate') {
+              data[textKey] = value.id;
+            } else {
+              data[textKey] = value.text;
+            }
           }
         } else if ('DatePicker'.includes(cName)) {
           if (!data[textKey]) {
@@ -322,6 +340,10 @@ export default class OopForm extends React.PureComponent {
           const {Number} = window;
           if (value !== +value) {
             data[`${name}`] = Number(value)
+          }
+        } else if ('OopGroupUserPicker,OopOrgEmpPicker,OopOrgPicker'.includes(cName)) {
+          if (!data[textKey]) {
+            data[textKey] = value.map(v=>v.name).join(',');
           }
         }
       }

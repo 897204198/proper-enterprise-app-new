@@ -4,6 +4,7 @@ import pathToRegexp from 'path-to-regexp';
 import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import * as properties from '@/config/properties';
+import { matchInputStrForTargetStr } from '@framework/utils/utils';
 import styles from './index.less';
 
 const { Sider } = Layout;
@@ -55,7 +56,7 @@ const getMenuOpenPath = (nodePath, menuData = []) =>{
 
 const Search = (props)=>{
   const {menuSearchValue, onSearch, collapsed, onSearchIconClick, self} = props;
-  return (<div style={{padding: '4px 20px 4px 24px'}}>
+  return (<div style={{padding: '12px 20px 4px 20px'}}>
     {collapsed ? <span className={styles.menuSearchIcon} onClick={onSearchIconClick}><Icon type="search" /></span> :
       <Input.Search
         allowClear
@@ -148,6 +149,7 @@ export default class SiderMenu extends PureComponent {
         target={target}
         replace={itemPath === this.props.location.pathname}
         onClick={this.props.isMobile ? () => { this.props.onCollapse(true); } : undefined}
+        title={name}
       >
         {icon}<span>{name}</span>
       </Link>
@@ -157,21 +159,19 @@ export default class SiderMenu extends PureComponent {
    * get SubMenu or Item
    */
   getSubMenuOrItem=(item) => {
-    const {menuSearchValue = ''} = this.state;
-    let {name} = item;
+    const { menuSearchValue = '', selectedKeys } = this.state;
+    let { name } = item;
     item.display = true;
     if (typeof name === 'string') {
       // 有值 准备过滤
       if (menuSearchValue !== '') {
-        const index = name.indexOf(menuSearchValue);
-        if (index > -1) {
-          // 过滤成蓝色的
-          const beforeStr = item.name.substr(0, index);
-          const afterStr = item.name.substr(index + menuSearchValue.length);
-          name = (<span>
-            {beforeStr}
-            <span className={styles.primaryColor}>{menuSearchValue}</span>
-            {afterStr}
+        const hasValue = matchInputStrForTargetStr(item.name, menuSearchValue)
+        if (hasValue) {
+          name = (
+            <span
+              className={styles.primaryColor}
+              style={{color: selectedKeys[0] === item.path ? 'black' : ''}}>
+              {item.name}
           </span>)
         } else {
           item.display = false;

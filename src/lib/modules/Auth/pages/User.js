@@ -225,10 +225,8 @@ const UserInfoForm = (props) => {
               <Option value="unchecked">未绑定</Option>
             </Select>
           }
-          ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
         />
         <OopTable
-          onLoad={this.onLoad}
           loading={loading}
           size="small"
           grid={{ list: roleUsersList }}
@@ -282,10 +280,8 @@ const GroupInfoForm = (props) => {
               <Option value="unchecked">未绑定</Option>
             </Select>
           }
-          ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
         />
         <OopTable
-          onLoad={this.onLoad}
           loading={loading}
           size="small"
           grid={{ list: groupUsersList }}

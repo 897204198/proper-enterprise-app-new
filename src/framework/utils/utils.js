@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { prefix, devMode } from '@/config/config';
+import pinyinUtil from 'proper-pinyin';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -302,6 +303,61 @@ export const getCurrentUser = (token)=>{
     username: u.name
   };
   return user;
+}
+const exchange = (strArr) => {
+  const results = [];
+  const result = [];
+  const permutation = (arr, index) => {
+    for (let i = 0; i < arr[index].length; i++) {
+      result[index] = arr[index][i]
+      if (index !== arr.length - 1) {
+        permutation(arr, index + 1)
+      } else {
+        results.push(result.reduce((strs, str) => strs + str))
+      }
+    }
+  }
+  permutation(strArr, 0)
+  return results
+}
+/*
+* 汉字转成拼音
+* 返回一个对象里面包含这个汉字的拼音和首字母
+ */
+export const convertChineseToPinyin = (string) => {
+  const qp = pinyinUtil.getPinyin(string, ',', false, true) // 参数：（要翻译的字符串，分隔符，是否显示声调，是否支持多音字）
+  const szm = pinyinUtil.getFirstLetter(string, true) // 参数：（要翻译的字符串，是否支持多音字）
+  const quanpin = exchange(qp)
+  const shouzimu = exchange(szm)
+  return {quanpin, shouzimu}
+}
+
+const trimWhiteSpace = (str)=>{
+  return str.replace(/ /g, '');
+}
+
+/*
+* 根据你的输入字符与目标字符做匹配
+* 返回结果是boolean
+* 例如：目标字符“流程设计” 输入字符：“liuchengsheji、lcsj、liucshej、lcsheji、流程设计”都能够返回true
+ */
+export const matchInputStrForTargetStr = (targetStr, searchStr) => {
+  if (!isString(targetStr) || !isString(searchStr)) return false;
+  targetStr = trimWhiteSpace(targetStr);
+  searchStr = trimWhiteSpace(searchStr);
+  const strObj = convertChineseToPinyin(targetStr);
+  const strs = [targetStr, ...strObj.shouzimu, ...strObj.quanpin];
+  const rule = searchStr.split('').reduce((sum, val) => { return sum.includes('.*') ? `${sum}${val}.*` : `${sum}.*${val}.*` });
+  let checkRule = new RegExp(rule, 'gim');
+  let hasValue = false;
+  for (let i = 0; i < strs.length; i++) {
+    if (checkRule.test(strs[i])) {
+      hasValue = true
+      break;
+    }
+  }
+  checkRule = null;
+  return hasValue;
 }
 
 export const isObject = (object)=>{

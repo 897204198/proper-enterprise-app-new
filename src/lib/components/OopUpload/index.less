@@ -1,0 +1,21 @@
+.OopUploadContainer {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .OopUploadContainer {
+    display: block;
+    :global {
+      .ant-upload.ant-upload-disabled + .ant-upload-list.ant-upload-list-text {
+        .ant-upload-list-item-info {
+          .anticon-paper-clip {
+            right: 0;
+          }
+          .ant-upload-list-item-name {
+            padding-right: 8px;
+          }
+        }
+      }
+    }
+  }
+}

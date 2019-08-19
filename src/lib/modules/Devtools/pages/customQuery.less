@@ -1,0 +1,42 @@
+@import "~antd/lib/style/themes/default.less";
+
+:global {
+  .colLine {
+    display: flex;
+    padding: 10px;
+    background: #fff;
+    .dragging {
+      background: #e6f7ff;
+      border-color: #ddd !important;
+    }
+  }
+  .colItem {
+    padding: 5px 10px;
+    color: @primary-color;
+    border: 1px solid @primary-color;
+    border-radius: 4px;
+    margin: 0 8px;
+    text-align: center;
+  }
+  .colItem.hideCol {
+    color: #7c7c7c;
+    border-color: #ddd;
+  }
+  .colItem.active {
+    background: @primary-color;
+    color: white;
+    border-color: @primary-color;
+  }
+}
+.ellipsis {
+  min-width: 130px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+@media screen and (max-width: 1800px) {
+  .ellipsis {
+    width: 130px;
+    min-width: 0;
+  }
+}

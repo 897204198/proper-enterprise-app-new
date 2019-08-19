@@ -165,10 +165,8 @@ const UserRelevance = (props) => {
               <Option value="unchecked">未绑定</Option>
             </Select>
           }
-          ref={(el) => { this.oopSearch = el && el.getWrappedInstance() }}
         />
         <OopTable
-          onLoad={this.onLoad}
           loading={loading}
           grid={{ list: userList }}
           columns={columns}

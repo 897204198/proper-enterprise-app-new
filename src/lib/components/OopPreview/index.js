@@ -17,7 +17,7 @@ export default class OopPreview extends PureComponent {
     if (isApp()) {
       this.getNaturalSize2();
     } else {
-      this.getNaturalSize();
+      // this.getNaturalSize();
     }
   }
 
@@ -57,21 +57,23 @@ export default class OopPreview extends PureComponent {
     const { innerWith, innerHeight } = window;
     const image = new Image();
     image.src = this.props.img.src;
-    const naturalWidth = image.width;
-    const naturalHeight = image.height;
-    const maxWith = this.props.img.maxWith ? this.props.img.maxWith : innerWith;
-    let horWidth = naturalWidth > maxWith ? maxWith : naturalWidth;
-    let horHeight = (horWidth / naturalWidth) * naturalHeight;
-    if (horHeight > (innerHeight - 100)) {
-      const width = ((innerHeight - 100) / horHeight) * horWidth;
-      horWidth = width;
-      horHeight = (horWidth / naturalWidth) * naturalHeight;
+    image.onload = ()=>{
+      const naturalWidth = image.width;
+      const naturalHeight = image.height;
+      const maxWith = this.props.img.maxWith ? this.props.img.maxWith : innerWith;
+      let horWidth = naturalWidth > maxWith ? maxWith : naturalWidth;
+      let horHeight = (horWidth / naturalWidth) * naturalHeight;
+      if (horHeight > (innerHeight - 100)) {
+        const width = ((innerHeight - 100) / horHeight) * horWidth;
+        horWidth = width;
+        horHeight = (horWidth / naturalWidth) * naturalHeight;
+      }
+      const verWidth = horWidth > horHeight ? horHeight : (horWidth / naturalHeight) * naturalWidth;
+      this.setState({
+        horWidth,
+        verWidth
+      });
     }
-    const verWidth = horWidth > horHeight ? horHeight : (horWidth / naturalHeight) * naturalWidth;
-    this.setState({
-      horWidth,
-      verWidth
-    });
   }
   // 图片缩放
   scale = (flag) => {
@@ -146,6 +148,12 @@ export default class OopPreview extends PureComponent {
 
   // 双指放大
   onImgLoaded = ()=>{
+    const { degs, horWidth, verWidth } = this.state;
+    const index = degs / 90;
+    const width = isApp() ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`;
+    if (width !== '0px') {
+      this.image.style.width = width;
+    }
     new pinchZoom(this.image.parentNode, {}); // eslint-disable-line
   }
   // 拖拽图片
@@ -171,8 +179,7 @@ export default class OopPreview extends PureComponent {
   }
   render() {
     const { img } = this.props;
-    const { scales, degs, horWidth, verWidth } = this.state;
-    const index = degs / 90;
+    const { scales } = this.state;
     const Footer = (
       <div className={styles.footerButtons}>
         <Button onClick={() => this.scale(true)}>
@@ -220,7 +227,9 @@ export default class OopPreview extends PureComponent {
             onMouseDown={e => this.mouseDown(e)}
             onLoad={e => this.onImgLoaded(e)}
             style={{
-              width: isApp() ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`,
+              // width: isApp() ? '100%' : `${index % 2 === 1 ? verWidth : horWidth}px`,
+              maxWidth: '100%',
+              maxHeight: '100%',
               transform: `translate(-50%, -50%) scale(${scales}, ${scales}) rotate(${this.state.degs}deg)`,
               cursor: `${scales !== 1 ? 'move' : 'default'}`
             }}

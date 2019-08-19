@@ -1,0 +1,558 @@
+{
+  "id": "5c698bba-ad67-40ec-a197-8cf218ead0dc",
+  "version": "2.0",
+  "name": "authRule",
+  "url": "http://192.168.1.111/pea/develop",
+  "tests": [{
+    "id": "1a48ff4d-8b1f-473a-a566-126d132d20a3",
+    "name": "权限规则管理 > 新建",
+    "commands": [{
+      "id": "83a6235d-ec24-4bd4-9709-c464199a4075",
+      "comment": "",
+      "command": "open",
+      "target": "#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "263f8cc5-a76b-4b6f-8c37-eb8bf74fd57f",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "53bcf256-4202-46b3-9909-5efe8943bf4f",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "caba510d-82c8-490a-b38e-202242b8b7fd",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
+      "id": "32b0cac0-dd1b-404d-bb33-ef6aced5f951",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='功能管理']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "权限规则管理"
+    }, {
+      "id": "f889a889-9127-4de8-9434-8c8009e2b483",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=权限规则管理",
+      "targets": [
+        ["linkText=功能管理", "linkText"],
+        ["css=.ant-menu-item > a", "css:finder"],
+        ["xpath=//ul[@id='/auth$Menu']/li/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '#/auth/func')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'功能管理')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d1b6313c-231e-42f3-80f2-6d103d29368e",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//button[contains(.,'新建')]",
+      "targets": [
+        ["css=.toolbar___3VYFC > .ant-btn", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div/div[2]/div[2]/div/button", "xpath:idRelative"],
+        ["xpath=//div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'新建')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "6cbb2416-d887-4a75-8894-606972e2fba1",
+      "comment": "",
+      "command": "type",
+      "target": "id=code",
+      "targets": [
+        ["id=code", "id"],
+        ["css=#code", "css:finder"],
+        ["xpath=//input[@id='code']", "xpath:attributes"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "ccc"
+    }, {
+      "id": "76bfa2e6-b228-40ac-975b-8dead1adb2bb",
+      "comment": "",
+      "command": "type",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[3]/div/div/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "9e9251ba-da32-416e-935f-bc272a1e4f2e",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[@class='ant-select-selection__placeholder' and text()='请选择规则分类']",
+      "targets": [
+        ["css=.ant-select-dropdown-menu-item-active", "css:finder"],
+        ["xpath=//div[@id='d181bac1-def1-40ba-9cd7-73e735ddccc4']/ul/li[2]", "xpath:idRelative"],
+        ["xpath=//span/div[2]/div/div/div/ul/li[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "12d6c374-bbb7-4c69-93f8-dd1365bf9427",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//li[@class='ant-select-dropdown-menu-item' and text()='用户规则']",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "4accbec8-cea1-4d82-9c6a-4cb70cd0fa52",
+      "comment": "",
+      "command": "type",
+      "target": "id=sort",
+      "targets": [
+        ["id=sort", "id"],
+        ["css=#sort", "css:finder"],
+        ["xpath=//input[@id='sort']", "xpath:attributes"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": "1"
+    }, {
+      "id": "15337475-f3b4-4626-bfad-7699712ab462",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//button[contains(.,'保 存')]",
+      "targets": [
+        ["css=.ant-btn:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[4]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "75511c4f-8029-40b5-8826-95fb14bc8d24",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "167a783b-0a27-4a24-9e78-5fb365055b12",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-notice-content",
+      "targets": [
+        ["css=.ant-message-notice-content", "css:finder"],
+        ["xpath=//div[4]/div/span/div/div", "xpath:position"]
+      ],
+      "value": "保存成功"
+    }, {
+      "id": "1a4b4863-5355-4f03-be9f-8bda9f6c2ca3",
+      "comment": "",
+      "command": "click",
+      "target": "css=.anticon-close > svg",
+      "targets": [
+        ["css=.anticon-close > svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "00059e8c-e0e4-4f16-9242-3e905fdabba3",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9dc4093d-8ba9-40ce-b138-f817cca46a2c",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=//input[@value='ccc']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": "ccc"
+    }, {
+      "id": "fba26799-8f13-4dc4-b6a2-716de9676a00",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//li[contains(.,'ccc编码')]",
+      "targets": [
+        ["css=.preActive___1uCBi", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/div[2]/ul/li", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li", "xpath:position"],
+        ["xpath=//li[contains(.,'ccc编码')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f43ed596-a521-4231-8746-2fce7d6e7cb5",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search-button",
+      "targets": [
+        ["css=.ant-input-search-button", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/span/span/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'搜 索')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b7ddce83-9010-4ede-929b-94d7b3d4181a",
+      "comment": "",
+      "command": "assertText",
+      "target": "xpath=//td[contains(.,'ccc')]",
+      "targets": [
+        ["css=td:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[2]", "xpath:idRelative"],
+        ["xpath=//td[2]", "xpath:position"],
+        ["xpath=//td[contains(.,'ccc')]", "xpath:innerText"]
+      ],
+      "value": "ccc"
+    }, {
+      "id": "86cdbfaf-7726-4fcf-aa79-d0f3c0539484",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=td:nth-child(3)",
+      "targets": [
+        ["css=td:nth-child(3)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[3]", "xpath:idRelative"],
+        ["xpath=//td[3]", "xpath:position"],
+        ["xpath=//td[contains(.,'123456')]", "xpath:innerText"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "7b615496-32cd-4dab-9121-28c6b68f78a4",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-table-row > .ant-table-column-has-actions",
+      "targets": [
+        ["css=.ant-table-row > .ant-table-column-has-actions", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[4]", "xpath:idRelative"],
+        ["xpath=//td[4]", "xpath:position"],
+        ["xpath=//td[contains(.,'用户规则')]", "xpath:innerText"]
+      ],
+      "value": "用户规则"
+    }, {
+      "id": "c1ee1a61-1398-4106-9586-e2ab5589bad9",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=td:nth-child(5)",
+      "targets": [
+        ["css=td:nth-child(5)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[5]", "xpath:idRelative"],
+        ["xpath=//td[5]", "xpath:position"]
+      ],
+      "value": "1"
+    }, {
+      "id": "7cfa39ca-4165-4198-870c-f20f661dc649",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "e64b53b3-ae64-4ffe-a93e-36ce709e1340",
+    "name": "权限规则管理 > 编辑、删除",
+    "commands": [{
+      "id": "99f62d58-64f2-42e4-a935-060b1b11ba0f",
+      "comment": "",
+      "command": "open",
+      "target": "#/base/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "23a7ac21-cd21-4fec-ab51-0e6ee2282892",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[2]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "6a99b563-bd27-4f3c-93ca-19cc4fc7a589",
+      "comment": "",
+      "command": "type",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "2ee3d097-a607-463c-a434-76159c1221e9",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "id=pwd",
+      "targets": [
+        ["id=pwd", "id"],
+        ["css=#pwd", "css:finder"],
+        ["xpath=//input[@id='pwd']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/form/div/div/div[3]/div/div[3]/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div/span/span/input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
+      "id": "cff347ce-00e1-426e-a050-dba8f1d92ad5",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-search > .ant-input",
+      "targets": [
+        ["css=.ant-input-search > .ant-input", "css:finder"],
+        ["xpath=//input[@value='功能管理']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/div/aside/div/div[2]/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "权限规则管理"
+    }, {
+      "id": "e1aeabc4-3a4c-4c6d-9530-bfa933524d4f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=权限规则管理",
+      "targets": [
+        ["linkText=功能管理", "linkText"],
+        ["css=.ant-menu-item > a", "css:finder"],
+        ["xpath=//ul[@id='/auth$Menu']/li/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '#/auth/func')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'功能管理')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "e0de7eb1-5c57-4af0-a7ae-7fc20597b6fd",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ant-input-wrapper > .ant-input",
+      "targets": [
+        ["css=.ant-input-wrapper > .ant-input", "css:finder"],
+        ["xpath=//input[@value='ccc']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/span/span/input", "xpath:idRelative"],
+        ["xpath=//span/span/input", "xpath:position"]
+      ],
+      "value": "ccc"
+    }, {
+      "id": "3e6d0cd0-ad00-41c3-ae99-677be00c70a0",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//li[contains(.,'ccc编码')]",
+      "targets": [
+        ["css=.preActive___1uCBi", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/div[2]/ul/li", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li", "xpath:position"],
+        ["xpath=//li[contains(.,'ccc编码')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9757ef6b-e5fe-4613-8fc3-c8c98eceba07",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ant-input-search-button",
+      "targets": [
+        ["css=.ant-input-search-button", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div/div/div/div[2]/div/div/div/span/span/span/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'搜 索')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9508cb34-8099-4ab0-8c91-7ee2872b5309",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//td[text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-edit']/..",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3c31b412-e2dd-4134-8840-93d26359436f",
+      "comment": "",
+      "command": "type",
+      "target": "id=name",
+      "targets": [
+        ["id=name", "id"],
+        ["css=#name", "css:finder"],
+        ["xpath=//input[@id='name']", "xpath:attributes"],
+        ["xpath=//div[3]/div/div/div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": "1234567"
+    }, {
+      "id": "87e26935-a443-4fd1-ac05-441c1144263c",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//button[contains(.,'保 存')]",
+      "targets": [
+        ["css=.ant-btn:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[4]", "xpath:attributes"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'保 存')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "cadd64b7-c0b6-4bca-b95c-be39e95a4814",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "bd8f77a3-cbea-477d-81ce-c571cbcbc7be",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-notice-content",
+      "targets": [
+        ["css=.ant-message-notice-content", "css:finder"],
+        ["xpath=//div[4]/div/span/div/div", "xpath:position"]
+      ],
+      "value": "保存成功"
+    }, {
+      "id": "b3eb8765-9b48-40a5-a925-ab9efb7fd6a7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.anticon-close > svg",
+      "targets": [
+        ["css=.anticon-close > svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "eec6898b-99d2-4dd1-9524-1257b6920353",
+      "comment": "",
+      "command": "assertText",
+      "target": "xpath=//td[contains(.,'ccc')]",
+      "targets": [
+        ["css=td:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[2]", "xpath:idRelative"],
+        ["xpath=//td[2]", "xpath:position"],
+        ["xpath=//td[contains(.,'ccc')]", "xpath:innerText"]
+      ],
+      "value": "ccc"
+    }, {
+      "id": "f697e377-6a33-4724-9d14-002e5645e796",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=td:nth-child(3)",
+      "targets": [
+        ["css=td:nth-child(3)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[3]", "xpath:idRelative"],
+        ["xpath=//td[3]", "xpath:position"],
+        ["xpath=//td[contains(.,'123456')]", "xpath:innerText"]
+      ],
+      "value": "1234567"
+    }, {
+      "id": "1cb4184c-36ff-473d-a49c-93a0d3de491a",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-table-row > .ant-table-column-has-actions",
+      "targets": [
+        ["css=.ant-table-row > .ant-table-column-has-actions", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[4]", "xpath:idRelative"],
+        ["xpath=//td[4]", "xpath:position"],
+        ["xpath=//td[contains(.,'用户规则')]", "xpath:innerText"]
+      ],
+      "value": "用户规则"
+    }, {
+      "id": "ce2a9551-6178-4e4e-ab2b-ab0f5b331621",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=td:nth-child(5)",
+      "targets": [
+        ["css=td:nth-child(5)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/section/section/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/table/tbody/tr/td[5]", "xpath:idRelative"],
+        ["xpath=//td[5]", "xpath:position"]
+      ],
+      "value": "1"
+    }, {
+      "id": "b87acda8-a964-4625-913a-d68a0156136e",
+      "comment": "",
+      "command": "pause",
+      "target": "3000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e3978fe9-fb85-405a-93fd-59519838b9c1",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//td[text()='ccc']/following-sibling::td/a/i[@class='anticon anticon-delete']/..",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "80c24f63-2856-4feb-a486-79aa4d47c42f",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//span[text()='确 定']/..",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "17eccae6-1a5b-4b4d-91ff-d533747507c8",
+      "comment": "",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "61893879-c4da-49b1-b5b6-a96a75c1fc1e",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.ant-message-notice-content",
+      "targets": [
+        ["css=.ant-message-notice-content", "css:finder"],
+        ["xpath=//div[4]/div/span/div/div", "xpath:position"]
+      ],
+      "value": "删除成功"
+    }, {
+      "id": "15343a4a-9a9d-425d-b148-cf326dbffc1b",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "e7b8fba6-5aee-41a7-a8df-442cead9e16f",
+    "name": "权限管理_权限规则管理",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["1a48ff4d-8b1f-473a-a566-126d132d20a3", "e64b53b3-ae64-4ffe-a93e-36ce709e1340"]
+  }],
+  "urls": ["http://192.168.1.111/", "http://192.168.1.111/pea/develop", "https://icmp2.propersoft.cn/icmp/propersoft", "http://192.168.1.111/pea/develop/", "http://192.168.1.122:8081/home/login.jsp"],
+  "plugins": []
+}

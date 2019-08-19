@@ -134,22 +134,37 @@ export default class OopSystemCurrent extends PureComponent {
     }
     return result;
   }
+  renderChildren = (props)=>{
+    const {children} = props;
+    if (children) {
+      if (typeof children === 'function') {
+        return children(props);
+      } else {
+        return children;
+      }
+    }
+  }
   render() {
-    const {global: {size}, label, loading} = this.props;
-    return (
-        <Spin spinning={!!loading}>
-          <div className={styles.container} style={{marginTop: 0}}>
-            <DescriptionList col="1" size={size} style={{width: '100%'}}>
-              <div>
-                <Fragment>
-                  <Input type="hidden" value={this.state.id} />
-                  <Input type="hidden" value={this.state.text} />
-                  <Input type="hidden" value={this.state.code} />
-                </Fragment>
-                <Description term={label} style={{display: 'flex', justifyContent: 'space-between'}}>{this.showText()}</Description>
-              </div>
-            </DescriptionList>
-          </div>
-        </Spin>);
+    const {global: {size}, label, loading, children} = this.props;
+    const component = (
+      <Spin spinning={!!loading}>
+        <div className={styles.container} style={{marginTop: 0}}>
+          <DescriptionList col="1" size={size} style={{width: '100%'}}>
+            <div>
+              <Fragment>
+                <Input type="hidden" value={this.state.id} />
+                <Input type="hidden" value={this.state.text} />
+                <Input type="hidden" value={this.state.code} />
+              </Fragment>
+              <Description term={label} style={{display: 'flex', justifyContent: 'space-between'}}>{this.showText()}</Description>
+            </div>
+          </DescriptionList>
+        </div>
+      </Spin>);
+    // 兼容移动端
+    if (typeof children === 'function') {
+      return children(component);
+    }
+    return component;
   }
 }

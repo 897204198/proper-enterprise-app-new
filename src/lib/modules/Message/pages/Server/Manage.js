@@ -452,8 +452,7 @@ export default class Manage extends React.PureComponent {
             isCreate: !record.havePushConf
           })
         },
-        display: record=>(!record.superuser),
-        disabled: record=>(record.havePushConf)
+        display: record=>(!record.superuser)
       }, {
         text: '邮件配置',
         name: 'EmailConf',
@@ -471,8 +470,7 @@ export default class Manage extends React.PureComponent {
             isCreate: !record.haveEmailConf
           })
         },
-        display: record=>(!record.superuser),
-        disabled: record=>(record.haveEmailConf)
+        display: record=>(!record.superuser)
       }, {
         text: '短信配置',
         name: 'SMSConf',
@@ -490,8 +488,7 @@ export default class Manage extends React.PureComponent {
             isCreate: !record.haveSMSConf
           })
         },
-        display: record=>(!record.superuser),
-        disabled: record=>(record.haveSMSConf)
+        display: record=>(!record.superuser)
       }, {
         text: '删除',
         name: 'delete',

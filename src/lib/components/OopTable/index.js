@@ -5,6 +5,17 @@ import styles from './index.less';
 const isReactObject = (component)=>{
   return component && component.$$typeof && component.$$typeof.toString() === 'Symbol(react.element)'
 }
+const getStringFromReactObj = (reactNode)=>{
+  let r = reactNode;
+  while (isReactObject(r.props.children)) {
+    r = r.props.children
+  }
+  if (typeof r.props.children === 'string') {
+    return r.props.children
+  }
+  return reactNode.toString();
+}
+
 // 计算rowButtons的长度 18:图标的宽度 17:中间竖线的长度+margin 32:td的内边距 5:再加5px的余量 怕有人对icon自定义大小影响长度导致换行
 const caculateRowButtonWidth = (n)=>{
   if (n <= 0) {
@@ -27,6 +38,11 @@ const getFilterParams = (filters)=>{
   } else {
     return {}
   }
+}
+const orderCol = {
+  title: '序号',
+  width: 60,
+  render: (text, record, index)=>`${index + 1}`
 }
 export default class OopTable extends PureComponent {
   constructor(props) {
@@ -137,6 +153,7 @@ export default class OopTable extends PureComponent {
             key={btn.name}
             icon={btn.icon}
             type={btn.type}
+            loading={btn.loading}
             disabled={btn.disabled}
             style={(typeof btn.style === 'function') ? btn.style() : btn.style}
             onClick={()=>{
@@ -327,9 +344,13 @@ export default class OopTable extends PureComponent {
           let value = record[column.dataIndex];
           if (value) {
             if (column.render) {
-              const r = column.render(value, record);
-              if (typeof r === 'string') {
-                value = r;
+              if (typeof value !== 'string') {
+                const r = column.render(value, record);
+                if (typeof r === 'string') {
+                  value = r;
+                } else if (isReactObject(r)) {
+                  value = getStringFromReactObj(r);
+                }
               }
             }
             // value = value.toString();
@@ -342,7 +363,6 @@ export default class OopTable extends PureComponent {
         }
         str.push(temp.join(',').concat('\n'));
       }
-      // 把中文的，转换成英文的
       const context = str.join(' ');
       this.downloadContext(context);
     });
@@ -420,7 +440,7 @@ export default class OopTable extends PureComponent {
       actionColumn, columns, loading, topButtons = [], rowButtons = [], extra, checkable = true, size,
       onRowSelect, selectTriggerOnRowClick = false, onSelectAll, rowKey,
       _onSelect, _onSelectAll, multiple = true, selectedDisabled = [],
-      showTableInfo, tableInfoExtra, ...otherProps } = this.props;
+      showTableInfo, tableInfoExtra, order = false, ...otherProps } = this.props;
     const { selectedRowKeys, pagination, filters, sorter } = this.state;
     const hasFilters = filters && Object.keys(filters).length > 0;
     const hasSorter = sorter && Object.keys(sorter).length > 0;
@@ -451,6 +471,9 @@ export default class OopTable extends PureComponent {
       }
     })
     const cols = this.createRowButtons(actionColumn, columns, rowButtons);
+    if (order) {
+      cols.unshift(orderCol)
+    }
     const tableData = [...list];
     if (multiple !== false) {
       if (tableData.length && selectedDisabled.length) {

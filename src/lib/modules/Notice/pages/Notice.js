@@ -144,12 +144,13 @@ const InfoForm = Form.create()((props) => {
 const CreateForm = (props) => {
   const { form, modalVisible, submitForm, closeForm, loading,
     formInfo, nowInfoType } = props;
+  const temp = {};
   const handleCancel = () => {
-    const customForm = this.infoForm.getForm();
+    const customForm = temp.infoForm.getForm();
     closeForm(customForm);
   };
   const handleOk = () => {
-    const customForm = this.infoForm.getForm();
+    const customForm = temp.infoForm.getForm();
     customForm.validateFields((err, fieldsValue) => {
       if (err) return;
       submitForm(form, fieldsValue);
@@ -171,7 +172,7 @@ const CreateForm = (props) => {
       maskClosable={false}
     >
       <InfoForm
-        ref={(el) => { this.infoForm = el }}
+        ref={(el) => { temp.infoForm = el }}
         loading={loading}
         nowInfoType={nowInfoType}
         formInfo={formInfo}

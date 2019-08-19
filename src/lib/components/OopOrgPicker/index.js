@@ -79,7 +79,7 @@ export default class OopOrgPicker extends React.PureComponent {
         const keys = value.length && value.map(val => val.id)
         this.setState({
           orgList: orgTreeData,
-          expand: [orgTreeData[0].id],
+          expand: orgTreeData.length ? [orgTreeData[0].id] : undefined,
           checkedKeys: {checked: keys, halfChecked: []},
           checkedOrgs: value
         })
@@ -207,7 +207,6 @@ export default class OopOrgPicker extends React.PureComponent {
     const columns = [
       {title: '工号', dataIndex: 'account'},
       {title: '姓名', dataIndex: 'name'},
-      {title: '部门', dataIndex: 'orgName'},
       {title: '手机号码', dataIndex: 'mobilePhone'}
     ]
     const footer = (
@@ -220,7 +219,7 @@ export default class OopOrgPicker extends React.PureComponent {
     return (
       <div>
         <Tooltip title={btnText}>
-          <Button onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
+          <Button icon="apartment" onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
         </Tooltip>
         <OopModal
           title={placeholder}
