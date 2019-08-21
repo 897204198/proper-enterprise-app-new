@@ -199,6 +199,11 @@ export default class OopOrgPicker extends React.PureComponent {
       }
       return <TreeNode title={item.title} key={item.key} dataRef={item} />;
     });
+  handleClick = (event)=>{
+    // event stop pop up
+    event.stopPropagation();
+    // console.log(event)
+  }
   render() {
     const { value = [], btnCfg = {}, listLoading, placeholder = '请选择' } = this.props
     const { selected } = this.state
@@ -217,7 +222,7 @@ export default class OopOrgPicker extends React.PureComponent {
       </div>
     )
     return (
-      <div>
+      <div onClick={this.handleClick}>
         <Tooltip title={btnText}>
           <Button icon="apartment" onClick={this.handleButtonClick} className={styles.btn} style={{...btnCfg}}>{btnText}</Button>
         </Tooltip>
