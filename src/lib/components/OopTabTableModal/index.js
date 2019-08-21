@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import {Tag, Button, Tooltip, Modal} from 'antd';
 import OopModal from '../OopModal';
 import OopTreeTable from '../OopTreeTable';
@@ -187,6 +187,11 @@ export default class OopTabTableModal extends React.PureComponent {
       }
     });
   }
+  handleClick = (event)=>{
+    // event stop pop up
+    event.stopPropagation();
+    // console.log(event)
+  }
   render() {
     const {
       buttonCfg = {
@@ -218,7 +223,7 @@ export default class OopTabTableModal extends React.PureComponent {
     const selectedRowNames = selectedRecord.map((item) => { return item.name }).join(',');
     const tableTitle = tableCfgState.title ? tableCfgState.title : tableCfg.title;
     return (
-      <Fragment>
+      <div onClick={this.handleClick}>
         <Tooltip title={selectedRowNames.length ? selectedRowNames : '点击选择'}>
           <Button
             icon={buttonCfg.showIcon ? buttonCfg.icon : ''}
@@ -297,7 +302,7 @@ export default class OopTabTableModal extends React.PureComponent {
             />
           </div>)}]}
         />
-      </Fragment>
+      </div>
     );
   }
 }

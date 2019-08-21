@@ -1,6 +1,6 @@
 import React from 'react';
 import FileSaver from 'file-saver'
-import {Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message, DatePicker} from 'antd';
+import {Modal, Card, Form, Spin, Input, Radio, Select, InputNumber, message} from 'antd';
 import {connect} from 'dva';
 import Debounce from 'lodash-decorators/debounce';
 import { inject } from '@framework/common/inject';
