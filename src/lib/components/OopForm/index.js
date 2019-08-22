@@ -36,7 +36,8 @@ const FormContainer = Form.create({
         let {value} = fields[name] || {};
         if (value !== undefined) {
           // 如果是字符串需要去空格
-          if (isString(value)) {
+          // eslint-disable-next-line
+          if (isString(value) && value == false) {
             value = String.prototype.trim.call(value);
           }
           // 数据字典 数据字典值啥code的时候 （默认值）做下转换
