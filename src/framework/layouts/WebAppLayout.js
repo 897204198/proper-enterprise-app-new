@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'dva/router';
 import {connect} from 'dva';
 import PropTypes from 'prop-types';
-import { Layout, Button, Icon } from 'antd';
+import { Layout, Icon } from 'antd';
 import { getUuid } from '@framework/common/oopUtils';
 // import VConsole from 'vconsole/dist/vconsole.min.js'
 import routers from '@/config/sysRouters';
@@ -78,13 +78,13 @@ const Header = (props)=>{
   const {leftButton, rightButton} = props;
   return (
     <div className={`${styles.header} ${isAndroid() ? styles.android : ''}`}>
-      <Button type="default" ghost className={styles.backBtn} onClick={leftButton.onClick}>
+      <div type="default" ghost className={styles.backBtn} onClick={leftButton.onClick}>
         <Icon type={leftButton.icon} style={{fontWeight: 'bold'}} />{leftButton.text}
-      </Button>
+      </div>
       <h3 className={styles.title}>{props.title}</h3>
-      <Button type="default" ghost className={styles.homeBtn} onClick={rightButton.onClick}>
+      <div type="default" ghost className={styles.homeBtn} onClick={rightButton.onClick}>
         <Icon type={rightButton.icon} style={{fontSize: '24px'}} />{rightButton.text}
-      </Button>
+      </div>
     </div>)
 }
 

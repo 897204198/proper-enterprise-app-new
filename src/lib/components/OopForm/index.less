@@ -41,8 +41,16 @@
       }
     }
     .am-list {
+      .am-list-body {
+        border: none !important;
+        border-top: 1px solid #ddd !important;
+      }
+      .am-list-body::after {
+        height: 0;
+      }
       .am-list-item {
         //padding-left: 0;
+        border-bottom: 1px solid #ddd;
         .am-list-line {
           //padding-right: 0;
           .am-list-extra {
@@ -71,6 +79,9 @@
             //display: none;
           }
         }
+        .am-list-line::after {
+          height: 0 !important;
+        }
         .am-input-control input {
           text-align: right;
           font-size: 16px;
@@ -82,6 +93,9 @@
           font-size: 16px;
           color: #666;
         }
+      }
+      .am-list-item:last-child {
+        border-bottom: 1px solid #eee;
       }
       .am-list-item.am-textarea-item {
         padding-right: 0;
