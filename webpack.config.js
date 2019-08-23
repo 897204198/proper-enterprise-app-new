@@ -71,9 +71,11 @@ function getWebpackConfig(webpackConfig, des = []) {
   // 输出alias配置到webpackAlias.txt
   generateAlias(webpackConfig)
   // 处理 htmlWebpackPlugin
-  if (htmlWebpackPlugin) {
-    const iframePlugin = new HtmlWebpackPlugin(htmlWebpackPlugin)
-    webpackConfig.plugins.push(iframePlugin)
+  if (htmlWebpackPlugin && htmlWebpackPlugin.length) {
+    htmlWebpackPlugin.forEach((hwp) =>{
+      const iframePlugin = new HtmlWebpackPlugin(hwp)
+      webpackConfig.plugins.push(iframePlugin)
+    })
   }
   return webpackConfig;
 }
