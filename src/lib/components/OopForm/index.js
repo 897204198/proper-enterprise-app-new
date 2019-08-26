@@ -3,7 +3,7 @@ import {connect} from 'dva';
 import { Form } from 'antd';
 import moment from 'moment';
 import {inject} from '@framework/common/inject';
-import {isApp} from '@framework/utils/utils';
+import {isApp, isString} from '@framework/utils/utils';
 import {appFormGenerator, formGenerator, toastValidErr, toastLoading, setFormJsonProperties /* getValueByFunctionStr */ } from './utils';
 import styles from './index.less';
 
@@ -35,6 +35,11 @@ const FormContainer = Form.create({
       if (name) {
         let {value} = fields[name] || {};
         if (value !== undefined) {
+          // 如果是字符串需要去空格
+          // eslint-disable-next-line
+          if (isString(value) && value == false) {
+            value = String.prototype.trim.call(value);
+          }
           // 数据字典 数据字典值啥code的时候 （默认值）做下转换
           // if (component.name === 'OopDict') {
           // }

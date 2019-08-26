@@ -282,7 +282,8 @@ export default class OopFormDesigner extends React.PureComponent {
     console.log(this.state.rowItems);
     console.log('OopFormDesigner componentDidMount');
   }
-  onRowItemClick = (key)=>{
+  onRowItemClick = (key, event)=>{
+    console.log(event.target)
     if (this.state.currentRowItem !== null && this.state.currentRowItem.key === key) {
       console.log('click the same one!')
       return

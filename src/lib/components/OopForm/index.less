@@ -41,19 +41,31 @@
       }
     }
     .am-list {
+      .am-list-body {
+        border: none !important;
+        border-top: 1px solid #ddd !important;
+      }
+      .am-list-body::after {
+        height: 0;
+      }
       .am-list-item {
         //padding-left: 0;
+        border-bottom: 1px solid #ddd;
         .am-list-line {
           //padding-right: 0;
           .am-list-extra {
             flex: 1 1;
             font-family: sans-serif;
+            color: #262626;
+            padding-top: 6px;
+            padding-bottom: 6px;
             //flex-grow: 2;
           }
           .am-input-label-5 {
             width: auto;
             font-size: 16px;
             user-select: none;
+            color: #666;
           }
           .am-list-content {
             font-size: 16px;
@@ -61,20 +73,29 @@
             white-space: normal;
             max-height: 64px;
             overflow-y: scroll;
+            color: #666;
           }
           .am-list-arrow-horizontal {
-            display: none;
+            //display: none;
           }
+        }
+        .am-list-line::after {
+          height: 0 !important;
         }
         .am-input-control input {
           text-align: right;
           font-size: 16px;
+          color: #262626;
         }
         .am-textarea-label.am-textarea-label-5 {
           width: auto;
           min-width: 60px;
           font-size: 16px;
+          color: #666;
         }
+      }
+      .am-list-item:last-child {
+        border-bottom: 1px solid #eee;
       }
       .am-list-item.am-textarea-item {
         padding-right: 0;
@@ -88,27 +109,27 @@
       }
       .oopform-list-item-disabled {
         .am-list-item.am-input-disabled .am-input-label {
-          color: #000;
+          color: #666;
         }
         .am-textarea-disabled .am-textarea-label {
-          color: #000;
+          color: #666;
         }
         .am-list-item {
           .am-list-arrow {
             display: none;
           }
           .am-input-control input:disabled {
-            color: #262626;
-            -webkit-text-fill-color: #262626;
-            opacity: 1;
+            //color: #262626;
+            //-webkit-text-fill-color: #262626;
+            //opacity: 1;
           }
           .am-list-extra .ant-radio-group .ant-radio-disabled + span {
             color: #888;
           }
           .am-textarea-control textarea:disabled {
-            color: #262626;
-            -webkit-text-fill-color: #262626;
-            opacity: 1;
+            //color: #262626;
+            //-webkit-text-fill-color: #262626;
+            //opacity: 1;
           }
         }
         .ant-upload-disabled {
@@ -124,7 +145,7 @@
         display: block;
       }
       .ant-upload-list {
-        padding: 0 5px;
+        padding: 0 15px;
       }
     }
   }

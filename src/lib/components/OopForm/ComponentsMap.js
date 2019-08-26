@@ -41,11 +41,13 @@ const hackInputAndroidFocusKeyboardOcclusion = (id)=>{
     }, 300)
   }
 }
-const getAntdMobileComponent = (componentName, componentLabel, props, children, rules)=>{
+const getAntdMobileComponent = (componentName, componentLabel, props = {}, children, rules)=>{
   let component = null;
   const rule = rules && rules.find(it=>it.required);
   const label = rule ? (<Fragment><span className={styles.required}>*</span>{componentLabel}</Fragment>) : componentLabel;
   // let pickerData = [];
+  let {placeholder = '请选择'} = props;
+  placeholder = <span style={{color: '#bbb'}}>{placeholder}</span>;
   switch (componentName) {
     case 'Input':
       component = <InputItem { ...props} clear onFocus={function () { hackInputAndroidFocusKeyboardOcclusion(this.id) }} >{label}</InputItem>;
@@ -61,16 +63,16 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       break;
     case 'Select':
       // pickerData = children.map(it=>({...it, value: [it.value]})); arrow="horizontal"
-      component = <Picker { ...props} data={children} cols={1}><List.Item arrow="horizontal">{label}</List.Item></Picker>;
+      component = <Picker { ...props} data={children} cols={1} extra={placeholder}><List.Item arrow="horizontal">{label}</List.Item></Picker>;
       break;
     case 'DatePicker':
-      component = <DatePickerM { ...props} locale={zhCN2} mode={props.showTime ? undefined : 'date'}><List.Item arrow="horizontal">{label}</List.Item></DatePickerM>;
+      component = <DatePickerM { ...props} locale={zhCN2} mode={props.showTime ? undefined : 'date'} extra={placeholder}><List.Item arrow="horizontal">{label}</List.Item></DatePickerM>;
       break;
     case 'RadioGroup':
-      component = <Picker { ...props} data={children} cols={1}><List.Item arrow="horizontal">{label}</List.Item></Picker>;
+      component = <Picker { ...props} data={children} cols={1} extra={placeholder}><List.Item arrow="horizontal">{label}</List.Item></Picker>;
       break;
     case 'CheckboxGroup':
-      component = <CheckBoxPop { ...props} data={children} componentLabel={componentLabel}>{p => (<List.Item arrow="horizontal" {...p}>{label}</List.Item>)}</CheckBoxPop>;
+      component = <CheckBoxPop { ...props} data={children} componentLabel={componentLabel} extra={placeholder}>{p => (<List.Item arrow="horizontal" {...p}>{label}</List.Item>)}</CheckBoxPop>;
       break;
     case 'OopText':
       component = (
@@ -86,11 +88,11 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       (
         <OopUpload
         {...props}
-      >{ p => <List.Item arrow="horizontal" extra={p.extra}>{label}</List.Item>}</OopUpload>)
+      >{ p => <List.Item extra={p.extra}>{label}</List.Item>}</OopUpload>)
       break;
     case 'OopSystemCurrent':
       component = (<OopSystemCurrent {...props} label={undefined} >
-        {c=> <List.Item arrow="horizontal" extra={c}>{label}</List.Item>}
+        {c=> <List.Item extra={c}>{label}</List.Item>}
       </OopSystemCurrent>)
       break;
     case 'OopGroupUserPicker':
@@ -100,16 +102,16 @@ const getAntdMobileComponent = (componentName, componentLabel, props, children, 
       component = (
         <OopFormSelectUser
         {...props}
-      >{ p => <List.Item arrow="horizontal" extra={p}>{label}</List.Item>}</OopFormSelectUser>)
+      >{ p => <List.Item extra={p}>{label}</List.Item>}</OopFormSelectUser>)
       break;
     case 'OopOrgPicker':
       component = (
         <OopFormSelectOrg
         {...props}
-      >{ p => <List.Item arrow="horizontal" extra={p}>{label}</List.Item>}</OopFormSelectOrg>)
+      >{ p => <List.Item extra={p}>{label}</List.Item>}</OopFormSelectOrg>)
       break;
     case 'Switch':
-      component = <List.Item arrow="horizontal" extra={<Switch {...props} />}>{label}</List.Item>
+      component = <List.Item extra={<Switch {...props} />}>{label}</List.Item>
       break;
     case 'OopTextEditor':
       component = <OopTextEditor {...props} />
